@@ -58,7 +58,7 @@ void DevelopScene::Initialize()
 	sprite2Position = { 100.0f,100.0f };
 	sprite2_->SetPosition(sprite2Position);
 	sprite2_->SetSize({ 300.0f,300.0f });
-
+	
 	wtAxis_.Initialize();
 	axis_ = std::make_unique<Object3d>();
 	axis_->InitializeModel("teapot");

@@ -50,8 +50,5 @@ private:
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 
-	//BGM
-	std::unique_ptr<Audio> bgm_ = nullptr;
-
 };
 
