@@ -95,7 +95,6 @@
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
     <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
     <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="engine\input\Input.h" />
@@ -114,7 +113,6 @@
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WinApp.h" />
-    <ClInclude Include="engine\2d\ImGuiManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="engine\math\MyMath.h" />
@@ -176,6 +174,12 @@
     <ClInclude Include="engine\base\DirectXCommon.h">
       <Filter>engine\base</Filter>
     </ClInclude>
+    <ClInclude Include="engine\2d\ImGuiManager.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
@@ -217,9 +221,6 @@
     </Filter>
     <Filter Include="engine\scenebase">
       <UniqueIdentifier>{4af1c3a2-e07c-46a3-a103-7a9fdd748669}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="externals">
-      <UniqueIdentifier>{7d3cdbfe-f7a6-46f3-bef8-4bf31ac6b206}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

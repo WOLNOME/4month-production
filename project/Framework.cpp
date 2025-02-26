@@ -87,6 +87,7 @@ void Framework::Update()
 	if (WinApp::GetInstance()->ProcessMessage()) {
 		isOver = true;
 	}
+	//インプット更新
 	Input::GetInstance()->Update();
 	//シーンマネージャー更新
 	SceneManager::GetInstance()->Update();
