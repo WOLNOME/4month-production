@@ -46,6 +46,7 @@ void DevelopScene::Initialize()
 
 
 	//ゲームシーン変数の初期化
+	/*
 	sprite_ = std::make_unique<Sprite>();
 	textureHandleSprite_ = TextureManager::GetInstance()->LoadTexture("monsterBall.png");
 	sprite_->Initialize(textureHandleSprite_);
@@ -62,12 +63,12 @@ void DevelopScene::Initialize()
 	wtAxis_.Initialize();
 	axis_ = std::make_unique<Object3d>();
 	axis_->InitializeModel("teapot");
-
+	*/
 	wtTerrain_.Initialize();
 	wtTerrain_.translate_ = { 0.0f,-1.2f,0.0f };
 	terrain_ = std::make_unique<Object3d>();
 	terrain_->InitializeModel("terrain");
-
+	/*
 	wtAnimatedCube_.Initialize();
 	wtAnimatedCube_.translate_ = { 0.0f,3.0f,0.0f };
 	animatedCube_ = std::make_unique<Object3d>();
@@ -107,6 +108,7 @@ void DevelopScene::Initialize()
 
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize("Alarm01.wav");
+	*/
 }
 
 void DevelopScene::Finalize()
@@ -123,9 +125,12 @@ void DevelopScene::Update()
 
 
 	//モデルの更新
+	/*
 	wtAxis_.rotate_.y += 0.03f;
 	wtAxis_.UpdateMatrix();
+	*/
 	wtTerrain_.UpdateMatrix();
+	/*
 	wtAnimatedCube_.UpdateMatrix();
 	wtSneakWalk_.UpdateMatrix();
 	wtWalk_.UpdateMatrix();
@@ -135,8 +140,9 @@ void DevelopScene::Update()
 	sprite_->Update();
 	sprite_->SetRotation(sprite_->GetRotation() + 0.03f);
 	sprite2_->Update();
-
+	*/
 #ifdef _DEBUG
+	/*
 	ImGui::SetNextWindowSize(ImVec2(500, 100));
 	ImGui::Begin("MosterBall");
 	ImGui::SliderFloat2("position", &sprite2Position.x, 0.0f, 1200.0f, "%5.1f");
@@ -176,12 +182,12 @@ void DevelopScene::Update()
 	ImGui::DragFloat3("translate", &wtAxis_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtAxis_.scale_.x, 0.01f);
 	ImGui::End();
-
+	*/
 	ImGui::Begin("terrain");
 	ImGui::DragFloat3("translate", &wtTerrain_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtTerrain_.scale_.x, 0.01f);
 	ImGui::End();
-
+	
 	ImGui::Begin("DirectionalLight");
 	ImGui::SliderFloat4("color", &dirLight->color_.x, 0.0f, 1.0f);
 	ImGui::DragFloat3("direction", &dirLight->direction_.x, 0.01f);
@@ -261,11 +267,11 @@ void DevelopScene::Draw()
 	///------------------------------///
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
-
-	axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
+	
+	//axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
 
 	terrain_->Draw(wtTerrain_, *camera.get(), sceneLight_.get());
-
+	/*
 	animatedCube_->Draw(wtAnimatedCube_, *camera.get(), sceneLight_.get());
 
 	sneakWalk_->Draw(wtSneakWalk_, *camera.get(), sceneLight_.get());
@@ -273,7 +279,7 @@ void DevelopScene::Draw()
 	walk_->Draw(wtWalk_, *camera.get(), sceneLight_.get());
 
 	simpleSkin_->Draw(wtSimpleSkin_, *camera.get(), sceneLight_.get());
-
+	*/
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
@@ -285,7 +291,7 @@ void DevelopScene::Draw()
 	///↓↓↓↓パーティクル描画開始↓↓↓↓
 	///------------------------------///
 
-	particle_->Draw(*camera.get(), emitter_, &field_);
+	//particle_->Draw(*camera.get(), emitter_, &field_);
 
 	///------------------------------///
 	///↑↑↑↑パーティクル描画終了↑↑↑↑
@@ -300,7 +306,7 @@ void DevelopScene::Draw()
 	///------------------------------///
 
 	//線描画
-	line_->Draw(*camera.get());
+	//line_->Draw(*camera.get());
 	plMark->Draw(*camera.get());
 	plMark2->Draw(*camera.get());
 	slMark->Draw(*camera.get());
@@ -317,8 +323,8 @@ void DevelopScene::Draw()
 	///------------------------------///
 
 	//スプライト描画
-	sprite_->Draw();
-	sprite2_->Draw();
+	//sprite_->Draw();
+	//sprite2_->Draw();
 
 
 	///------------------------------///

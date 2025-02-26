@@ -55,6 +55,7 @@ private://メンバ変数
 	std::unique_ptr<LineDrawer> slMark;
 	bool isDrawSLMark = false;
 
+	/*
 	uint32_t textureHandleSprite_ = 0u;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	uint32_t textureHandleSprite2_ = 0u;
@@ -63,10 +64,10 @@ private://メンバ変数
 
 	WorldTransform wtAxis_;
 	std::unique_ptr<Object3d> axis_ = nullptr;
-
+	*/
 	WorldTransform wtTerrain_;
 	std::unique_ptr<Object3d> terrain_ = nullptr;
-
+	/*
 	WorldTransform wtAnimatedCube_;
 	std::unique_ptr<Object3d> animatedCube_ = nullptr;
 
@@ -88,5 +89,6 @@ private://メンバ変数
 	bool isDrawSphere_ = false;
 	std::unique_ptr<Audio> audio_ = nullptr;
 	float volume = 0.5f;
+	*/
 };
 
