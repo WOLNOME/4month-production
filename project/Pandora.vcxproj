@@ -130,7 +130,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="engine\2d\ImGuiManager.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="engine\3d\LineDrawer.cpp" />
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
     <ClCompile Include="main.cpp" />
@@ -199,7 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\base\WinApp.h" />
     <ClInclude Include="engine\2d\ImGuiManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
-    <ClInclude Include="Framework.h" />
+    <ClInclude Include="engine\base\Framework.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\LineDrawer.h" />
     <ClInclude Include="engine\3d\LineDrawerCommon.h" />
