@@ -1,11 +1,4 @@
 #include "ClearScene.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
-#include "ImGuiManager.h"
-#include "Object3dCommon.h"
-#include "ParticleCommon.h"
-#include "SpriteCommon.h"
-#include "LineDrawerCommon.h"
 #include "SceneManager.h"
 
 void ClearScene::Initialize()

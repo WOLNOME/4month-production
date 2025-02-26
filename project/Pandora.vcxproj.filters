@@ -88,6 +88,7 @@
     <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
       <Filter>engine\base</Filter>
     </ClInclude>
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

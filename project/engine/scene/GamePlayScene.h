@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseScene.h"
-class ClearScene : public BaseScene
-{
+
+class GamePlayScene : public BaseScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -20,12 +20,8 @@ public:
 	/// </summary>
 	void Draw() override;
 private://メンバ変数
-	//インプット
 	Input* input_ = nullptr;
 
-	//スプライト
-	uint32_t textureHandleClear_ = 0u;
-	std::unique_ptr<Sprite> spriteClear_ = nullptr;
 
 
 };
