@@ -61,7 +61,10 @@ uint32_t TextureManager::LoadTexture(const std::string& filePath)
 	DirectX::ScratchImage mipImages{};
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+	//assert(SUCCEEDED(hr));
+	if (!SUCCEEDED(hr)) {
+		mipImages = std::move(image);
+	}
 
 	//追加したテクスチャデータの参照を取得する
 	TextureData textureData;

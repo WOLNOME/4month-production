@@ -39,8 +39,8 @@ private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
-	Vector3 cameraTranslate = { 0.0f,0.0f,-15.0f };
-	Vector3 cameraRotate = { 0.0f,0.0f,0.0f };
+	Vector3 cameraTranslate = { 0.0f,35.0f,0.0f };
+	Vector3 cameraRotate = { 1.6f,0.0f,0.0f };
 	//平行光源
 	std::unique_ptr<DirectionalLight> dirLight;
 	//点光源
@@ -64,10 +64,10 @@ private://メンバ変数
 
 	WorldTransform wtAxis_;
 	std::unique_ptr<Object3d> axis_ = nullptr;
-	*/
+	
 	WorldTransform wtTerrain_;
 	std::unique_ptr<Object3d> terrain_ = nullptr;
-	/*
+	
 	WorldTransform wtAnimatedCube_;
 	std::unique_ptr<Object3d> animatedCube_ = nullptr;
 
@@ -90,5 +90,12 @@ private://メンバ変数
 	std::unique_ptr<Audio> audio_ = nullptr;
 	float volume = 0.5f;
 	*/
+
+	WorldTransform wtPlayer_;
+	std::unique_ptr<Object3d> player_;
+
+	//障害物
+	WorldTransform wtObstacle_;
+	std::unique_ptr<Object3d> obstacle_;
 };
 

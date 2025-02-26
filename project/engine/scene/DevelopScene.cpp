@@ -63,12 +63,12 @@ void DevelopScene::Initialize()
 	wtAxis_.Initialize();
 	axis_ = std::make_unique<Object3d>();
 	axis_->InitializeModel("teapot");
-	*/
+	
 	wtTerrain_.Initialize();
 	wtTerrain_.translate_ = { 0.0f,-1.2f,0.0f };
 	terrain_ = std::make_unique<Object3d>();
 	terrain_->InitializeModel("terrain");
-	/*
+	
 	wtAnimatedCube_.Initialize();
 	wtAnimatedCube_.translate_ = { 0.0f,3.0f,0.0f };
 	animatedCube_ = std::make_unique<Object3d>();
@@ -109,6 +109,15 @@ void DevelopScene::Initialize()
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize("Alarm01.wav");
 	*/
+
+	wtPlayer_.Initialize();
+	player_ = std::make_unique<Object3d>();
+	player_->InitializeModel("player");
+
+	wtObstacle_.Initialize();
+	wtObstacle_.translate_ = { 1.5f, 0.0f, 1.5f };
+	obstacle_ = std::make_unique<Object3d>();
+	obstacle_->InitializeModel("obstacle");
 }
 
 void DevelopScene::Finalize()
@@ -128,15 +137,21 @@ void DevelopScene::Update()
 	/*
 	wtAxis_.rotate_.y += 0.03f;
 	wtAxis_.UpdateMatrix();
-	*/
+	
 	wtTerrain_.UpdateMatrix();
-	/*
+	
 	wtAnimatedCube_.UpdateMatrix();
 	wtSneakWalk_.UpdateMatrix();
 	wtWalk_.UpdateMatrix();
 	wtSimpleSkin_.UpdateMatrix();
+	*/
+
+	wtPlayer_.UpdateMatrix();
+
+	wtObstacle_.UpdateMatrix();
 
 	//スプライトの更新
+	/*
 	sprite_->Update();
 	sprite_->SetRotation(sprite_->GetRotation() + 0.03f);
 	sprite2_->Update();
@@ -182,12 +197,12 @@ void DevelopScene::Update()
 	ImGui::DragFloat3("translate", &wtAxis_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtAxis_.scale_.x, 0.01f);
 	ImGui::End();
-	*/
+	
 	ImGui::Begin("terrain");
 	ImGui::DragFloat3("translate", &wtTerrain_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtTerrain_.scale_.x, 0.01f);
 	ImGui::End();
-	
+	*/
 	ImGui::Begin("DirectionalLight");
 	ImGui::SliderFloat4("color", &dirLight->color_.x, 0.0f, 1.0f);
 	ImGui::DragFloat3("direction", &dirLight->direction_.x, 0.01f);
@@ -267,11 +282,11 @@ void DevelopScene::Draw()
 	///------------------------------///
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
-	
-	//axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
+	/*
+	axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
 
 	terrain_->Draw(wtTerrain_, *camera.get(), sceneLight_.get());
-	/*
+	
 	animatedCube_->Draw(wtAnimatedCube_, *camera.get(), sceneLight_.get());
 
 	sneakWalk_->Draw(wtSneakWalk_, *camera.get(), sceneLight_.get());
@@ -280,6 +295,11 @@ void DevelopScene::Draw()
 
 	simpleSkin_->Draw(wtSimpleSkin_, *camera.get(), sceneLight_.get());
 	*/
+
+	player_->Draw(wtPlayer_, *camera.get(), sceneLight_.get());
+
+	obstacle_->Draw(wtObstacle_, *camera.get(), sceneLight_.get());
+
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
