@@ -1,12 +1,12 @@
 #pragma once
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "SceneTransitionAnimation.h"
 #include "Audio.h"
 #include <string>
 #include <memory>
 //シーン管理
-class SceneManager
-{
+class SceneManager {
 private://コンストラクタ等の隠蔽
 	static SceneManager* instance;
 
@@ -40,7 +40,7 @@ private:
 	void ChangeScene();
 public:
 	//次シーンのセット
-	void SetNextScene(const std::string& nextSceneName);
+	void SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType = SceneTransitionAnimation::TransitionType::FADE, uint32_t frame = 120);
 
 private:
 	//今のシーン
@@ -49,6 +49,8 @@ private:
 	BaseScene* nextScene_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	//シーン遷移アニメーション
+	std::unique_ptr<SceneTransitionAnimation> sceneTransitionAnimation_ = nullptr;
 
 };
 

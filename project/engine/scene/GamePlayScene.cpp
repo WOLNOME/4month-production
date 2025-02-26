@@ -21,6 +21,7 @@ void GamePlayScene::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "GAMEPLAY");
+	ImGui::Text("%s", "ESC:TITLE");
 	ImGui::End();
 #endif // _DEBUG
 }
