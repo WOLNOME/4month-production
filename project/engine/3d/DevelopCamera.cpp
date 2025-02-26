@@ -20,15 +20,8 @@ void DevelopCamera::Update()
 	transform.translate += GetForwardDirection() * (input_->GetMouseScrollCount() * 1.3f);
 	//ドラッグアンドドロップでカメラの向きを変える
 	if (input_->PushMouseButton(MouseButton::RightButton)) {
-		if (input_->TriggerMouseButton(MouseButton::RightButton)) {
-			//マウス移動中は判定を受け付けない
-			if ((input_->GetMouseDelta().x <= 0.05f && input_->GetMouseDelta().x >= -0.05f)&&
-				(input_->GetMouseDelta().y <= 0.05f && input_->GetMouseDelta().y >= -0.05f)) {
-				start = input_->GetMousePosition();
-			}
-		}
 		//マウスの移動幅
-		Vector2 moveValue = input_->GetMousePosition() - start;
+		Vector2 moveValue = input_->GetMousePosition();
 		//デッドゾーン
 		float deadZone = 2.0f;
 		if (moveValue.Length() > deadZone) {
