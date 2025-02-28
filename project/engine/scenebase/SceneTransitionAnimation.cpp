@@ -65,7 +65,7 @@ void SceneTransitionAnimation::UpdateIn() {
 				//フレームを減らす
 				timer_--;
 				//透明度を計算
-				float alpha = 1.0 - MyMath::Lerp(0.0f, 1.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
+				float alpha = 1.0f - MyMath::Lerp(0.0f, 1.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
 				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 			}
@@ -109,7 +109,7 @@ void SceneTransitionAnimation::UpdateOut() {
 				//フレームを減らす
 				timer_--;
 				//透明度を計算
-				float alpha = 1.0 - MyMath::Lerp(1.0f, 0.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
+				float alpha = 1.0f - MyMath::Lerp(1.0f, 0.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
 				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 			}
