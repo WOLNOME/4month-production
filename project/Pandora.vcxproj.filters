@@ -62,6 +62,14 @@
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
     <ClCompile Include="engine\scene\ClearScene.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
+    <ClCompile Include="application\appCollider\AppCollider.cpp" />
+    <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
+    <ClCompile Include="engine\math\Vector3.cpp" />
+    <ClCompile Include="application\objects\Enemy\Enemy.cpp" />
+    <ClCompile Include="application\objects\Player\Player.cpp" />
+    <ClCompile Include="application\objects\Field\Field.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\DirectionalLight.h" />
@@ -122,6 +130,14 @@
     <ClInclude Include="engine\collision\CollisionConfig.h" />
     <ClInclude Include="engine\collision\CollisionManager.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\appCollider\AppShape.h" />
+    <ClInclude Include="application\appCollider\AppCollisionManager.h" />
+    <ClInclude Include="application\appCollider\AppCollider.h" />
+    <ClInclude Include="application\objects\GameObject\GameObject.h" />
+    <ClInclude Include="application\objects\Enemy\Enemy.h" />
+    <ClInclude Include="application\objects\Player\Player.h" />
+    <ClInclude Include="application\objects\Field\Field.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

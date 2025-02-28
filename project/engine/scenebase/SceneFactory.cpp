@@ -3,6 +3,9 @@
 #include "TitleScene.h"
 #include "ClearScene.h"
 
+// 追加
+#include "GamePlayScene.h"
+
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 {
 	//次のシーンを生成
@@ -16,6 +19,10 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	}
 	else if (sceneName == "CLEAR") {
 		newScene = new ClearScene();
+	}
+	// 追加
+	else if (sceneName == "GAMEPLAY") {
+		newScene = new GamePlayScene();
 	}
 
 	return newScene;

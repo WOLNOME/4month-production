@@ -409,7 +409,7 @@ Vector2 operator*(float s, const Vector2& v);
 Vector2 operator*(const Vector2& v, float s);
 Vector2 operator/(const Vector2& v, float s);
 Vector3 operator+(const Vector3& v1, const Vector3& v2);
-Vector3 operator-(const Vector3& v1, const Vector3& v2);
+//Vector3 operator-(const Vector3& v1, const Vector3& v2);  Vector3のクラスで定義してます。そっちで使いたかったので byイイオカ
 Vector3 operator*(float s, const Vector3& v);
 Vector3 operator*(const Vector3& v, float s);
 Vector3 operator/(const Vector3& v, float s);

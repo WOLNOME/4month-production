@@ -16,7 +16,7 @@ void TitleScene::Initialize()
 	input_ = Input::GetInstance();
 
 	//生成と初期化
-	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("title.png");
+	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
 }
