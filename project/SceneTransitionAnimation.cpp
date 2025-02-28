@@ -19,8 +19,12 @@ void SceneTransitionAnimation::Initialize() {
 	//スプライトの初期化
 	sprite_ = std::make_unique<Sprite>();
 	textureHandle_ = TextureManager::GetInstance()->LoadTexture("black.png");
-	sprite_->SetAnchorPoint({ 0.5f,0.5f });
 	sprite_->Initialize(textureHandle_);
+}
+
+void SceneTransitionAnimation::Update() {
+	//スプライトの更新
+	sprite_->Update();
 }
 
 void SceneTransitionAnimation::Draw() {
@@ -61,7 +65,7 @@ void SceneTransitionAnimation::UpdateIn() {
 				//フレームを減らす
 				timer_--;
 				//透明度を計算
-				float alpha = MyMath::Lerp(0.0f, 1.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
+				float alpha = 1.0 - MyMath::Lerp(0.0f, 1.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
 				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 			}
@@ -70,7 +74,7 @@ void SceneTransitionAnimation::UpdateIn() {
 	default:
 		break;
 	}
-	
+
 }
 
 void SceneTransitionAnimation::EndIn() {
@@ -105,7 +109,7 @@ void SceneTransitionAnimation::UpdateOut() {
 				//フレームを減らす
 				timer_--;
 				//透明度を計算
-				float alpha = MyMath::Lerp(1.0f, 0.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
+				float alpha = 1.0 - MyMath::Lerp(1.0f, 0.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
 				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 			}
@@ -125,6 +129,8 @@ void SceneTransitionAnimation::EndOut() {
 			state_ = TransitionState::END_ALL;
 			//遷移中フラグを下げる
 			isTransitioning_ = false;
+			//スプライトの透明度を設定
+			sprite_->SetColor({ 1.0f,1.0f,1.0f,0.0f });
 		}
 		break;
 	default:

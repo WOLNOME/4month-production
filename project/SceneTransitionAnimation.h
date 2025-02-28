@@ -24,6 +24,7 @@ public:
 	SceneTransitionAnimation();
 	~SceneTransitionAnimation();
 	void Initialize();
+	void Update();
 	void Draw();
 
 	//遷移処理全般

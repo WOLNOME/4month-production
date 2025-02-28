@@ -17,6 +17,10 @@ void GamePlayScene::Update() {
 	if (input_->TriggerKey(DIK_ESCAPE)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
+	if (input_->TriggerKey(DIK_TAB)) {
+		sceneManager_->SetNextScene("CLEAR");
+	}
+
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");

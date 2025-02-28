@@ -22,6 +22,8 @@ void SceneManager::Initialize() {
 }
 
 void SceneManager::Update() {
+	//シーン遷移アニメーションの更新
+	sceneTransitionAnimation_->Update();
 	//シーン切り替え処理
 	ChangeScene();
 	//実行中シーンを更新する
@@ -30,10 +32,10 @@ void SceneManager::Update() {
 }
 
 void SceneManager::Draw() {
-	//シーン遷移アニメーションの描画
-	sceneTransitionAnimation_->Draw();
 	//シーンの描画
 	scene_->Draw();
+	//シーン遷移アニメーションの描画
+	sceneTransitionAnimation_->Draw();
 }
 
 void SceneManager::Finalize() {
