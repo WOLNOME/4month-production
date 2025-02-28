@@ -17,6 +17,7 @@ void GamePlayScene::Update() {
 	if (input_->TriggerKey(DIK_ESCAPE)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
+	//クリアシーンに遷移
 	if (input_->TriggerKey(DIK_TAB)) {
 		sceneManager_->SetNextScene("CLEAR");
 	}

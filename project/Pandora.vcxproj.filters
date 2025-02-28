@@ -89,7 +89,7 @@
       <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
-    <ClCompile Include="SceneTransitionAnimation.cpp" />
+    <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -183,7 +183,7 @@
       <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\GamePlayScene.h" />
-    <ClInclude Include="SceneTransitionAnimation.h" />
+    <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

@@ -158,7 +158,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\SceneLight.cpp" />
     <ClCompile Include="engine\3d\SpotLight.cpp" />
     <ClCompile Include="engine\3d\Shape.cpp" />
-    <ClCompile Include="SceneTransitionAnimation.cpp" />
+    <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scene\ClearScene.h" />
@@ -220,7 +220,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\SceneLight.h" />
     <ClInclude Include="engine\3d\SpotLight.h" />
     <ClInclude Include="engine\3d\Shape.h" />
-    <ClInclude Include="SceneTransitionAnimation.h" />
+    <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
