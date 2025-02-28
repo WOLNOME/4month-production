@@ -49,6 +49,9 @@ void Player::Update()
 	// 場外処理
 	OutOfField();
 	
+	// 攻撃	
+	Attack();
+
 	wtPlayer_.translate_ += moveVel_;
 	position_ = wtPlayer_.translate_;
 }
@@ -127,6 +130,9 @@ void Player::ImGuiDraw()
 	{
 		wtPlayer_.translate_ = { 0.0f,3.0f,0.0f };
 	}
+
+	ImGui::Text("aabb.max: %.3f %.3f %.3f", aabb_.max.x, aabb_.max.y, aabb_.max.z);
+	ImGui::Text("aabb.min: %.3f %.3f %.3f", aabb_.min.x, aabb_.min.y, aabb_.min.z);
 
 	ImGui::End();
 }

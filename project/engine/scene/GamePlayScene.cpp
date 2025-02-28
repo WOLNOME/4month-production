@@ -56,6 +56,8 @@ void GamePlayScene::Update()
 {
 	// カメラの更新
 	camera_->UpdateMatrix();
+	camera_->SetRotate({ cameraRotate });
+	camera_->SetTranslate(cameraTranslate);
 
 	// プレイヤー
 	player_->Update();

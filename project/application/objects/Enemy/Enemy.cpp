@@ -105,6 +105,9 @@ void Enemy::ImGuiDraw()
 		wtEnemy_.translate_ = { 1.0f,3.0f,0.0f };
 	}
 
+	ImGui::Text("aabb.max: %.3f %.3f %.3f", aabb_.max.x, aabb_.max.y, aabb_.max.z);
+	ImGui::Text("aabb.min: %.3f %.3f %.3f", aabb_.min.x, aabb_.min.y, aabb_.min.z);
+
 	ImGui::End();
 }
 
