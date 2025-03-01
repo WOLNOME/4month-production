@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "TextWriter.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -25,5 +26,8 @@ private://メンバ変数
 	//タイトルスプライト
 	uint32_t textureHandleTitle_ = 0u;
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
+
+	//テキスト描画
+	std::unique_ptr<TextWriter> textWriter_ = nullptr;
 };
 

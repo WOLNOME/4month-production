@@ -1,6 +1,10 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dwrite.lib")
+
 void TitleScene::Initialize()
 {
 	//シーン共通の初期化
@@ -12,6 +16,11 @@ void TitleScene::Initialize()
 	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("title.png");
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
+
+	//テキスト描画の初期化
+	textWriter_ = std::make_unique<TextWriter>();
+	textWriter_->Initialize();
+	textWriter_->CreateTextFormat(L"ＭＳ ゴシック", 32.0f);
 }
 
 void TitleScene::Finalize()
@@ -86,4 +95,8 @@ void TitleScene::Draw()
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
+	
+	//テキスト描画
+	textWriter_->Draw(100.0f, 100.0f, L"タイトル画面");
+
 }

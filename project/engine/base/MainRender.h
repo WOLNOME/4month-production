@@ -51,7 +51,8 @@ public://ゲッター
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
 	//バックバッファの数を取得
 	size_t GetBackBufferCount()const { return swapChainDesc.BufferCount; }
-
+	//スワップチェーン
+	IDXGISwapChain4* GetSwapChain()const { return swapChain.Get(); }
 private://インスタンス
 
 private://メンバ変数
