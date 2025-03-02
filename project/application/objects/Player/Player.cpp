@@ -7,11 +7,12 @@ void Player::Initialize()
 {
 	input_ = Input::GetInstance();
 
+	// プレーヤーモデル
 	wtPlayer_.Initialize();
-	wtPlayer_.translate_ = { 0.0f,3.0f,0.0f };
 	wtPlayer_.scale_ = { 1.0f,1.0f,1.0f };
 	player_ = std::make_unique<Object3d>();
 	player_->InitializeModel("cube");
+	
 
 	// 当たり判定関係
 	appCollisionManager_ = AppCollisionManager::GetInstance();
@@ -31,7 +32,7 @@ void Player::Initialize()
 
 void Player::Finalize()
 {
-	player_.reset();
+	//player_.reset();
 }
 
 void Player::Update()
@@ -92,6 +93,11 @@ void Player::OutOfField()
 		wtPlayer_.translate_.y -= fallSpeed_;
 	}
 
+	if (wtPlayer_.translate_.y < -10.0f)
+	{
+		isDead_ = true;
+	}
+
 	isGround_ = false;
 }
 
@@ -118,6 +124,7 @@ void Player::Attack()
 
 void Player::ImGuiDraw()
 {
+	// プレイヤー
 	ImGui::Begin("Player");
 
 	ImGui::SliderFloat3("PlayerPos", &wtPlayer_.translate_.x, -20.0f, 20.0f);
@@ -135,6 +142,7 @@ void Player::ImGuiDraw()
 	ImGui::Text("aabb.min: %.3f %.3f %.3f", aabb_.min.x, aabb_.min.y, aabb_.min.z);
 
 	ImGui::End();
+
 }
 
 void Player::OnCollision(const AppCollider* _other)

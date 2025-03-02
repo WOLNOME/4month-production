@@ -28,15 +28,25 @@ void GamePlayScene::Initialize()
 	appCollisionManager_->Initialize();
 
 	// プレイヤー
-	player_ = std::make_unique<Player>();
-	player_->Initialize();
-	player_->SetCamera(camera_.get());
+	for (uint32_t i = 0; i < 1; ++i)
+	{
+		auto player = std::make_unique<Player>();
+
+		player->Initialize();
+		player->SetPlayerPos(playerSpawnPos_);
+		player->SetCamera(camera_.get());
+		
+		players_.push_back(std::move(player));
+	}
 
 	// エネミー プレイヤーの位置をセットするためプレイヤーの初期化の後に行う
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
 	enemy_->SetCamera(camera_.get());
-	enemy_->SetPlayerPos(player_->GetPosition());
+	if (!players_.empty())
+	{
+		enemy_->SetPlayerPos(players_);
+	}
 
 	// フィールド
 	field_ = std::make_unique<Field>();
@@ -47,7 +57,11 @@ void GamePlayScene::Initialize()
 
 void GamePlayScene::Finalize()
 {
-	player_->Finalize();
+	for (auto& player : players_)
+	{
+		player->Finalize();
+	}
+	
 	enemy_->Finalize();
 	field_->Finalize();
 }
@@ -60,10 +74,21 @@ void GamePlayScene::Update()
 	camera_->SetTranslate(cameraTranslate);
 
 	// プレイヤー
-	player_->Update();
+	for (auto& player : players_)
+	{
+		player->Update();
+	}
+	// 死んだプレイヤーを削除
+	players_.erase(std::remove_if(players_.begin(), players_.end(), [](const std::unique_ptr<Player>& player) 
+		{
+			return player->IsDead(); 
+		}), players_.end());
 
 	// エネミー
-	enemy_->SetPlayerPos(player_->GetPosition());
+	if (!players_.empty())
+	{
+		enemy_->SetPlayerPos(players_);		
+	}
 	enemy_->Update();
 
 	// フィールド
@@ -81,13 +106,16 @@ void GamePlayScene::Draw()
 {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
-	
+
 	///------------------------------///
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
 	// プレイヤー
-	player_->Draw();
+	for (auto& player : players_)
+	{
+		player->Draw();
+	}
 
 	// エネミー
 	enemy_->Draw();
@@ -152,10 +180,26 @@ void GamePlayScene::ImGuiDraw()
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -50.0f, 50.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
 
+	ImGui::SliderFloat3("playerSpawnPos", &playerSpawnPos_.x, -10.0f, 10.0f);
+	// プレイヤーを追加するボタン
+	if (ImGui::Button("Add Player"))
+	{
+		auto player = std::make_unique<Player>();
+
+		player->SetPlayerPos(playerSpawnPos_);
+		player->Initialize();
+		player->SetCamera(camera_.get());
+
+		players_.push_back(std::move(player));
+	}
+
 	ImGui::End();
 
 	// プレイヤー
-	player_->ImGuiDraw();
+	for (auto& player : players_)
+	{
+		player->ImGuiDraw();
+	}
 
 	// エネミー
 	enemy_->ImGuiDraw();

@@ -9,6 +9,8 @@
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
+class Player;
+
 class Enemy : public GameObject
 {
 public:
@@ -37,8 +39,8 @@ public: //セッター
 	// カメラをセット
 	void SetCamera(BaseCamera* _camera) { camera_.reset(_camera); }
 
-	// プレイヤーの位置をセット
-	void SetPlayerPos(const Vector3& _pos) { playerPos_ = _pos; }
+	// プレイヤーの位置との距離をセット
+	void SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player);
 
 private:
 
@@ -63,8 +65,11 @@ private:
 	float fallSpeed_ = 0.3f;
 
 	// プレイヤーの位置
-	Vector3 playerPos_{};
+	std::vector<Vector3> playerPos_{};
 	// プレイヤーとの距離
 	Vector3 toPlayer_{};
-
+	// 1フレーム前のプレイヤーとの距離
+	Vector3 prevToPlayer_{};
+	// 最短距離
+	Vector3 minDistance_{};
 };

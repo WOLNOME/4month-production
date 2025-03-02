@@ -1,7 +1,12 @@
+#define NOMINMAX // std::min std::max を有効にするためのマクロ定義
+
 #include "Enemy.h"
 
 #include "../../appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
+#include "../Player/Player.h"
+
+#include <limits>
 
 void Enemy::Initialize()
 {
@@ -57,13 +62,6 @@ void Enemy::Draw()
 
 void Enemy::Move()
 {
-
-	// 敵から自キャラへのベクトルを計算
-	toPlayer_ = playerPos_ - wtEnemy_.translate_;
-
-	// ベクトルを正規化する
-	toPlayer_ = MyMath::Normalize(toPlayer_);
-	moveVel_ = MyMath::Normalize(moveVel_);
 	// 球面線形補間により、今の速度と自キャラへのベクトルを内挿し、新たな速度とする
 	moveVel_ = 1.0f * (MyMath::Slerp(moveVel_, toPlayer_, 0.1f));
 
@@ -72,7 +70,6 @@ void Enemy::Move()
 
 	rotation_.y = std::atan2(moveVel_.x, moveVel_.z);
 	rotation_.x = 0.0f;
-
 
 	moveVel_ /= 20.0f;
 
@@ -88,6 +85,11 @@ void Enemy::OutOfField()
 	}
 
 	isGround_ = false;
+
+	if (wtEnemy_.translate_.y < -30.0f)
+	{
+		isGround_ = true;
+	}
 }
 
 void Enemy::ImGuiDraw()
@@ -117,4 +119,32 @@ void Enemy::OnCollision(const AppCollider* _other)
 	{
 		isGround_ = true;
 	}
+}
+
+void Enemy::SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player)
+{
+	playerPos_.clear();
+	float minDistance = std::numeric_limits<float>::max();
+	Vector3 closestPlayerPos;
+
+	for (const auto& player : player)
+	{
+		Vector3 playerPos = player->GetPosition();
+		playerPos_.push_back(playerPos);
+
+		// プレイヤーとの距離を計算
+		Vector3 toPlayer = playerPos - wtEnemy_.translate_;
+		float distance = toPlayer.Length();
+
+		// 最も近いプレイヤーを見つける
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			closestPlayerPos = playerPos;
+		}
+	}
+
+	// 最も近いプレイヤーとのベクトルを設定
+	toPlayer_ = closestPlayerPos - wtEnemy_.translate_;
+	toPlayer_ = MyMath::Normalize(toPlayer_);
 }

@@ -54,13 +54,15 @@ private://メンバ変数
 	AppCollisionManager* appCollisionManager_ = nullptr;
 
 	// プレイヤー
-	std::unique_ptr<Player> player_ = nullptr;
+	std::vector<std::unique_ptr<Player>> players_{};
 
 	// エネミー
 	std::unique_ptr<Enemy> enemy_ = nullptr;
 
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
+	// プレイヤースポーン位置
+	Vector3 playerSpawnPos_ = { 0.0f,13.0f,2.0f };
 
 };
 

@@ -32,14 +32,23 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+
 private: // 衝突判定
 
 	void OnCollision(const AppCollider* _other);
+
+public: // ゲッター
+	
+	// 死亡フラグを取得
+	bool IsDead() const { return isDead_; }
 
 public: //セッター
 
 	// カメラをセット
 	void SetCamera(BaseCamera* _camera) { camera_.reset(_camera); }
+
+	// プレイヤーの位置をセット
+	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
 
 private:
 
@@ -49,7 +58,7 @@ private:
 	// カメラ
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
-	// モデル情報
+	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};
 	std::unique_ptr<Object3d> player_ = nullptr;
 
@@ -71,6 +80,9 @@ private:
 	// 攻撃時間
 	const float attackTime_ = 12;
 	float attackTimeCounter_ = attackTime_;
+
+	// 死亡フラグ
+	bool isDead_ = false;
 
 };
 
