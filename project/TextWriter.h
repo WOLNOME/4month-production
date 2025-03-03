@@ -38,6 +38,12 @@ public:
 	void registerSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
 	void registerTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
 
+	///=======================
+	/// 描画処理
+	///=======================
+	
+	void BeginDrawWithD2D()const noexcept;
+
 
 
 private:

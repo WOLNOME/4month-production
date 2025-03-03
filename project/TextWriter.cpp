@@ -110,3 +110,8 @@ void TextWriter::registerTextFormat(const std::string& key, const std::wstring& 
 	directWriteFactory->CreateTextFormat(fontName.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
 	textFormatMap[key] = textFormat;
 }
+
+void TextWriter::BeginDrawWithD2D() const noexcept {
+	const auto wrappedBackBuffer =wrappedBackBuffers[]
+
+}

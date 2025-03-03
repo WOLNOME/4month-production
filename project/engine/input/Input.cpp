@@ -140,6 +140,7 @@ void Input::GenerateKeyboard()
 	//入力データ形式のセット
 	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
 	assert(SUCCEEDED(hr));
+	//ウィンドウがないためスキップ
 	if (!IsWindow(WinApp::GetInstance()->GetHwnd())) {
 		Logger::Log("ウィンドウ消えてるからSetCooperativeLevelスキップ");
 		return;
