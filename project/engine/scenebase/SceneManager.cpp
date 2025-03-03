@@ -26,6 +26,8 @@ void SceneManager::Update()
 	ChangeScene();
 	//実行中シーンを更新する
 	scene_->Update();
+	//FPS表示
+	scene_->ShowFPS();
 
 }
 
