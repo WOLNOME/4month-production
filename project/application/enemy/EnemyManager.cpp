@@ -37,7 +37,7 @@ void EnemyManager::Update()
 	for (auto& enemy : tackleEnemies_)
 	{
 		enemy->SetTargetPosition(targetPosition_);
-		enemy->Update();
+		enemy->EnemyUpdate();
 	}
 }
 
@@ -46,7 +46,7 @@ void EnemyManager::Draw()
 	//タックルエネミーの描画
 	for (auto& enemy : tackleEnemies_)
 	{
-		enemy->Draw(*camera_);
+		enemy->EnemyDraw(*camera_);
 	}
 }
 
@@ -60,10 +60,18 @@ void EnemyManager::SpawnTackleEnemy(uint32_t count)
 	for (uint32_t i = 0; i < count; i++)
 	{
 		auto enemy = std::make_unique<TackleEnemy>();
-		enemy->Initialize(tackleEnemyPath_);
+		enemy->EnemyInitialize(tackleEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 0.0f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		enemy->SetTargetPosition(targetPosition_);
 		tackleEnemies_.emplace_back(std::move(enemy));
+	}
+}
+
+void EnemyManager::Finalize()
+{
+	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->Finalize();
 	}
 }

@@ -1,7 +1,10 @@
 #include "TackleEnemy.h"
+
 #include <chrono>
 
-void TackleEnemy::Initialize(const std::string& filePath)
+#include "../appCollider/AppCollisionManager.h"
+
+void TackleEnemy::EnemyInitialize(const std::string& filePath)
 {
     //オブジェクトの初期化
     object3d_ = std::make_unique<Object3d>();
@@ -20,9 +23,24 @@ void TackleEnemy::Initialize(const std::string& filePath)
     std::uniform_real_distribution<float> waitTimeDist(1.0f, 3.0f);
     nextTackleWaitTime_ = waitTimeDist(randomEngine_);
     tackleWaitTimer_ = 0.0f;
+
+
+    // 当たり判定関係
+    appCollisionManager_ = AppCollisionManager::GetInstance();
+
+    objectName_ = "TackleEnemy";
+    appCollider_ = std::make_unique<AppCollider>();
+    appCollider_->SetOwner(this);
+    appCollider_->SetColliderID(objectName_);
+    appCollider_->SetShapeData(&aabb_);
+    appCollider_->SetShape(AppShape::AppAABB);
+    appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+    //appCollider_->SetOnCollisionTrigger(std::bind(&TackleEnemy::OnCollisionTrigger, this, std::placeholders::_1));
+    appCollider_->SetOnCollision(std::bind(&TackleEnemy::OnCollision, this, std::placeholders::_1));
+    appCollisionManager_->RegisterCollider(appCollider_.get());
 }
 
-void TackleEnemy::Update()
+void TackleEnemy::EnemyUpdate()
 {
     // タックルの更新
     UpdateTackle();
@@ -41,11 +59,20 @@ void TackleEnemy::Update()
         }
     }
 
+	// 場外処理
+	OutOfField();
+
     //行列の更新
 	transform_.UpdateMatrix();
+
+    // 当たり判定関係
+    aabb_.min = transform_.translate_ - transform_.scale_;
+    aabb_.max = transform_.translate_ + transform_.scale_;
+    appCollider_->SetPosition(transform_.translate_);
+
 }
 
-void TackleEnemy::Draw(const BaseCamera& camera)
+void TackleEnemy::EnemyDraw(const BaseCamera& camera)
 {
     object3d_->Draw(transform_,camera);
 }
@@ -68,6 +95,40 @@ void TackleEnemy::StartTackle()
         // 次のタックルまでの待機時間を設定
         std::uniform_real_distribution<float> waitTimeDist(1.0f, 5.0f); // 1秒〜5秒の間でランダム
         nextTackleWaitTime_ = waitTimeDist(randomEngine_);
+    }
+}
+
+void TackleEnemy::Finalize()
+{
+    // 各解放処理
+    if (appCollider_)
+    {
+        appCollisionManager_->DeleteCollider(appCollider_.get());
+        appCollider_.reset();
+    }
+
+}
+
+void TackleEnemy::OutOfField()
+{
+    if (isGround_ == false)
+    {
+        transform_.translate_.y -= fallSpeed_;
+    }
+
+    isGround_ = false;
+
+    if (transform_.translate_.y < -30.0f)
+    {
+        isGround_ = true;
+    }
+}
+
+void TackleEnemy::OnCollision(const AppCollider* _other)
+{
+    if (_other->GetColliderID() == "Field")
+    {
+        isGround_ = true;
     }
 }
 

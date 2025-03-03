@@ -15,10 +15,9 @@
 // アプリケーションインクルード
 #include "../../application/objects/Player/Player.h"
 #include "../../application/objects/Player/SpawnPos/SpawnPos.h"
-#include "../../application/objects/Enemy/Enemy.h"
 #include "../../application/objects/Field/Field.h"
 #include "../../application/appCollider/AppCollisionManager.h"
-#include "application/enemy/EnemyManager.h"
+#include "../../application/enemy/EnemyManager.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -60,8 +59,8 @@ private://メンバ変数
 	// プレイヤー
 	std::vector<std::unique_ptr<Player>> players_{};
 
-	// エネミー
-	std::unique_ptr<Enemy> enemy_ = nullptr;
+	//エネミーマネージャー
+	std::unique_ptr<EnemyManager> enemyManager_;
 
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;

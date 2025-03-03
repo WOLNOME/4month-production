@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseScene.h"
 #include "DevelopCamera.h"
-#include "application/enemy/EnemyManager.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -29,7 +28,6 @@ private://メンバ変数
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
-	//エネミーマネージャー
-	std::unique_ptr<EnemyManager> enemyManager_;
+	
 };
 

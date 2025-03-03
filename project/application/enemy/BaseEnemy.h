@@ -10,9 +10,9 @@ class BaseCamera;
 class BaseEnemy
 {
 public:
-	virtual void Initialize(const std::string& filePath) = 0;
-	virtual void Update() = 0;
-	virtual void Draw(const BaseCamera& camera) = 0;
+	virtual void EnemyInitialize(const std::string& filePath) = 0;
+	virtual void EnemyUpdate() = 0;
+	virtual void EnemyDraw(const BaseCamera& camera) = 0;
 protected:
 	//3Dオブジェクト
 	std::unique_ptr<Object3d> object3d_;

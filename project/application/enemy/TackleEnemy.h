@@ -2,21 +2,45 @@
 #include "BaseEnemy.h"
 #include <random> // ランダム生成のために追加
 
-class TackleEnemy : public BaseEnemy
+#include "../appCollider/AppCollider.h"
+#include "../objects/GameObject/GameObject.h"
+
+class TackleEnemy : public BaseEnemy, public GameObject
 {
 public:
-    void Initialize(const std::string& filePath) override;
-    void Update() override;
-    void Draw(const BaseCamera& camera) override;
+    void EnemyInitialize(const std::string& filePath) override;
+    void EnemyUpdate() override;
+    void EnemyDraw(const BaseCamera& camera) override;
     void StartTackle();
     Vector3 GetTargetPosition() const { return target_; }
     void SetTargetPosition(const Vector3& target) { target_ = target; }
     Vector3 GetPosition() const { return transform_.translate_; }
     void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 
+	/////////// GameObjectとの競合を無くすための関数 ///////////
+
+    void Initialize() override {}
+    void Update() override {}
+    void Draw(BaseCamera _camera) override {_camera; }
+
+	///////////////////////////////////////////////////////////
+    
+
+    void Finalize() override;
+
+    // 場外処理
+    void OutOfField();
+
+private: // 衝突判定
+
+    void OnCollision(const AppCollider* _other);
+
 private:
+
 	void UpdateTackle();
+
 private:
+
     // タックル中かどうか
     bool isTackling_ = false;
     // 初期速度
@@ -35,4 +59,14 @@ private:
     float nextTackleWaitTime_ = 0.0f;
     // ランダムエンジン
     std::mt19937 randomEngine_;
+
+    // 落下速度
+    float fallSpeed_ = 0.3f;
+
+    // 当たり判定関係
+    AppCollisionManager* appCollisionManager_ = nullptr;
+    std::unique_ptr<AppCollider> appCollider_ = nullptr;
+    AppAABB aabb_{};
+    bool isHit_ = false;
+    bool isGround_ = false;
 };

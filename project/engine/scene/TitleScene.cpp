@@ -17,9 +17,7 @@ void TitleScene::Initialize()
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
 	camera->SetRotate({ 0.6f,0.0f,0.0f });
-	//エネミーマネージャーの生成と初期化
-	enemyManager_ = std::make_unique<EnemyManager>();
-	enemyManager_->Initialize(camera.get(), "axis");
+	
 }
 
 void TitleScene::Finalize()
@@ -43,8 +41,6 @@ void TitleScene::Update()
 
 	spriteTitle_->Update();
 
-	//エネミーマネージャーの更新
-	enemyManager_->Update();
 }
 
 void TitleScene::Draw()
@@ -56,8 +52,7 @@ void TitleScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	//エネミーマネージャーの描画
-	enemyManager_->Draw();
+
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑

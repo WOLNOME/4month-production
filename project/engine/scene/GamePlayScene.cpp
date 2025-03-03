@@ -41,15 +41,11 @@ void GamePlayScene::Initialize()
 		player->Initialize();
 
 		players_.push_back(std::move(player));
-}
+	}
 
-	// エネミー プレイヤーの位置をセットするためプレイヤーの初期化の後に行う
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize();
-	if (!players_.empty())
-	{
-		enemy_->SetPlayerPos(players_);
-}
+	//エネミーマネージャーの生成と初期化
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->Initialize(camera_.get(), "axis");
 
 	// フィールド
 	field_ = std::make_unique<Field>();
@@ -73,7 +69,8 @@ void GamePlayScene::Finalize()
 		player->Finalize();
 	}
 	
-	enemy_->Finalize();
+	enemyManager_->Finalize();
+
 	field_->Finalize();
 }
 
@@ -101,12 +98,8 @@ void GamePlayScene::Update()
 		player->Update();
 	}
 
-	// エネミー
-	if (!players_.empty())
-	{
-		enemy_->SetPlayerPos(players_);		
-	}
-	enemy_->Update();
+	//エネミーマネージャーの更新
+	enemyManager_->Update();
 
 	// フィールド
 	field_->Update();
@@ -132,10 +125,6 @@ void GamePlayScene::Update()
 	ImGuiDraw();
 }
 
-void GamePlayScene::Finalize() 
-{
-}
-
 void GamePlayScene::Draw()
 {
 	//3Dモデルの共通描画設定
@@ -151,8 +140,8 @@ void GamePlayScene::Draw()
         player->Draw(*camera_.get());
 	}
 
-	// エネミー
-	enemy_->Draw(*camera_.get());
+	//エネミーマネージャーの描画
+	enemyManager_->Draw();
 
 	// フィールド
 	field_->Draw(*camera_.get());
@@ -241,8 +230,7 @@ void GamePlayScene::ImGuiDraw()
 		player->ImGuiDraw();
 	}
 
-	// エネミー
-	enemy_->ImGuiDraw();
+	
 
 	// フィールド
 	field_->ImGuiDraw();
