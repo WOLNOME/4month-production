@@ -128,7 +128,7 @@ void Enemy::OnCollision(const AppCollider* _other)
 	}
 }
 
-void Enemy::SetPlayerPos(const std::list<std::unique_ptr<Player>>& player)
+void Enemy::SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player)
 {
 	playerPos_.clear();
 	float minDistance = std::numeric_limits<float>::max();

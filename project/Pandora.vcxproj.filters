@@ -70,6 +70,7 @@
     <ClCompile Include="application\objects\Enemy\Enemy.cpp" />
     <ClCompile Include="application\objects\Player\Player.cpp" />
     <ClCompile Include="application\objects\Field\Field.cpp" />
+    <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\DirectionalLight.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="application\objects\Enemy\Enemy.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Field\Field.h" />
+    <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

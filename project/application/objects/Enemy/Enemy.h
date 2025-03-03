@@ -8,6 +8,7 @@
 
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
+#include "../../engine/3d/BaseCamera.h"
 
 class Player;
 
@@ -37,7 +38,7 @@ private: // 衝突判定
 public: //セッター
 
 	// プレイヤーの位置との距離をセット
-	void SetPlayerPos(const std::list<std::unique_ptr<Player>>& player);
+	void SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player);
 
 private:
 
