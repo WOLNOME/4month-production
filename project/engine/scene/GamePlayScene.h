@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseScene.h"
+#include "DevelopCamera.h"
+#include "application/enemy/EnemyManager.h"
 
 class GamePlayScene : public BaseScene {
 public:
@@ -21,8 +23,7 @@ public:
 	void Draw() override;
 private://メンバ変数
 	Input* input_ = nullptr;
-
-
+	
 
 };
 
