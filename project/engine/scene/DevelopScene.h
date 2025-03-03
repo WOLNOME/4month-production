@@ -1,20 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "Particle.h"
-#include "LineDrawer.h"
-#include "Audio.h"
 #include "Vector2.h"
-#include "Input.h"
 #include "MyMath.h"
 #include "WorldTransform.h"
 #include "DevelopCamera.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include <memory>
-#include <cstdint>
 
 class DevelopScene : public BaseScene
 {

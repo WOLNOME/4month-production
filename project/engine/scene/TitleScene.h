@@ -1,16 +1,7 @@
 #pragma once
 #include "BaseScene.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "Audio.h"
-#include "Vector2.h"
-#include "Input.h"
-#include "LineDrawer.h"
-#include <cstdint>
-#include <memory>
 
-class TitleScene : public BaseScene
-{
+class TitleScene : public BaseScene {
 public:
 	/// <summary>
 	/// 初期化

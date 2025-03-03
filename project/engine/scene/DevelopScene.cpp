@@ -1,11 +1,4 @@
 #include "DevelopScene.h"
-#include "TextureManager.h"
-#include "ImGuiManager.h"
-#include "Object3dCommon.h"
-#include "ParticleCommon.h"
-#include "LineDrawerCommon.h"
-#include "SpriteCommon.h"
-#include "SceneManager.h"
 #include <numbers>
 
 void DevelopScene::Initialize()
