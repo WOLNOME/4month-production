@@ -17,7 +17,7 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 	void Update() override;
-	void Draw() override;
+	void Draw(BaseCamera _camera) override;
 
 	// ImGui
 	void ImGuiDraw();
@@ -26,15 +26,7 @@ private: // 衝突判定
 
 	void OnCollision(const AppCollider* _other);
 
-public: //セッター
-
-	// カメラをセット
-	void SetCamera(BaseCamera* _camera) { camera_.reset(_camera); }
-
 private:
-
-	// カメラ
-	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
 	// モデル情報
 	WorldTransform wtField_{};

@@ -29,6 +29,13 @@ void Field::Initialize()
 
 void Field::Finalize()
 {
+	// 各解放処理
+	if (appCollider_)
+	{
+		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
+	}
+
 	field_.reset();
 }
 
@@ -43,9 +50,9 @@ void Field::Update()
 	appCollider_->SetPosition(wtField_.translate_);
 }
 
-void Field::Draw()
+void Field::Draw(BaseCamera _camera)
 {
-	field_->Draw(wtField_, *camera_);
+    field_->Draw(wtField_, _camera);
 }
 
 void Field::ImGuiDraw()

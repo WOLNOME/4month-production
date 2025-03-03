@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <BaseCamera.h>
 
 #include <Vector3.h>
 #include <string>
@@ -12,7 +13,7 @@ public:
 
     virtual void Initialize() = 0;
     virtual void Update() = 0;
-    virtual void Draw() = 0;
+    virtual void Draw(BaseCamera _camera) = 0;
     virtual void Finalize() = 0;
 
 

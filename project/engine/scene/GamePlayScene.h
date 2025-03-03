@@ -54,7 +54,7 @@ private://メンバ変数
 	AppCollisionManager* appCollisionManager_ = nullptr;
 
 	// プレイヤー
-	std::vector<std::unique_ptr<Player>> players_{};
+	std::list<std::unique_ptr<Player>> players_{};
 
 	// エネミー
 	std::unique_ptr<Enemy> enemy_ = nullptr;

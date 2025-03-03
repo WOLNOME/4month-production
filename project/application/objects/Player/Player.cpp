@@ -32,7 +32,14 @@ void Player::Initialize()
 
 void Player::Finalize()
 {
-	//player_.reset();
+	// 各解放処理
+	if (appCollider_)
+	{
+		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
+	}
+
+	player_.reset();
 }
 
 void Player::Update()
@@ -57,33 +64,39 @@ void Player::Update()
 	position_ = wtPlayer_.translate_;
 }
 
-void Player::Draw()
+void Player::Draw(BaseCamera _camera)
 {
-	player_->Draw(wtPlayer_, *camera_);
+	if (!isDead_)
+	{
+		player_->Draw(wtPlayer_, _camera);
+	}
 }
 
 void Player::Move()
 {
 	moveVel_ = { 0.0f,0.0f,0.0f };
 
-	// 移動
-	if (input_->PushKey(DIK_W))
+	// 地面にいるとき
+	if (isGround_)
 	{
-		moveVel_.z += moveSpeed_.z;
+		// 移動
+		if (input_->PushKey(DIK_W))
+		{
+			moveVel_.z += moveSpeed_.z;
+		}
+		if (input_->PushKey(DIK_S))
+		{
+			moveVel_.z -= moveSpeed_.z;
+		}
+		if (input_->PushKey(DIK_A))
+		{
+			moveVel_.x -= moveSpeed_.x;
+		}
+		if (input_->PushKey(DIK_D))
+		{
+			moveVel_.x += moveSpeed_.x;
+		}
 	}
-	if (input_->PushKey(DIK_S))
-	{
-		moveVel_.z -= moveSpeed_.z;
-	}
-	if (input_->PushKey(DIK_A))
-	{
-		moveVel_.x -= moveSpeed_.x;
-	}
-	if (input_->PushKey(DIK_D))
-	{
-		moveVel_.x += moveSpeed_.x;
-	}
-
 }
 
 void Player::OutOfField()
@@ -96,6 +109,7 @@ void Player::OutOfField()
 	if (wtPlayer_.translate_.y < -10.0f)
 	{
 		isDead_ = true;
+		isGround_ = true;
 	}
 
 	isGround_ = false;

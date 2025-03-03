@@ -18,7 +18,7 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 	void Update() override;
-	void Draw() override;
+	void Draw(BaseCamera _camera) override;
 	
 	// 移動
 	void Move();
@@ -44,9 +44,6 @@ public: // ゲッター
 
 public: //セッター
 
-	// カメラをセット
-	void SetCamera(BaseCamera* _camera) { camera_.reset(_camera); }
-
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
 
@@ -54,9 +51,6 @@ private:
 
 	// 入力
 	Input* input_ = nullptr;
-
-	// カメラ
-	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};

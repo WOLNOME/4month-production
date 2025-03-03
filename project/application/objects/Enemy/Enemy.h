@@ -18,7 +18,7 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 	void Update() override;
-	void Draw() override;
+	void Draw(BaseCamera _camera) override;
 	
 
 	// 移動
@@ -36,16 +36,10 @@ private: // 衝突判定
 
 public: //セッター
 
-	// カメラをセット
-	void SetCamera(BaseCamera* _camera) { camera_.reset(_camera); }
-
 	// プレイヤーの位置との距離をセット
-	void SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player);
+	void SetPlayerPos(const std::list<std::unique_ptr<Player>>& player);
 
 private:
-
-	// カメラ
-	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
 	// モデル情報
 	WorldTransform wtEnemy_{};

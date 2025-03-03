@@ -34,7 +34,6 @@ void GamePlayScene::Initialize()
 
 		player->Initialize();
 		player->SetPlayerPos(playerSpawnPos_);
-		player->SetCamera(camera_.get());
 		
 		players_.push_back(std::move(player));
 	}
@@ -42,7 +41,6 @@ void GamePlayScene::Initialize()
 	// エネミー プレイヤーの位置をセットするためプレイヤーの初期化の後に行う
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
-	enemy_->SetCamera(camera_.get());
 	if (!players_.empty())
 	{
 		enemy_->SetPlayerPos(players_);
@@ -51,7 +49,6 @@ void GamePlayScene::Initialize()
 	// フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
-	field_->SetCamera(camera_.get());
 
 }
 
@@ -73,26 +70,32 @@ void GamePlayScene::Update()
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
 
+	// 死んだプレイヤーを削除
+	players_.remove_if([](const std::unique_ptr<Player>& player)
+		{
+			if (player->IsDead())
+			{
+				player->Finalize();
+
+				return true;
+			}
+			return false;
+		});
 	// プレイヤー
 	for (auto& player : players_)
 	{
 		player->Update();
 	}
-	// 死んだプレイヤーを削除
-	players_.erase(std::remove_if(players_.begin(), players_.end(), [](const std::unique_ptr<Player>& player) 
-		{
-			return player->IsDead(); 
-		}), players_.end());
 
 	// エネミー
 	if (!players_.empty())
 	{
 		enemy_->SetPlayerPos(players_);		
 	}
-	enemy_->Update();
+	//enemy_->Update();
 
 	// フィールド
-	field_->Update();
+	//field_->Update();
 
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();
@@ -114,14 +117,14 @@ void GamePlayScene::Draw()
 	// プレイヤー
 	for (auto& player : players_)
 	{
-		player->Draw();
+        player->Draw(*camera_.get());
 	}
 
 	// エネミー
-	enemy_->Draw();
+	//enemy_->Draw(*camera_.get());
 
 	// フィールド
-	field_->Draw();
+	//field_->Draw(*camera_.get());
 
 
 	///------------------------------///
@@ -188,7 +191,6 @@ void GamePlayScene::ImGuiDraw()
 
 		player->SetPlayerPos(playerSpawnPos_);
 		player->Initialize();
-		player->SetCamera(camera_.get());
 
 		players_.push_back(std::move(player));
 	}

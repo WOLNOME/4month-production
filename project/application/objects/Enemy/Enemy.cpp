@@ -34,6 +34,13 @@ void Enemy::Initialize()
 
 void Enemy::Finalize()
 {
+	// 各解放処理
+	if (appCollider_)
+	{
+		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
+	}
+
 	enemy_.reset();
 }
 
@@ -55,9 +62,9 @@ void Enemy::Update()
 	wtEnemy_.translate_ += moveVel_;
 }
 
-void Enemy::Draw()
+void Enemy::Draw(BaseCamera _camera)
 {
-	enemy_->Draw(wtEnemy_, *camera_);
+	enemy_->Draw(wtEnemy_, _camera);
 }
 
 void Enemy::Move()
@@ -121,7 +128,7 @@ void Enemy::OnCollision(const AppCollider* _other)
 	}
 }
 
-void Enemy::SetPlayerPos(const std::vector<std::unique_ptr<Player>>& player)
+void Enemy::SetPlayerPos(const std::list<std::unique_ptr<Player>>& player)
 {
 	playerPos_.clear();
 	float minDistance = std::numeric_limits<float>::max();
