@@ -17,10 +17,7 @@ void TitleScene::Initialize()
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
 
-	//テキスト描画の初期化
-	textWriter_ = std::make_unique<TextWriter>();
-	textWriter_->Initialize();
-	textWriter_->CreateTextFormat(L"ＭＳ ゴシック", 32.0f);
+	
 }
 
 void TitleScene::Finalize()
@@ -96,7 +93,4 @@ void TitleScene::Draw()
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
 	
-	//テキスト描画
-	textWriter_->Draw(100.0f, 100.0f, L"タイトル画面");
-
 }

@@ -53,6 +53,9 @@ public://ゲッター
 	size_t GetBackBufferCount()const { return swapChainDesc.BufferCount; }
 	//スワップチェーン
 	IDXGISwapChain4* GetSwapChain()const { return swapChain.Get(); }
+	//スワップチェーンのリソース
+	ID3D12Resource* GetSwapChainResource(uint32_t index)const { return swapChainResources[index].Get(); }
+
 private://インスタンス
 
 private://メンバ変数
