@@ -35,7 +35,7 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
     appCollider_->SetShapeData(&aabb_);
     appCollider_->SetShape(AppShape::AppAABB);
     appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-    //appCollider_->SetOnCollisionTrigger(std::bind(&TackleEnemy::OnCollisionTrigger, this, std::placeholders::_1));
+    appCollider_->SetOnCollisionTrigger(std::bind(&TackleEnemy::OnCollisionTrigger, this, std::placeholders::_1));
     appCollider_->SetOnCollision(std::bind(&TackleEnemy::OnCollision, this, std::placeholders::_1));
     appCollisionManager_->RegisterCollider(appCollider_.get());
 }
@@ -130,6 +130,14 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         isGround_ = true;
     }
+}
+
+void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
+{
+	if (_other->GetColliderID() == "Player")
+	{
+		// プレイヤーと衝突したらタックルを開始
+	}
 }
 
 void TackleEnemy::UpdateTackle()

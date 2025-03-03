@@ -33,7 +33,11 @@ public:
 
 private: // 衝突判定
 
+	// 当たっている間ずっと呼ばれる
     void OnCollision(const AppCollider* _other);
+
+	// 当たった瞬間だけ呼ばれる
+	void OnCollisionTrigger(const AppCollider* _other);
 
 private:
 
