@@ -9,9 +9,17 @@ void TitleScene::Initialize()
 	input_ = Input::GetInstance();
 
 	//生成と初期化
-	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("title.png");
+	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
+	//カメラの生成と初期化
+	camera = std::make_unique<DevelopCamera>();
+	camera->Initialize();
+	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
+	camera->SetRotate({ 0.6f,0.0f,0.0f });
+	//エネミーマネージャーの生成と初期化
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->Initialize(camera.get(), "axis");
 }
 
 void TitleScene::Finalize()
@@ -24,13 +32,19 @@ void TitleScene::Update()
 		sceneManager_->SetNextScene("GAMEPLAY");
 	}
 
-	spriteTitle_->Update();
+	//カメラの更新
+	camera->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "TITLE");
 	ImGui::End();
 #endif // _DEBUG
+
+	spriteTitle_->Update();
+
+	//エネミーマネージャーの更新
+	enemyManager_->Update();
 }
 
 void TitleScene::Draw()
@@ -42,7 +56,8 @@ void TitleScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	
+	//エネミーマネージャーの描画
+	enemyManager_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑

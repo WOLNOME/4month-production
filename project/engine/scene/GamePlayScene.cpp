@@ -6,7 +6,6 @@ void GamePlayScene::Initialize() {
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
-
 }
 
 void GamePlayScene::Finalize() {
@@ -23,6 +22,7 @@ void GamePlayScene::Update() {
 	ImGui::Text("%s", "GAMEPLAY");
 	ImGui::End();
 #endif // _DEBUG
+
 }
 
 void GamePlayScene::Draw() {
