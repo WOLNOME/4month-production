@@ -15,5 +15,6 @@ public:
 	void Draw();
 
 private:
+	ComPtr<ID3D11DeviceContext> m_d3d11DeviceContext;
 
 };
