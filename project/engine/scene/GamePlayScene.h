@@ -18,6 +18,7 @@
 #include "../../application/objects/Enemy/Enemy.h"
 #include "../../application/objects/Field/Field.h"
 #include "../../application/appCollider/AppCollisionManager.h"
+#include "application/enemy/EnemyManager.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -47,7 +48,7 @@ public:
 private://メンバ変数
 
 	Input* input_ = nullptr;
-
+	
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
 	Vector3 cameraTranslate = { 0.0f,25.0f,-32.0f };
@@ -82,3 +83,4 @@ private://メンバ変数
 
 
 };
+

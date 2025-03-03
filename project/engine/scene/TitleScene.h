@@ -1,16 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "Audio.h"
-#include "Vector2.h"
-#include "Input.h"
-#include "LineDrawer.h"
-#include <cstdint>
-#include <memory>
+#include "DevelopCamera.h"
+#include "application/enemy/EnemyManager.h"
 
-class TitleScene : public BaseScene
-{
+class TitleScene : public BaseScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -34,5 +27,9 @@ private://メンバ変数
 	//タイトルスプライト
 	uint32_t textureHandleTitle_ = 0u;
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
+	//開発用カメラ
+	std::unique_ptr<DevelopCamera> camera;
+	//エネミーマネージャー
+	std::unique_ptr<EnemyManager> enemyManager_;
 };
 

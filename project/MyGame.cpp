@@ -14,7 +14,7 @@ void MyGame::Initialize()
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene("TITLE"); // 変更
+	SceneManager::GetInstance()->SetNextScene("TITLE");
 
 }
 

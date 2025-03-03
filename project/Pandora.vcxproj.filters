@@ -12,16 +12,6 @@
     <FxCompile Include="Resources\shaders\SkinningObject3d.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engine\3d\DirectionalLight.cpp" />
-    <ClCompile Include="engine\3d\DevelopCamera.cpp" />
-    <ClCompile Include="engine\scene\DevelopScene.cpp" />
-    <ClCompile Include="engine\scenebase\AbstractSceneFactory.cpp" />
-    <ClCompile Include="engine\scene\BaseScene.cpp" />
-    <ClCompile Include="engine\audio\Audio.cpp" />
-    <ClCompile Include="engine\audio\AudioCommon.cpp" />
-    <ClCompile Include="engine\3d\BaseCamera.cpp" />
-    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="engine\base\DirectXCommon.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -32,7 +22,7 @@
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="engine\2d\ImGuiManager.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="engine\3d\LineDrawer.cpp" />
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
     <ClCompile Include="main.cpp" />
@@ -61,8 +51,6 @@
     <ClCompile Include="engine\3d\Shape.cpp" />
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
-    <ClCompile Include="engine\scene\ClearScene.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
     <ClCompile Include="application\appCollider\AppCollider.cpp" />
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
@@ -71,24 +59,56 @@
     <ClCompile Include="application\objects\Player\Player.cpp" />
     <ClCompile Include="application\objects\Field\Field.cpp" />
     <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
+    <ClCompile Include="engine\scenebase\AbstractSceneFactory.cpp">
+      <Filter>engine\scenebase</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\audio\Audio.cpp">
+      <Filter>engine\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\audio\AudioCommon.cpp">
+      <Filter>engine\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\BaseCamera.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\BaseScene.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\ClearScene.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\collision\Collider.cpp">
+      <Filter>engine\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\collision\CollisionManager.cpp">
+      <Filter>engine\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
+      <Filter>engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\DevelopCamera.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\DevelopScene.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\DirectionalLight.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\DirectXCommon.cpp">
+      <Filter>engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\enemy\EnemyManager.cpp" />
+    <ClCompile Include="application\enemy\TackleEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\3d\DirectionalLight.h" />
-    <ClInclude Include="engine\3d\DevelopCamera.h" />
-    <ClInclude Include="engine\scene\DevelopScene.h" />
-    <ClInclude Include="engine\scenebase\AbstractSceneFactory.h" />
-    <ClInclude Include="engine\scene\BaseScene.h" />
-    <ClInclude Include="engine\audio\Audio.h" />
-    <ClInclude Include="engine\audio\AudioCommon.h" />
-    <ClInclude Include="engine\3d\BaseCamera.h" />
-    <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
-    <ClInclude Include="engine\base\DirectXCommon.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
     <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
     <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="engine\input\Input.h" />
@@ -107,9 +127,8 @@
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\base\WinApp.h" />
-    <ClInclude Include="engine\2d\ImGuiManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
-    <ClInclude Include="Framework.h" />
+    <ClInclude Include="engine\base\Framework.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\LineDrawer.h" />
     <ClInclude Include="engine\3d\LineDrawerCommon.h" />
@@ -127,10 +146,60 @@
     <ClInclude Include="engine\3d\SceneLight.h" />
     <ClInclude Include="engine\3d\SpotLight.h" />
     <ClInclude Include="engine\3d\Shape.h" />
+    <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
+      <Filter>engine\scenebase</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\audio\Audio.h">
+      <Filter>engine\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\audio\AudioCommon.h">
+      <Filter>engine\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\BaseCamera.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\BaseScene.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\ClearScene.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\collision\Collider.h">
+      <Filter>engine\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\collision\CollisionConfig.h">
+      <Filter>engine\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\collision\CollisionManager.h">
+      <Filter>engine\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\DevelopCamera.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\DevelopScene.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\DirectionalLight.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\DirectXCommon.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\ImGuiManager.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="application\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\enemy\EnemyManager.h" />
+    <ClInclude Include="application\enemy\TackleEnemy.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />
     <ClInclude Include="engine\collision\CollisionManager.h" />
-    <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\appCollider\AppShape.h" />
     <ClInclude Include="application\appCollider\AppCollisionManager.h" />
@@ -150,5 +219,37 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{9d6f09e6-e7dd-4005-a8ac-4efa64e47188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\2d">
+      <UniqueIdentifier>{68274809-f6d5-4e81-9ed9-84abb1cdc6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d">
+      <UniqueIdentifier>{19002482-c196-4259-9107-7d8f5a07e802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\audio">
+      <UniqueIdentifier>{1454f29d-b4a3-461f-8447-2a4f25969f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\base">
+      <UniqueIdentifier>{61c8dec8-1701-4467-a940-5c6707f4b9be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\collision">
+      <UniqueIdentifier>{c2224fc8-3814-4a07-a2db-08531d8f9991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\input">
+      <UniqueIdentifier>{afa99c66-d007-4458-bf12-2d50c1e56ac4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\math">
+      <UniqueIdentifier>{cb7d7a59-4356-421e-a438-2031401a5153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\scene">
+      <UniqueIdentifier>{f2c20471-18e2-4023-9be1-80af460b9b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\scenebase">
+      <UniqueIdentifier>{4af1c3a2-e07c-46a3-a103-7a9fdd748669}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

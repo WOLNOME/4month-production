@@ -111,6 +111,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
     <ClCompile Include="application\objects\Enemy\Enemy.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
+    <ClCompile Include="application\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\enemy\EnemyManager.cpp" />
+    <ClCompile Include="application\enemy\TackleEnemy.cpp" />
     <ClCompile Include="engine\scene\ClearScene.cpp" />
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
@@ -135,7 +138,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="engine\2d\ImGuiManager.cpp" />
     <ClCompile Include="application\objects\Field\Field.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="engine\3d\LineDrawer.cpp" />
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
@@ -171,6 +174,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\appCollider\AppCollider.h" />
     <ClInclude Include="application\appCollider\AppCollisionManager.h" />
     <ClInclude Include="application\objects\Enemy\Enemy.h" />
+    <ClInclude Include="application\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\enemy\EnemyManager.h" />
+    <ClInclude Include="application\enemy\TackleEnemy.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />
@@ -211,8 +217,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\base\WinApp.h" />
     <ClInclude Include="engine\2d\ImGuiManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
+    <ClInclude Include="engine\base\Framework.h" />
     <ClInclude Include="application\objects\Field\Field.h" />
-    <ClInclude Include="Framework.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\LineDrawer.h" />
     <ClInclude Include="engine\3d\LineDrawerCommon.h" />

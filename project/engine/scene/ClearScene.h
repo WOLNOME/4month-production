@@ -1,9 +1,5 @@
 #pragma once
 #include "BaseScene.h"
-#include "Input.h"
-#include "Sprite.h"
-#include <memory>
-#include <cstdint>
 class ClearScene : public BaseScene
 {
 public:

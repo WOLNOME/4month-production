@@ -41,15 +41,15 @@ void GamePlayScene::Initialize()
 		player->Initialize();
 
 		players_.push_back(std::move(player));
-	}
-	
+}
+
 	// エネミー プレイヤーの位置をセットするためプレイヤーの初期化の後に行う
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
 	if (!players_.empty())
 	{
 		enemy_->SetPlayerPos(players_);
-	}
+}
 
 	// フィールド
 	field_ = std::make_unique<Field>();
@@ -121,9 +121,19 @@ void GamePlayScene::Update()
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();
 
+	//タイトルシーンに戻る
+	if (input_->TriggerKey(DIK_ESCAPE)) {
+		sceneManager_->SetNextScene("TITLE");
+	}
+
+
 
 	// ImGui
 	ImGuiDraw();
+}
+
+void GamePlayScene::Finalize() 
+{
 }
 
 void GamePlayScene::Draw()
@@ -157,7 +167,7 @@ void GamePlayScene::Draw()
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
-	
+
 
 	//パーティクルの共通描画設定
 	ParticleCommon::GetInstance()->SettingCommonDrawing();
@@ -192,7 +202,7 @@ void GamePlayScene::Draw()
 	///------------------------------///
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
-	
+
 
 
 	///------------------------------///
@@ -206,6 +216,7 @@ void GamePlayScene::ImGuiDraw()
 #ifdef _DEBUG
 
 	ImGui::Begin("scene");
+	ImGui::Text("%s", "GAMEPLAY");;
 	
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -50.0f, 50.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
