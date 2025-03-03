@@ -27,6 +27,9 @@ public:
 	void PreDraw();
 	//描画後処理
 	void PostDraw();
+	//画面切り替え処理
+	void ExchangeScreen();
+
 	//コマンドの準備
 	void ReadyNextCommand();
 private://生成系メンバ関数

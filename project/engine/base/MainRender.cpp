@@ -92,6 +92,9 @@ void MainRender::PostDraw()
 	//GPUにコマンドリストの実行を行わせる
 	Microsoft::WRL::ComPtr<ID3D12CommandList> commandLists[] = { commandList.Get() };
 	DirectXCommon::GetInstance()->GetCommandQueue()->ExecuteCommandLists(1, commandLists->GetAddressOf());
+}
+
+void MainRender::ExchangeScreen() {
 	//GPUとOSに画面の交換を行うように通知する
 	swapChain->Present(1, 0);
 }

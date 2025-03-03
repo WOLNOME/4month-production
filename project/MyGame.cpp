@@ -61,6 +61,8 @@ void MyGame::Draw()
 	MainRender::GetInstance()->PostDraw();
 	//単レンダー終了時の共通処理
 	DirectXCommon::GetInstance()->PostEachRender();
+	//画面切り替え
+	MainRender::GetInstance()->ExchangeScreen();
 	//コマンドのリセット
 	MainRender::GetInstance()->ReadyNextCommand();
 
