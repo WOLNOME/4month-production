@@ -31,6 +31,10 @@ public:
 	/// </summary>
 	void Draw();
 	/// <summary>
+	///	文字描画
+	/// </summary>
+	void TextDraw();
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();

@@ -75,6 +75,7 @@ public://ゲッター
 	IDXGIFactory7* GetDXGIFactory() const { return dxgiFactory.Get(); }
 	//コマンドキュー
 	ID3D12CommandQueue* GetCommandQueue() const { return commandQueue.Get(); }
+	ID3D12CommandQueue** GetAddlessOfCommandQueue() { return commandQueue.GetAddressOf(); }
 
 private://インスタンス
 

@@ -45,6 +45,10 @@ public:
 	/// 描画
 	/// </summary>
 	virtual void Draw();
+	/// <summary>
+	/// 文字描画
+	/// </summary>
+	virtual void TextDraw();
 	
 protected:
 	//シーンマネージャー

@@ -23,3 +23,6 @@ void BaseScene::Draw()
 {
 }
 
+void BaseScene::TextDraw() {
+}
+

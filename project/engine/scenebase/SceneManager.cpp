@@ -38,6 +38,11 @@ void SceneManager::Draw() {
 	sceneTransitionAnimation_->Draw();
 }
 
+void SceneManager::TextDraw() {
+	//シーンの文字描画
+	scene_->TextDraw();
+}
+
 void SceneManager::Finalize() {
 	//最後のシーンの終了と解放
 	scene_->Finalize();

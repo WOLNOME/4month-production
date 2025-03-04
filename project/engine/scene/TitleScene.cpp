@@ -17,6 +17,12 @@ void TitleScene::Initialize()
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
 
+	//テキスト
+	text = std::make_unique<TextWriter>();
+	text->Initialize();
+	text->registerSolidColorBrash("UI", D2D1::ColorF::AliceBlue);
+	text->registerTextFormat("UI", L"游ゴシック", 24.0f);
+
 	
 }
 
@@ -93,4 +99,24 @@ void TitleScene::Draw()
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
 	
+}
+
+void TitleScene::TextDraw() {
+
+	text->BeginDrawWithD2D();
+
+	///------------------------------///
+	///↓↓↓↓文字描画開始↓↓↓↓
+	///------------------------------///
+
+	D2D1_RECT_F rect;
+	rect = { 100.0f,100.0f,500.0f,150.0f };
+	text->WriteText("UI", "UI", L"テストメッセージ", rect);
+
+	///------------------------------///
+	///↑↑↑↑文字描画終了↑↑↑↑
+	///------------------------------///
+
+	text->EndDrawWithD2D();
+
 }

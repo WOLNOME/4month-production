@@ -2,13 +2,29 @@
 #include <cassert>
 
 void TextWriter::Initialize() {
-	
+	//IDWriteFactoryの生成
+	if (!CreateIDWriteFactory()) {
+		assert(0 && "IDWriteFactoryの生成に失敗しました");
+	}
+	//D3D11On12Deviceの生成
+	if (!CreateD3D11On12Device()) {
+		assert(0 && "D3D11On12Deviceの生成に失敗しました");
+	}
+	//Direct2DDeviceContextの生成
+	if (!CreateDirect2DDeviceContext()) {
+		assert(0 && "Direct2DDeviceContextの生成に失敗しました");
+	}
+	//D2DRenderTargetの生成
+	if (!CreateD2DRenderTarget()) {
+		assert(0 && "D2DRenderTargetの生成に失敗しました");
+	}
 }
 
 void TextWriter::Update() {
 }
 
 void TextWriter::Draw() {
+	
 }
 
 bool TextWriter::CreateIDWriteFactory() noexcept {
@@ -32,11 +48,23 @@ bool TextWriter::CreateD3D11On12Device() noexcept {
 	d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #endif // _DEBUG
 
-	if (FAILED(D3D11On12CreateDevice(dxcommon->GetDevice(), d3d11DeviceFlags, nullptr, 0U, reinterpret_cast<IUnknown**>(dxcommon->GetCommandQueue()), 1U, 0U, &d3d11Device, &m_d3d11DeviceContext, nullptr))) [[unlikely]] {
+	if (FAILED(D3D11On12CreateDevice(
+		dxcommon->GetDevice(),
+		d3d11DeviceFlags,
+		nullptr,
+		0,
+		reinterpret_cast<IUnknown**>(dxcommon->GetAddlessOfCommandQueue()),
+		1,
+		0,
+		&d3d11Device,
+		&d3d11On12DeviceContext,
+		nullptr
+	))) [[unlikely]] {
+		assert(0 && "ID3D11On12Deviceの生成に失敗しました");
 		return false;
 	}
-
-	return SUCCEEDED(d3d11Device.As(&d3d11Device));
+	//D3D11->D3D11On12
+	return SUCCEEDED(d3d11Device.As(&d3d11On12Device));
 }
 
 bool TextWriter::CreateDirect2DDeviceContext() noexcept {
@@ -112,6 +140,29 @@ void TextWriter::registerTextFormat(const std::string& key, const std::wstring& 
 }
 
 void TextWriter::BeginDrawWithD2D() const noexcept {
-	const auto wrappedBackBuffer =wrappedBackBuffers[]
+	const auto backBufferIndex = mainrender->GetSwapChain()->GetCurrentBackBufferIndex();
+	const auto wrappedBackBuffer = wrappedBackBuffers[backBufferIndex];
+	const auto backBufferForD2D = d2dRenderTargets[backBufferIndex];
 
+	d3d11On12Device->AcquireWrappedResources(wrappedBackBuffer.GetAddressOf(), 1);
+	d2dDeviceContext->SetTarget(backBufferForD2D.Get());
+	d2dDeviceContext->BeginDraw();
+	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
+}
+
+void TextWriter::WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept {
+	const auto textFormat = textFormatMap.at(textFormatKey);
+	const auto solidColorBrush = solidColorBrushMap.at(solidColorBrushKey);
+	//描画処理
+	d2dDeviceContext->DrawTextW(text.c_str(), static_cast<UINT32>(text.length()), textFormat.Get(), &rect, solidColorBrush.Get());
+}
+
+void TextWriter::EndDrawWithD2D() const noexcept {
+	const auto backBufferIndex = mainrender->GetSwapChain()->GetCurrentBackBufferIndex();
+	const auto wrappedBackBuffer = wrappedBackBuffers[backBufferIndex];
+
+	d2dDeviceContext->EndDraw();
+	d3d11On12Device->ReleaseWrappedResources(wrappedBackBuffer.GetAddressOf(), 1);
+	//描画内容の確定(スワップ可能状態に移行)
+	d3d11On12DeviceContext->Flush();
 }

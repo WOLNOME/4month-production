@@ -41,8 +41,11 @@ public:
 	///=======================
 	/// 描画処理
 	///=======================
-	
+
 	void BeginDrawWithD2D()const noexcept;
+	void WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept;
+	void EndDrawWithD2D() const noexcept;
+
 
 
 
@@ -53,9 +56,9 @@ private:
 	MainRender* mainrender = MainRender::GetInstance();
 
 	//保存用変数
-	ComPtr<IDWriteFactory> directWriteFactory;
+	ComPtr<IDWriteFactory> directWriteFactory = nullptr;
 	ComPtr<ID3D11On12Device> d3d11On12Device = nullptr;
-	ComPtr<ID3D11DeviceContext> m_d3d11DeviceContext = nullptr;
+	ComPtr<ID3D11DeviceContext> d3d11On12DeviceContext = nullptr;
 	ComPtr<ID2D1DeviceContext2> d2dDeviceContext = nullptr;
 
 	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
