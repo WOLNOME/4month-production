@@ -2,41 +2,31 @@
 #include <cassert>
 
 void TextWriter::Initialize() {
-	//IDWriteFactoryの生成
-	if (!CreateIDWriteFactory()) {
-		assert(0 && "IDWriteFactoryの生成に失敗しました");
-	}
+	//DWriteFactoryの生成
+	CreateIDWriteFactory();
 	//D3D11On12Deviceの生成
-	if (!CreateD3D11On12Device()) {
-		assert(0 && "D3D11On12Deviceの生成に失敗しました");
-	}
-	//Direct2DDeviceContextの生成
-	if (!CreateDirect2DDeviceContext()) {
-		assert(0 && "Direct2DDeviceContextの生成に失敗しました");
-	}
+	CreateD3D11On12Device();
+	//D2DDeviceContextの生成
+	CreateDirect2DDeviceContext();
 	//D2DRenderTargetの生成
-	if (!CreateD2DRenderTarget()) {
-		assert(0 && "D2DRenderTargetの生成に失敗しました");
-	}
+	CreateD2DRenderTarget();
 }
 
 void TextWriter::Update() {
 }
 
 void TextWriter::Draw() {
-	
 }
 
-bool TextWriter::CreateIDWriteFactory() noexcept {
+void TextWriter::CreateIDWriteFactory() {
+	HRESULT hr;
 	//IDWriteFactoryの生成
-	if (FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &directWriteFactory))) [[unlikely]] {
-		assert(0 && "IDWriteFactoryの生成に失敗しました");
-		return false;
-	}
-	return true;
+	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &directWriteFactory);
+	assert(SUCCEEDED(hr));
 }
 
-bool TextWriter::CreateD3D11On12Device() noexcept {
+void TextWriter::CreateD3D11On12Device() {
+	HRESULT hr;
 	//ID3D11On12Deviceの生成
 	ComPtr<ID3D11Device
 	> d3d11Device = nullptr;
@@ -47,8 +37,7 @@ bool TextWriter::CreateD3D11On12Device() noexcept {
 #else
 	d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #endif // _DEBUG
-
-	if (FAILED(D3D11On12CreateDevice(
+	hr = D3D11On12CreateDevice(
 		dxcommon->GetDevice(),
 		d3d11DeviceFlags,
 		nullptr,
@@ -59,39 +48,35 @@ bool TextWriter::CreateD3D11On12Device() noexcept {
 		&d3d11Device,
 		&d3d11On12DeviceContext,
 		nullptr
-	))) [[unlikely]] {
-		assert(0 && "ID3D11On12Deviceの生成に失敗しました");
-		return false;
-	}
+	);
+	assert(SUCCEEDED(hr));
 	//D3D11->D3D11On12
-	return SUCCEEDED(d3d11Device.As(&d3d11On12Device));
+	hr = d3d11Device.As(&d3d11On12Device);
+	assert(SUCCEEDED(hr));
 }
 
-bool TextWriter::CreateDirect2DDeviceContext() noexcept {
+void TextWriter::CreateDirect2DDeviceContext() {
+	HRESULT hr;
 	//ID2D1Factory3の生成
 	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
 	constexpr D2D1_FACTORY_OPTIONS factoryOptions{};
-	if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &factoryOptions, &d2dFactory))) [[unlikely]] {
-		assert(0 && "ID2D1Factory3の生成に失敗しました");
-		return false;
-	}
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &factoryOptions, &d2dFactory);
+	assert(SUCCEEDED(hr));
 	//IDXGIDeviceの生成
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
-	if (FAILED(d3d11On12Device.As(&dxgiDevice))) [[unlikely]] {
-		assert(0 && "IDXGIDeviceの生成に失敗しました");
-		return false;
-	}
+	hr = d3d11On12Device.As(&dxgiDevice);
+	assert(SUCCEEDED(hr));
 	//ID2D1Device2の生成
 	ComPtr<ID2D1Device2> d2dDevice = nullptr;
-	if (FAILED(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice))) [[unlikely]] {
-		assert(0 && "ID2D1Device2の生成に失敗しました");
-		return false;
-	}
-	
-	return SUCCEEDED(d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dDeviceContext.ReleaseAndGetAddressOf()));
+	hr = d2dFactory->CreateDevice(dxgiDevice.Get(), d2dDevice.ReleaseAndGetAddressOf());
+	assert(SUCCEEDED(hr));
+	//d2dDeviceContextの生成
+	hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dDeviceContext.ReleaseAndGetAddressOf());
+	assert(SUCCEEDED(hr));
 }
 
-bool TextWriter::CreateD2DRenderTarget() noexcept {
+void TextWriter::CreateD2DRenderTarget() {
+	HRESULT hr;
 	//DirectWriteの描画先の生成
 	D3D11_RESOURCE_FLAGS resourceFlags = { D3D11_BIND_RENDER_TARGET };
 	const UINT dpi = GetDpiForWindow(winapp->GetHwnd());
@@ -100,26 +85,20 @@ bool TextWriter::CreateD2DRenderTarget() noexcept {
 	for (UINT i = 0U; i < mainrender->GetBackBufferCount(); ++i) {
 		ComPtr<ID3D11Resource> wrappedBackBuffer = nullptr;
 		//ID3D11Resourceの生成
-		if (FAILED(d3d11On12Device->CreateWrappedResource(mainrender->GetSwapChainResource(i), &resourceFlags, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT, IID_PPV_ARGS(wrappedBackBuffer.ReleaseAndGetAddressOf())))) [[unlikely]] {
-			assert(0 && "ID3D11On12Device::CreateWrappedResourceの呼び出しに失敗しました");
-			return false;
-		}
+		hr = d3d11On12Device->CreateWrappedResource(mainrender->GetSwapChainResource(i), &resourceFlags, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT, IID_PPV_ARGS(wrappedBackBuffer.ReleaseAndGetAddressOf()));
+		assert(SUCCEEDED(hr));
 		//IDXGISurfaceの生成
 		ComPtr<IDXGISurface> dxgiSurface = nullptr;
-		if (FAILED(wrappedBackBuffer.As(&dxgiSurface))) [[unlikely]] {
-			assert(0 && "IDXGISurfaceの生成に失敗しました");
-			return false;
-		}
+		hr = wrappedBackBuffer.As(&dxgiSurface);
+		assert(SUCCEEDED(hr));
 		//ID2D1Bitmap1の生成
 		ComPtr<ID2D1Bitmap1> d2dRenderTarget = nullptr;
-		if (FAILED(d2dDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), &bitmapProperties, &d2dRenderTarget))) [[unlikely]] {
-			assert(0 && "ID2D1Bitmap1の生成に失敗しました");
-			return false;
-		}
+		hr = d2dDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), &bitmapProperties, &d2dRenderTarget);
+		assert(SUCCEEDED(hr));
+		
 		wrappedBackBuffers.emplace_back(wrappedBackBuffer);
 		d2dRenderTargets.emplace_back(d2dRenderTarget);
 	}
-	return true;
 }
 
 void TextWriter::registerSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {

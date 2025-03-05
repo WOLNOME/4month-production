@@ -24,10 +24,10 @@ public:
 	/// 初期化時処理
 	///=======================
 
-	bool CreateIDWriteFactory() noexcept;
-	bool CreateD3D11On12Device() noexcept;
-	bool CreateDirect2DDeviceContext() noexcept;
-	bool CreateD2DRenderTarget() noexcept;
+	void CreateIDWriteFactory();
+	void CreateD3D11On12Device();
+	void CreateDirect2DDeviceContext();
+	void CreateD2DRenderTarget();
 
 
 
