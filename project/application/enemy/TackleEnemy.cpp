@@ -76,6 +76,12 @@ void TackleEnemy::EnemyUpdate()
 	// 場外処理
 	OutOfField();
 
+    //生存中か
+	if (transform_.translate_.y <= -10.0f)
+	{
+		isAlive_ = false;
+	}
+
     //行列の更新
 	transform_.UpdateMatrix();
 
