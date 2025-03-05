@@ -245,7 +245,7 @@ void GamePlayScene::ImGuiDraw()
 void GamePlayScene::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
-	//rotationTimer_ -= 1.0f;
+	rotationTimer_ -= 1.0f;
 	if (rotationTimer_ <= 0.0f)
 	{
 		rotationTimer_ = rotation_;
