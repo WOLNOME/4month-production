@@ -83,7 +83,8 @@ void Player::Draw(BaseCamera _camera)
 
 void Player::Move()
 {
-	moveVel_ = { 0.0f,0.0f,0.0f };
+	// 摩擦による減速を適用
+	moveVel_ *= friction_;
 
 	// 地面にいるとき
 	if (isGround_)
@@ -107,8 +108,17 @@ void Player::Move()
 		}
 	}
 
+	
+
+	// 速度が非常に小さくなったら停止する
+	if (moveVel_.Length() < 0.01f)
+	{
+		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+
 	wtPlayer_.translate_ += moveVel_;
 	position_ = wtPlayer_.translate_;
+
 }
 
 void Player::MovePosition()
@@ -121,7 +131,8 @@ void Player::MovePosition()
 	moveVel_ += friction;
 
 	// 速度が非常に小さくなったら停止する
-	if (moveVel_.Length() < 0.01f) {
+	if (moveVel_.Length() < 0.01f)
+	{
 
 		return;
 	}
@@ -217,6 +228,6 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		moveVel_ *= 7.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
-		knockBackTime_ = 4.0f;
+		knockBackTime_ = 34.0f;
 	}
 }
