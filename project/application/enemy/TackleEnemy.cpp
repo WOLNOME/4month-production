@@ -49,9 +49,6 @@ void TackleEnemy::EnemyUpdate()
     } 
     else
 	{
-        // 移動の処理ここにオナシャス
-
-
          // タックル中でない場合、待機タイマーを更新
         if (!isTackling_)
         {

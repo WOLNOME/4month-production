@@ -55,14 +55,6 @@ void Player::Update()
 	if (knockBackTime_ > 0.0f)
 	{
 		knockBackTime_ -= 1.0f;
-
-		//wtPlayer_.translate_ += moveVel_ * (1.0f/60.0f);
-		//position_ = wtPlayer_.translate_;
-	
-		Vector3 moveFriction_ = moveVel_ * friction_ * (1.0f / 60.0f);
-		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_ * (1.0f / 60.0f);
-		position_ = wtPlayer_.translate_;
 	}
 	else
 	{
@@ -72,6 +64,9 @@ void Player::Update()
 		// 攻撃	
 		Attack();
 	}
+
+	// 位置更新
+	MovePosition();
 
 	// 場外処理
 	OutOfField();
@@ -89,7 +84,6 @@ void Player::Draw(BaseCamera _camera)
 void Player::Move()
 {
 	moveVel_ = { 0.0f,0.0f,0.0f };
-	
 
 	// 地面にいるとき
 	if (isGround_)
@@ -113,11 +107,27 @@ void Player::Move()
 		}
 	}
 
-	if (!isAttack_)
-	{
-		wtPlayer_.translate_ += moveVel_;
-		position_ = wtPlayer_.translate_;
+	wtPlayer_.translate_ += moveVel_;
+	position_ = wtPlayer_.translate_;
+}
+
+void Player::MovePosition()
+{
+	// フレーム間の時間差（秒）
+	float deltaTime = 1.0f / 60.0f;
+
+	// 摩擦による減速を適用
+	Vector3 friction = -moveVel_ * attackFriction_ * deltaTime;
+	moveVel_ += friction;
+
+	// 速度が非常に小さくなったら停止する
+	if (moveVel_.Length() < 0.01f) {
+
+		return;
 	}
+
+	// 位置を更新
+	wtPlayer_.translate_ += moveVel_ * deltaTime;
 }
 
 void Player::OutOfField()
@@ -145,11 +155,11 @@ void Player::Attack()
 
 	if (isAttack_)
 	{
-		moveVel_ *= 1.5f * friction_;
+		moveVel_ *= 1.5f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
 
-		Vector3 moveFriction_ = moveVel_ * friction_ * (1.0f/60.0f);
+		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f/60.0f);
 		moveVel_ += moveFriction_;
 		wtPlayer_.translate_ += moveVel_;
 		position_ = wtPlayer_.translate_;
@@ -204,7 +214,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 
 		// ノックバック
 		moveVel_ = attackToEnemy_;
-		moveVel_ *= 17.0f;
+		moveVel_ *= 7.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
 		knockBackTime_ = 4.0f;

@@ -23,6 +23,8 @@ public:
 	// 移動
 	void Move();
 	
+	void MovePosition();
+
 	// 場外処理
 	void OutOfField();
 	
@@ -78,7 +80,7 @@ private:
 	// 落下速度
 	float fallSpeed_ = 0.3f;
 	// 摩擦係数（減速率）
-	float friction_ = 2.0f;
+	float attackFriction_ = 2.0f;
 
 
 	// 攻撃時間
