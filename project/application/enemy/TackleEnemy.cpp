@@ -46,19 +46,6 @@ void TackleEnemy::EnemyUpdate()
 	if (knockBackTime_ > 0.0f)
 	{
 		knockBackTime_ -= 1.0f;
-	
-        //ノックバック(仮)
-        Vector3 friction = -tackleVelocity_ * tackleFriction_ * (1.0f/60.0f);
-        tackleVelocity_ += friction;
-
-        // 速度が非常に小さくなったら停止する
-        if (tackleVelocity_.Length() < 0.01f) {
-            tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
-            return;
-        }
-
-        // 位置を更新
-        transform_.translate_ += tackleVelocity_ * (1.0f/60.0f);
     } 
     else
 	{
@@ -78,13 +65,19 @@ void TackleEnemy::EnemyUpdate()
                 tackleWaitTimer_ = 0.0f;
             }
         }
-
-        // タックルの更新
-        UpdateTackle();
 	}
+
+    //移動
+    Move();
 
 	// 場外処理
 	OutOfField();
+
+    //生存中か
+	if (transform_.translate_.y <= -10.0f)
+	{
+		isAlive_ = false;
+	}
 
     //行列の更新
 	transform_.UpdateMatrix();
@@ -103,24 +96,21 @@ void TackleEnemy::EnemyDraw(const BaseCamera& camera)
 
 void TackleEnemy::StartTackle()
 {
-    if (!isTackling_) {
-        isTackling_ = true;
-		isAttack_ = true;
+	isAttack_ = true;
 
-        // ターゲット方向を計算
-        tackleDirection_ = target_ - transform_.translate_;
-        // Y軸方向の移動はしない
-        tackleDirection_.y = 0.0f;
-        // 正規化
-		tackleDirection_ = tackleDirection_.Normalized();
+    // ターゲット方向を計算
+    tackleDirection_ = target_ - transform_.translate_;
+    // Y軸方向の移動はしない
+    tackleDirection_.y = 0.0f;
+    // 正規化
+	tackleDirection_ = tackleDirection_.Normalized();
 
-        // 初期速度を設定
-        tackleVelocity_ = tackleDirection_ * tackleSpeed_;
+    // 初期速度を設定
+    tackleVelocity_ = tackleDirection_ * tackleSpeed_;
 
-        // 次のタックルまでの待機時間を設定
-        std::uniform_real_distribution<float> waitTimeDist(1.0f, 5.0f); // 1秒〜5秒の間でランダム
-        nextTackleWaitTime_ = waitTimeDist(randomEngine_);
-    }
+    // 次のタックルまでの待機時間を設定
+    std::uniform_real_distribution<float> waitTimeDist(1.0f, 5.0f); // 1秒〜5秒の間でランダム
+    nextTackleWaitTime_ = waitTimeDist(randomEngine_);
 }
 
 void TackleEnemy::Finalize()
@@ -177,26 +167,23 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 	}
 }
 
-void TackleEnemy::UpdateTackle()
+void TackleEnemy::Move()
 {
-    if (isTackling_) {
-        // フレーム間の時間差（秒）
-        float deltaTime = 1.0f / 60.0f;
+    // フレーム間の時間差（秒）
+    float deltaTime = 1.0f / 60.0f;
 
-        // 摩擦による減速を適用
-        Vector3 friction = -tackleVelocity_ * tackleFriction_ * deltaTime;
-        tackleVelocity_ += friction;
+    // 摩擦による減速を適用
+    Vector3 friction = -tackleVelocity_ * tackleFriction_ * deltaTime;
+    tackleVelocity_ += friction;
 
-        // 速度が非常に小さくなったら停止する
-        if (tackleVelocity_.Length() < 0.01f) {
-            tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
-            isTackling_ = false;
-			isAttack_ = false;
-            return;
-        }
-
-        // 位置を更新
-        transform_.translate_ += tackleVelocity_ * deltaTime;
+    // 速度が非常に小さくなったら停止する
+    if (tackleVelocity_.Length() < 0.01f) {
+        isAttack_ = false;
+        return;
     }
+
+    // 位置を更新
+    transform_.translate_ += tackleVelocity_ * deltaTime;
+
 }
 

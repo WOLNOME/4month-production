@@ -41,7 +41,19 @@ void EnemyManager::Update()
 	for (auto& enemy : tackleEnemies_)
 	{
 		enemy->EnemyUpdate();
-	}	
+		//死んでいたら
+		if (!enemy->IsAlive())
+		{
+			enemy->Finalize();
+		}
+	}
+	//死んでいるエネミーをリストから削除
+	tackleEnemies_.erase(std::remove_if(tackleEnemies_.begin(), tackleEnemies_.end(),
+		[](const std::unique_ptr<TackleEnemy>& enemy)
+		{
+			return !enemy->IsAlive();
+		}), 
+		tackleEnemies_.end());
 }
 
 void EnemyManager::Draw()
