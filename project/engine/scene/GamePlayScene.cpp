@@ -208,7 +208,7 @@ void GamePlayScene::ImGuiDraw()
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "GAMEPLAY");;
 	
-	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -50.0f, 50.0f);
+	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -100.0f, 100.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
 
 	ImGui::SliderFloat3("playerSpawnPos", &playerSpawnPositions_[0].x, -10.0f, 10.0f);

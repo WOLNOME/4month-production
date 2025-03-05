@@ -7,7 +7,7 @@ void Field::Initialize()
 {
 	wtField_.Initialize();
 	wtField_.translate_ = { 0.0f,-1.0f,0.0f };
-	wtField_.scale_ = { 10.0f,1.0f,10.0f };
+	wtField_.scale_ = { 20.0f,1.0f,20.0f };
 
 	field_ = std::make_unique<Object3d>();
 	field_->InitializeModel("cube");
@@ -59,7 +59,7 @@ void Field::ImGuiDraw()
 {
 	ImGui::Begin("Field");
 
-	ImGui::SliderFloat3("FieldSize", &wtField_.scale_.x, -20.0f, 20.0f);
+	ImGui::SliderFloat3("FieldSize", &wtField_.scale_.x, 0.0f, 50.0f);
 	ImGui::SliderFloat3("FieldPos", &wtField_.translate_.x, -50.0f, 50.0f);
 
 	ImGui::Text("aabb.max: %.3f %.3f %.3f", aabb_.max.x, aabb_.max.y, aabb_.max.z);

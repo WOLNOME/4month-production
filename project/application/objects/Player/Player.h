@@ -78,7 +78,7 @@ private:
 	// 落下速度
 	float fallSpeed_ = 0.3f;
 	// 摩擦係数（減速率）
-	float friction_ = 2.0f;
+	float friction_{};
 
 
 	// 攻撃時間

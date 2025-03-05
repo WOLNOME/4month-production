@@ -55,18 +55,17 @@ void Player::Update()
 	if (knockBackTime_ > 0.0f)
 	{
 		knockBackTime_ -= 1.0f;
-		wtPlayer_.translate_ += moveVel_ * friction_ * 1.0f/60.0f;
+
+		wtPlayer_.translate_ += moveVel_ * (1.0f/60.0f);
 		position_ = wtPlayer_.translate_;
 	}
 	else
 	{
 		// 移動
 		Move();
+
 		// 攻撃	
 		Attack();
-
-		wtPlayer_.translate_ += moveVel_;
-		position_ = wtPlayer_.translate_;
 	}
 
 	// 場外処理
@@ -84,7 +83,10 @@ void Player::Draw(BaseCamera _camera)
 
 void Player::Move()
 {
-	moveVel_ = { 0.0f,0.0f,0.0f };
+	if (!isAttack_)
+	{
+		moveVel_ = { 0.0f,0.0f,0.0f };
+	}
 
 	// 地面にいるとき
 	if (isGround_)
@@ -106,6 +108,12 @@ void Player::Move()
 		{
 			moveVel_.x += moveSpeed_.x;
 		}
+	}
+
+	if (!isAttack_)
+	{
+		wtPlayer_.translate_ += moveVel_;
+		position_ = wtPlayer_.translate_;
 	}
 }
 
@@ -137,6 +145,11 @@ void Player::Attack()
 		moveVel_ *= 1.5f * friction_;
 
 		attackTimeCounter_ -= 1.0f;
+
+		Vector3 moveFriction_ = -moveVel_ * friction_;
+		moveVel_ += moveFriction_;
+		wtPlayer_.translate_ += moveVel_;
+		position_ = wtPlayer_.translate_;
 	}
 
 	if (attackTimeCounter_ <= 0.0f)
@@ -184,12 +197,10 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// 当たったエネミーの位置を取得
 		enemyPosition_ = _other->GetOwner()->GetPosition();
 
-		attackToEnemy_ = enemyPosition_ - position_;
-
-		moveVel_ = { 0.0f,0.0f,0.0f };
+		attackToEnemy_ = wtPlayer_.translate_ - enemyPosition_;
 
 		// ノックバック
-		moveVel_ = -attackToEnemy_;
+		moveVel_ = attackToEnemy_;
 		moveVel_ *= 17.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
