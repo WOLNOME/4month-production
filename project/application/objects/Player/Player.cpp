@@ -56,7 +56,12 @@ void Player::Update()
 	{
 		knockBackTime_ -= 1.0f;
 
-		wtPlayer_.translate_ += moveVel_ * (1.0f/60.0f);
+		//wtPlayer_.translate_ += moveVel_ * (1.0f/60.0f);
+		//position_ = wtPlayer_.translate_;
+	
+		Vector3 moveFriction_ = moveVel_ * friction_ * (1.0f / 60.0f);
+		moveVel_ += moveFriction_;
+		wtPlayer_.translate_ += moveVel_ * (1.0f / 60.0f);
 		position_ = wtPlayer_.translate_;
 	}
 	else
@@ -83,10 +88,8 @@ void Player::Draw(BaseCamera _camera)
 
 void Player::Move()
 {
-	if (!isAttack_)
-	{
-		moveVel_ = { 0.0f,0.0f,0.0f };
-	}
+	moveVel_ = { 0.0f,0.0f,0.0f };
+	
 
 	// 地面にいるとき
 	if (isGround_)
@@ -146,7 +149,7 @@ void Player::Attack()
 
 		attackTimeCounter_ -= 1.0f;
 
-		Vector3 moveFriction_ = -moveVel_ * friction_;
+		Vector3 moveFriction_ = moveVel_ * friction_ * (1.0f/60.0f);
 		moveVel_ += moveFriction_;
 		wtPlayer_.translate_ += moveVel_;
 		position_ = wtPlayer_.translate_;

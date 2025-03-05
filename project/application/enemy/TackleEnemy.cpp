@@ -48,7 +48,17 @@ void TackleEnemy::EnemyUpdate()
 		knockBackTime_ -= 1.0f;
 	
         //ノックバック(仮)
-        transform_.translate_ += tackleVelocity_ * (1.0f / 60.0f); // 移動作ったら消して
+        Vector3 friction = -tackleVelocity_ * tackleFriction_ * (1.0f/60.0f);
+        tackleVelocity_ += friction;
+
+        // 速度が非常に小さくなったら停止する
+        if (tackleVelocity_.Length() < 0.01f) {
+            tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+            return;
+        }
+
+        // 位置を更新
+        transform_.translate_ += tackleVelocity_ * (1.0f/60.0f);
     } 
     else
 	{
