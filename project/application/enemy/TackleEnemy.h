@@ -43,7 +43,11 @@ private: // 衝突判定
 
 private:
 
-	void UpdateTackle();
+    /**
+	 * \brief
+	 *
+	 */
+	void Move();
 
 private:
     //生存フラグ
