@@ -22,7 +22,7 @@ public: // ゲッター
     virtual Vector3 GetRotation() const { return rotation_; };
     virtual Vector3 GetPosition() const { return position_; };
     virtual float   GetHP() const { return hp_; };
-
+    virtual bool IsAttack() const { return isAttack_; };
 
 public: // セッター
     virtual void SetScale(const Vector3& _scale) { scale_ = _scale; };
@@ -37,4 +37,5 @@ protected: // メンバー
     Vector3 rotation_;
     Vector3 position_;
     float   hp_;
+	bool isAttack_;
 };

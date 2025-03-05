@@ -24,7 +24,7 @@ void Player::Initialize()
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
 	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	//appCollider_->SetOnCollisionTrigger(std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1));
+	appCollider_->SetOnCollisionTrigger(std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1));
 	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
@@ -51,17 +51,27 @@ void Player::Update()
 	aabb_.max = wtPlayer_.translate_ + wtPlayer_.scale_;
 	appCollider_->SetPosition(wtPlayer_.translate_);
 	
-	// 移動
-	Move();
-	
+	// ノックバック中は移動、攻撃できない
+	if (knockBackTime_ > 0.0f)
+	{
+		knockBackTime_ -= 1.0f;
+		wtPlayer_.translate_ += moveVel_ * friction_ * 1.0f/60.0f;
+		position_ = wtPlayer_.translate_;
+	}
+	else
+	{
+		// 移動
+		Move();
+		// 攻撃	
+		Attack();
+
+		wtPlayer_.translate_ += moveVel_;
+		position_ = wtPlayer_.translate_;
+	}
+
 	// 場外処理
 	OutOfField();
-	
-	// 攻撃	
-	Attack();
 
-	wtPlayer_.translate_ += moveVel_;
-	position_ = wtPlayer_.translate_;
 }
 
 void Player::Draw(BaseCamera _camera)
@@ -124,7 +134,7 @@ void Player::Attack()
 
 	if (isAttack_)
 	{
-		moveVel_ *= 3.5f;
+		moveVel_ *= 1.5f * friction_;
 
 		attackTimeCounter_ -= 1.0f;
 	}
@@ -164,5 +174,25 @@ void Player::OnCollision(const AppCollider* _other)
 	if (_other->GetColliderID() == "Field")
 	{
 		isGround_ = true;
+	}
+}
+
+void Player::OnCollisionTrigger(const AppCollider* _other)
+{
+	if (_other->GetColliderID() == "TackleEnemy" && _other->GetOwner()->IsAttack() && !isAttack_)
+	{
+		// 当たったエネミーの位置を取得
+		enemyPosition_ = _other->GetOwner()->GetPosition();
+
+		attackToEnemy_ = enemyPosition_ - position_;
+
+		moveVel_ = { 0.0f,0.0f,0.0f };
+
+		// ノックバック
+		moveVel_ = -attackToEnemy_;
+		moveVel_ *= 17.0f;
+		moveVel_.y = 0.0f;
+		// ノックバックタイマー
+		knockBackTime_ = 4.0f;
 	}
 }

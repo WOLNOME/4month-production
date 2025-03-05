@@ -4,7 +4,7 @@ void SpawnPos::Initialize()
 {
 	wtSpawn_.Initialize();
 	wtSpawn_.translate_ = position_;
-	wtSpawn_.scale_ = { 0.5f,0.5f,0.5f };
+	wtSpawn_.scale_ = { 0.4f,0.4f,0.4f };
 
 	spawn_ = std::make_unique<Object3d>();
 	spawn_->InitializeModel("cube");

@@ -98,13 +98,14 @@ void GamePlayScene::Update()
 		player->Update();
 	}
 
+
 	//エネミーマネージャーの更新
 	enemyManager_->Update();
 
 	// フィールド
 	field_->Update();
 
-	// プレイヤースポーン
+	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
 	{
 		playerSpawn->Update();
@@ -244,7 +245,7 @@ void GamePlayScene::ImGuiDraw()
 void GamePlayScene::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
-	rotationTimer_ -= 1.0f;
+	//rotationTimer_ -= 1.0f;
 	if (rotationTimer_ <= 0.0f)
 	{
 		rotationTimer_ = rotation_;

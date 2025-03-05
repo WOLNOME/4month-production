@@ -42,22 +42,36 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
 
 void TackleEnemy::EnemyUpdate()
 {
-    // タックルの更新
-    UpdateTackle();
+	// ノックバック中は移動、攻撃できない
+	if (knockBackTime_ > 0.0f)
+	{
+		knockBackTime_ -= 1.0f;
+	
+        //ノックバック(仮)
+        transform_.translate_ += tackleVelocity_ * (1.0f / 60.0f); // 移動作ったら消して
+    } 
+    else
+	{
+        // 移動の処理ここにオナシャス
 
-    // タックル中でない場合、待機タイマーを更新
-    if (!isTackling_)
-    {
-        tackleWaitTimer_ += 1.0f / 60.0f;
-        if (tackleWaitTimer_ >= nextTackleWaitTime_)
+
+         // タックル中でない場合、待機タイマーを更新
+        if (!isTackling_)
         {
-            // タックルを開始
-            StartTackle();
+            tackleWaitTimer_ += 1.0f / 60.0f;
+            if (tackleWaitTimer_ >= nextTackleWaitTime_)
+            {
+                // タックルを開始
+                StartTackle();
 
-            // 待機タイマーをリセット
-            tackleWaitTimer_ = 0.0f;
+                // 待機タイマーをリセット
+                tackleWaitTimer_ = 0.0f;
+            }
         }
-    }
+
+        // タックルの更新
+        UpdateTackle();
+	}
 
 	// 場外処理
 	OutOfField();
@@ -81,6 +95,7 @@ void TackleEnemy::StartTackle()
 {
     if (!isTackling_) {
         isTackling_ = true;
+		isAttack_ = true;
 
         // ターゲット方向を計算
         tackleDirection_ = target_ - transform_.translate_;
@@ -134,9 +149,21 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
 
 void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 {
-	if (_other->GetColliderID() == "Player")
-	{
-		// プレイヤーと衝突したらタックルを開始
+    if (_other->GetColliderID() == "Player" && _other->GetOwner()->IsAttack())
+    {
+        // プレイヤーの位置
+        Vector3 playerPosition = _other->GetOwner()->GetPosition();
+
+	   // プレイヤーの位置から逃げる
+  	   Vector3 runDirection = transform_.translate_ - playerPosition;
+
+       // ノックバック
+       tackleVelocity_ = runDirection;
+       tackleVelocity_ *= 7.0f;
+       tackleVelocity_.y = 0.0f;
+        // ノックバックタイマー
+        knockBackTime_ = 4.0f;
+		
 	}
 }
 
@@ -154,6 +181,7 @@ void TackleEnemy::UpdateTackle()
         if (tackleVelocity_.Length() < 0.01f) {
             tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
             isTackling_ = false;
+			isAttack_ = false;
             return;
         }
 

@@ -31,6 +31,7 @@ public:
     // 場外処理
     void OutOfField();
 
+
 private: // 衝突判定
 
 	// 当たっている間ずっと呼ばれる
@@ -73,4 +74,8 @@ private:
     AppAABB aabb_{};
     bool isHit_ = false;
     bool isGround_ = false;
+	
+	// ノックバックの時間
+	float knockBackTime_ = 0.0f;
+
 };

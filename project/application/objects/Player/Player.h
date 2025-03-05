@@ -35,7 +35,11 @@ public:
 
 private: // 衝突判定
 
+	// 当たっている間ずっと呼ばれる
 	void OnCollision(const AppCollider* _other);
+
+	// 当たった瞬間だけ呼ばれる
+	void OnCollisionTrigger(const AppCollider* _other);
 
 public: // ゲッター
 	
@@ -62,18 +66,26 @@ private:
 	AppAABB aabb_{};
 	bool isHit_ = false;
 	bool isGround_ = false;
+	// エネミーの位置
+	Vector3 enemyPosition_{};
+	// ノックバックの時間
+	float knockBackTime_ = 0.0f;
+
 
 	// 移動速度
 	Vector3 moveSpeed_ = { 0.1f,0.0f,0.1f };
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
 	// 落下速度
 	float fallSpeed_ = 0.3f;
+	// 摩擦係数（減速率）
+	float friction_ = 2.0f;
 
-	// 攻撃
-	bool isAttack_ = false;
+
 	// 攻撃時間
 	const float attackTime_ = 12;
 	float attackTimeCounter_ = attackTime_;
+
+	Vector3 attackToEnemy_{};
 
 	// 死亡フラグ
 	bool isDead_ = false;
