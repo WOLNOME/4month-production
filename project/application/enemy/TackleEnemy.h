@@ -30,7 +30,8 @@ public:
 
     // 場外処理
     void OutOfField();
-
+	//生存フラグ
+	bool IsAlive() const { return isAlive_; }
 
 private: // 衝突判定
 
@@ -45,7 +46,8 @@ private:
 	void UpdateTackle();
 
 private:
-
+    //生存フラグ
+	bool isAlive_ = true;
     // タックル中かどうか
     bool isTackling_ = false;
     // 初期速度
