@@ -76,7 +76,7 @@ void EnemyManager::SpawnTackleEnemy(uint32_t count)
 	{
 		auto enemy = std::make_unique<TackleEnemy>();
 		enemy->EnemyInitialize(tackleEnemyPath_);
-		Vector3 spawnPosition = { disX(gen), 0.0f, disZ(gen) };
+		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		enemy->SetTargetPosition(targetPosition_);
 		tackleEnemies_.emplace_back(std::move(enemy));

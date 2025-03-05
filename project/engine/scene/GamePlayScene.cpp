@@ -45,7 +45,7 @@ void GamePlayScene::Initialize()
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
-	enemyManager_->Initialize(camera_.get(), &players_, "axis");
+	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
 
 	// フィールド
 	field_ = std::make_unique<Field>();
