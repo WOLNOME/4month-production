@@ -3,11 +3,13 @@
 #include <random>
 
 #include "imgui.h"
+#include "application/objects/Player/Player.h"
 
-void EnemyManager::Initialize(BaseCamera* camera, const std::string& tackleEnemy)
+void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy)
 {
 	camera_ = camera;
 	tackleEnemyPath_ = tackleEnemy;
+	players_ = players;
 }
 
 void EnemyManager::Update()
@@ -25,20 +27,21 @@ void EnemyManager::Update()
 	}
 	if (ImGui::Button("Tackle"))
 	{
+		TargetUpdate();
 		for (auto& enemy : tackleEnemies_)
 		{
-			enemy->SetTargetPosition(targetPosition_);
 			enemy->StartTackle();
 		}
 	}
 	ImGui::End();
 #endif
+	//ターゲットの更新
+	TargetUpdate();
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
 	{
-		enemy->SetTargetPosition(targetPosition_);
 		enemy->EnemyUpdate();
-	}
+	}	
 }
 
 void EnemyManager::Draw()
@@ -65,6 +68,31 @@ void EnemyManager::SpawnTackleEnemy(uint32_t count)
 		enemy->SetPosition(spawnPosition);
 		enemy->SetTargetPosition(targetPosition_);
 		tackleEnemies_.emplace_back(std::move(enemy));
+	}
+}
+
+void EnemyManager::TargetUpdate()
+{
+	//タックルエネミーの更新
+	for (auto& enemy : tackleEnemies_)
+	{
+		//敵から一番近いプレイヤーを探す
+		Vector3 target{};
+		for (auto& player : *players_)
+		{
+			if (target.Length() == 0.0f)
+			{
+				target = player->GetPosition();
+			}
+			else
+			{
+				if ((enemy->GetPosition() - player->GetPosition()).Length() < (enemy->GetPosition() - target).Length())
+				{
+					target = player->GetPosition();
+				}
+			}
+		}
+		enemy->SetTargetPosition(target);
 	}
 }
 
