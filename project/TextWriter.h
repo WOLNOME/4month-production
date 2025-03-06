@@ -14,11 +14,22 @@ template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 class TextWriter {
+private://コンストラクタ等の隠蔽
+	static TextWriter* instance;
+
+	TextWriter() = default;//コンストラクタ隠蔽
+	~TextWriter() = default;//デストラクタ隠蔽
+	TextWriter(TextWriter&) = delete;//コピーコンストラクタ封印
+	TextWriter& operator=(TextWriter&) = delete;//コピー代入演算子封印
+public:
+	//シングルトンインスタンスの取得
+	static TextWriter* GetInstance();
 public:
 
 	void Initialize();
 	void Update();
 	void Draw();
+	void Finalize();
 
 	///=======================
 	/// 初期化時処理

@@ -31,8 +31,7 @@ private://メンバ変数
 	uint32_t textureHandleTitle_ = 0u;
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
 
-	//テキスト
-	std::unique_ptr<TextWriter> text = nullptr;
+	TextWriter* text = nullptr;
 
 };
 

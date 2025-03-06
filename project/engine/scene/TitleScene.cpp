@@ -18,8 +18,7 @@ void TitleScene::Initialize()
 	spriteTitle_->Initialize(textureHandleTitle_);
 
 	//テキスト
-	text = std::make_unique<TextWriter>();
-	text->Initialize();
+	text = TextWriter::GetInstance();
 	text->registerSolidColorBrash("UI", D2D1::ColorF::AliceBlue);
 	text->registerTextFormat("UI", L"游ゴシック", 24.0f);
 

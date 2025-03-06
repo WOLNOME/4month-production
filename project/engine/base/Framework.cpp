@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "MainRender.h"
 #include "SrvManager.h"
+#include "TextWriter.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
@@ -30,6 +31,9 @@ void Framework::Initialize()
 
 	//SRVマネージャー
 	SrvManager::GetInstance()->Initialize();
+
+	//テキストライター
+	TextWriter::GetInstance()->Initialize();
 
 	//ImGuiマネージャー
 	ImGuiManager::GetInstance()->Initialize();
@@ -75,6 +79,7 @@ void Framework::Finalize()
 	ModelManager::GetInstance()->Finalize();
 	TextureManager::GetInstance()->Finalize();
 	ImGuiManager::GetInstance()->Finalize();
+	TextWriter::GetInstance()->Finalize();
 	SrvManager::GetInstance()->Finalize();
 	MainRender::GetInstance()->Finalize();
 	DirectXCommon::GetInstance()->Finalize();

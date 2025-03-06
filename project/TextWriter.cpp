@@ -1,6 +1,21 @@
 #include "TextWriter.h"
 #include <cassert>
 
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
+
+TextWriter* TextWriter::instance = nullptr;
+
+TextWriter* TextWriter::GetInstance() {
+	if (instance == nullptr) {
+		instance = new TextWriter;
+	}
+	return instance;
+}
+
 void TextWriter::Initialize() {
 	//DWriteFactoryの生成
 	CreateIDWriteFactory();
@@ -18,6 +33,11 @@ void TextWriter::Update() {
 void TextWriter::Draw() {
 }
 
+void TextWriter::Finalize() {
+	delete instance;
+	instance = nullptr;
+}
+
 void TextWriter::CreateIDWriteFactory() {
 	HRESULT hr;
 	//IDWriteFactoryの生成
@@ -31,7 +51,6 @@ void TextWriter::CreateD3D11On12Device() {
 	ComPtr<ID3D11Device
 	> d3d11Device = nullptr;
 	UINT d3d11DeviceFlags = 0U;
-
 #ifdef _DEBUG
 	d3d11DeviceFlags = D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #else
@@ -59,7 +78,8 @@ void TextWriter::CreateDirect2DDeviceContext() {
 	HRESULT hr;
 	//ID2D1Factory3の生成
 	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
-	constexpr D2D1_FACTORY_OPTIONS factoryOptions{};
+	D2D1_FACTORY_OPTIONS factoryOptions{};
+	factoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &factoryOptions, &d2dFactory);
 	assert(SUCCEEDED(hr));
 	//IDXGIDeviceの生成
