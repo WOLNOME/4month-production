@@ -19,7 +19,7 @@ void TitleScene::Initialize()
 
 	//テキスト
 	text = TextWriter::GetInstance();
-	text->registerSolidColorBrash("UI", D2D1::ColorF::Pink);
+	text->registerSolidColorBrash("UI", D2D1::ColorF::Red);
 	text->registerTextFormat("UI", L"メイリオ", 32.0f);
 
 	
