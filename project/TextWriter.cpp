@@ -89,6 +89,7 @@ void TextWriter::CreateDirect2DDeviceContext() {
 	//ID2D1Device2の生成
 	ComPtr<ID2D1Device2> d2dDevice = nullptr;
 	hr = d2dFactory->CreateDevice(dxgiDevice.Get(), d2dDevice.ReleaseAndGetAddressOf());
+
 	wchar_t message[256];
 	swprintf_s(message, L"HRESULT=0x%08X\n", hr);
 	OutputDebugString(message);

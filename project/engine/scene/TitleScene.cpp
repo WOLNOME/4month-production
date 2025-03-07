@@ -102,20 +102,8 @@ void TitleScene::Draw()
 
 void TitleScene::TextDraw() {
 
-	text->BeginDrawWithD2D();
-
-	///------------------------------///
-	///↓↓↓↓文字描画開始↓↓↓↓
-	///------------------------------///
-
 	D2D1_RECT_F rect;
 	rect = { 100.0f,100.0f,500.0f,150.0f };
-	text->WriteText("UI", "UI", L"テストメッセージ", rect);
-
-	///------------------------------///
-	///↑↑↑↑文字描画終了↑↑↑↑
-	///------------------------------///
-
-	text->EndDrawWithD2D();
+	text->WriteText("UI", "UI", L"テストメッセージ\n成功", rect);
 
 }

@@ -7,6 +7,7 @@
 #include "ModelManager.h"
 #include "Model.h"
 #include "SceneManager.h"
+#include "TextWriter.h"
 
 void MyGame::Initialize()
 {
@@ -60,8 +61,18 @@ void MyGame::Draw()
 	//描画後処理
 	MainRender::GetInstance()->PostDraw();
 
+	///------------------------------///
+	///        テキスト描画処理
+	///------------------------------///
+
+	//テキスト描画前処理
+	TextWriter::GetInstance()->BeginDrawWithD2D();
+
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
+
+	//テキスト描画後処理
+	TextWriter::GetInstance()->EndDrawWithD2D();
 
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();

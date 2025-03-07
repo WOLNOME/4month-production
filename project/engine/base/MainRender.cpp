@@ -77,13 +77,7 @@ void MainRender::PreDraw()
 void MainRender::PostDraw()
 {
 	HRESULT hr;
-	//これから書き込むバックバッファのインデックスを取得
-	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-	////今回はRenderTargetからPresentにする
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	////TransitionBarrierを張る
-	//commandList->ResourceBarrier(1, &barrier);
+	//!>本来ここにバリア遷移があるけど、D2Dの描画終了時に同じことをしているので省略
 
 	//コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
 	hr = commandList->Close();
