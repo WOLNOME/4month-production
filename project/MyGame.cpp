@@ -59,12 +59,14 @@ void MyGame::Draw()
 
 	//描画後処理
 	MainRender::GetInstance()->PostDraw();
-	//単レンダー終了時の共通処理
-	DirectXCommon::GetInstance()->PostEachRender();
+
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
+
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();
+	//単レンダー終了時の共通処理
+	DirectXCommon::GetInstance()->PostEachRender();
 	//コマンドのリセット
 	MainRender::GetInstance()->ReadyNextCommand();
 

@@ -19,8 +19,8 @@ void TitleScene::Initialize()
 
 	//テキスト
 	text = TextWriter::GetInstance();
-	text->registerSolidColorBrash("UI", D2D1::ColorF::AliceBlue);
-	text->registerTextFormat("UI", L"游ゴシック", 24.0f);
+	text->registerSolidColorBrash("UI", D2D1::ColorF::Pink);
+	text->registerTextFormat("UI", L"メイリオ", 32.0f);
 
 	
 }

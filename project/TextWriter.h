@@ -40,8 +40,6 @@ public:
 	void CreateDirect2DDeviceContext();
 	void CreateD2DRenderTarget();
 
-
-
 	///=======================
 	/// 描画前準備
 	///=======================
