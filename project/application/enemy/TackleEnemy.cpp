@@ -24,10 +24,8 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
     nextTackleWaitTime_ = waitTimeDist(randomEngine_);
     tackleWaitTimer_ = 0.0f;
 
-
-    // 当たり判定関係
+    // 当たり判定
     appCollisionManager_ = AppCollisionManager::GetInstance();
-
     objectName_ = "TackleEnemy";
     appCollider_ = std::make_unique<AppCollider>();
     appCollider_->SetOwner(this);
