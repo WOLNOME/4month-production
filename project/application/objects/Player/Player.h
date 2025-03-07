@@ -48,6 +48,9 @@ public: // ゲッター
 	// 死亡フラグを取得
 	bool IsDead() const { return isDead_; }
 
+	// プレイヤーの速度を取得
+	Vector3 GetVelocity() const { return moveVel_; }
+
 public: //セッター
 
 	// プレイヤーの位置をセット

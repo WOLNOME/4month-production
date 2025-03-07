@@ -146,22 +146,29 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
 
 void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 {
-    if (_other->GetColliderID() == "Player" && _other->GetOwner()->IsAttack())
+    if (_other->GetColliderID() == "Player")
     {
-        // プレイヤーの位置
-        Vector3 playerPosition = _other->GetOwner()->GetPosition();
+        if (_other->GetOwner()->IsAttack()) 
+        {
+            // プレイヤーの位置
+            Vector3 playerPosition = _other->GetOwner()->GetPosition();
 
-	   // プレイヤーの位置から逃げる
-  	   Vector3 runDirection = transform_.translate_ - playerPosition;
+            // プレイヤーの位置から逃げる
+            Vector3 runDirection = transform_.translate_ - playerPosition;
 
-       // ノックバック
-       tackleVelocity_ = runDirection;
-       tackleVelocity_ *= 7.0f;
-       tackleVelocity_.y = 0.0f;
-        // ノックバックタイマー
-        knockBackTime_ = 4.0f;
-		
-	}
+            // ノックバック
+            tackleVelocity_ = runDirection;
+            tackleVelocity_ *= 7.0f;
+            tackleVelocity_.y = 0.0f;
+            // ノックバックタイマー
+            knockBackTime_ = 4.0f;
+        }
+        else
+        {
+            // プレイヤーの速度
+			//Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+        }
+    }
 }
 
 void TackleEnemy::Move()
