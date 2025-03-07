@@ -61,7 +61,7 @@ void TextWriter::CreateD3D11On12Device() {
 		d3d11DeviceFlags,
 		nullptr,
 		0,
-		reinterpret_cast<IUnknown**>(dxcommon->GetAddlessOfCommandQueue()),
+		reinterpret_cast<IUnknown**>(dxcommon->GetAddressOfCommandQueue()),
 		1,
 		0,
 		&d3d11Device,
@@ -89,6 +89,9 @@ void TextWriter::CreateDirect2DDeviceContext() {
 	//ID2D1Device2の生成
 	ComPtr<ID2D1Device2> d2dDevice = nullptr;
 	hr = d2dFactory->CreateDevice(dxgiDevice.Get(), d2dDevice.ReleaseAndGetAddressOf());
+	wchar_t message[256];
+	swprintf_s(message, L"HRESULT=0x%08X\n", hr);
+	OutputDebugString(message);
 	assert(SUCCEEDED(hr));
 	//d2dDeviceContextの生成
 	hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dDeviceContext.ReleaseAndGetAddressOf());

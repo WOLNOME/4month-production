@@ -75,17 +75,17 @@ public://ゲッター
 	IDXGIFactory7* GetDXGIFactory() const { return dxgiFactory.Get(); }
 	//コマンドキュー
 	ID3D12CommandQueue* GetCommandQueue() const { return commandQueue.Get(); }
-	ID3D12CommandQueue** GetAddlessOfCommandQueue() { return commandQueue.GetAddressOf(); }
+	ID3D12CommandQueue** GetAddressOfCommandQueue() { return commandQueue.GetAddressOf(); }
 
 private://インスタンス
 
 private://メンバ変数
 	//DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
-	// DXGIファクトリ
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 	//コマンドキュー
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+	// DXGIファクトリ
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 	//フェンス
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	//フェンス値
