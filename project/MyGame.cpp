@@ -3,11 +3,11 @@
 #include "MainRender.h"
 #include "TextureManager.h"
 #include "SrvManager.h"
+#include "TextWriteManager.h"
 #include "ImGuiManager.h"
 #include "ModelManager.h"
 #include "Model.h"
 #include "SceneManager.h"
-#include "TextWriter.h"
 
 void MyGame::Initialize()
 {
@@ -66,13 +66,13 @@ void MyGame::Draw()
 	///------------------------------///
 
 	//テキスト描画前処理
-	TextWriter::GetInstance()->BeginDrawWithD2D();
+	TextWriteManager::GetInstance()->BeginDrawWithD2D();
 
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
 
 	//テキスト描画後処理
-	TextWriter::GetInstance()->EndDrawWithD2D();
+	TextWriteManager::GetInstance()->EndDrawWithD2D();
 
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();

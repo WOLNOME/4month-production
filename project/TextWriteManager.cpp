@@ -1,4 +1,5 @@
-#include "TextWriter.h"
+#include "TextWriteManager.h"
+#include "TextWrite.h"
 #include <cassert>
 
 #pragma comment(lib, "d3d12.lib")
@@ -7,16 +8,16 @@
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dwrite.lib")
 
-TextWriter* TextWriter::instance = nullptr;
+TextWriteManager* TextWriteManager::instance = nullptr;
 
-TextWriter* TextWriter::GetInstance() {
+TextWriteManager* TextWriteManager::GetInstance() {
 	if (instance == nullptr) {
-		instance = new TextWriter;
+		instance = new TextWriteManager;
 	}
 	return instance;
 }
 
-void TextWriter::Initialize() {
+void TextWriteManager::Initialize() {
 	//DWriteFactoryの生成
 	CreateIDWriteFactory();
 	//D3D11On12Deviceの生成
@@ -27,25 +28,25 @@ void TextWriter::Initialize() {
 	CreateD2DRenderTarget();
 }
 
-void TextWriter::Update() {
+void TextWriteManager::Update() {
 }
 
-void TextWriter::Draw() {
+void TextWriteManager::Draw() {
 }
 
-void TextWriter::Finalize() {
+void TextWriteManager::Finalize() {
 	delete instance;
 	instance = nullptr;
 }
 
-void TextWriter::CreateIDWriteFactory() {
+void TextWriteManager::CreateIDWriteFactory() {
 	HRESULT hr;
 	//IDWriteFactoryの生成
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &directWriteFactory);
 	assert(SUCCEEDED(hr));
 }
 
-void TextWriter::CreateD3D11On12Device() {
+void TextWriteManager::CreateD3D11On12Device() {
 	HRESULT hr;
 	//ID3D11On12Deviceの生成
 	ComPtr<ID3D11Device
@@ -74,7 +75,7 @@ void TextWriter::CreateD3D11On12Device() {
 	assert(SUCCEEDED(hr));
 }
 
-void TextWriter::CreateDirect2DDeviceContext() {
+void TextWriteManager::CreateDirect2DDeviceContext() {
 	HRESULT hr;
 	//ID2D1Factory3の生成
 	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
@@ -99,7 +100,7 @@ void TextWriter::CreateDirect2DDeviceContext() {
 	assert(SUCCEEDED(hr));
 }
 
-void TextWriter::CreateD2DRenderTarget() {
+void TextWriteManager::CreateD2DRenderTarget() {
 	HRESULT hr;
 	//DirectWriteの描画先の生成
 	D3D11_RESOURCE_FLAGS resourceFlags = { D3D11_BIND_RENDER_TARGET };
@@ -125,7 +126,7 @@ void TextWriter::CreateD2DRenderTarget() {
 	}
 }
 
-void TextWriter::registerSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
+void TextWriteManager::RegisterSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
 	//ブラシが登録されているか確認
 	if (solidColorBrushMap.contains(key)) [[unlikely]] {
 		return;
@@ -136,13 +137,13 @@ void TextWriter::registerSolidColorBrash(const std::string& key, const D2D1::Col
 	solidColorBrushMap[key] = brush;
 }
 
-void TextWriter::registerTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
+void TextWriteManager::RegisterTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
 	ComPtr<IDWriteTextFormat> textFormat = nullptr;
 	directWriteFactory->CreateTextFormat(fontName.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
 	textFormatMap[key] = textFormat;
 }
 
-void TextWriter::BeginDrawWithD2D() const noexcept {
+void TextWriteManager::BeginDrawWithD2D() const noexcept {
 	const auto backBufferIndex = mainrender->GetSwapChain()->GetCurrentBackBufferIndex();
 	const auto wrappedBackBuffer = wrappedBackBuffers[backBufferIndex];
 	const auto backBufferForD2D = d2dRenderTargets[backBufferIndex];
@@ -153,14 +154,14 @@ void TextWriter::BeginDrawWithD2D() const noexcept {
 	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
-void TextWriter::WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept {
+void TextWriteManager::WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept {
 	const auto textFormat = textFormatMap.at(textFormatKey);
 	const auto solidColorBrush = solidColorBrushMap.at(solidColorBrushKey);
 	//描画処理
 	d2dDeviceContext->DrawTextW(text.c_str(), static_cast<UINT32>(text.length()), textFormat.Get(), &rect, solidColorBrush.Get());
 }
 
-void TextWriter::EndDrawWithD2D() const noexcept {
+void TextWriteManager::EndDrawWithD2D() const noexcept {
 	const auto backBufferIndex = mainrender->GetSwapChain()->GetCurrentBackBufferIndex();
 	const auto wrappedBackBuffer = wrappedBackBuffers[backBufferIndex];
 

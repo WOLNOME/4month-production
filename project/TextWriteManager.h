@@ -9,21 +9,24 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-class TextWriter {
-private://コンストラクタ等の隠蔽
-	static TextWriter* instance;
+class TextWrite;
 
-	TextWriter() = default;//コンストラクタ隠蔽
-	~TextWriter() = default;//デストラクタ隠蔽
-	TextWriter(TextWriter&) = delete;//コピーコンストラクタ封印
-	TextWriter& operator=(TextWriter&) = delete;//コピー代入演算子封印
+class TextWriteManager {
+private://コンストラクタ等の隠蔽
+	static TextWriteManager* instance;
+
+	TextWriteManager() = default;//コンストラクタ隠蔽
+	~TextWriteManager() = default;//デストラクタ隠蔽
+	TextWriteManager(TextWriteManager&) = delete;//コピーコンストラクタ封印
+	TextWriteManager& operator=(TextWriteManager&) = delete;//コピー代入演算子封印
 public:
 	//シングルトンインスタンスの取得
-	static TextWriter* GetInstance();
+	static TextWriteManager* GetInstance();
 public:
 
 	void Initialize();
@@ -31,6 +34,7 @@ public:
 	void Draw();
 	void Finalize();
 
+private:
 	///=======================
 	/// 初期化時処理
 	///=======================
@@ -40,13 +44,14 @@ public:
 	void CreateDirect2DDeviceContext();
 	void CreateD2DRenderTarget();
 
+public:
 	///=======================
 	/// 描画前準備
 	///=======================
 
-	void registerSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
-	void registerTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
-
+	void RegisterSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
+	void RegisterTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
+	
 	///=======================
 	/// 描画処理
 	///=======================
@@ -75,4 +80,8 @@ private:
 
 	std::unordered_map<std::string, ComPtr<ID2D1SolidColorBrush>> solidColorBrushMap;
 	std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> textFormatMap;
+
+	//テキストライトコンテナ
+	std::unordered_map<std::string, std::unique_ptr<TextWrite>> textWriteMap;
+
 };

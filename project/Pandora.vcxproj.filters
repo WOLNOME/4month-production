@@ -90,7 +90,7 @@
     </ClCompile>
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
-    <ClCompile Include="TextWriter.cpp" />
+    <ClCompile Include="TextWriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -185,7 +185,7 @@
     </ClInclude>
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
-    <ClInclude Include="TextWriter.h" />
+    <ClInclude Include="TextWriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
