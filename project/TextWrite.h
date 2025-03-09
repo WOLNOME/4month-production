@@ -1,4 +1,68 @@
 #pragma once
-class TextWrite {
+#include "d2d1_3.h"
+#include <Vector2.h>
+#include <format>
+#include <string>
+
+//フォント
+enum class Font {
+	Meiryo,
+	YuGothic,
 };
 
+class TextWrite {
+public:
+	~TextWrite();
+	//初期化
+	void Initialize(const std::string& name);
+	//テキストを生成()
+	template <typename... Args>
+	void WriteText(const std::wstring& text, Args&&... args) {
+		text_ = std::vformat(text, std::make_wformat_args(args...));
+	}
+
+	//セッター
+	void SetParam(const Vector2& position, float width, float height, const Font& font,float size, const D2D1::ColorF& color);
+
+	void SetPosition(const Vector2& position) { position_ = position; }
+	void SetWidth(float width) { width_ = width; }
+	void SetHeight(float height) { height_ = height; }
+	void SetFont(const Font& font) { font_ = font; fontName_ = ReturnFontName(font); }
+	void SetSize(float size) { size_ = size; }
+	void SetColor(const D2D1::ColorF& color) { color_ = color; }
+	//ゲッター
+	const std::string& GetName() { return name_; }
+	const std::wstring& GetText() { return text_; }
+	const Vector2& GetPosition() { return position_; }
+	float GetWidth() { return width_; }
+	float GetHeight() { return height_; }
+	const std::wstring& GetFontName() { return fontName_; }
+	float GetSize() { return size_; }
+	const D2D1::ColorF& GetColor() { return color_; }
+
+private:
+	//フォントを入れたらフォント名を出す関数
+	const std::wstring& ReturnFontName(const Font& font);
+
+
+private:
+	//識別名
+	std::string name_;
+
+	//テキスト
+	std::wstring text_;
+	//テキストの座標
+	Vector2 position_;
+	//テキストの幅
+	float width_;
+	//テキストの高さ
+	float height_;
+	//フォント(わかりやすい用)
+	Font font_;
+	//フォント名(正式)
+	std::wstring fontName_;
+	//テキストのサイズ
+	float size_;
+	//色
+	D2D1::ColorF color_;
+};

@@ -30,9 +30,13 @@ public:
 public:
 
 	void Initialize();
-	void Update();
 	void Draw();
 	void Finalize();
+
+	//個別クラスを登録
+	void Registration(TextWrite* piece);
+	//個別クラスの登録を解除
+	void CancelRegistration(const std::string& key);
 
 private:
 	///=======================
@@ -44,14 +48,13 @@ private:
 	void CreateDirect2DDeviceContext();
 	void CreateD2DRenderTarget();
 
-public:
 	///=======================
 	/// 描画前準備
 	///=======================
 
 	void RegisterSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
 	void RegisterTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
-	
+
 	///=======================
 	/// 描画処理
 	///=======================
@@ -82,6 +85,6 @@ private:
 	std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> textFormatMap;
 
 	//テキストライトコンテナ
-	std::unordered_map<std::string, std::unique_ptr<TextWrite>> textWriteMap;
+	std::unordered_map<std::string, TextWrite*> textWriteMap;
 
 };

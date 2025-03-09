@@ -28,15 +28,69 @@ void TextWriteManager::Initialize() {
 	CreateD2DRenderTarget();
 }
 
-void TextWriteManager::Update() {
-}
-
 void TextWriteManager::Draw() {
+	//描画前準備
+	BeginDrawWithD2D();
+	//描画
+	WriteText();
+	//描画後処理
+	EndDrawWithD2D();
 }
 
 void TextWriteManager::Finalize() {
 	delete instance;
 	instance = nullptr;
+}
+
+void TextWriteManager::Registration(TextWrite* piece) {
+	std::string key = piece->GetName();
+
+	//コンテナに同じ名前が登録されていたらエラー
+	if (textWriteMap.find(key) != textWriteMap.end()) {
+		assert(0 && "TextWriteで既に同じ名前が使われています。");
+	}
+
+	//コンテナに登録
+	textWriteMap[key] = piece;
+
+	//ブラシを登録
+	RegisterSolidColorBrash(key, textWriteMap[key]->GetColor());
+	//フォントを登録
+	RegisterTextFormat(key, textWriteMap[key]->GetFontName(), textWriteMap[key]->GetSize());
+}
+
+void TextWriteManager::CancelRegistration(const std::string& key) {
+	// 指定したキーが存在するか確認
+	auto it = textWriteMap.find(key);
+	if (it != textWriteMap.end()) {
+		// キーと関連する情報を削除
+		textWriteMap.erase(it);
+	}
+	else {
+		// キーが見つからなかった場合の処理
+		return;
+	}
+
+	//ブラシとフォントのコンテナの情報も削除
+	if (solidColorBrushMap.find(key) != solidColorBrushMap.end()) {
+		// キーと関連する情報を削除
+		solidColorBrushMap.erase(solidColorBrushMap.find(key));
+	}
+	else {
+		// キーが見つからなかった場合の処理
+		assert(0 && "発生するはずのないエラーです。システムに問題がある可能性が高いです。");
+		return;
+	}
+	if (textFormatMap.find(key) != textFormatMap.end()) {
+		// キーと関連する情報を削除
+		textFormatMap.erase(textFormatMap.find(key));
+	}
+	else {
+		// キーが見つからなかった場合の処理
+		assert(0 && "発生するはずのないエラーです。システムに問題がある可能性が高いです。");
+		return;
+	}
+
 }
 
 void TextWriteManager::CreateIDWriteFactory() {
@@ -120,7 +174,7 @@ void TextWriteManager::CreateD2DRenderTarget() {
 		ComPtr<ID2D1Bitmap1> d2dRenderTarget = nullptr;
 		hr = d2dDeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), &bitmapProperties, &d2dRenderTarget);
 		assert(SUCCEEDED(hr));
-		
+
 		wrappedBackBuffers.emplace_back(wrappedBackBuffer);
 		d2dRenderTargets.emplace_back(d2dRenderTarget);
 	}
