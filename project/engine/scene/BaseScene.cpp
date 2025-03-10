@@ -1,8 +1,7 @@
 #include "BaseScene.h"
 #include "SceneManager.h"
 
-void BaseScene::Initialize()
-{
+void BaseScene::Initialize() {
 	//シーンの初期化
 	sceneManager_ = SceneManager::GetInstance();
 	//シーンライトの生成と初期化
@@ -11,16 +10,13 @@ void BaseScene::Initialize()
 
 }
 
-void BaseScene::Finalize()
-{
+void BaseScene::Finalize() {
 }
 
-void BaseScene::Update()
-{
+void BaseScene::Update() {
 }
 
-void BaseScene::Draw()
-{
+void BaseScene::Draw() {
 }
 
 void BaseScene::TextDraw() {

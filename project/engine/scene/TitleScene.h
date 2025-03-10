@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "TextWrite.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -19,6 +20,11 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+	/// <summary>
+	/// テキスト描画
+	/// </summary>
+	void TextDraw() override;
+
 private://メンバ変数
 	Input* input_ = nullptr;
 
@@ -26,5 +32,11 @@ private://メンバ変数
 	uint32_t textureHandleTitle_ = 0u;
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
 
+	//テキスト
+	std::unique_ptr<TextWrite> text1_;
+	std::unique_ptr<TextWrite> text2_;
+
+	//タイマー
+	int timer_ = 0;
 };
 

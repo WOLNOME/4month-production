@@ -30,7 +30,6 @@ public:
 public:
 
 	void Initialize();
-	void Draw();
 	void Finalize();
 
 	//個別クラスを登録
@@ -48,19 +47,20 @@ private:
 	void CreateDirect2DDeviceContext();
 	void CreateD2DRenderTarget();
 
+public:
 	///=======================
 	/// 描画前準備
 	///=======================
 
-	void RegisterSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
-	void RegisterTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
+	void EditSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
+	void EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
 
 	///=======================
 	/// 描画処理
 	///=======================
 
 	void BeginDrawWithD2D()const noexcept;
-	void WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept;
+	void WriteText(const std::string& key) const noexcept;
 	void EndDrawWithD2D() const noexcept;
 
 

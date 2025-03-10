@@ -8,7 +8,16 @@
 enum class Font {
 	Meiryo,
 	YuGothic,
+	YuMincho,
+	UDDegitalN_B,
+	UDDegitalN_R,
+	UDDegitalNK_B,
+	UDDegitalNK_R,
+	UDDegitalNP_B,
+	UDDegitalNP_R,
 };
+
+class TextWriteManager;
 
 class TextWrite {
 public:
@@ -18,18 +27,24 @@ public:
 	//テキストを生成()
 	template <typename... Args>
 	void WriteText(const std::wstring& text, Args&&... args) {
+		//テキストを生成
 		text_ = std::vformat(text, std::make_wformat_args(args...));
+		//テキストを描画
+		WriteOnManager();
 	}
+	//ImGuiを使ったデバッグ
+	void DebugWithImGui();
+
 
 	//セッター
-	void SetParam(const Vector2& position, float width, float height, const Font& font,float size, const D2D1::ColorF& color);
+	void SetParam(const Vector2& position, const Font& font, float size, const D2D1::ColorF& color);
 
 	void SetPosition(const Vector2& position) { position_ = position; }
 	void SetWidth(float width) { width_ = width; }
 	void SetHeight(float height) { height_ = height; }
-	void SetFont(const Font& font) { font_ = font; fontName_ = ReturnFontName(font); }
-	void SetSize(float size) { size_ = size; }
-	void SetColor(const D2D1::ColorF& color) { color_ = color; }
+	void SetFont(const Font& font);
+	void SetSize(float size);
+	void SetColor(const D2D1::ColorF& color);
 	//ゲッター
 	const std::string& GetName() { return name_; }
 	const std::wstring& GetText() { return text_; }
@@ -43,6 +58,8 @@ public:
 private:
 	//フォントを入れたらフォント名を出す関数
 	const std::wstring& ReturnFontName(const Font& font);
+	//マネージャーに描画
+	void WriteOnManager();
 
 
 private:
@@ -64,5 +81,5 @@ private:
 	//テキストのサイズ
 	float size_;
 	//色
-	D2D1::ColorF color_;
+	D2D1::ColorF color_ = D2D1::ColorF::White;
 };

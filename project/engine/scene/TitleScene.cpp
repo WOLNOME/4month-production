@@ -17,6 +17,15 @@ void TitleScene::Initialize()
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
 	
+	//テキスト
+	text1_ = std::make_unique<TextWrite>();
+	text1_->Initialize("text1");
+	text1_->SetParam({ 0.0f,0.0f }, Font::Meiryo, 32.0f, D2D1::ColorF::Red);
+	text2_ = std::make_unique<TextWrite>();
+	text2_->Initialize("text2");
+	text2_->SetParam({ 0.0f,100.0f }, Font::UDDegitalNK_R, 64.0f, D2D1::ColorF::Yellow);
+
+
 }
 
 void TitleScene::Finalize()
@@ -36,6 +45,11 @@ void TitleScene::Update()
 	ImGui::Text("%s", "TITLE");
 	ImGui::End();
 #endif // _DEBUG
+
+	timer_++;
+
+	//テキストのimgui
+	text2_->DebugWithImGui();
 }
 
 void TitleScene::Draw()
@@ -93,3 +107,19 @@ void TitleScene::Draw()
 	///------------------------------///
 	
 }
+
+void TitleScene::TextDraw() {
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+	
+	float seconds = timer_ / 60.0f;
+	text1_->WriteText(L"フォント確認　現在の時間 : {:.1f}秒", seconds);
+	text2_->WriteText(L"フォント確認　テキスト出力実験中");
+	
+	
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+}
+

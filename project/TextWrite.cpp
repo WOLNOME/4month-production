@@ -1,5 +1,7 @@
 #include "TextWrite.h"
 #include "TextWriteManager.h"
+#include "WinApp.h"
+#include "ImGuiManager.h"
 
 TextWrite::~TextWrite() {
 	//マネージャーの登録を外す
@@ -22,27 +24,123 @@ void TextWrite::Initialize(const std::string& name) {
 	TextWriteManager::GetInstance()->Registration(this);
 }
 
-void TextWrite::SetParam(const Vector2& position, float width, float height, const Font& font, float size, const D2D1::ColorF& color) {
+void TextWrite::DebugWithImGui() {
+#ifdef _DEBUG
+	ImGui::Begin(("TextDebugger : " + name_).c_str());
+	//テキストの座標
+	Vector2 position = position_;
+	ImGui::DragFloat2("position", &position.x, 1.0f);
+	SetPosition(position);
+	//フォント
+	Font currentFont = font_;
+	const char* fontNames[] = {
+		"Meiryo",
+		"YuGothic",
+		"YuMincho",
+		"UDDegitalN_B",
+		"UDDegitalN_R",
+		"UDDegitalNK_B",
+		"UDDegitalNK_R",
+		"UDDegitalNP_B",
+		"UDDegitalNP_R"
+	};
+	int fontIndex = static_cast<int>(currentFont);
+	if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
+		//フォントを変更
+		currentFont = static_cast<Font>(fontIndex);
+		SetFont(currentFont);
+	}
+	//テキストのサイズ
+	float size = size_;
+	ImGui::DragFloat("size", &size, 0.1f, 10.0f, 80.0f);
+	SetSize(size);
+
+
+	ImGui::End();
+#endif // _DEBUG
+}
+
+void TextWrite::SetParam(const Vector2& position, const Font& font, float size, const D2D1::ColorF& color) {
 	position_ = position;
-	width_ = width;
-	height_ = height;
 	font_ = font;
 	fontName_ = ReturnFontName(font_);
 	size_ = size;
 	color_ = color;
+
+	//ポジションから幅と高さを計算
+	width_ = WinApp::GetInstance()->kClientWidth - position_.x;
+	height_ = WinApp::GetInstance()->kClientHeight - position_.y;
+
+	//マネージャーに値をセット
+	TextWriteManager::GetInstance()->EditSolidColorBrash(name_, color_);
+	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
+}
+
+void TextWrite::SetFont(const Font& font) {
+	//フォントをセット
+	font_ = font;
+	//フォント名をセット
+	fontName_ = ReturnFontName(font_);
+	//フォント情報をマネージャーにセット
+	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
+}
+
+void TextWrite::SetSize(float size) {
+	//サイズをセット
+	size_ = size;
+	//サイズ情報をマネージャーにセット
+	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
+}
+
+void TextWrite::SetColor(const D2D1::ColorF& color) {
+	//色をセット
+	color_ = color;
+	//色情報をマネージャーにセット
+	TextWriteManager::GetInstance()->EditSolidColorBrash(name_, color_);
 }
 
 const std::wstring& TextWrite::ReturnFontName(const Font& font) {
-	std::wstring fontName;
+	static const std::wstring meiryo = L"メイリオ";
+	static const std::wstring yugothic = L"游ゴシック";
+	static const std::wstring yumincho = L"游明朝";
+	static const std::wstring udDegitalN_B = L"UD デジタル 教科書体 N-B";
+	static const std::wstring udDegitalN_R = L"UD デジタル 教科書体 N-R";
+	static const std::wstring udDegitalNK_B = L"UD デジタル 教科書体 NK-B";
+	static const std::wstring udDegitalNK_R = L"UD デジタル 教科書体 NK-R";
+	static const std::wstring udDegitalNP_B = L"UD デジタル 教科書体 NP-B";
+	static const std::wstring udDegitalNP_R = L"UD デジタル 教科書体 NP-R";
+
+
+	static const std::wstring empty = L"";
+
 	switch (font) {
 	case Font::Meiryo:
-		fontName = L"メイリオ";
+		return meiryo;
 		break;
 	case Font::YuGothic:
-		fontName = L"游ゴシック";
+		return yugothic;
 		break;
+	case Font::YuMincho:
+		return yumincho;
+	case Font::UDDegitalN_B:
+		return udDegitalN_B;
+	case Font::UDDegitalN_R:
+		return udDegitalN_R;
+	case Font::UDDegitalNK_B:
+		return udDegitalNK_B;
+	case Font::UDDegitalNK_R:
+		return udDegitalNK_R;
+	case Font::UDDegitalNP_B:
+		return udDegitalNP_B;
+	case Font::UDDegitalNP_R:
+		return udDegitalNP_R;
 	default:
+		return empty;
 		break;
 	}
-	return fontName;
+}
+
+void TextWrite::WriteOnManager() {
+	//描画処理
+	TextWriteManager::GetInstance()->WriteText(name_);
 }

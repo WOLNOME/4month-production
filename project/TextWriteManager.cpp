@@ -28,15 +28,6 @@ void TextWriteManager::Initialize() {
 	CreateD2DRenderTarget();
 }
 
-void TextWriteManager::Draw() {
-	//描画前準備
-	BeginDrawWithD2D();
-	//描画
-	WriteText();
-	//描画後処理
-	EndDrawWithD2D();
-}
-
 void TextWriteManager::Finalize() {
 	delete instance;
 	instance = nullptr;
@@ -54,9 +45,9 @@ void TextWriteManager::Registration(TextWrite* piece) {
 	textWriteMap[key] = piece;
 
 	//ブラシを登録
-	RegisterSolidColorBrash(key, textWriteMap[key]->GetColor());
+	EditSolidColorBrash(key, textWriteMap[key]->GetColor());
 	//フォントを登録
-	RegisterTextFormat(key, textWriteMap[key]->GetFontName(), textWriteMap[key]->GetSize());
+	EditTextFormat(key, textWriteMap[key]->GetFontName(), textWriteMap[key]->GetSize());
 }
 
 void TextWriteManager::CancelRegistration(const std::string& key) {
@@ -180,18 +171,15 @@ void TextWriteManager::CreateD2DRenderTarget() {
 	}
 }
 
-void TextWriteManager::RegisterSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
-	//ブラシが登録されているか確認
-	if (solidColorBrushMap.contains(key)) [[unlikely]] {
-		return;
-	}
-
+void TextWriteManager::EditSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
+	//ブラシを作って登録(すでに作っていたら編集)
 	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
 	d2dDeviceContext->CreateSolidColorBrush(color, &brush);
 	solidColorBrushMap[key] = brush;
 }
 
-void TextWriteManager::RegisterTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
+void TextWriteManager::EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
+	//テキストフォーマットを作って登録(すでに作ってあったら編集)
 	ComPtr<IDWriteTextFormat> textFormat = nullptr;
 	directWriteFactory->CreateTextFormat(fontName.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
 	textFormatMap[key] = textFormat;
@@ -208,11 +196,21 @@ void TextWriteManager::BeginDrawWithD2D() const noexcept {
 	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
-void TextWriteManager::WriteText(const std::string& textFormatKey, const std::string& solidColorBrushKey, const std::wstring& text, const D2D1_RECT_F& rect) const noexcept {
-	const auto textFormat = textFormatMap.at(textFormatKey);
-	const auto solidColorBrush = solidColorBrushMap.at(solidColorBrushKey);
+void TextWriteManager::WriteText(const std::string& key) const noexcept {
+	const auto textFormat = textFormatMap.at(key);
+	const auto solidColorBrush = solidColorBrushMap.at(key);
+	const auto textWrite = textWriteMap.at(key);
+
+	//描画範囲
+	D2D1_RECT_F rect;
+	rect = {
+		textWrite->GetPosition().x,
+		textWrite->GetPosition().y,
+		textWrite->GetPosition().x + textWrite->GetWidth(),
+		textWrite->GetPosition().y + textWrite->GetHeight()
+	};
 	//描画処理
-	d2dDeviceContext->DrawTextW(text.c_str(), static_cast<UINT32>(text.length()), textFormat.Get(), &rect, solidColorBrush.Get());
+	d2dDeviceContext->DrawTextW(textWrite->GetText().c_str(), static_cast<UINT32>(textWrite->GetText().length()), textFormat.Get(), &rect, solidColorBrush.Get());
 }
 
 void TextWriteManager::EndDrawWithD2D() const noexcept {
