@@ -1,12 +1,8 @@
 #include "TextWriteManager.h"
 #include "TextWrite.h"
+#include <filesystem>
 #include <cassert>
-
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dwrite.lib")
+namespace fs = std::filesystem;
 
 TextWriteManager* TextWriteManager::instance = nullptr;
 
@@ -26,6 +22,9 @@ void TextWriteManager::Initialize() {
 	CreateDirect2DDeviceContext();
 	//D2DRenderTargetの生成
 	CreateD2DRenderTarget();
+
+	//フォントファイルの生成
+	CreateFontFile();
 }
 
 void TextWriteManager::Finalize() {
@@ -123,7 +122,6 @@ void TextWriteManager::CreateD3D11On12Device() {
 void TextWriteManager::CreateDirect2DDeviceContext() {
 	HRESULT hr;
 	//ID2D1Factory3の生成
-	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
 	D2D1_FACTORY_OPTIONS factoryOptions{};
 	factoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &factoryOptions, &d2dFactory);
@@ -171,6 +169,40 @@ void TextWriteManager::CreateD2DRenderTarget() {
 	}
 }
 
+void TextWriteManager::CreateFontFile() {
+	HRESULT hr;
+	// IDWriteFontSetBuilder2 の生成
+	ComPtr<IDWriteFontSetBuilder2> dwriteFontSetBuilder = nullptr;
+	hr = directWriteFactory->CreateFontSetBuilder(&dwriteFontSetBuilder);
+	assert(SUCCEEDED(hr));
+
+	std::vector<ComPtr<IDWriteFontFile>> fontFiles;
+	std::wstring fontDirectory = L"Resources/fonts"; // フォントフォルダのパス
+
+	// フォントフォルダ内の .ttf ファイルを探索
+	for (const auto& entry : fs::directory_iterator(fontDirectory)) {
+		if (entry.is_regular_file() && entry.path().extension() == L".ttf") {
+			// IDWriteFontFile の生成
+			ComPtr<IDWriteFontFile> dwriteFontFile;
+			hr = directWriteFactory->CreateFontFileReference(entry.path().c_str(), nullptr, &dwriteFontFile);
+			if (SUCCEEDED(hr)) {
+				fontFiles.push_back(dwriteFontFile); // 一時的な vector に保存
+				hr = dwriteFontSetBuilder->AddFontFile(dwriteFontFile.Get()); // フォントセットビルダーに追加
+				assert(SUCCEEDED(hr));
+			}
+		}
+	}
+
+	// IDWriteFontSet の生成
+	ComPtr<IDWriteFontSet> dwriteFontSet = nullptr;
+	hr = dwriteFontSetBuilder->CreateFontSet(&dwriteFontSet);
+	assert(SUCCEEDED(hr));
+
+	// フォントコレクションの生成
+	hr = directWriteFactory->CreateFontCollectionFromFontSet(dwriteFontSet.Get(), &dwriteFontCollection);
+	assert(SUCCEEDED(hr));
+}
+
 void TextWriteManager::EditSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
 	//ブラシを作って登録(すでに作っていたら編集)
 	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
@@ -181,7 +213,7 @@ void TextWriteManager::EditSolidColorBrash(const std::string& key, const D2D1::C
 void TextWriteManager::EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
 	//テキストフォーマットを作って登録(すでに作ってあったら編集)
 	ComPtr<IDWriteTextFormat> textFormat = nullptr;
-	directWriteFactory->CreateTextFormat(fontName.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
+	directWriteFactory->CreateTextFormat(fontName.c_str(), dwriteFontCollection.Get(), DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
 	textFormatMap[key] = textFormat;
 }
 
@@ -196,7 +228,7 @@ void TextWriteManager::BeginDrawWithD2D() const noexcept {
 	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
-void TextWriteManager::WriteText(const std::string& key) const noexcept {
+void TextWriteManager::WriteText(const std::string& key) {
 	const auto textFormat = textFormatMap.at(key);
 	const auto solidColorBrush = solidColorBrushMap.at(key);
 	const auto textWrite = textWriteMap.at(key);
@@ -209,8 +241,9 @@ void TextWriteManager::WriteText(const std::string& key) const noexcept {
 		textWrite->GetPosition().x + textWrite->GetWidth(),
 		textWrite->GetPosition().y + textWrite->GetHeight()
 	};
-	//描画処理
+	//テキスト描画処理
 	d2dDeviceContext->DrawTextW(textWrite->GetText().c_str(), static_cast<UINT32>(textWrite->GetText().length()), textFormat.Get(), &rect, solidColorBrush.Get());
+
 }
 
 void TextWriteManager::EndDrawWithD2D() const noexcept {

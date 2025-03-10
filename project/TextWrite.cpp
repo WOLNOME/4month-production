@@ -42,7 +42,8 @@ void TextWrite::DebugWithImGui() {
 		"UDDegitalNK_B",
 		"UDDegitalNK_R",
 		"UDDegitalNP_B",
-		"UDDegitalNP_R"
+		"UDDegitalNP_R",
+		"OnionScript"
 	};
 	int fontIndex = static_cast<int>(currentFont);
 	if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
@@ -109,7 +110,7 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 	static const std::wstring udDegitalNK_R = L"UD デジタル 教科書体 NK-R";
 	static const std::wstring udDegitalNP_B = L"UD デジタル 教科書体 NP-B";
 	static const std::wstring udDegitalNP_R = L"UD デジタル 教科書体 NP-R";
-
+	static const std::wstring onionScript = L"玉ねぎ楷書激無料版v7改";
 
 	static const std::wstring empty = L"";
 
@@ -134,6 +135,8 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 		return udDegitalNP_B;
 	case Font::UDDegitalNP_R:
 		return udDegitalNP_R;
+	case Font::OnionScript:
+		return onionScript;
 	default:
 		return empty;
 		break;

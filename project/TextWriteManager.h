@@ -46,6 +46,7 @@ private:
 	void CreateD3D11On12Device();
 	void CreateDirect2DDeviceContext();
 	void CreateD2DRenderTarget();
+	void CreateFontFile();
 
 public:
 	///=======================
@@ -60,11 +61,8 @@ public:
 	///=======================
 
 	void BeginDrawWithD2D()const noexcept;
-	void WriteText(const std::string& key) const noexcept;
+	void WriteText(const std::string& key);
 	void EndDrawWithD2D() const noexcept;
-
-
-
 
 private:
 	//省略変数
@@ -73,10 +71,12 @@ private:
 	MainRender* mainrender = MainRender::GetInstance();
 
 	//保存用変数
-	ComPtr<IDWriteFactory> directWriteFactory = nullptr;
+	ComPtr<IDWriteFactory8> directWriteFactory = nullptr;
 	ComPtr<ID3D11On12Device> d3d11On12Device = nullptr;
 	ComPtr<ID3D11DeviceContext> d3d11On12DeviceContext = nullptr;
+	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
 	ComPtr<ID2D1DeviceContext2> d2dDeviceContext = nullptr;
+	ComPtr<IDWriteFontCollection1> dwriteFontCollection = nullptr;
 
 	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
 	std::vector<ComPtr<ID2D1Bitmap1>> d2dRenderTargets;

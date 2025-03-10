@@ -15,6 +15,7 @@ enum class Font {
 	UDDegitalNK_R,
 	UDDegitalNP_B,
 	UDDegitalNP_R,
+	OnionScript,
 };
 
 class TextWriteManager;
@@ -24,7 +25,7 @@ public:
 	~TextWrite();
 	//初期化
 	void Initialize(const std::string& name);
-	//テキストを生成()
+	//テキストを生成
 	template <typename... Args>
 	void WriteText(const std::wstring& text, Args&&... args) {
 		//テキストを生成
