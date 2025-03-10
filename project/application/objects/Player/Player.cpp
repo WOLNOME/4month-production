@@ -11,7 +11,7 @@ void Player::Initialize()
 	wtPlayer_.Initialize();
 	wtPlayer_.scale_ = { 1.0f,1.0f,1.0f };
 	player_ = std::make_unique<Object3d>();
-	player_->InitializeModel("cube");
+	player_->InitializeModel("player");
 	
 
 	// 当たり判定関係
@@ -28,6 +28,7 @@ void Player::Initialize()
 	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
+	
 }
 
 void Player::Finalize()
@@ -145,6 +146,10 @@ void Player::OutOfField()
 	if (isGround_ == false)
 	{
 		wtPlayer_.translate_.y -= fallSpeed_;
+	} 
+	else
+	{
+		wtPlayer_.translate_.y = 1.0f;
 	}
 
 	if (wtPlayer_.translate_.y < -10.0f)
@@ -250,7 +255,7 @@ void Player::OnCollision(const AppCollider* _other)
 		if ((playerPosition - otherPlayerPosition).Length() < distance)
 		{
 			playerPosition += direction * 0.1f; // 微調整のための値
-			playerPosition.y = 0.7f;
+			playerPosition.y = 1.0f;
 			wtPlayer_.translate_ = playerPosition;
 			position_ = wtPlayer_.translate_;
 		}
