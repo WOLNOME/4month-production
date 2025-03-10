@@ -51,6 +51,9 @@ public: // ゲッター
 	// 死亡フラグを取得
 	bool IsDead() const { return isDead_; }
 
+	// プレイヤーの速度を取得
+	Vector3 GetVelocity() const { return moveVel_; }
+
 public: //セッター
 
 	// プレイヤーの位置をセット
@@ -69,8 +72,9 @@ private:
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
-	bool isHit_ = false;
 	bool isGround_ = false;
+	bool isPlayerHit_ = false;
+	bool isStop_ = false;
 	// エネミーの位置
 	Vector3 enemyPosition_{};
 	// ノックバックの時間
