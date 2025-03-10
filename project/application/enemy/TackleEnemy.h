@@ -74,7 +74,7 @@ private:
     // 落下速度
     float fallSpeed_ = 0.3f;
 
-    // 当たり判定関係
+    // 当たり判定
     AppCollisionManager* appCollisionManager_ = nullptr;
     std::unique_ptr<AppCollider> appCollider_ = nullptr;
     AppAABB aabb_{};

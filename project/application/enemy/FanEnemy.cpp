@@ -28,9 +28,51 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 
 void FanEnemy::EnemyUpdate()
 {
+	// 移動
+	Move();
+
+	//行列の更新
+	transform_.UpdateMatrix();
+
 	// 当たり判定関係
 	aabb_.min = transform_.translate_ - transform_.scale_;
 	aabb_.max = transform_.translate_ + transform_.scale_;
 	appCollider_->SetPosition(transform_.translate_);
+}
+
+void FanEnemy::EnemyDraw(const BaseCamera& camera)
+{
+	object3d_->Draw(transform_, camera);
+}
+
+void FanEnemy::OnCollision(const AppCollider* _other)
+{
+
+}
+
+void FanEnemy::OnCollisionTrigger(const AppCollider* other)
+{
+}
+
+void FanEnemy::Move()
+{
+ 	const float deltaTime = 1.0f / 60.0f;
+
+	// 摩擦処理
+	Vector3 friction = -velocity_ * friction_ * deltaTime;
+	velocity_ += friction;
+
+	// 速度が小さくなったら停止
+	if (velocity_.Length() < 0.1f)
+	{
+		velocity_ = { 0.0f,0.0f,0.0f };
+	}
+	
+	// 移動処理
+	transform_.translate_ += velocity_ * deltaTime;
+}
+
+void FanEnemy::StartFan()
+{
 
 }

@@ -17,13 +17,17 @@ void EnemyManager::Update()
 #ifdef _DEBUG
 	ImGui::Begin("EnemyManager");
 	ImGui::Text("TackleEnemyCount: %d", tackleEnemies_.size());
-	ImGui::DragFloat3("TargetPosition", &targetPosition_.x, 0.1f);
+	ImGui::Text("FanEnemyCount: %d", fanEnemies_.size());
 	ImGui::DragFloat3("SpawnMinPosition", &spawnMinPosition_.x, 0.1f);
 	ImGui::DragFloat3("SpawnMaxPosition", &spawnMaxPosition_.x, 0.1f);
 	ImGui::DragInt("SpawnCount", &spawnCount_, 1.0f, 1, 100);
 	if (ImGui::Button("SpawnTackleEnemy"))
 	{
 		SpawnTackleEnemy(spawnCount_);
+	}
+	if (ImGui::Button("SpawnFanEnemy"))
+	{
+		SpawnFanEnemy(spawnCount_);
 	}
 	if (ImGui::Button("Tackle"))
 	{
@@ -47,6 +51,11 @@ void EnemyManager::Update()
 			enemy->Finalize();
 		}
 	}
+	//ファンエネミーの更新
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->EnemyUpdate();
+	}
 	//死んでいるエネミーをリストから削除
 	tackleEnemies_.erase(std::remove_if(tackleEnemies_.begin(), tackleEnemies_.end(),
 		[](const std::unique_ptr<TackleEnemy>& enemy)
@@ -60,6 +69,11 @@ void EnemyManager::Draw()
 {
 	//タックルエネミーの描画
 	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->EnemyDraw(*camera_);
+	}
+	//ファンエネミーの描画
+	for (auto& enemy : fanEnemies_)
 	{
 		enemy->EnemyDraw(*camera_);
 	}
@@ -80,6 +94,22 @@ void EnemyManager::SpawnTackleEnemy(uint32_t count)
 		enemy->SetPosition(spawnPosition);
 		enemy->SetTargetPosition(targetPosition_);
 		tackleEnemies_.emplace_back(std::move(enemy));
+	}
+}
+
+void EnemyManager::SpawnFanEnemy(uint32_t count)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(spawnMinPosition_.x, spawnMaxPosition_.x);
+	std::uniform_real_distribution<float> disZ(spawnMinPosition_.z, spawnMaxPosition_.z);
+	for (uint32_t i = 0; i < count; i++)
+	{
+		auto enemy = std::make_unique<FanEnemy>();
+		enemy->EnemyInitialize(tackleEnemyPath_);
+		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
+		enemy->SetPosition(spawnPosition);
+		fanEnemies_.emplace_back(std::move(enemy));
 	}
 }
 
