@@ -102,6 +102,7 @@
     <ClCompile Include="application\enemy\EnemyManager.cpp" />
     <ClCompile Include="application\enemy\TackleEnemy.cpp" />
     <ClCompile Include="application\enemy\FanEnemy.cpp" />
+    <ClCompile Include="application\enemy\Wind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="application\objects\Field\Field.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
     <ClInclude Include="application\enemy\FanEnemy.h" />
+    <ClInclude Include="application\enemy\Wind.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

@@ -169,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\Shape.cpp" />
     <ClCompile Include="application\objects\Player\Player.cpp" />
     <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
+    <ClCompile Include="application\enemy\Wind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -241,6 +242,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\appCollider\AppShape.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
+    <ClInclude Include="application\enemy\Wind.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

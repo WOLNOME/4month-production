@@ -29,6 +29,10 @@ private:
 	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
 	//摩擦係数
 	const float friction_ = 2.0f;
+	//ファンの届く範囲
+	float range_ = 5.0f;
+	//ファンの向き
+	Vector3 direction_ = { 0.0f,0.0f,0.0f };
 
 	//当たり判定
 	AppCollisionManager* appCollisionManager_ = nullptr;
