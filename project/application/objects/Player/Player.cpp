@@ -218,6 +218,9 @@ void Player::OnCollision(const AppCollider* _other)
 	{
 		isGround_ = true;
 	}
+	else if (_other->GetColliderID() == "Obstacle") {
+		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
+	}
 
 	// どちらも攻撃していないとき
 	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
@@ -254,10 +257,6 @@ void Player::OnCollision(const AppCollider* _other)
 		//moveVel_ = playerVelocity;
 	}
 
-}
-	else if (_other->GetColliderID() == "Obstacle") {
-		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
-	}
 }
 
 void Player::OnCollisionTrigger(const AppCollider* _other)
