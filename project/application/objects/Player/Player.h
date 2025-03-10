@@ -69,8 +69,9 @@ private:
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
-	bool isHit_ = false;
 	bool isGround_ = false;
+	bool isPlayerHit_ = false;
+	bool isStop_ = false;
 	// エネミーの位置
 	Vector3 enemyPosition_{};
 	// ノックバックの時間

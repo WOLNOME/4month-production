@@ -110,7 +110,7 @@ void GamePlayScene::Update()
 	{
 		playerSpawn->Update();
 	}
-	playerSpawnRotation();
+	//playerSpawnRotation();
 
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();

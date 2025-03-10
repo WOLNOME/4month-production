@@ -87,7 +87,7 @@ void Player::Move()
 	moveVel_ *= friction_;
 
 	// 地面にいるとき
-	if (isGround_)
+	if (isGround_ && !isStop_)
 	{
 		// 移動
 		if (input_->PushKey(DIK_W))
@@ -108,8 +108,6 @@ void Player::Move()
 		}
 	}
 
-	
-
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.01f)
 	{
@@ -123,6 +121,8 @@ void Player::Move()
 
 void Player::MovePosition()
 {
+	isPlayerHit_ = false;
+
 	// フレーム間の時間差（秒）
 	float deltaTime = 1.0f / 60.0f;
 
@@ -139,6 +139,7 @@ void Player::MovePosition()
 
 	// 位置を更新
 	wtPlayer_.translate_ += moveVel_ * deltaTime;
+	position_ = wtPlayer_.translate_;
 }
 
 void Player::OutOfField()
@@ -159,9 +160,13 @@ void Player::OutOfField()
 
 void Player::Attack()
 {
-	if (input_->TriggerKey(DIK_SPACE))
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_)
 	{
 		isAttack_ = true;
+
+		// 攻撃時間リセット
+		attackTimeCounter_ = attackTime_;
+
 	}
 
 	if (isAttack_)
@@ -179,7 +184,7 @@ void Player::Attack()
 	if (attackTimeCounter_ <= 0.0f)
 	{
 		isAttack_ = false;
-		attackTimeCounter_ = attackTime_;
+		isStop_ = false;
 	}
 }
 
@@ -208,26 +213,73 @@ void Player::ImGuiDraw()
 
 void Player::OnCollision(const AppCollider* _other)
 {
+	// フィールドの内にいるかどうか
 	if (_other->GetColliderID() == "Field")
 	{
 		isGround_ = true;
 	}
+
+	// どちらも攻撃していないとき
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
+	{
+		// プレイヤーの速度を取得
+		Vector3 playerVelocity = moveVel_;
+
+		// 減速係数を設定
+		float decelerationFactor = 0.5f; // 速度を50%に減少させる
+
+		// プレイヤーの速度を減少させる
+		playerVelocity *= decelerationFactor;
+
+		// プレイヤーの速度を更新
+		moveVel_ = playerVelocity;
+
+	}
+
+	// プレイヤー同士の衝突
+	if (_other->GetColliderID() == "Player")
+	{
+		//isPlayerHit_ = true;
+		//// プレイヤーの速度
+		//Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+
+		//// プレイヤーの進行方向に対して垂直な方向を計算
+		//Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+
+		//// プレイヤーの進行方向に対して垂直な方向にプレイヤーを移動
+		//float distance = 0.2f; // プレイヤーからプレイヤーを徐々に離す距離
+		//wtPlayer_.translate_ += perpendicularDirection * distance;
+
+		//// moveVel_ をプレイヤーの速度に設定
+		//moveVel_ = playerVelocity;
+	}
+
 }
 
 void Player::OnCollisionTrigger(const AppCollider* _other)
 {
-	if (_other->GetColliderID() == "TackleEnemy" && _other->GetOwner()->IsAttack() && !isAttack_)
+	if (_other->GetColliderID() == "TackleEnemy")
 	{
-		// 当たったエネミーの位置を取得
-		enemyPosition_ = _other->GetOwner()->GetPosition();
+		// 攻撃が当たったとき攻撃を止める
+		if (isAttack_)
+		{
+			isStop_ = true;
+		}
 
-		attackToEnemy_ = wtPlayer_.translate_ - enemyPosition_;
+		// エネミーの攻撃を食らったとき
+		if (_other->GetOwner()->IsAttack() && !isAttack_)
+		{
+			// 当たったエネミーの位置を取得
+			enemyPosition_ = _other->GetOwner()->GetPosition();
 
-		// ノックバック
-		moveVel_ = attackToEnemy_;
-		moveVel_ *= 7.0f;
-		moveVel_.y = 0.0f;
-		// ノックバックタイマー
-		knockBackTime_ = 34.0f;
+			attackToEnemy_ = wtPlayer_.translate_ - enemyPosition_;
+
+			// ノックバック
+			moveVel_ = attackToEnemy_;
+			moveVel_ *= 17.0f;
+			moveVel_.y = 0.0f;
+			// ノックバックタイマー
+			knockBackTime_ = 40.0f;
+		}
 	}
 }

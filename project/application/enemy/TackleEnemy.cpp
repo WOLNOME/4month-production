@@ -45,10 +45,12 @@ void TackleEnemy::EnemyUpdate()
 	// ノックバック中は移動、攻撃できない
 	if (knockBackTime_ > 0.0f)
 	{
+        isHit_ = false;
 		knockBackTime_ -= 1.0f;
     } 
     else
 	{
+
          // タックル中でない場合、待機タイマーを更新
         if (!isTackling_)
         {
@@ -66,6 +68,8 @@ void TackleEnemy::EnemyUpdate()
 
     //移動
     Move();
+    
+   
 
 	// 場外処理
 	OutOfField();
@@ -142,14 +146,67 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         isGround_ = true;
     }
+
+    if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
+    {
+        //// エネミーの位置を取得
+        //Vector3 enemyPosition = transform_.translate_;
+
+        //// プレイヤーの位置を取得
+        //Vector3 playerPosition = _other->GetOwner()->GetPosition();
+
+        //// エネミーとプレイヤーの位置を調整して、互いに重ならないようにする
+        //Vector3 direction = enemyPosition - playerPosition;
+        //direction.Normalize();
+        //float distance = 1.0f; // エネミーとプレイヤーの間の距離を調整するための値
+        //transform_.translate_ = playerPosition + direction * distance;
+
+
+
+
+
+		//////-------押し出される処理-------//////
+        // プレイヤーの速度
+        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+
+        // プレイヤーの進行方向に対して垂直な方向を計算
+        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+
+        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
+        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
+        transform_.translate_ += perpendicularDirection * distance;
+
+        // tackleVelocity_ をプレイヤーの速度に設定
+        tackleVelocity_ = playerVelocity;
+    }
+
+	if (_other->GetColliderID() == "TackleEnemy")
+	{
+        // プレイヤーの速度
+        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+
+        // プレイヤーの進行方向に対して垂直な方向を計算
+        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+
+        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
+        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
+        transform_.translate_ += perpendicularDirection * distance;
+
+        // tackleVelocity_ をプレイヤーの速度に設定
+        tackleVelocity_ = playerVelocity;
+		
+	}
 }
 
 void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 {
     if (_other->GetColliderID() == "Player")
     {
+		AAA = true;
         if (_other->GetOwner()->IsAttack()) 
         {
+			isHit_ = true;
+
             // プレイヤーの位置
             Vector3 playerPosition = _other->GetOwner()->GetPosition();
 
@@ -158,15 +215,10 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 
             // ノックバック
             tackleVelocity_ = runDirection;
-            tackleVelocity_ *= 7.0f;
+            tackleVelocity_ *= 9.0f;
             tackleVelocity_.y = 0.0f;
             // ノックバックタイマー
             knockBackTime_ = 4.0f;
-        }
-        else
-        {
-            // プレイヤーの速度
-			//Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
         }
     }
 }
@@ -181,13 +233,20 @@ void TackleEnemy::Move()
     tackleVelocity_ += friction;
 
     // 速度が非常に小さくなったら停止する
-    if (tackleVelocity_.Length() < 0.01f) {
+    if (tackleVelocity_.Length() < 0.01f or AAA == true)
+    {
         isAttack_ = false;
+        AAA = false;
+
+		//tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+
         return;
     }
 
     // 位置を更新
-    transform_.translate_ += tackleVelocity_ * deltaTime;
-
+    if (!AAA)
+    {
+        transform_.translate_ += tackleVelocity_ * deltaTime;
+    }
 }
 
