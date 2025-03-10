@@ -180,21 +180,26 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
         tackleVelocity_ = playerVelocity;
     }
 
+	// エネミー同士の衝突
 	if (_other->GetColliderID() == "TackleEnemy")
 	{
-        // プレイヤーの速度
-        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+        // エネミー同士の衝突処理
+        Vector3 enemyPosition = transform_.translate_;
+        Vector3 otherEnemyPosition = _other->GetOwner()->GetPosition();
 
-        // プレイヤーの進行方向に対して垂直な方向を計算
-        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+        // エネミー同士が重ならないようにする
+        Vector3 direction = enemyPosition - otherEnemyPosition;
+        direction.Normalize();
+        float distance = 2.5f; // エネミー同士の間の距離を調整するための値
 
-        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
-        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
-        transform_.translate_ += perpendicularDirection * distance;
-
-        // tackleVelocity_ をプレイヤーの速度に設定
-        tackleVelocity_ = playerVelocity;
-		
+        // 互いに重ならないように少しずつ位置を調整
+        if ((enemyPosition - otherEnemyPosition).Length() < distance)
+        {
+            enemyPosition += direction * 0.1f; // 微調整のための値
+            enemyPosition.y = 0.7f;
+            transform_.translate_ = enemyPosition;
+            position_ = transform_.translate_;
+        }
 	}
 }
 
