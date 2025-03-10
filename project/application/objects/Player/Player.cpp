@@ -218,7 +218,8 @@ void Player::OnCollision(const AppCollider* _other)
 	{
 		isGround_ = true;
 	}
-	else if (_other->GetColliderID() == "Obstacle") {
+	else if (_other->GetColliderID() == "Obstacle")
+	{
 		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
 	}
 
@@ -287,18 +288,18 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 	}
 }
 
-Vector3 Player::ComputePenetration(const AppAABB& obstacle)
+Vector3 Player::ComputePenetration(const AppAABB& otherAABB)
 {
 	Vector3 penetration;
 
 	//X軸方向に押し戻すベクトル
-	float overlapX1 = obstacle.max.x - aabb_.min.x;
-	float overlapX2 = aabb_.max.x - obstacle.min.x;
+	float overlapX1 = otherAABB.max.x - aabb_.min.x;
+	float overlapX2 = aabb_.max.x - otherAABB.min.x;
 	float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
 
 	//Z軸方向に押し戻すベクトル
-	float overlapZ1 = obstacle.max.z - aabb_.min.z;
-	float overlapZ2 = aabb_.max.z - obstacle.min.z;
+	float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+	float overlapZ2 = aabb_.max.z - otherAABB.min.z;
 	float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
 
 	//ベクトルの絶対値を求める
@@ -306,10 +307,12 @@ Vector3 Player::ComputePenetration(const AppAABB& obstacle)
 	float absZ = std::abs(penetrationZ);
 
 	//最小のベクトルを求める
-	if (absX < absZ) {
+	if (absX < absZ)
+	{
 		penetration.x = penetrationX;
 	}
-	else {
+	else 
+	{
 		penetration.z = penetrationZ;
 	}
 

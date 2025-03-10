@@ -146,6 +146,10 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         isGround_ = true;
     }
+    else if (_other->GetColliderID() == "Obstacle")
+    {
+        transform_.translate_ += ComputePenetration(*_other->GetAABB());
+    }
 
     if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
     {
@@ -221,6 +225,35 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
             knockBackTime_ = 4.0f;
         }
     }
+}
+
+Vector3 TackleEnemy::ComputePenetration(const AppAABB& otherAABB)
+{
+    Vector3 penetration;
+
+    //X軸方向に押し戻すベクトル
+    float overlapX1 = otherAABB.max.x - aabb_.min.x;
+    float overlapX2 = aabb_.max.x - otherAABB.min.x;
+    float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
+
+    //Z軸方向に押し戻すベクトル
+    float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+    float overlapZ2 = aabb_.max.z - otherAABB.min.z;
+    float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
+
+    //ベクトルの絶対値を求める
+    float absX = std::abs(penetrationX);
+    float absZ = std::abs(penetrationZ);
+
+    //最小のベクトルを求める
+    if (absX < absZ) {
+        penetration.x = penetrationX;
+    }
+    else {
+        penetration.z = penetrationZ;
+    }
+
+    return penetration;
 }
 
 void TackleEnemy::Move()

@@ -113,7 +113,8 @@ void GamePlayScene::Update()
 	field_->Update();
 
 	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
+	{
 		obstacle->Update();
 	}
 
@@ -160,7 +161,8 @@ void GamePlayScene::Draw()
 	field_->Draw(*camera_.get());
 
 	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
+	{
 		obstacle->Draw(*camera_.get());
 	}
 

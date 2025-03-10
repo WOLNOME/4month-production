@@ -44,7 +44,7 @@ private: // 衝突判定
 	void OnCollisionTrigger(const AppCollider* _other);
 
 	// 障害物にぶつかったとき、最小の移動量で押し戻すベクトルを求める
-	Vector3 ComputePenetration(const AppAABB& obstacle);
+	Vector3 ComputePenetration(const AppAABB& otherAABB);
 
 public: // ゲッター
 	
