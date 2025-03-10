@@ -18,6 +18,7 @@
 #include "../../application/objects/Field/Field.h"
 #include "../../application/appCollider/AppCollisionManager.h"
 #include "../../application/enemy/EnemyManager.h"
+#include "../../application/objects/Gimmick/Obstacle.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -65,6 +66,8 @@ private://メンバ変数
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
+	//障害物
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};

@@ -101,6 +101,9 @@
     <ClCompile Include="application\enemy\BaseEnemy.cpp" />
     <ClCompile Include="application\enemy\EnemyManager.cpp" />
     <ClCompile Include="application\enemy\TackleEnemy.cpp" />
+    <ClCompile Include="application\objects\Gimmick\Obstacle.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -207,6 +210,9 @@
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Field\Field.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
+    <ClInclude Include="application\objects\Gimmick\Obstacle.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
@@ -248,6 +254,9 @@
     </Filter>
     <Filter Include="engine\scenebase">
       <UniqueIdentifier>{4af1c3a2-e07c-46a3-a103-7a9fdd748669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gimmick">
+      <UniqueIdentifier>{1e064a18-e749-4820-92d2-624a28a940a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

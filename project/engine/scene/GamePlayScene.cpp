@@ -51,6 +51,12 @@ void GamePlayScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
+	//障害物
+	std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+	obstacle = std::make_unique<Obstacle>();
+	obstacle->Initialize();
+	obstacle->SetPosition({ 0.0f, 1.0f, 3.0f });
+
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
 	{
@@ -105,6 +111,11 @@ void GamePlayScene::Update()
 	// フィールド
 	field_->Update();
 
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		obstacle->Update();
+	}
+
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
 	{
@@ -146,6 +157,11 @@ void GamePlayScene::Draw()
 
 	// フィールド
 	field_->Draw(*camera_.get());
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		obstacle->Draw(*camera_.get());
+	}
 
 	// プレイヤースポーン
 	for (auto& playerSpawn : playerSpawn_)
