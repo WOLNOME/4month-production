@@ -18,6 +18,7 @@ void EnemyManager::Update()
 	ImGui::Begin("EnemyManager");
 	ImGui::Text("TackleEnemyCount: %d", tackleEnemies_.size());
 	ImGui::Text("FanEnemyCount: %d", fanEnemies_.size());
+	ImGui::Text("WindCount: %d", winds_.size());
 	ImGui::DragFloat3("SpawnMinPosition", &spawnMinPosition_.x, 0.1f);
 	ImGui::DragFloat3("SpawnMaxPosition", &spawnMaxPosition_.x, 0.1f);
 	ImGui::DragInt("SpawnCount", &spawnCount_, 1.0f, 1, 100);
@@ -56,6 +57,12 @@ void EnemyManager::Update()
 	{
 		enemy->EnemyUpdate();
 	}
+	//風の更新
+	for (auto& wind : winds_)
+	{
+		wind->Update();
+	}
+
 	//死んでいるエネミーをリストから削除
 	tackleEnemies_.erase(std::remove_if(tackleEnemies_.begin(), tackleEnemies_.end(),
 		[](const std::unique_ptr<TackleEnemy>& enemy)
@@ -63,6 +70,13 @@ void EnemyManager::Update()
 			return !enemy->IsAlive();
 		}), 
 		tackleEnemies_.end());
+	//死んでいる風をリストから削除
+	winds_.erase(std::remove_if(winds_.begin(), winds_.end(),
+		[](const std::unique_ptr<Wind>& wind)
+		{
+			return !wind->IsAlive();
+		}),
+		winds_.end());
 }
 
 void EnemyManager::Draw()
@@ -76,6 +90,11 @@ void EnemyManager::Draw()
 	for (auto& enemy : fanEnemies_)
 	{
 		enemy->EnemyDraw(*camera_);
+	}
+	//風の描画
+	for (auto& wind : winds_)
+	{
+		wind->Draw(*camera_);
 	}
 }
 
@@ -106,11 +125,19 @@ void EnemyManager::SpawnFanEnemy(uint32_t count)
 	for (uint32_t i = 0; i < count; i++)
 	{
 		auto enemy = std::make_unique<FanEnemy>();
+		enemy->SetEnemyManager(this);
 		enemy->EnemyInitialize(tackleEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		fanEnemies_.emplace_back(std::move(enemy));
 	}
+}
+
+void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction)
+{
+	auto wind = std::make_unique<Wind>();
+	wind->Initialize("Cube", position, direction);
+	winds_.emplace_back(std::move(wind));					
 }
 
 void EnemyManager::TargetUpdate()

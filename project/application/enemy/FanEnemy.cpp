@@ -1,4 +1,5 @@
 #include "FanEnemy.h"
+#include "EnemyManager.h"
 
 void FanEnemy::EnemyInitialize(const std::string& filePath)
 {
@@ -30,6 +31,16 @@ void FanEnemy::EnemyUpdate()
 {
 	// 移動
 	Move();
+
+	// 回転
+	transform_.rotate_.y += rotateSpeed_;
+	if (transform_.rotate_.y >= 3.14f)
+	{
+		transform_.rotate_.y = -3.14f;
+	}
+
+	// 風の更新
+	FanUpdate();
 
 	//行列の更新
 	transform_.UpdateMatrix();
@@ -74,5 +85,21 @@ void FanEnemy::Move()
 
 void FanEnemy::StartFan()
 {
+	// 風の方向を設定
+	Vector3 direction = { cos(transform_.rotate_.y), 0.0f, sin(transform_.rotate_.y) };
+	direction.Normalize();
 
+	// 風を生成
+	enemyManager_->SpawnWind(transform_.translate_, direction);
+}
+
+void FanEnemy::FanUpdate()
+{
+	// 風の生成タイマーを更新
+	windSpawnTimer_ += 1.0f / 60.0f;
+	if (windSpawnTimer_ >= windSpawnInterval_)
+	{
+		StartFan();
+		windSpawnTimer_ = 0.0f;
+	}
 }

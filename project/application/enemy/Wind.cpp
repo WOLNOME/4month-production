@@ -9,13 +9,20 @@ void Wind::Initialize(const std::string& filePath, const Vector3& position, cons
 	transform_.scale_ = { 1.0f, 1.0f, 1.0f };
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
 	direction_ = direction;
+	startPosition_ = position;
 }
 
 void Wind::Update()
 {
 	// 移動
 	const float deltaTime = 1.0f / 60.0f;
-	transform_.translate_ += direction_ * deltaTime;
+	transform_.translate_ += direction_ * speed_ * deltaTime;
+
+	// スタート地点からの距離が一定以上になったら消す
+	if ((transform_.translate_ - startPosition_).Length() > range_)
+	{
+		isAlive_ = false;
+	}
 
 	// 行列の更新
 	transform_.UpdateMatrix();
@@ -23,5 +30,6 @@ void Wind::Update()
 
 void Wind::Draw(const BaseCamera& camera)
 {
+	if (!isAlive_) return;
 	object3d_->Draw(transform_, camera);
 }
