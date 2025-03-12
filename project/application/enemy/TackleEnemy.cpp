@@ -52,7 +52,7 @@ void TackleEnemy::EnemyUpdate()
 	{
 
          // タックル中でない場合、待機タイマーを更新
-        if (!isTackling_)
+        if (!isTackling_ && isGround_)
         {
             tackleWaitTimer_ += 1.0f / 60.0f;
             if (tackleWaitTimer_ >= nextTackleWaitTime_)
@@ -207,7 +207,11 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 {
     if (_other->GetColliderID() == "Player")
     {
-		AAA = true;
+        if (isAttack_)
+        {
+            isStop_ = true;
+        }
+
         if (_other->GetOwner()->IsAttack()) 
         {
 			isHit_ = true;
@@ -238,10 +242,10 @@ void TackleEnemy::Move()
     tackleVelocity_ += friction;
 
     // 速度が非常に小さくなったら停止する
-    if (tackleVelocity_.Length() < 0.01f or AAA == true)
+    if (tackleVelocity_.Length() < 0.01f or isStop_ == true)
     {
         isAttack_ = false;
-        AAA = false;
+        isStop_ = false;
 
 		//tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
 
@@ -249,7 +253,7 @@ void TackleEnemy::Move()
     }
 
     // 位置を更新
-    if (!AAA)
+    if (!isStop_)
     {
         transform_.translate_ += tackleVelocity_ * deltaTime;
     }

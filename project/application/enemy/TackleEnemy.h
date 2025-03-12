@@ -81,7 +81,7 @@ private:
     bool isHit_ = false;
     bool isGround_ = false;
 
-	bool AAA = false;
+	bool isStop_ = false;
 	
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
