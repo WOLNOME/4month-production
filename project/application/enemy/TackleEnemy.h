@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseEnemy.h"
-#include <random> // ランダム生成のために追加
+#include <random>
 
 #include "../appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"

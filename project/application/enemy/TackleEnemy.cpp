@@ -77,7 +77,7 @@ void TackleEnemy::EnemyUpdate()
     //行列の更新
 	transform_.UpdateMatrix();
 
-    // 当たり判定関係
+    // 当たり判定
     aabb_.min = transform_.translate_ - transform_.scale_;
     aabb_.max = transform_.translate_ + transform_.scale_;
     appCollider_->SetPosition(transform_.translate_);

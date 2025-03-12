@@ -1,5 +1,12 @@
 #include "Wind.h"
 
+Wind::~Wind()
+{
+	// 当たり判定解放
+	appCollisionManager_->DeleteCollider(appCollider_.get());
+	appCollider_.reset();
+}
+
 void Wind::Initialize(const std::string& filePath, const Vector3& position, const Vector3& direction)
 {
 	object3d_ = std::make_unique<Object3d>();
@@ -10,6 +17,18 @@ void Wind::Initialize(const std::string& filePath, const Vector3& position, cons
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
 	direction_ = direction;
 	startPosition_ = position;
+	//当たり判定
+	appCollisionManager_ = AppCollisionManager::GetInstance();
+	objectName_ = "Wind";
+	appCollider_ = std::make_unique<AppCollider>();
+	appCollider_->SetOwner(this);
+	appCollider_->SetColliderID(objectName_);
+	appCollider_->SetShapeData(&aabb_);
+	appCollider_->SetShape(AppShape::AppAABB);
+	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_->SetOnCollisionTrigger(std::bind(&Wind::OnCollisionTrigger, this, std::placeholders::_1));
+	appCollider_->SetOnCollision(std::bind(&Wind::OnCollision, this, std::placeholders::_1));
+	appCollisionManager_->RegisterCollider(appCollider_.get());
 }
 
 void Wind::Update()
@@ -26,10 +45,29 @@ void Wind::Update()
 
 	// 行列の更新
 	transform_.UpdateMatrix();
+
+	// 当たり判定
+	aabb_.min = transform_.translate_ - transform_.scale_;
+	aabb_.max = transform_.translate_ + transform_.scale_;
+	appCollider_->SetPosition(transform_.translate_);
 }
 
-void Wind::Draw(const BaseCamera& camera)
+void Wind::Draw(BaseCamera camera)
 {
 	if (!isAlive_) return;
 	object3d_->Draw(transform_, camera);
+}
+
+void Wind::OnCollision(const AppCollider* other)
+{
+
+}
+
+void Wind::OnCollisionTrigger(const AppCollider* other)
+{
+	if (other->GetColliderID() == "Player")
+	{
+		//NOTE：今は当たり判定確認用に当たったら消えるようにしている
+		isAlive_ = false;
+	}
 }
