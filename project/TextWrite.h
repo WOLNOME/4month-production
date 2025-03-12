@@ -1,5 +1,6 @@
 #pragma once
 #include "d2d1_3.h"
+#include "dwrite_3.h"
 #include <Vector2.h>
 #include <Vector4.h>
 #include <format>
@@ -17,6 +18,12 @@ enum class Font {
 	UDDegitalNP_B,
 	UDDegitalNP_R,
 	OnionScript,
+};
+//フォントスタイル
+enum class FontStyle {
+	Normal,		//通常
+	Italic,		//斜体(フォントファイルベース)
+	Oblique,	//斜体(通常フォントをプログラムで斜体にする)
 };
 
 class TextWriteManager;
@@ -45,8 +52,14 @@ public:
 	void SetWidth(float width) { width_ = width; }
 	void SetHeight(float height) { height_ = height; }
 	void SetFont(const Font& font);
+	void SetFontStyle(const FontStyle& fontStyle);
 	void SetSize(float size);
 	void SetColor(const Vector4& color);
+	void SetEdgeParam(const Vector4& color, float strokeWidth, float slideRate, bool isDisplay);
+	void SetEdgeColor(const Vector4& color);
+	void SetEdgeStrokeWidth(float width) { edgeStrokeWidth_ = width; }
+	void SetEdgeSlideRate(float slideRate) { edgeSlideRate_ = slideRate; }
+	void SetIsEdgeDisplay(bool isDisplay) { isEdgeDisplay_ = isDisplay; }
 	//ゲッター
 	const std::string& GetName() { return name_; }
 	const std::wstring& GetText() { return text_; }
@@ -54,8 +67,15 @@ public:
 	float GetWidth() { return width_; }
 	float GetHeight() { return height_; }
 	const std::wstring& GetFontName() { return fontName_; }
+	const DWRITE_FONT_STYLE& GetFontStyle() { return fontStyle_; }
+	const std::string& GetFontFaceKey() { return fontFaceKey_; }
 	float GetSize() { return size_; }
 	const Vector4& GetColor() { return color_; }
+	const std::string& GetEdgeName() { return edgeName_; }
+	const Vector4& GetEdgeColor() { return edgeColor_; }
+	float GetEdgeStrokeWidth() { return edgeStrokeWidth_; }
+	float GetEdgeSlideRate() { return edgeSlideRate_; }
+	bool GetIsEdgeDisplay() { return isEdgeDisplay_; }
 
 private:
 	//フォントを入れたらフォント名を出す関数
@@ -65,9 +85,12 @@ private:
 
 
 private:
+	///============================
+	/// テキスト
+	///============================
+
 	//識別名
 	std::string name_;
-
 	//テキスト
 	std::wstring text_;
 	//テキストの座標
@@ -80,8 +103,27 @@ private:
 	Font font_;
 	//フォント名(正式)
 	std::wstring fontName_;
+	//フォントのスタイル
+	DWRITE_FONT_STYLE fontStyle_;
+	//フォントフェイスのキー
+	std::string fontFaceKey_;
 	//テキストのサイズ
 	float size_;
 	//色
 	Vector4 color_;
+
+	///============================
+	/// アウトライン
+	///============================
+
+	//識別名
+	std::string edgeName_;
+	//色
+	Vector4 edgeColor_;
+	//幅
+	float edgeStrokeWidth_;
+	//スライド量
+	float edgeSlideRate_;
+	//アウトライン表示フラグ
+	bool isEdgeDisplay_;
 };

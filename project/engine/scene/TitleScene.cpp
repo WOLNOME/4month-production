@@ -23,6 +23,7 @@ void TitleScene::Initialize() {
 	text2_ = std::make_unique<TextWrite>();
 	text2_->Initialize("text2");
 	text2_->SetParam({ 0.0f,100.0f }, Font::UDDegitalNK_R, 64.0f, { 1.0f,1.0f,0.0f,1.0f });
+	text2_->SetEdgeParam({ 0.0f,0.0f,0.0f,1.0f }, 10.0f, 0.0f, true);
 
 
 }

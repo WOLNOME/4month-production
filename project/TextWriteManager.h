@@ -38,6 +38,9 @@ public:
 	//個別クラスの登録を解除
 	void CancelRegistration(const std::string& key);
 
+	//フォントキー作成用関数
+	std::string GenerateFontKey(const std::wstring& fontName, DWRITE_FONT_STYLE style);
+
 private:
 	///=======================
 	/// 初期化時処理
@@ -56,7 +59,6 @@ public:
 
 	void EditSolidColorBrash(const std::string& key, const Vector4& color) noexcept;
 	void EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
-
 	///=======================
 	/// 描画処理
 	///=======================
@@ -64,6 +66,10 @@ public:
 	void BeginDrawWithD2D()const noexcept;
 	void WriteText(const std::string& key);
 	void EndDrawWithD2D() const noexcept;
+
+private:
+	//アウトライン描画
+	void DrawOutline(const std::string& key);
 
 private:
 	//省略変数
@@ -81,9 +87,13 @@ private:
 
 	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
 	std::vector<ComPtr<ID2D1Bitmap1>> d2dRenderTargets;
+	//各フォントで保持しておく項目
+	std::unordered_map<std::string,ComPtr<IDWriteFontFace3>> fontFaceMap;
 
+	//各テキストで保持しておく項目(作成及び編集にデバイス等の情報が必要なため、Managerで保持)
 	std::unordered_map<std::string, ComPtr<ID2D1SolidColorBrush>> solidColorBrushMap;
 	std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> textFormatMap;
+	std::unordered_map<std::string, std::pair<ComPtr<ID2D1PathGeometry>, ComPtr<ID2D1GeometrySink>>> pathGeometryMap;
 
 	//テキストライトコンテナ
 	std::unordered_map<std::string, TextWrite*> textWriteMap;

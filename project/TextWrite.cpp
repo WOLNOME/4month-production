@@ -15,10 +15,19 @@ void TextWrite::Initialize(const std::string& name) {
 	text_ = L"";
 	font_ = Font::Meiryo;
 	fontName_ = ReturnFontName(font_);
-	color_ = D2D1::ColorF::White;
+	fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
+	fontFaceKey_ = TextWriteManager::GetInstance()->GenerateFontKey(fontName_, fontStyle_);
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
 	position_ = { 0.0f,0.0f };
 	width_ = 100.0f;
 	height_ = 100.0f;
+	size_ = 32.0f;
+
+	edgeName_ = name_ + "_Edge";
+	edgeColor_ = { 0.0f,0.0f,0.0f,1.0f };
+	edgeStrokeWidth_ = 10.0f;
+	edgeSlideRate_ = 0.0f;
+	isEdgeDisplay_ = false;
 
 	//マネージャーに登録する
 	TextWriteManager::GetInstance()->Registration(this);
@@ -28,9 +37,11 @@ void TextWrite::DebugWithImGui() {
 #ifdef _DEBUG
 	ImGui::Begin(("TextDebugger : " + name_).c_str());
 	//テキストの座標
-	ImGui::DragFloat2("position", &position_.x, 1.0f);
-	SetPosition(position_);
+	Vector2 position = position_;
+	ImGui::DragFloat2("position", &position.x, 1.0f);
+	SetPosition(position);
 	//フォント
+	Font currentFont = font_;
 	const char* fontNames[] = {
 		"Meiryo",
 		"YuGothic",
@@ -43,10 +54,11 @@ void TextWrite::DebugWithImGui() {
 		"UDDegitalNP_R",
 		"OnionScript"
 	};
-	int fontIndex = static_cast<int>(font_);
+	int fontIndex = static_cast<int>(currentFont);
 	if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
 		//フォントを変更
-		SetFont(font_);
+		currentFont = static_cast<Font>(fontIndex);
+		SetFont(currentFont);
 	}
 	//テキストのサイズ
 	ImGui::DragFloat("size", &size_, 0.1f, 10.0f, 80.0f);
@@ -61,19 +73,13 @@ void TextWrite::DebugWithImGui() {
 }
 
 void TextWrite::SetParam(const Vector2& position, const Font& font, float size, const Vector4& color) {
-	position_ = position;
-	font_ = font;
-	fontName_ = ReturnFontName(font_);
-	size_ = size;
-	color_ = color;
-
-	//ポジションから幅と高さを計算
+	SetPosition(position);
+	SetFont(font);
+	SetSize(size);
+	SetColor(color);
+	//ポジションから幅と高さを計算(初期化時限定)
 	width_ = WinApp::GetInstance()->kClientWidth - position_.x;
 	height_ = WinApp::GetInstance()->kClientHeight - position_.y;
-
-	//マネージャーに値をセット
-	TextWriteManager::GetInstance()->EditSolidColorBrash(name_, color_);
-	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
 }
 
 void TextWrite::SetFont(const Font& font) {
@@ -81,6 +87,29 @@ void TextWrite::SetFont(const Font& font) {
 	font_ = font;
 	//フォント名をセット
 	fontName_ = ReturnFontName(font_);
+	//フォントフェイスキーの更新
+	fontFaceKey_ = TextWriteManager::GetInstance()->GenerateFontKey(fontName_, fontStyle_);
+	//フォント情報をマネージャーにセット
+	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
+}
+
+void TextWrite::SetFontStyle(const FontStyle& fontStyle) {
+	switch (fontStyle) {
+	case FontStyle::Normal:
+		fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
+		break;
+	case FontStyle::Italic:
+		fontStyle_ = DWRITE_FONT_STYLE_ITALIC;
+		break;
+	case FontStyle::Oblique:
+		fontStyle_ = DWRITE_FONT_STYLE_OBLIQUE;
+		break;
+	default:
+		fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
+		break;
+	}
+	//フォントフェイスキーの更新
+	fontFaceKey_ = TextWriteManager::GetInstance()->GenerateFontKey(fontName_, fontStyle_);
 	//フォント情報をマネージャーにセット
 	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
 }
@@ -99,17 +128,31 @@ void TextWrite::SetColor(const Vector4& color) {
 	TextWriteManager::GetInstance()->EditSolidColorBrash(name_, color_);
 }
 
+void TextWrite::SetEdgeParam(const Vector4& color, float strokeWidth, float slideRate, bool isDisplay) {
+	SetEdgeColor(color);
+	SetEdgeStrokeWidth(strokeWidth);
+	SetEdgeSlideRate(slideRate);
+	SetIsEdgeDisplay(isDisplay);
+}
+
+void TextWrite::SetEdgeColor(const Vector4& color) {
+	//色をセット
+	edgeColor_ = color;
+	//色をマネージャーにセット
+	TextWriteManager::GetInstance()->EditSolidColorBrash(edgeName_, edgeColor_);
+}
+
 const std::wstring& TextWrite::ReturnFontName(const Font& font) {
-	static const std::wstring meiryo = L"メイリオ";
-	static const std::wstring yugothic = L"游ゴシック";
-	static const std::wstring yumincho = L"游明朝";
-	static const std::wstring udDegitalN_B = L"UD デジタル 教科書体 N-B";
-	static const std::wstring udDegitalN_R = L"UD デジタル 教科書体 N-R";
-	static const std::wstring udDegitalNK_B = L"UD デジタル 教科書体 NK-B";
-	static const std::wstring udDegitalNK_R = L"UD デジタル 教科書体 NK-R";
-	static const std::wstring udDegitalNP_B = L"UD デジタル 教科書体 NP-B";
-	static const std::wstring udDegitalNP_R = L"UD デジタル 教科書体 NP-R";
-	static const std::wstring onionScript = L"玉ねぎ楷書激無料版v7改";
+	static const std::wstring meiryo = L"Meiryo";
+	static const std::wstring yugothic = L"Yu Gothic";
+	static const std::wstring yumincho = L"Yu Mincho";
+	static const std::wstring udDegitalN_B = L"UD Digi Kyokasho N-B";
+	static const std::wstring udDegitalN_R = L"UD Digi Kyokasho N-R";
+	static const std::wstring udDegitalNK_B = L"UD Digi Kyokasho NK-B";
+	static const std::wstring udDegitalNK_R = L"UD Digi Kyokasho NK-R";
+	static const std::wstring udDegitalNP_B = L"UD Digi Kyokasho NP-B";
+	static const std::wstring udDegitalNP_R = L"UD Digi Kyokasho NP-R";
+	static const std::wstring onionScript = L"Tamanegi Kaisho Geki FreeVer 7";
 
 	static const std::wstring empty = L"";
 

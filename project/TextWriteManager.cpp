@@ -42,11 +42,6 @@ void TextWriteManager::Registration(TextWrite* piece) {
 
 	//コンテナに登録
 	textWriteMap[key] = piece;
-
-	//ブラシを登録
-	EditSolidColorBrash(key, textWriteMap[key]->GetColor());
-	//フォントを登録
-	EditTextFormat(key, textWriteMap[key]->GetFontName(), textWriteMap[key]->GetSize());
 }
 
 void TextWriteManager::CancelRegistration(const std::string& key) {
@@ -81,6 +76,16 @@ void TextWriteManager::CancelRegistration(const std::string& key) {
 		return;
 	}
 
+}
+
+std::string TextWriteManager::GenerateFontKey(const std::wstring& fontName, DWRITE_FONT_STYLE style) {
+	std::string key(fontName.begin(), fontName.end()); // wstring → string 変換
+	switch (style) {
+	case DWRITE_FONT_STYLE_NORMAL:  key += "_Normal"; break;
+	case DWRITE_FONT_STYLE_OBLIQUE: key += "_Oblique"; break;
+	case DWRITE_FONT_STYLE_ITALIC:  key += "_Italic"; break;
+	}
+	return key;
 }
 
 void TextWriteManager::CreateIDWriteFactory() {
@@ -175,7 +180,7 @@ void TextWriteManager::CreateFontFile() {
 	ComPtr<IDWriteFontSetBuilder2> dwriteFontSetBuilder = nullptr;
 	hr = directWriteFactory->CreateFontSetBuilder(&dwriteFontSetBuilder);
 	assert(SUCCEEDED(hr));
-
+	// フォントファイルとフォントフェイスを作る
 	std::vector<ComPtr<IDWriteFontFile>> fontFiles;
 	std::wstring fontDirectory = L"Resources/fonts"; // フォントフォルダのパス
 
@@ -185,10 +190,52 @@ void TextWriteManager::CreateFontFile() {
 			// IDWriteFontFile の生成
 			ComPtr<IDWriteFontFile> dwriteFontFile;
 			hr = directWriteFactory->CreateFontFileReference(entry.path().c_str(), nullptr, &dwriteFontFile);
-			if (SUCCEEDED(hr)) {
-				fontFiles.push_back(dwriteFontFile); // 一時的な vector に保存
-				hr = dwriteFontSetBuilder->AddFontFile(dwriteFontFile.Get()); // フォントセットビルダーに追加
-				assert(SUCCEEDED(hr));
+			if (FAILED(hr)) continue;
+			// vectorに保存
+			fontFiles.push_back(dwriteFontFile);
+			// フォントセットビルダーに追加
+			hr = dwriteFontSetBuilder->AddFontFile(dwriteFontFile.Get());
+			assert(SUCCEEDED(hr));
+
+			//フォントファイルの種類を取得
+			BOOL isSupported;
+			DWRITE_FONT_FILE_TYPE fileType;
+			DWRITE_FONT_FACE_TYPE faceType;
+			UINT32 numFaces;
+			hr = dwriteFontFile->Analyze(&isSupported, &fileType, &faceType, &numFaces);
+			if (FAILED(hr) || !isSupported) continue;
+
+			// IDWriteFontFace の作成 (ttcの場合はフォントごとに作る)
+			for (UINT32 i = 0; i < numFaces; i++) {
+				//IDWriteFontReferenceの作成
+				ComPtr<IDWriteFontFaceReference> dwriteFontFaceRef;
+				hr = directWriteFactory->CreateFontFaceReference(
+					dwriteFontFile.Get(), i, DWRITE_FONT_SIMULATIONS_NONE, &dwriteFontFaceRef
+				);
+				if (FAILED(hr)) continue;
+				//IDWriteFontFaceの作成
+				ComPtr<IDWriteFontFace3> dwriteFontFace;
+				hr = dwriteFontFaceRef->CreateFontFace(dwriteFontFace.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) continue;
+				//フォントファミリー名を取得
+				ComPtr<IDWriteLocalizedStrings> fontNames;
+				hr = dwriteFontFace->GetFamilyNames(&fontNames);
+				if (FAILED(hr)) continue;
+				// 最初のフォント名を取得
+				UINT32 length = 0;
+				hr = fontNames->GetStringLength(0, &length);
+				if (FAILED(hr)) continue;
+				std::vector<wchar_t> nameBuffer(length + 1);
+				hr = fontNames->GetString(0, nameBuffer.data(), length + 1);
+				if (FAILED(hr)) continue;
+				std::wstring fontName = nameBuffer.data();
+
+				// フォントのスタイルを取得
+				DWRITE_FONT_STYLE fontStyle = dwriteFontFace->GetStyle();
+				std::string fontKey = GenerateFontKey(fontName, fontStyle);
+
+				// unordered_map に格納
+				fontFaceMap[fontKey] = dwriteFontFace;
 			}
 		}
 	}
@@ -204,20 +251,38 @@ void TextWriteManager::CreateFontFile() {
 }
 
 void TextWriteManager::EditSolidColorBrash(const std::string& key, const Vector4& color) noexcept {
+	HRESULT hr;
 	//色と透明度を分離
 	D2D1::ColorF rgb(color.x, color.y, color.z);
 	FLOAT alpha = static_cast<FLOAT>(color.w);
 	//ブラシを作って登録(すでに作っていたら編集)
 	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
-	d2dDeviceContext->CreateSolidColorBrush(rgb, &brush);
+	hr = d2dDeviceContext->CreateSolidColorBrush(rgb, &brush);
+	assert(SUCCEEDED(hr));
 	brush->SetOpacity(alpha);
 	solidColorBrushMap[key] = brush;
 }
 
 void TextWriteManager::EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept {
+	HRESULT hr;
+	//該当キーのテキストライトマップが存在するか確認
+	if (!textWriteMap[key]) {
+		assert(0 && "入力されたキーのTextWriteMapがありませんでした。初期化してください。");
+	}
 	//テキストフォーマットを作って登録(すでに作ってあったら編集)
 	ComPtr<IDWriteTextFormat> textFormat = nullptr;
-	directWriteFactory->CreateTextFormat(fontName.c_str(), dwriteFontCollection.Get(), DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"ja-jp", &textFormat);
+	hr = directWriteFactory->CreateTextFormat(
+		fontName.c_str(),
+		dwriteFontCollection.Get(),
+		DWRITE_FONT_WEIGHT_NORMAL,
+		textWriteMap[key]->GetFontStyle(),
+		DWRITE_FONT_STRETCH_NORMAL,
+		fontSize,
+		L"ja-jp",
+		&textFormat
+	);
+	assert(SUCCEEDED(hr));
+
 	textFormatMap[key] = textFormat;
 }
 
@@ -234,8 +299,13 @@ void TextWriteManager::BeginDrawWithD2D() const noexcept {
 
 void TextWriteManager::WriteText(const std::string& key) {
 	const auto textFormat = textFormatMap.at(key);
-	const auto solidColorBrush = solidColorBrushMap.at(key);
-	const auto textWrite = textWriteMap.at(key);
+	const auto solidColorBrush = solidColorBrushMap[key];
+	const auto textWrite = textWriteMap[key];
+
+	//アウトライン描画
+	if (textWriteMap[key]->GetIsEdgeDisplay()) {
+		DrawOutline(key);
+	}
 
 	//描画範囲
 	D2D1_RECT_F rect;
@@ -246,7 +316,13 @@ void TextWriteManager::WriteText(const std::string& key) {
 		textWrite->GetPosition().y + textWrite->GetHeight()
 	};
 	//テキスト描画処理
-	d2dDeviceContext->DrawTextW(textWrite->GetText().c_str(), static_cast<UINT32>(textWrite->GetText().length()), textFormat.Get(), &rect, solidColorBrush.Get());
+	d2dDeviceContext->DrawTextW(
+		textWrite->GetText().c_str(),
+		static_cast<UINT32>(textWrite->GetText().length()),
+		textFormat.Get(),
+		&rect,
+		solidColorBrush.Get()
+	);
 
 }
 
@@ -258,4 +334,54 @@ void TextWriteManager::EndDrawWithD2D() const noexcept {
 	d3d11On12Device->ReleaseWrappedResources(wrappedBackBuffer.GetAddressOf(), 1);
 	//描画内容の確定(スワップ可能状態に移行)
 	d3d11On12DeviceContext->Flush();
+}
+
+void TextWriteManager::DrawOutline(const std::string& key) {
+	//グリフインデックス列を取得する
+	std::vector<UINT> codePoints;
+	auto glyphIndices = new UINT16[textWriteMap[key]->GetText().length()];
+	ZeroMemory(glyphIndices, sizeof(UINT16) * textWriteMap[key]->GetText().length());
+	for (auto character : textWriteMap[key]->GetText()) {
+		codePoints.emplace_back(character);
+	}
+	const auto fontFace = fontFaceMap[textWriteMap[key]->GetFontFaceKey()];
+	fontFace->GetGlyphIndicesW(codePoints.data(), static_cast<UINT32>(codePoints.size()), glyphIndices);
+	ComPtr<ID2D1PathGeometry> pathGeometry = nullptr;
+	if (FAILED(d2dFactory->CreatePathGeometry(pathGeometry.ReleaseAndGetAddressOf()))) [[unlikely]] {
+		return;
+	}
+	ComPtr<ID2D1GeometrySink> geometrySink = nullptr;
+	if (FAILED(pathGeometry->Open(geometrySink.ReleaseAndGetAddressOf()))) [[unlikely]] {
+		return;
+	}
+	//アウトライン情報を取得する
+	if (FAILED(fontFace->GetGlyphRunOutline((textWriteMap[key]->GetSize() / 72.0f) * 96.0f, glyphIndices, nullptr, nullptr, static_cast<UINT32>(textWriteMap[key]->GetText().length()), FALSE, FALSE, geometrySink.Get()))) [[unlikely]] {
+		return;
+	}
+	if (FAILED(geometrySink->Close())) [[unlikely]] {
+		return;
+	}
+	codePoints.clear();
+	delete[] glyphIndices;
+	std::pair<ComPtr<ID2D1PathGeometry>, ComPtr<ID2D1GeometrySink>> geometryInfo;
+	geometryInfo = { pathGeometry, geometrySink };
+
+	const auto textPathGeometry = geometryInfo.first;
+	const auto solidColorBrush = solidColorBrushMap[textWriteMap[key]->GetName()];
+	const auto solidColorBrushOfEdge = solidColorBrushMap[textWriteMap[key]->GetEdgeName()];
+	Vector2 position = textWriteMap[key]->GetPosition();
+	float slideRate = textWriteMap[key]->GetEdgeSlideRate();
+	float strokeWidth = textWriteMap[key]->GetEdgeStrokeWidth();
+
+	if (slideRate > 0.0f) {
+		D2D1_RECT_F rect{};
+		textPathGeometry->GetBounds(nullptr, &rect);
+		position.x -= (rect.right - rect.left) * slideRate;
+	}
+
+	//描画
+	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(position.x, position.y));
+	d2dDeviceContext->DrawGeometry(textPathGeometry.Get(), solidColorBrushOfEdge.Get(), strokeWidth);
+	d2dDeviceContext->FillGeometry(textPathGeometry.Get(), solidColorBrush.Get());
+
 }
