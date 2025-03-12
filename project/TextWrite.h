@@ -1,6 +1,7 @@
 #pragma once
 #include "d2d1_3.h"
 #include <Vector2.h>
+#include <Vector4.h>
 #include <format>
 #include <string>
 
@@ -38,14 +39,14 @@ public:
 
 
 	//セッター
-	void SetParam(const Vector2& position, const Font& font, float size, const D2D1::ColorF& color);
+	void SetParam(const Vector2& position, const Font& font, float size, const Vector4& color);
 
 	void SetPosition(const Vector2& position) { position_ = position; }
 	void SetWidth(float width) { width_ = width; }
 	void SetHeight(float height) { height_ = height; }
 	void SetFont(const Font& font);
 	void SetSize(float size);
-	void SetColor(const D2D1::ColorF& color);
+	void SetColor(const Vector4& color);
 	//ゲッター
 	const std::string& GetName() { return name_; }
 	const std::wstring& GetText() { return text_; }
@@ -54,7 +55,7 @@ public:
 	float GetHeight() { return height_; }
 	const std::wstring& GetFontName() { return fontName_; }
 	float GetSize() { return size_; }
-	const D2D1::ColorF& GetColor() { return color_; }
+	const Vector4& GetColor() { return color_; }
 
 private:
 	//フォントを入れたらフォント名を出す関数
@@ -82,5 +83,5 @@ private:
 	//テキストのサイズ
 	float size_;
 	//色
-	D2D1::ColorF color_ = D2D1::ColorF::White;
+	Vector4 color_;
 };

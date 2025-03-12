@@ -2,6 +2,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "MainRender.h"
+#include <Vector4.h>
 #include <d2d1_3.h>
 #include <d3d11on12.h>
 #include <dwrite_3.h>
@@ -53,7 +54,7 @@ public:
 	/// 描画前準備
 	///=======================
 
-	void EditSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept;
+	void EditSolidColorBrash(const std::string& key, const Vector4& color) noexcept;
 	void EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
 
 	///=======================

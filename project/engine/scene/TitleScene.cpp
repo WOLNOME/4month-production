@@ -19,10 +19,10 @@ void TitleScene::Initialize() {
 	//テキスト
 	text1_ = std::make_unique<TextWrite>();
 	text1_->Initialize("text1");
-	text1_->SetParam({ 0.0f,0.0f }, Font::Meiryo, 32.0f, D2D1::ColorF::Red);
+	text1_->SetParam({ 0.0f,0.0f }, Font::Meiryo, 32.0f, { 1.0f,0.0f,0.0f,1.0f });
 	text2_ = std::make_unique<TextWrite>();
 	text2_->Initialize("text2");
-	text2_->SetParam({ 0.0f,100.0f }, Font::UDDegitalNK_R, 64.0f, D2D1::ColorF::Yellow);
+	text2_->SetParam({ 0.0f,100.0f }, Font::UDDegitalNK_R, 64.0f, { 1.0f,1.0f,0.0f,1.0f });
 
 
 }

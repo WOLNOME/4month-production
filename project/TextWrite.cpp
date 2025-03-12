@@ -28,11 +28,9 @@ void TextWrite::DebugWithImGui() {
 #ifdef _DEBUG
 	ImGui::Begin(("TextDebugger : " + name_).c_str());
 	//テキストの座標
-	Vector2 position = position_;
-	ImGui::DragFloat2("position", &position.x, 1.0f);
-	SetPosition(position);
+	ImGui::DragFloat2("position", &position_.x, 1.0f);
+	SetPosition(position_);
 	//フォント
-	Font currentFont = font_;
 	const char* fontNames[] = {
 		"Meiryo",
 		"YuGothic",
@@ -45,23 +43,24 @@ void TextWrite::DebugWithImGui() {
 		"UDDegitalNP_R",
 		"OnionScript"
 	};
-	int fontIndex = static_cast<int>(currentFont);
+	int fontIndex = static_cast<int>(font_);
 	if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
 		//フォントを変更
-		currentFont = static_cast<Font>(fontIndex);
-		SetFont(currentFont);
+		SetFont(font_);
 	}
 	//テキストのサイズ
-	float size = size_;
-	ImGui::DragFloat("size", &size, 0.1f, 10.0f, 80.0f);
-	SetSize(size);
+	ImGui::DragFloat("size", &size_, 0.1f, 10.0f, 80.0f);
+	SetSize(size_);
+	//テキストのカラー
+	ImGui::ColorEdit4("color", &color_.x);
+	SetColor(color_);
 
 
 	ImGui::End();
 #endif // _DEBUG
 }
 
-void TextWrite::SetParam(const Vector2& position, const Font& font, float size, const D2D1::ColorF& color) {
+void TextWrite::SetParam(const Vector2& position, const Font& font, float size, const Vector4& color) {
 	position_ = position;
 	font_ = font;
 	fontName_ = ReturnFontName(font_);
@@ -93,7 +92,7 @@ void TextWrite::SetSize(float size) {
 	TextWriteManager::GetInstance()->EditTextFormat(name_, fontName_, size_);
 }
 
-void TextWrite::SetColor(const D2D1::ColorF& color) {
+void TextWrite::SetColor(const Vector4& color) {
 	//色をセット
 	color_ = color;
 	//色情報をマネージャーにセット

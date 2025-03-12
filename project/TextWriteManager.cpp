@@ -203,10 +203,14 @@ void TextWriteManager::CreateFontFile() {
 	assert(SUCCEEDED(hr));
 }
 
-void TextWriteManager::EditSolidColorBrash(const std::string& key, const D2D1::ColorF color) noexcept {
+void TextWriteManager::EditSolidColorBrash(const std::string& key, const Vector4& color) noexcept {
+	//色と透明度を分離
+	D2D1::ColorF rgb(color.x, color.y, color.z);
+	FLOAT alpha = static_cast<FLOAT>(color.w);
 	//ブラシを作って登録(すでに作っていたら編集)
 	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
-	d2dDeviceContext->CreateSolidColorBrush(color, &brush);
+	d2dDeviceContext->CreateSolidColorBrush(rgb, &brush);
+	brush->SetOpacity(alpha);
 	solidColorBrushMap[key] = brush;
 }
 
