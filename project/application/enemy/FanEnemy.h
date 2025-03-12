@@ -8,6 +8,7 @@ class EnemyManager;
 class FanEnemy : public BaseEnemy, public GameObject
 {
 public:
+	~FanEnemy();
 	void EnemyInitialize(const std::string& filePath) override;
 	void EnemyUpdate() override;
 	void EnemyDraw(const BaseCamera& camera) override;
@@ -22,6 +23,7 @@ public:
 	void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	Vector3 GetPosition() const { return transform_.translate_; }
 	void SetEnemyManager(EnemyManager* enemyManager) { enemyManager_ = enemyManager; }
+	bool IsAlive() const { return isAlive_; }
 
 private:
 	void Move();
@@ -44,5 +46,6 @@ private:
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_;
+	bool isAlive_ = true;
 };
 

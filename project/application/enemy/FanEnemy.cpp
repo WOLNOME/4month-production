@@ -1,6 +1,13 @@
 #include "FanEnemy.h"
 #include "EnemyManager.h"
 
+FanEnemy::~FanEnemy()
+{
+	// 当たり判定関係
+	appCollisionManager_->DeleteCollider(appCollider_.get());
+	appCollider_.reset();
+}
+
 void FanEnemy::EnemyInitialize(const std::string& filePath)
 {
 	//オブジェクトの初期化
@@ -63,6 +70,10 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 
 void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 {
+	if (other->GetColliderID() == "Player")
+	{
+		isAlive_ = false;
+	}
 }
 
 void FanEnemy::Move()

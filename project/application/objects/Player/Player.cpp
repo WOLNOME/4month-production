@@ -238,7 +238,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
 		moveVel_ = windDirection;
-		moveVel_ *= 7.0f;
+		moveVel_ *= 4.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
 		knockBackTime_ = 34.0f;

@@ -70,6 +70,13 @@ void EnemyManager::Update()
 			return !enemy->IsAlive();
 		}), 
 		tackleEnemies_.end());
+	//死んでいるエネミーをリストから削除
+	fanEnemies_.erase(std::remove_if(fanEnemies_.begin(), fanEnemies_.end(),
+		[](const std::unique_ptr<FanEnemy>& enemy)
+		{
+			return !enemy->IsAlive();
+		}),
+		fanEnemies_.end());
 	//死んでいる風をリストから削除
 	winds_.erase(std::remove_if(winds_.begin(), winds_.end(),
 		[](const std::unique_ptr<Wind>& wind)

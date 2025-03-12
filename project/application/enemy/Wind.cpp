@@ -65,9 +65,5 @@ void Wind::OnCollision(const AppCollider* other)
 
 void Wind::OnCollisionTrigger(const AppCollider* other)
 {
-	if (other->GetColliderID() == "Player")
-	{
-		//NOTE：今は当たり判定確認用に当たったら消えるようにしている
-		isAlive_ = false;
-	}
+
 }
