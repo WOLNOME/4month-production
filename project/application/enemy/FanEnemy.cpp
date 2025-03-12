@@ -127,8 +127,8 @@ void FanEnemy::ChageRotationSpeed()
 	if (rotateSpeedChangeTimer_ >= rotateSpeedChangeInterval_)
 	{
 		// 回転速度をランダムな速度で変更
-		std::uniform_real_distribution<float> dis(-0.03f, 0.03f);
-		std::uniform_real_distribution<float> disTime(1.0f, 3.0f);
+		std::uniform_real_distribution<float> dis(-0.02f, 0.02f);
+		std::uniform_real_distribution<float> disTime(3.0f, 6.0f);
 		rotateSpeed_ = dis(randomEngine_);
 		rotateSpeedChangeInterval_ = disTime(randomEngine_);
 		rotateSpeedChangeTimer_ = 0.0f;
