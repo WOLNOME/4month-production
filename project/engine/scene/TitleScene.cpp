@@ -5,8 +5,7 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwrite.lib")
 
-void TitleScene::Initialize()
-{
+void TitleScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -16,7 +15,7 @@ void TitleScene::Initialize()
 	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("title.png");
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
-	
+
 	//テキスト
 	text1_ = std::make_unique<TextWrite>();
 	text1_->Initialize("text1");
@@ -28,12 +27,10 @@ void TitleScene::Initialize()
 
 }
 
-void TitleScene::Finalize()
-{
+void TitleScene::Finalize() {
 }
 
-void TitleScene::Update()
-{
+void TitleScene::Update() {
 	if (input_->TriggerKey(DIK_TAB)) {
 		sceneManager_->SetNextScene("GAMEPLAY");
 	}
@@ -52,8 +49,7 @@ void TitleScene::Update()
 	text2_->DebugWithImGui();
 }
 
-void TitleScene::Draw()
-{
+void TitleScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -61,7 +57,7 @@ void TitleScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	
+
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
@@ -87,7 +83,7 @@ void TitleScene::Draw()
 	///↓↓↓↓線描画開始↓↓↓↓
 	///------------------------------///
 
-	
+
 
 	///------------------------------///
 	///↑↑↑↑線描画終了↑↑↑↑
@@ -105,19 +101,19 @@ void TitleScene::Draw()
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
-	
+
 }
 
 void TitleScene::TextDraw() {
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
-	
+
 	float seconds = timer_ / 60.0f;
 	text1_->WriteText(L"フォント確認　現在の時間 : {:.1f}秒", seconds);
 	text2_->WriteText(L"フォント確認　テキスト出力実験中");
-	
-	
+
+
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///

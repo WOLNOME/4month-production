@@ -1,8 +1,7 @@
 #include "DevelopScene.h"
 #include <numbers>
 
-void DevelopScene::Initialize()
-{
+void DevelopScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -51,7 +50,7 @@ void DevelopScene::Initialize()
 	sprite2Position = { 100.0f,100.0f };
 	sprite2_->SetPosition(sprite2Position);
 	sprite2_->SetSize({ 300.0f,300.0f });
-	
+
 	wtAxis_.Initialize();
 	axis_ = std::make_unique<Object3d>();
 	axis_->InitializeModel("teapot");
@@ -102,17 +101,18 @@ void DevelopScene::Initialize()
 	audio_->Initialize("Alarm01.wav");
 }
 
-void DevelopScene::Finalize()
-{
+void DevelopScene::Finalize() {
 }
 
-void DevelopScene::Update()
-{
+void DevelopScene::Update() {
+	//シーン共通の更新
+	BaseScene::Update();
+
 	//カメラの更新
 	camera->Update();
 
 	//シーンライトの更新処理
-	sceneLight_->Update(camera.get());
+	sceneLight_->Update();
 
 
 	//モデルの更新
@@ -246,8 +246,7 @@ void DevelopScene::Update()
 #endif // _DEBUG
 }
 
-void DevelopScene::Draw()
-{
+void DevelopScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 

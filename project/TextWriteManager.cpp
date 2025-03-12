@@ -179,9 +179,9 @@ void TextWriteManager::CreateFontFile() {
 	std::vector<ComPtr<IDWriteFontFile>> fontFiles;
 	std::wstring fontDirectory = L"Resources/fonts"; // フォントフォルダのパス
 
-	// フォントフォルダ内の .ttf ファイルを探索
+	// fontsフォルダ内の .ttf 及び .ttc ファイルを探索
 	for (const auto& entry : fs::directory_iterator(fontDirectory)) {
-		if (entry.is_regular_file() && entry.path().extension() == L".ttf") {
+		if (entry.is_regular_file() && (entry.path().extension() == L".ttf" || entry.path().extension() == L".ttc")) {
 			// IDWriteFontFile の生成
 			ComPtr<IDWriteFontFile> dwriteFontFile;
 			hr = directWriteFactory->CreateFontFileReference(entry.path().c_str(), nullptr, &dwriteFontFile);
