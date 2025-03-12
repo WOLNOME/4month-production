@@ -1,4 +1,6 @@
 #pragma once
+#include <random>
+
 #include "BaseEnemy.h"
 #include "../appCollider/AppCollisionManager.h"
 #include "application/objects/GameObject/GameObject.h"
@@ -29,17 +31,25 @@ private:
 	void Move();
 	void StartFan();
 	void FanUpdate();
+	void ChageRotationSpeed();
 
 private:
 	//速度ベクトル
 	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
 	//摩擦係数
 	const float friction_ = 2.0f;
+	//回転速度
 	float rotateSpeed_ = 0.02f;
+	//回転速度変更インターバル
+	float rotateSpeedChangeInterval_ = 3.0f;
+	//回転速度変更タイマー
+	float rotateSpeedChangeTimer_ = 0.0f;
 	//風を生成する間隔
 	float windSpawnInterval_ = 0.2f;
 	//風を生成するタイマー
 	float windSpawnTimer_ = 0.0f;
+	//ランダムエンジン
+	std::mt19937 randomEngine_;
 	//エネミーマネージャーのポインタ
 	EnemyManager* enemyManager_ = nullptr;
 	//当たり判定

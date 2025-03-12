@@ -1,4 +1,7 @@
 #include "FanEnemy.h"
+
+#include <chrono>
+
 #include "EnemyManager.h"
 
 FanEnemy::~FanEnemy()
@@ -20,6 +23,9 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 	transform_.translate_ = { 0.0f, 0.0f, 0.0f };
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
 
+	//ランダムエンジンの初期化（シードを現在時刻から取得）
+	randomEngine_.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
+
 	// 当たり判定関係
 	appCollisionManager_ = AppCollisionManager::GetInstance();
 	objectName_ = "FanEnemy";
@@ -39,12 +45,11 @@ void FanEnemy::EnemyUpdate()
 	// 移動
 	Move();
 
+	// 回転速度の変更
+	ChageRotationSpeed();
+
 	// 回転
-	transform_.rotate_.y += rotateSpeed_;
-	if (transform_.rotate_.y >= 3.14f)
-	{
-		transform_.rotate_.y = -3.14f;
-	}
+	transform_.rotate_.y = fmod(transform_.rotate_.y + rotateSpeed_, 2.0f * 3.14159265359f);
 
 	// 風の更新
 	FanUpdate();
@@ -112,5 +117,20 @@ void FanEnemy::FanUpdate()
 	{
 		StartFan();
 		windSpawnTimer_ = 0.0f;
+	}
+}
+
+void FanEnemy::ChageRotationSpeed()
+{
+	const float deltaTime = 1.0f / 60.0f;
+	rotateSpeedChangeTimer_ += deltaTime;
+	if (rotateSpeedChangeTimer_ >= rotateSpeedChangeInterval_)
+	{
+		// 回転速度をランダムな速度で変更
+		std::uniform_real_distribution<float> dis(-0.03f, 0.03f);
+		std::uniform_real_distribution<float> disTime(1.0f, 3.0f);
+		rotateSpeed_ = dis(randomEngine_);
+		rotateSpeedChangeInterval_ = disTime(randomEngine_);
+		rotateSpeedChangeTimer_ = 0.0f;
 	}
 }
