@@ -4,11 +4,11 @@
 #include "../GameObject/GameObject.h"
 #include "../../appCollider/AppCollider.h"
 
-class Obstacle : public GameObject
+class Bumper : public GameObject
 {
 public:
 
-	~Obstacle() override {};
+	~Bumper() override {};
 
 	void Initialize() override;
 	void Finalize() override;
@@ -26,4 +26,3 @@ private:
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
 };
-

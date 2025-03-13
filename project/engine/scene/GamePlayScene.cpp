@@ -56,7 +56,13 @@ void GamePlayScene::Initialize()
 	std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
 	obstacle = std::make_unique<Obstacle>();
 	obstacle->Initialize();
-	obstacle->SetPosition({ 0.0f, 1.0f, 3.0f });
+	obstacle->SetPosition({ 0.0f, 1.0f, 7.0f });
+
+	//跳ね返る障害物
+	std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+	bumper = std::make_unique<Bumper>();
+	bumper->Initialize();
+	bumper->SetPosition({ 7.0f, 1.0f, 7.0f });
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -118,6 +124,12 @@ void GamePlayScene::Update()
 		obstacle->Update();
 	}
 
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Update();
+	}
+
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
 	{
@@ -164,6 +176,12 @@ void GamePlayScene::Draw()
 	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
 	{
 		obstacle->Draw(*camera_.get());
+	}
+
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Draw(*camera_.get());
 	}
 
 	// プレイヤースポーン

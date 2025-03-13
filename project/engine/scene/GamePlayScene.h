@@ -19,6 +19,7 @@
 #include "../../application/appCollider/AppCollisionManager.h"
 #include "../../application/enemy/EnemyManager.h"
 #include "../../application/objects/Gimmick/Obstacle.h"
+#include "../../application/objects/Gimmick/Bumper.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -68,6 +69,9 @@ private://メンバ変数
 
 	//障害物
 	std::vector<std::unique_ptr<Obstacle>> obstacles_;
+
+	//跳ね返る障害物
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};

@@ -150,7 +150,20 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         transform_.translate_ += ComputePenetration(*_other->GetAABB());
     }
+    else if (_other->GetColliderID() == "Bumper")
+    {
+        Vector3 penetration = ComputePenetration(*_other->GetAABB());
+        transform_.translate_ += penetration;
+        penetration.Normalize();
+        // ノックバック
+        tackleVelocity_ = penetration;
+        tackleVelocity_ *= 20.0f;
+        tackleVelocity_.y = 0.0f;
+        // ノックバックタイマー
+        knockBackTime_ = 30.0f;
 
+        isAttack_ = false;
+    }
     if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
     {
         //// エネミーの位置を取得

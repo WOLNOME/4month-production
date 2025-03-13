@@ -1,18 +1,18 @@
-#include "Obstacle.h"
+#include "Bumper.h"
 
 #include "../../appCollider/AppCollisionManager.h"
 
-void Obstacle::Initialize()
+void Bumper::Initialize()
 {
 
 	worldTransform_.Initialize();
 	object_ = std::make_unique<Object3d>();
-	object_->InitializeModel("obstacle");
+	object_->InitializeModel("bumper");
 
 	// 当たり判定関係
 	appCollisionManager_ = AppCollisionManager::GetInstance();
 
-	objectName_ = "Obstacle";
+	objectName_ = "Bumper";
 	appCollider_ = std::make_unique<AppCollider>();
 	appCollider_->SetOwner(this);
 	appCollider_->SetColliderID(objectName_);
@@ -22,7 +22,7 @@ void Obstacle::Initialize()
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 }
 
-void Obstacle::Finalize()
+void Bumper::Finalize()
 {
 	// 各解放処理
 	if (appCollider_)
@@ -31,7 +31,7 @@ void Obstacle::Finalize()
 	}
 }
 
-void Obstacle::Update()
+void Bumper::Update()
 {
 	worldTransform_.translate_ = position_;
 
@@ -44,7 +44,7 @@ void Obstacle::Update()
 	appCollider_->SetPosition(worldTransform_.translate_);
 }
 
-void Obstacle::Draw(BaseCamera _camera)
+void Bumper::Draw(BaseCamera _camera)
 {
 	object_->Draw(worldTransform_, _camera);
 }

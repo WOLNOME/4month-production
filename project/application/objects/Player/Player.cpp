@@ -222,6 +222,20 @@ void Player::OnCollision(const AppCollider* _other)
 	{
 		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
 	}
+	else if (_other->GetColliderID() == "Bumper")
+	{
+		Vector3 penetration = ComputePenetration(*_other->GetAABB());
+		wtPlayer_.translate_ += penetration;
+		penetration.Normalize();
+		// ノックバック
+		moveVel_ = penetration;
+		moveVel_ *= 20.0f;
+		moveVel_.y = 0.0f;
+		// ノックバックタイマー
+		knockBackTime_ = 30.0f;
+
+		isAttack_ = false;
+	}
 
 	// どちらも攻撃していないとき
 	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
