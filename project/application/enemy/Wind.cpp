@@ -13,7 +13,7 @@ void Wind::Initialize(const std::string& filePath, const Vector3& position, cons
 	object3d_->InitializeModel(filePath);
 	transform_.Initialize();
 	transform_.translate_ = position;
-	transform_.scale_ = { 1.0f, 1.0f, 1.0f };
+	transform_.scale_ = { 0.5f, 0.5f, 0.5f };
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
 	direction_ = direction;
 	startPosition_ = position;

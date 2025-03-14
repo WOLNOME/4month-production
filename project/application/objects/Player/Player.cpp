@@ -291,15 +291,15 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 	}
 
 	// 風に当たったらノックバック
-	if (_other->GetColliderID() == "Wind")
+	if (_other->GetColliderID() == "Wind" && !isAttack_)
 	{
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
-		moveVel_ = windDirection;
-		moveVel_ *= 4.0f;
+		moveVel_ += windDirection * 2.0f;
+		//moveVel_ *= 2.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
-		knockBackTime_ = 34.0f;
+		knockBackTime_ = 25.0f;
 	}
 }

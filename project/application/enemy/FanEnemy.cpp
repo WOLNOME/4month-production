@@ -44,26 +44,18 @@ void FanEnemy::EnemyUpdate()
 {
 	// 移動
 	Move();
-
 	// 回転速度の変更
 	ChageRotationSpeed();
-
 	// 回転
 	transform_.rotate_.y = fmod(transform_.rotate_.y + rotateSpeed_, 2.0f * 3.14159265359f);
-
 	// 風の更新
 	FanUpdate();
-
 	// 場外処理
 	OutOfField();
-
 	//行列の更新
 	transform_.UpdateMatrix();
-
 	// 当たり判定関係
-	aabb_.min = transform_.translate_ - transform_.scale_;
-	aabb_.max = transform_.translate_ + transform_.scale_;
-	appCollider_->SetPosition(transform_.translate_);
+	UpdateCollider();
 }
 
 void FanEnemy::EnemyDraw(const BaseCamera& camera)
@@ -92,7 +84,7 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 
 		// ノックバック
 		velocity_ = runDirection;
-		velocity_ *= 7.0f;
+		velocity_ *= 20.0f;
 		velocity_.y = 0.0f;
 	}
 }
@@ -168,4 +160,12 @@ void FanEnemy::OutOfField()
 	}
 
 	isGround_ = false;
+}
+
+void FanEnemy::UpdateCollider()
+{
+	// 当たり判定
+	aabb_.min = transform_.translate_ - transform_.scale_;
+	aabb_.max = transform_.translate_ + transform_.scale_;
+	appCollider_->SetPosition(transform_.translate_);
 }
