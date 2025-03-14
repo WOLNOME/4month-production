@@ -104,8 +104,8 @@
     <ClCompile Include="application\enemy\FanEnemy.cpp" />
     <ClCompile Include="application\enemy\Wind.cpp" />
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
-    <ClCompile Include="TextWriteManager.cpp" />
-    <ClCompile Include="TextWrite.cpp" />
+    <ClCompile Include="engine\2d\TextWriteManager.cpp" />
+    <ClCompile Include="engine\2d\TextWrite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -215,8 +215,8 @@
     <ClInclude Include="application\enemy\FanEnemy.h" />
     <ClInclude Include="application\enemy\Wind.h" />
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
-    <ClInclude Include="TextWriteManager.h" />
-    <ClInclude Include="TextWrite.h" />
+    <ClInclude Include="engine\2d\TextWriteManager.h" />
+    <ClInclude Include="engine\2d\TextWrite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

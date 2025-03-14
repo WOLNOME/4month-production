@@ -171,8 +171,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
     <ClCompile Include="application\enemy\Wind.cpp" />
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
-    <ClCompile Include="TextWrite.cpp" />
-    <ClCompile Include="TextWriteManager.cpp" />
+    <ClCompile Include="engine\2d\TextWrite.cpp" />
+    <ClCompile Include="engine\2d\TextWriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -247,8 +247,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
     <ClInclude Include="application\enemy\Wind.h" />
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
-    <ClInclude Include="TextWrite.h" />
-    <ClInclude Include="TextWriteManager.h" />
+    <ClInclude Include="engine\2d\TextWrite.h" />
+    <ClInclude Include="engine\2d\TextWriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
