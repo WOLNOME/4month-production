@@ -28,7 +28,7 @@ void TitleScene::Finalize() {
 
 void TitleScene::Update() {
 	if (input_->TriggerKey(DIK_TAB)) {
-		sceneManager_->SetNextScene("CLEAR");
+		sceneManager_->SetNextScene("GAMEPLAY");
 	}
 
 	//カメラの更新
