@@ -137,7 +137,7 @@ void TextWrite::SetColor(const Vector4& color) {
 	TextWriteManager::GetInstance()->EditSolidColorBrash(name_, color_);
 }
 
-void TextWrite::SetEdgeParam(const Vector4& color, float strokeWidth, float slideRate, bool isDisplay) {
+void TextWrite::SetEdgeParam(const Vector4& color, float strokeWidth, const Vector2& slideRate, bool isDisplay) {
 	SetEdgeColor(color);
 	SetEdgeStrokeWidth(strokeWidth);
 	SetEdgeSlideRate(slideRate);

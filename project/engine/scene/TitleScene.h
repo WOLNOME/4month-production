@@ -34,5 +34,8 @@ private://メンバ変数
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
 	
+	//タイトル
+	std::unique_ptr<TextWrite> title_;
+
 };
 

@@ -31,10 +31,19 @@ class TextWriteManager;
 class TextWrite {
 public:
 	~TextWrite();
-	//初期化
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="name">インスタンスの名前(被るのはダメ！)</param>
 	void Initialize(const std::string& name);
-	//テキストを生成
+
 	template <typename... Args>
+	/// <summary>
+	/// テキスト生成
+	/// </summary>
+	/// <param name="text">出力する文字</param>
+	/// <param name="...args">{}に表示させる変数名</param>
 	void WriteText(const std::wstring& text, Args&&... args) {
 		//テキストを生成
 		text_ = std::vformat(text, std::make_wformat_args(args...));
@@ -45,7 +54,14 @@ public:
 	void DebugWithImGui();
 
 
-	//セッター
+public://セッター
+	/// <summary>
+	/// テキストのパラメーター設定(初期化時のみ)
+	/// </summary>
+	/// <param name="position">スクリーン座標</param>
+	/// <param name="font">フォント名　(例 : Font::Meiryo)</param>
+	/// <param name="size">サイズ　(平均は32.0fくらい)</param>
+	/// <param name="color">色　(Vector4型)</param>
 	void SetParam(const Vector2& position, const Font& font, float size, const Vector4& color);
 
 	void SetPosition(const Vector2& position) { position_ = position; }
@@ -55,12 +71,21 @@ public:
 	void SetFontStyle(const FontStyle& fontStyle);
 	void SetSize(float size);
 	void SetColor(const Vector4& color);
-	void SetEdgeParam(const Vector4& color, float strokeWidth, float slideRate, bool isDisplay);
+
+	/// <summary>
+	/// アウトラインのパラメーター設定
+	/// </summary>
+	/// <param name="color">色　(Vector4型)</param>
+	/// <param name="strokeWidth">アウトラインの太さ　(平均は5.0fくらい)</param>
+	/// <param name="slideRate">アウトラインのずらし量</param>
+	/// <param name="isDisplay">表示させるか</param>
+	void SetEdgeParam(const Vector4& color, float strokeWidth, const Vector2& slideRate, bool isDisplay);
 	void SetEdgeColor(const Vector4& color);
 	void SetEdgeStrokeWidth(float width) { edgeStrokeWidth_ = width; }
 	void SetEdgeSlideRate(const Vector2& slideRate) { edgeSlideRate_ = slideRate; }
 	void SetIsEdgeDisplay(bool isDisplay) { isEdgeDisplay_ = isDisplay; }
-	//ゲッター
+	
+public://ゲッター
 	const std::string& GetName() { return name_; }
 	const std::wstring& GetText() { return text_; }
 	const Vector2& GetPosition() { return position_; }

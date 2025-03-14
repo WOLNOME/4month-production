@@ -57,7 +57,7 @@ public:
 	///=======================
 	/// 描画前準備
 	///=======================
-
+	
 	void EditSolidColorBrash(const std::string& key, const Vector4& color) noexcept;
 	void EditTextFormat(const std::string& key, const std::wstring& fontName, const float fontSize) noexcept;
 	///=======================
