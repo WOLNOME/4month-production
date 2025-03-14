@@ -2,6 +2,11 @@
 #include "TextWrite.h"
 #include <filesystem>
 #include <cassert>
+
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dwrite.lib")
+
 namespace fs = std::filesystem;
 
 TextWriteManager* TextWriteManager::instance = nullptr;
