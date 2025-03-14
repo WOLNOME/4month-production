@@ -107,6 +107,9 @@
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp">
       <Filter>gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="application\objects\Gimmick\IceFloor.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -217,6 +220,9 @@
       <Filter>gimmick</Filter>
     </ClInclude>
     <ClInclude Include="application\objects\Gimmick\Bumper.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
       <Filter>gimmick</Filter>
     </ClInclude>
   </ItemGroup>
