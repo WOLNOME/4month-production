@@ -15,7 +15,7 @@ void TextWrite::Initialize(const std::string& name) {
 	text_ = L"";
 	font_ = Font::Meiryo;
 	fontName_ = ReturnFontName(font_);
-	fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
+	fontStyle_ = FontStyle::Normal;
 	fontFaceKey_ = TextWriteManager::GetInstance()->GenerateFontKey(fontName_, fontStyle_);
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 	position_ = { 0.0f,0.0f };
@@ -26,7 +26,7 @@ void TextWrite::Initialize(const std::string& name) {
 	edgeName_ = name_ + "_Edge";
 	edgeColor_ = { 0.0f,0.0f,0.0f,1.0f };
 	edgeStrokeWidth_ = 10.0f;
-	edgeSlideRate_ = 0.0f;
+	edgeSlideRate_ = { 0.0f,0.0f };
 	isEdgeDisplay_ = false;
 
 	//マネージャーに登録する
@@ -36,37 +36,59 @@ void TextWrite::Initialize(const std::string& name) {
 void TextWrite::DebugWithImGui() {
 #ifdef _DEBUG
 	ImGui::Begin(("TextDebugger : " + name_).c_str());
-	//テキストの座標
-	Vector2 position = position_;
-	ImGui::DragFloat2("position", &position.x, 1.0f);
-	SetPosition(position);
-	//フォント
-	Font currentFont = font_;
-	const char* fontNames[] = {
-		"Meiryo",
-		"YuGothic",
-		"YuMincho",
-		"UDDegitalN_B",
-		"UDDegitalN_R",
-		"UDDegitalNK_B",
-		"UDDegitalNK_R",
-		"UDDegitalNP_B",
-		"UDDegitalNP_R",
-		"OnionScript"
-	};
-	int fontIndex = static_cast<int>(currentFont);
-	if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
-		//フォントを変更
-		currentFont = static_cast<Font>(fontIndex);
-		SetFont(currentFont);
-	}
-	//テキストのサイズ
-	ImGui::DragFloat("size", &size_, 0.1f, 10.0f, 80.0f);
-	SetSize(size_);
-	//テキストのカラー
-	ImGui::ColorEdit4("color", &color_.x);
-	SetColor(color_);
+	//テキスト
+	if (ImGui::CollapsingHeader("Text")) {
+		//テキストの座標
+		Vector2 position = position_;
+		ImGui::DragFloat2("position", &position.x, 1.0f);
+		SetPosition(position);
+		//フォント
+		Font currentFont = font_;
+		const char* fontNames[] = {
+			"Meiryo",
+			"YuGothic",
+			"YuMincho",
+			"UDDegitalN_B",
+			"UDDegitalN_R",
+			"UDDegitalNK_B",
+			"UDDegitalNK_R",
+			"UDDegitalNP_B",
+			"UDDegitalNP_R",
+			"OnionScript"
+		};
+		int fontIndex = static_cast<int>(currentFont);
+		if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
+			//フォントを変更
+			currentFont = static_cast<Font>(fontIndex);
+			SetFont(currentFont);
+		}
+		//フォントのスタイル
+		FontStyle currentFontStyle = fontStyle_;
 
+		//テキストのサイズ
+		ImGui::DragFloat("size", &size_, 0.1f, 10.0f, 80.0f);
+		SetSize(size_);
+		//テキストのカラー
+		ImGui::ColorEdit4("color", &color_.x);
+		SetColor(color_);
+	}
+
+	//アウトライン
+	if (ImGui::CollapsingHeader("Outline")) {
+		//表示切り替え
+		bool isDisplay = GetIsEdgeDisplay();
+		ImGui::Checkbox("display", &isDisplay);
+		SetIsEdgeDisplay(isDisplay);
+		//アウトラインのカラー
+		ImGui::ColorEdit3("colorEdge", &edgeColor_.x);
+		SetEdgeColor(edgeColor_);
+		//アウトラインの幅
+		ImGui::SliderFloat("strokeWidth", &edgeStrokeWidth_, 1.0f, 30.0f);
+		SetEdgeStrokeWidth(edgeStrokeWidth_);
+		//アウトラインのスライド量
+		ImGui::SliderFloat2("slideRate", &edgeSlideRate_.x, -0.005f, 0.005f);
+		SetEdgeSlideRate(edgeSlideRate_);
+	}
 
 	ImGui::End();
 #endif // _DEBUG
@@ -94,20 +116,7 @@ void TextWrite::SetFont(const Font& font) {
 }
 
 void TextWrite::SetFontStyle(const FontStyle& fontStyle) {
-	switch (fontStyle) {
-	case FontStyle::Normal:
-		fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
-		break;
-	case FontStyle::Italic:
-		fontStyle_ = DWRITE_FONT_STYLE_ITALIC;
-		break;
-	case FontStyle::Oblique:
-		fontStyle_ = DWRITE_FONT_STYLE_OBLIQUE;
-		break;
-	default:
-		fontStyle_ = DWRITE_FONT_STYLE_NORMAL;
-		break;
-	}
+	fontStyle_ = fontStyle;
 	//フォントフェイスキーの更新
 	fontFaceKey_ = TextWriteManager::GetInstance()->GenerateFontKey(fontName_, fontStyle_);
 	//フォント情報をマネージャーにセット
@@ -159,10 +168,8 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 	switch (font) {
 	case Font::Meiryo:
 		return meiryo;
-		break;
 	case Font::YuGothic:
 		return yugothic;
-		break;
 	case Font::YuMincho:
 		return yumincho;
 	case Font::UDDegitalN_B:
@@ -181,7 +188,6 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 		return onionScript;
 	default:
 		return empty;
-		break;
 	}
 }
 

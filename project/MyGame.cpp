@@ -15,7 +15,7 @@ void MyGame::Initialize()
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene("TITLE");
+	SceneManager::GetInstance()->SetNextScene("DEVELOP");
 
 }
 
@@ -73,6 +73,10 @@ void MyGame::Draw()
 
 	//テキスト描画後処理
 	TextWriteManager::GetInstance()->EndDrawWithD2D();
+
+	///------------------------------///
+	///        全ての描画が終了
+	///------------------------------///
 
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();

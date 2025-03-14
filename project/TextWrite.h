@@ -22,8 +22,8 @@ enum class Font {
 //フォントスタイル
 enum class FontStyle {
 	Normal,		//通常
-	Italic,		//斜体(フォントファイルベース)
 	Oblique,	//斜体(通常フォントをプログラムで斜体にする)
+	Italic,		//斜体(フォントファイルベース)
 };
 
 class TextWriteManager;
@@ -58,7 +58,7 @@ public:
 	void SetEdgeParam(const Vector4& color, float strokeWidth, float slideRate, bool isDisplay);
 	void SetEdgeColor(const Vector4& color);
 	void SetEdgeStrokeWidth(float width) { edgeStrokeWidth_ = width; }
-	void SetEdgeSlideRate(float slideRate) { edgeSlideRate_ = slideRate; }
+	void SetEdgeSlideRate(const Vector2& slideRate) { edgeSlideRate_ = slideRate; }
 	void SetIsEdgeDisplay(bool isDisplay) { isEdgeDisplay_ = isDisplay; }
 	//ゲッター
 	const std::string& GetName() { return name_; }
@@ -66,15 +66,16 @@ public:
 	const Vector2& GetPosition() { return position_; }
 	float GetWidth() { return width_; }
 	float GetHeight() { return height_; }
+	const Font& GetFont() { return font_; }
 	const std::wstring& GetFontName() { return fontName_; }
-	const DWRITE_FONT_STYLE& GetFontStyle() { return fontStyle_; }
+	const FontStyle& GetFontStyle() { return fontStyle_; }
 	const std::string& GetFontFaceKey() { return fontFaceKey_; }
 	float GetSize() { return size_; }
 	const Vector4& GetColor() { return color_; }
 	const std::string& GetEdgeName() { return edgeName_; }
 	const Vector4& GetEdgeColor() { return edgeColor_; }
 	float GetEdgeStrokeWidth() { return edgeStrokeWidth_; }
-	float GetEdgeSlideRate() { return edgeSlideRate_; }
+	const Vector2& GetEdgeSlideRate() { return edgeSlideRate_; }
 	bool GetIsEdgeDisplay() { return isEdgeDisplay_; }
 
 private:
@@ -104,7 +105,7 @@ private:
 	//フォント名(正式)
 	std::wstring fontName_;
 	//フォントのスタイル
-	DWRITE_FONT_STYLE fontStyle_;
+	FontStyle fontStyle_;
 	//フォントフェイスのキー
 	std::string fontFaceKey_;
 	//テキストのサイズ
@@ -123,7 +124,7 @@ private:
 	//幅
 	float edgeStrokeWidth_;
 	//スライド量
-	float edgeSlideRate_;
+	Vector2 edgeSlideRate_;
 	//アウトライン表示フラグ
 	bool isEdgeDisplay_;
 };

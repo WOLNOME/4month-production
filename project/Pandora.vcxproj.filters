@@ -88,9 +88,9 @@
     <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
     <ClCompile Include="TextWriteManager.cpp" />
+    <ClCompile Include="TextWrite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -183,9 +183,9 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
       <Filter>engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
     <ClInclude Include="TextWriteManager.h" />
+    <ClInclude Include="TextWrite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

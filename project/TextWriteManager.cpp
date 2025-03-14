@@ -78,12 +78,13 @@ void TextWriteManager::CancelRegistration(const std::string& key) {
 
 }
 
-std::string TextWriteManager::GenerateFontKey(const std::wstring& fontName, DWRITE_FONT_STYLE style) {
+std::string TextWriteManager::GenerateFontKey(const std::wstring& fontName, const FontStyle& style) {
 	std::string key(fontName.begin(), fontName.end()); // wstring → string 変換
+
 	switch (style) {
-	case DWRITE_FONT_STYLE_NORMAL:  key += "_Normal"; break;
-	case DWRITE_FONT_STYLE_OBLIQUE: key += "_Oblique"; break;
-	case DWRITE_FONT_STYLE_ITALIC:  key += "_Italic"; break;
+	case FontStyle::Normal:  key += "_Normal"; break;
+	case FontStyle::Oblique: key += "_Oblique"; break;
+	case FontStyle::Italic:  key += "_Italic"; break;
 	}
 	return key;
 }
@@ -138,11 +139,6 @@ void TextWriteManager::CreateDirect2DDeviceContext() {
 	//ID2D1Device2の生成
 	ComPtr<ID2D1Device2> d2dDevice = nullptr;
 	hr = d2dFactory->CreateDevice(dxgiDevice.Get(), d2dDevice.ReleaseAndGetAddressOf());
-
-	wchar_t message[256];
-	swprintf_s(message, L"HRESULT=0x%08X\n", hr);
-	OutputDebugString(message);
-	assert(SUCCEEDED(hr));
 	//d2dDeviceContextの生成
 	hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dDeviceContext.ReleaseAndGetAddressOf());
 	assert(SUCCEEDED(hr));
@@ -232,7 +228,8 @@ void TextWriteManager::CreateFontFile() {
 
 				// フォントのスタイルを取得
 				DWRITE_FONT_STYLE fontStyle = dwriteFontFace->GetStyle();
-				std::string fontKey = GenerateFontKey(fontName, fontStyle);
+				FontStyle style = static_cast<FontStyle>(fontStyle);
+				std::string fontKey = GenerateFontKey(fontName, style);
 
 				// unordered_map に格納
 				fontFaceMap[fontKey] = dwriteFontFace;
@@ -271,11 +268,12 @@ void TextWriteManager::EditTextFormat(const std::string& key, const std::wstring
 	}
 	//テキストフォーマットを作って登録(すでに作ってあったら編集)
 	ComPtr<IDWriteTextFormat> textFormat = nullptr;
+	DWRITE_FONT_STYLE style = static_cast<DWRITE_FONT_STYLE>(textWriteMap[key]->GetFontStyle());
 	hr = directWriteFactory->CreateTextFormat(
 		fontName.c_str(),
 		dwriteFontCollection.Get(),
 		DWRITE_FONT_WEIGHT_NORMAL,
-		textWriteMap[key]->GetFontStyle(),
+		style,
 		DWRITE_FONT_STRETCH_NORMAL,
 		fontSize,
 		L"ja-jp",
@@ -306,7 +304,6 @@ void TextWriteManager::WriteText(const std::string& key) {
 	if (textWriteMap[key]->GetIsEdgeDisplay()) {
 		DrawOutline(key);
 	}
-
 	//描画範囲
 	D2D1_RECT_F rect;
 	rect = {
@@ -316,6 +313,9 @@ void TextWriteManager::WriteText(const std::string& key) {
 		textWrite->GetPosition().y + textWrite->GetHeight()
 	};
 	//テキスト描画処理
+	d2dDeviceContext->SetTransform(
+		D2D1::Matrix3x2F::Identity()
+	);
 	d2dDeviceContext->DrawTextW(
 		textWrite->GetText().c_str(),
 		static_cast<UINT32>(textWrite->GetText().length()),
@@ -323,7 +323,6 @@ void TextWriteManager::WriteText(const std::string& key) {
 		&rect,
 		solidColorBrush.Get()
 	);
-
 }
 
 void TextWriteManager::EndDrawWithD2D() const noexcept {
@@ -337,6 +336,7 @@ void TextWriteManager::EndDrawWithD2D() const noexcept {
 }
 
 void TextWriteManager::DrawOutline(const std::string& key) {
+	HRESULT hr;
 	//グリフインデックス列を取得する
 	std::vector<UINT> codePoints;
 	auto glyphIndices = new UINT16[textWriteMap[key]->GetText().length()];
@@ -345,43 +345,81 @@ void TextWriteManager::DrawOutline(const std::string& key) {
 		codePoints.emplace_back(character);
 	}
 	const auto fontFace = fontFaceMap[textWriteMap[key]->GetFontFaceKey()];
-	fontFace->GetGlyphIndicesW(codePoints.data(), static_cast<UINT32>(codePoints.size()), glyphIndices);
+	hr = fontFace->GetGlyphIndicesW(codePoints.data(), static_cast<UINT32>(codePoints.size()), glyphIndices);
+	if (FAILED(hr)) return;
 	ComPtr<ID2D1PathGeometry> pathGeometry = nullptr;
-	if (FAILED(d2dFactory->CreatePathGeometry(pathGeometry.ReleaseAndGetAddressOf()))) [[unlikely]] {
-		return;
-	}
+	hr = d2dFactory->CreatePathGeometry(pathGeometry.ReleaseAndGetAddressOf());
+	if (FAILED(hr)) return;
 	ComPtr<ID2D1GeometrySink> geometrySink = nullptr;
-	if (FAILED(pathGeometry->Open(geometrySink.ReleaseAndGetAddressOf()))) [[unlikely]] {
-		return;
-	}
+	hr = pathGeometry->Open(geometrySink.ReleaseAndGetAddressOf());
+	if (FAILED(hr)) return;
 	//アウトライン情報を取得する
-	if (FAILED(fontFace->GetGlyphRunOutline((textWriteMap[key]->GetSize() / 72.0f) * 96.0f, glyphIndices, nullptr, nullptr, static_cast<UINT32>(textWriteMap[key]->GetText().length()), FALSE, FALSE, geometrySink.Get()))) [[unlikely]] {
-		return;
-	}
-	if (FAILED(geometrySink->Close())) [[unlikely]] {
-		return;
-	}
+	hr = fontFace->GetGlyphRunOutline(textWriteMap[key]->GetSize(), glyphIndices, nullptr, nullptr, static_cast<UINT32>(textWriteMap[key]->GetText().length()), FALSE, FALSE, geometrySink.Get());
+	if (FAILED(hr)) return;
+	hr = geometrySink->Close();
+	assert(SUCCEEDED(hr));
 	codePoints.clear();
 	delete[] glyphIndices;
 	std::pair<ComPtr<ID2D1PathGeometry>, ComPtr<ID2D1GeometrySink>> geometryInfo;
 	geometryInfo = { pathGeometry, geometrySink };
 
 	const auto textPathGeometry = geometryInfo.first;
-	const auto solidColorBrush = solidColorBrushMap[textWriteMap[key]->GetName()];
 	const auto solidColorBrushOfEdge = solidColorBrushMap[textWriteMap[key]->GetEdgeName()];
 	Vector2 position = textWriteMap[key]->GetPosition();
-	float slideRate = textWriteMap[key]->GetEdgeSlideRate();
+	Vector2 slideRate = textWriteMap[key]->GetEdgeSlideRate();
 	float strokeWidth = textWriteMap[key]->GetEdgeStrokeWidth();
-
-	if (slideRate > 0.0f) {
+	if (slideRate.x != 0.0f || slideRate.y != 0.0f) {
 		D2D1_RECT_F rect{};
-		textPathGeometry->GetBounds(nullptr, &rect);
-		position.x -= (rect.right - rect.left) * slideRate;
+		hr = textPathGeometry->GetBounds(nullptr, &rect);
+		assert(SUCCEEDED(hr));
+		position.x += (rect.right - rect.left) * slideRate.x;
+		position.y += (rect.right - rect.left) * slideRate.y;
+	}
+
+	//文字サイズに合わせて位置調整(フォントごと)
+	switch (textWriteMap[key]->GetFont()) {
+	case Font::Meiryo:
+		position.y += textWriteMap[key]->GetSize() * (17.0f / 16.0f);
+		break;
+	case Font::YuGothic:
+		position.y += textWriteMap[key]->GetSize() * (21.0f / 16.0f);
+		break;
+	case Font::YuMincho:
+		position.y += textWriteMap[key]->GetSize() * (21.0f / 16.0f);
+		break;
+	case Font::UDDegitalN_B:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::UDDegitalN_R:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::UDDegitalNK_B:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::UDDegitalNK_R:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::UDDegitalNP_B:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::UDDegitalNP_R:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::OnionScript:
+		position.y += textWriteMap[key]->GetSize() * (15.0f / 16.0f);
+		break;
+	default:
+		assert(0 && "不明のフォントです。ポジションの計算をしてください。");
+		break;
 	}
 
 	//描画
-	d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(position.x, position.y));
-	d2dDeviceContext->DrawGeometry(textPathGeometry.Get(), solidColorBrushOfEdge.Get(), strokeWidth);
-	d2dDeviceContext->FillGeometry(textPathGeometry.Get(), solidColorBrush.Get());
-
+	d2dDeviceContext->SetTransform(
+		D2D1::Matrix3x2F::Translation(position.x, position.y)
+	);
+	d2dDeviceContext->DrawGeometry(
+		textPathGeometry.Get(),
+		solidColorBrushOfEdge.Get(),
+		strokeWidth
+	);
 }

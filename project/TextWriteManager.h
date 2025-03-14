@@ -16,6 +16,7 @@ template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 class TextWrite;
+enum class FontStyle;
 
 class TextWriteManager {
 private://コンストラクタ等の隠蔽
@@ -39,7 +40,7 @@ public:
 	void CancelRegistration(const std::string& key);
 
 	//フォントキー作成用関数
-	std::string GenerateFontKey(const std::wstring& fontName, DWRITE_FONT_STYLE style);
+	std::string GenerateFontKey(const std::wstring& fontName, const FontStyle& style);
 
 private:
 	///=======================
@@ -88,7 +89,7 @@ private:
 	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
 	std::vector<ComPtr<ID2D1Bitmap1>> d2dRenderTargets;
 	//各フォントで保持しておく項目
-	std::unordered_map<std::string,ComPtr<IDWriteFontFace3>> fontFaceMap;
+	std::unordered_map<std::string, ComPtr<IDWriteFontFace3>> fontFaceMap;
 
 	//各テキストで保持しておく項目(作成及び編集にデバイス等の情報が必要なため、Managerで保持)
 	std::unordered_map<std::string, ComPtr<ID2D1SolidColorBrush>> solidColorBrushMap;
@@ -99,3 +100,10 @@ private:
 	std::unordered_map<std::string, TextWrite*> textWriteMap;
 
 };
+
+///フォントを追加する時の注意点
+//1. ttfもしくはttcファイルをResourcesフォルダ内のfontsフォルダに入れる
+//2. TextWrite.hのFont列挙型に新たに追加する。
+//3. TextWrite.cppのReturnFontName関数にfontファイル名を新たに追加する(wstringを使っているが、あとでstringに直す処理を挟むので日本語禁止)
+//4. TextWrite.cppのDebugWithImGui関数のフォント欄に新たに追加する
+//5. TextWriteManager.cppのDrawOutline関数内のアウトラインの位置計算に新たに追加する。

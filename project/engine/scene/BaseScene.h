@@ -11,6 +11,7 @@
 #include "Audio.h"
 #include "Input.h"
 #include "LineDrawer.h"
+#include "TextWrite.h"
 #include "TextureManager.h"
 //シーン共通クラス
 #include "ImGuiManager.h"

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseScene.h"
-#include "TextWrite.h"
 
 class TitleScene : public BaseScene {
 public:

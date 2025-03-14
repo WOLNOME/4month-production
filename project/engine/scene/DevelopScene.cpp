@@ -99,6 +99,11 @@ void DevelopScene::Initialize() {
 
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize("Alarm01.wav");
+
+	text_ = std::make_unique<TextWrite>();
+	text_->Initialize("text");
+	text_->SetParam({ 0.0f,0.0f }, Font::UDDegitalN_R, 32.0f, { 1,1,0,1 });
+	text_->SetEdgeParam({ 1,0,0,1 }, 10.0f, 0.0f, true);
 }
 
 void DevelopScene::Finalize() {
@@ -242,6 +247,8 @@ void DevelopScene::Update() {
 		MyMath::DrawSphere(slMarkSphere2, { 0.0f,1.0f,0.0f,1.0f }, slMark.get());
 	}
 	ImGui::End();
+	//テキスト用ImGui
+	text_->DebugWithImGui();
 
 #endif // _DEBUG
 }
@@ -315,5 +322,19 @@ void DevelopScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
+	///------------------------------///
+}
+
+void DevelopScene::TextDraw() {
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+
+	timer_++;
+	float time = timer_ / 60.0f;
+	text_->WriteText(L"フォント確認 0123 現在時刻 : {:.1f}",time);
+
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 }

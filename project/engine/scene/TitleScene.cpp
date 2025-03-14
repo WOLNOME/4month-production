@@ -33,7 +33,7 @@ void TitleScene::Finalize() {
 
 void TitleScene::Update() {
 	if (input_->TriggerKey(DIK_TAB)) {
-		sceneManager_->SetNextScene("GAMEPLAY");
+		sceneManager_->SetNextScene("CLEAR");
 	}
 
 	spriteTitle_->Update();
