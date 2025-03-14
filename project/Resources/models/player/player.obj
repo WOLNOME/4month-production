@@ -1,6 +1,6 @@
 # Blender 4.1.1
 # www.blender.org
-mtllib enemy.mtl
+mtllib player.mtl
 o 球
 v 0.000000 1.683348 -0.555570
 v 0.000000 1.407449 -0.831470
