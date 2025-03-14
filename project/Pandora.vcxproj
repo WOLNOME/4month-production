@@ -107,6 +107,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\appCollider\AppCollider.cpp" />
+    <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
+    <ClCompile Include="engine\math\Vector3.cpp" />
+    <ClCompile Include="application\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\enemy\EnemyManager.cpp" />
+    <ClCompile Include="application\enemy\TackleEnemy.cpp" />
     <ClCompile Include="engine\scene\ClearScene.cpp" />
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
@@ -130,9 +136,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="engine\2d\ImGuiManager.cpp" />
+    <ClCompile Include="application\objects\Field\Field.cpp" />
     <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="engine\3d\LineDrawer.cpp" />
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
+    <ClCompile Include="application\enemy\FanEnemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -157,11 +167,19 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\SceneLight.cpp" />
     <ClCompile Include="engine\3d\SpotLight.cpp" />
     <ClCompile Include="engine\3d\Shape.cpp" />
+    <ClCompile Include="application\objects\Player\Player.cpp" />
+    <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
+    <ClCompile Include="application\enemy\Wind.cpp" />
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
     <ClCompile Include="TextWrite.cpp" />
     <ClCompile Include="TextWriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\appCollider\AppCollider.h" />
+    <ClInclude Include="application\appCollider\AppCollisionManager.h" />
+    <ClInclude Include="application\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\enemy\EnemyManager.h" />
+    <ClInclude Include="application\enemy\TackleEnemy.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />
@@ -203,11 +221,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\2d\ImGuiManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\base\Framework.h" />
+    <ClInclude Include="application\objects\Field\Field.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\LineDrawer.h" />
     <ClInclude Include="engine\3d\LineDrawerCommon.h" />
     <ClInclude Include="engine\base\MainRender.h" />
     <ClInclude Include="engine\3d\ModelFormat.h" />
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\objects\GameObject\GameObject.h" />
+    <ClInclude Include="application\enemy\FanEnemy.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
@@ -220,6 +242,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\SceneLight.h" />
     <ClInclude Include="engine\3d\SpotLight.h" />
     <ClInclude Include="engine\3d\Shape.h" />
+    <ClInclude Include="application\appCollider\AppShape.h" />
+    <ClInclude Include="application\objects\Player\Player.h" />
+    <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
+    <ClInclude Include="application\enemy\Wind.h" />
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
     <ClInclude Include="TextWrite.h" />
     <ClInclude Include="TextWriteManager.h" />

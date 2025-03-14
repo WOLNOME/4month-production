@@ -12,20 +12,15 @@ void TitleScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//生成と初期化
-	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("title.png");
+	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
 	spriteTitle_ = std::make_unique<Sprite>();
 	spriteTitle_->Initialize(textureHandleTitle_);
-
-	//テキスト
-	text1_ = std::make_unique<TextWrite>();
-	text1_->Initialize("text1");
-	text1_->SetParam({ 0.0f,0.0f }, Font::Meiryo, 32.0f, { 1.0f,0.0f,0.0f,1.0f });
-	text2_ = std::make_unique<TextWrite>();
-	text2_->Initialize("text2");
-	text2_->SetParam({ 0.0f,100.0f }, Font::UDDegitalNK_R, 64.0f, { 1.0f,1.0f,0.0f,1.0f });
-	text2_->SetEdgeParam({ 0.0f,0.0f,0.0f,1.0f }, 10.0f, 0.0f, true);
-
-
+	//カメラの生成と初期化
+	camera = std::make_unique<DevelopCamera>();
+	camera->Initialize();
+	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
+	camera->SetRotate({ 0.6f,0.0f,0.0f });
+	
 }
 
 void TitleScene::Finalize() {
@@ -36,7 +31,8 @@ void TitleScene::Update() {
 		sceneManager_->SetNextScene("CLEAR");
 	}
 
-	spriteTitle_->Update();
+	//カメラの更新
+	camera->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -44,10 +40,8 @@ void TitleScene::Update() {
 	ImGui::End();
 #endif // _DEBUG
 
-	timer_++;
+	spriteTitle_->Update();
 
-	//テキストのimgui
-	text2_->DebugWithImGui();
 }
 
 void TitleScene::Draw() {
@@ -109,10 +103,6 @@ void TitleScene::TextDraw() {
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
-
-	float seconds = timer_ / 60.0f;
-	text1_->WriteText(L"フォント確認　現在の時間 : {:.1f}秒", seconds);
-	text2_->WriteText(L"フォント確認　テキスト出力実験中");
 
 
 	///------------------------------///

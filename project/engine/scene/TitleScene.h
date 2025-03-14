@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "DevelopCamera.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -30,12 +31,8 @@ private://メンバ変数
 	//タイトルスプライト
 	uint32_t textureHandleTitle_ = 0u;
 	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
-
-	//テキスト
-	std::unique_ptr<TextWrite> text1_;
-	std::unique_ptr<TextWrite> text2_;
-
-	//タイマー
-	int timer_ = 0;
+	//開発用カメラ
+	std::unique_ptr<DevelopCamera> camera;
+	
 };
 

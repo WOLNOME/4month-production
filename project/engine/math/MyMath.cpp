@@ -1812,7 +1812,6 @@ void MyMath::DrawSphere(const Sphere& sphere, Vector4 color, LineDrawer* lineDra
 	}
 }
 
-
 ///------------------------------------///
 ///       演算子のオーバーロード
 ///------------------------------------///
@@ -1847,10 +1846,10 @@ Vector3 operator+(const Vector3& v1, const Vector3& v2)
 	return MyMath::Add(v1, v2);
 }
 
-Vector3 operator-(const Vector3& v1, const Vector3& v2)
-{
-	return MyMath::Subtract(v1, v2);
-}
+//Vector3 operator-(const Vector3& v1, const Vector3& v2)
+//{
+//	return MyMath::Subtract(v1, v2);
+//}
 
 Vector3 operator*(float s, const Vector3& v)
 {
