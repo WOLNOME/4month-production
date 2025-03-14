@@ -10,6 +10,7 @@ class BaseCamera;
 class BaseEnemy
 {
 public:
+	virtual ~BaseEnemy() = default;
 	virtual void EnemyInitialize(const std::string& filePath) = 0;
 	virtual void EnemyUpdate() = 0;
 	virtual void EnemyDraw(const BaseCamera& camera) = 0;
