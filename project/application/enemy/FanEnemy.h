@@ -33,6 +33,7 @@ private:
 	void FanUpdate();
 	void ChageRotationSpeed();
 	void OutOfField();
+	void UpdateCollider();
 
 private:
 	//速度ベクトル
@@ -46,7 +47,7 @@ private:
 	//回転速度変更タイマー
 	float rotateSpeedChangeTimer_ = 0.0f;
 	//風を生成する間隔
-	float windSpawnInterval_ = 0.2f;
+	float windSpawnInterval_ = 0.1f;
 	//風を生成するタイマー
 	float windSpawnTimer_ = 0.0f;
 	//地面にいるか

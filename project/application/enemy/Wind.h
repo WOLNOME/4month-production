@@ -36,7 +36,7 @@ private:
 	// 風向き
     Vector3 direction_;
 	// 速度
-	float speed_ = 10.0f;
+	float speed_ = 20.0f;
 	// 移動できる範囲
 	float range_ = 10.0f;
 	// 開始位置
