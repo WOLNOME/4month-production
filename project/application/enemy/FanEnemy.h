@@ -32,6 +32,7 @@ private:
 	void StartFan();
 	void FanUpdate();
 	void ChageRotationSpeed();
+	void OutOfField();
 
 private:
 	//速度ベクトル
@@ -48,6 +49,8 @@ private:
 	float windSpawnInterval_ = 0.2f;
 	//風を生成するタイマー
 	float windSpawnTimer_ = 0.0f;
+	//地面にいるか
+	bool isGround_ = true;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
 	//エネミーマネージャーのポインタ

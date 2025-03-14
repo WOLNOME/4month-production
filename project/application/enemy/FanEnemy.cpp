@@ -54,6 +54,9 @@ void FanEnemy::EnemyUpdate()
 	// 風の更新
 	FanUpdate();
 
+	// 場外処理
+	OutOfField();
+
 	//行列の更新
 	transform_.UpdateMatrix();
 
@@ -70,14 +73,27 @@ void FanEnemy::EnemyDraw(const BaseCamera& camera)
 
 void FanEnemy::OnCollision(const AppCollider* _other)
 {
-
+	if(_other->GetColliderID() == "Field")
+	{
+		// 地面にいる
+		isGround_ = true;
+	}
 }
 
 void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 {
-	if (other->GetColliderID() == "Player")
+	if (other->GetColliderID() == "Player" && other->GetOwner()->IsAttack())
 	{
-		isAlive_ = false;
+		// プレイヤーの位置
+		Vector3 playerPosition = other->GetOwner()->GetPosition();
+
+		// プレイヤーの位置から逃げる
+		Vector3 runDirection = transform_.translate_ - playerPosition;
+
+		// ノックバック
+		velocity_ = runDirection;
+		velocity_ *= 7.0f;
+		velocity_.y = 0.0f;
 	}
 }
 
@@ -133,4 +149,23 @@ void FanEnemy::ChageRotationSpeed()
 		rotateSpeedChangeInterval_ = disTime(randomEngine_);
 		rotateSpeedChangeTimer_ = 0.0f;
 	}
+}
+
+void FanEnemy::OutOfField()
+{
+	// 落下速度
+	float fallSpeed_ = 0.3f;
+
+	if (isGround_ == false)
+	{
+		transform_.translate_.y -= fallSpeed_;
+	}
+
+	if (transform_.translate_.y < -10.0f)
+	{
+		isAlive_ = false;
+		isGround_ = true;
+	}
+
+	isGround_ = false;
 }
