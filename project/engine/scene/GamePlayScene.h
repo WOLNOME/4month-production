@@ -38,6 +38,10 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+	/// <summary>
+	/// テキスト描画
+	/// </summary>
+	void TextDraw() override;
 
 	// ImGui
 	void ImGuiDraw();
