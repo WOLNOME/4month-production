@@ -36,7 +36,10 @@ void BaseScene::ShowFPS() {
 	fps_ = 1.0f / deltaTime.count();
 
 	// ImGuiで表示
+#ifdef _DEBUG
 	ImGui::Begin("FPS Display");
 	ImGui::Text("Current FPS: %.0f", fps_);
 	ImGui::End();
+#endif // _DEBUG
+
 }
