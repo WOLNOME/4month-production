@@ -28,8 +28,8 @@ public:
 		D3D12_GPU_DESCRIPTOR_HANDLE SrvHandleGPU;
 		uint32_t srvIndex;
 	};
-	//パーティクル構造体
-	struct ParticleData {
+	//エフェクト構造体
+	struct EffectData {
 		TransformEuler transform;
 		Vector3 velocity;
 		Vector4 color;
@@ -39,7 +39,7 @@ public:
 	//エミッター構造体
 	struct Emitter {
 		TransformEuler transform;//エミッターのトランスフォーム
-		uint32_t count;//発生させるパーティクルの数
+		uint32_t count;//発生させるエフェクトの数
 		float frequency;//発生頻度
 		float frequencyTime;//頻度用時刻
 	};
@@ -64,9 +64,9 @@ private://メンバ関数(非公開)
 	//SRVの設定
 	void SettingSRV();
 	//パーティクルの生成
-	ParticleData MakeNewParticle(const Vector3& translate);
+	EffectData MakeNewParticle(const Vector3& translate);
 	//エミット
-	std::list<ParticleData> Emit(const Emitter& emitter);
+	std::list<EffectData> Emit(const Emitter& emitter);
 
 private://インスタンス
 private://メンバ変数
@@ -76,7 +76,7 @@ private://メンバ変数
 	ParticleResource particleResource_;
 
 	//各インスタンシング用書き換え情報
-	std::list<ParticleData> particles;
+	std::list<EffectData> effects_;
 	//表示するパーティクルの最大数
 	const uint32_t kNumMaxInstance_ = 64;
 	//δtの定義

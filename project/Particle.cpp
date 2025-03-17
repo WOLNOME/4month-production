@@ -5,7 +5,6 @@
 #include "SrvManager.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
-#include "ParticleCommon.h"
 #include "ImGuiManager.h"
 #include "BaseCamera.h"
 #include "ModelFormat.h"
@@ -39,18 +38,18 @@ void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationFiel
 	//エミッターの更新
 	emitter.frequencyTime += kDeltaTime;
 	if (emitter.frequency <= emitter.frequencyTime) {
-		particles.splice(particles.end(), Emit(emitter));
+		effects_.splice(effects_.end(), Emit(emitter));
 		emitter.frequencyTime -= emitter.frequency;
 	}
 
-	for (std::list<ParticleData>::iterator particleIterator = particles.begin(); particleIterator != particles.end();) {
+	for (std::list<EffectData>::iterator particleIterator = effects_.begin(); particleIterator != effects_.end();) {
 		//時間更新
 		++(*particleIterator).currentTime;
 
 		//生存チェック
 		if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
 			//寿命を迎えたら削除
-			particleIterator = particles.erase(particleIterator);
+			particleIterator = effects_.erase(particleIterator);
 			continue;
 		}
 
@@ -101,7 +100,7 @@ void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationFiel
 	//CameraCBufferの場所を設定
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, camera.GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
 	//モデルの描画
-	model_->Draw(0, 3, (uint32_t)particles.size());
+	model_->Draw(0, 3, (uint32_t)effects_.size());
 
 }
 
@@ -147,9 +146,9 @@ void Particle::SettingSRV()
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, particleResource_.SrvHandleCPU);
 }
 
-Particle::ParticleData Particle::MakeNewParticle(const Vector3& translate)
+Particle::EffectData Particle::MakeNewParticle(const Vector3& translate)
 {
-	ParticleData particle;
+	EffectData particle;
 	//ランダムエンジンの生成
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
@@ -172,9 +171,9 @@ Particle::ParticleData Particle::MakeNewParticle(const Vector3& translate)
 	return particle;
 }
 
-std::list<Particle::ParticleData> Particle::Emit(const Emitter& emitter)
+std::list<Particle::EffectData> Particle::Emit(const Emitter& emitter)
 {
-	std::list<ParticleData> particle;
+	std::list<EffectData> particle;
 
 	for (uint32_t count = 0; count < emitter.count; ++count) {
 		particle.push_back(MakeNewParticle(emitter.transform.translate));

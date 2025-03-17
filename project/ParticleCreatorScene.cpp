@@ -1,4 +1,5 @@
 #include "ParticleCreatorScene.h"
+#include "ImGuiManager.h"
 
 void ParticleCreatorScene::Initialize() {
 	//シーン共通の初期化

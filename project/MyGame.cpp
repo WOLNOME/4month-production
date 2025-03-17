@@ -6,6 +6,7 @@
 #include "TextWriteManager.h"
 #include "ImGuiManager.h"
 #include "ModelManager.h"
+#include "ParticleManager.h"
 #include "Model.h"
 #include "SceneManager.h"
 
@@ -54,6 +55,9 @@ void MyGame::Draw()
 
 	//シーンの描画
 	SceneManager::GetInstance()->Draw();
+
+	//シーンのパーティクル描画
+	ParticleManager::GetInstance()->Draw();
 
 	//ImGuiの描画
 	ImGuiManager::GetInstance()->Draw();

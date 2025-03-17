@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+
 class ParticleCreatorScene : public BaseScene {
 public:
 	/// <summary>
@@ -24,6 +25,8 @@ public:
 	void TextDraw() override;
 
 private:
+	// 編集するパーティクル
+	std::unique_ptr<Particle> partile_ = nullptr;
 
 
 

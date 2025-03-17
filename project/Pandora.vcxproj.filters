@@ -43,7 +43,6 @@
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
     <ClCompile Include="engine\scene\TitleScene.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleCommon.cpp" />
     <ClCompile Include="engine\3d\WorldTransform.cpp" />
     <ClCompile Include="engine\3d\PointLight.cpp" />
     <ClCompile Include="engine\3d\SceneLight.cpp" />
@@ -107,6 +106,7 @@
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="engine\2d\TextWrite.cpp" />
     <ClCompile Include="ParticleCreatorScene.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -144,7 +144,6 @@
     <ClInclude Include="engine\scenebase\SceneManager.h" />
     <ClInclude Include="engine\scene\TitleScene.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleCommon.h" />
     <ClInclude Include="engine\3d\WorldTransform.h" />
     <ClInclude Include="engine\3d\PointLight.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
@@ -219,6 +218,7 @@
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="engine\2d\TextWrite.h" />
     <ClInclude Include="ParticleCreatorScene.h" />
+    <ClInclude Include="ParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
