@@ -1,4 +1,5 @@
 #include "Wind.h"
+#include "TextureManager.h"
 
 Wind::~Wind()
 {
@@ -15,6 +16,7 @@ void Wind::Initialize(const std::string& filePath, const Vector3& position, cons
 	transform_.translate_ = position;
 	transform_.scale_ = { 0.5f, 0.5f, 0.5f };
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
+	textureHandle_ = TextureManager::GetInstance()->LoadTexture("wind.png");
 	direction_ = direction;
 	startPosition_ = position;
 	//当たり判定
@@ -55,7 +57,7 @@ void Wind::Update()
 void Wind::Draw(BaseCamera camera)
 {
 	if (!isAlive_) return;
-	object3d_->Draw(transform_, camera);
+	object3d_->Draw(transform_, camera, nullptr,textureHandle_);
 }
 
 void Wind::OnCollision(const AppCollider* other)

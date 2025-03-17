@@ -47,6 +47,10 @@ void GamePlayScene::Initialize()
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
 	//enemyManager_->SpawnTackleEnemy(7);
+	
+	//スカイドーム
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
 	// フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
@@ -102,6 +106,8 @@ void GamePlayScene::Update()
 	//エネミーマネージャーの更新
 	enemyManager_->Update();
 
+	//スカイドーム
+	skydome_->Update();
 	// フィールド
 	field_->Update();
 
@@ -144,6 +150,8 @@ void GamePlayScene::Draw()
 	//エネミーマネージャーの描画
 	enemyManager_->Draw();
 
+	//スカイドーム
+	skydome_->Draw(*camera_.get());
 	// フィールド
 	field_->Draw(*camera_.get());
 

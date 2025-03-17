@@ -15,6 +15,7 @@
 // アプリケーションインクルード
 #include "../../application/objects/Player/Player.h"
 #include "../../application/objects/Player/SpawnPos/SpawnPos.h"
+#include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/Field.h"
 #include "../../application/appCollider/AppCollisionManager.h"
 #include "../../application/enemy/EnemyManager.h"
@@ -66,6 +67,8 @@ private://メンバ変数
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;
 
+	//スカイドーム
+	std::unique_ptr<Skydome> skydome_ = nullptr;
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 

@@ -78,7 +78,7 @@ void Object3d::Draw(WorldTransform& worldTransform, const  BaseCamera& camera, c
 		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, camera.GetCameraPositionConstBuffer()->GetGPUVirtualAddress());
 
 		//モデルを描画する
-		model_->Draw(0, 3);
+		model_->Draw(0, 3,1,textureHandle);
 		break;
 	case Object3d::kShape:
 		//形状の更新処理

@@ -1,13 +1,15 @@
 #include "Field.h"
+#include "TextureManager.h"
 
 #include "../../appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
 
-void Field::Initialize()
-{
+void Field::Initialize() {
 	wtField_.Initialize();
 	wtField_.translate_ = { 0.0f,-1.0f,0.0f };
 	wtField_.scale_ = { 20.0f,1.0f,20.0f };
+
+	textureHandleField_ = TextureManager::GetInstance()->LoadTexture("grid.png");
 
 	field_ = std::make_unique<Object3d>();
 	field_->InitializeModel("cube");
@@ -27,11 +29,9 @@ void Field::Initialize()
 
 }
 
-void Field::Finalize()
-{
+void Field::Finalize() {
 	// 各解放処理
-	if (appCollider_)
-	{
+	if (appCollider_) {
 		appCollisionManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
@@ -39,8 +39,7 @@ void Field::Finalize()
 	field_.reset();
 }
 
-void Field::Update()
-{
+void Field::Update() {
 	wtField_.UpdateMatrix();
 
 	// 当たり判定関係
@@ -50,13 +49,11 @@ void Field::Update()
 	appCollider_->SetPosition(wtField_.translate_);
 }
 
-void Field::Draw(BaseCamera _camera)
-{
-    field_->Draw(wtField_, _camera);
+void Field::Draw(BaseCamera _camera) {
+	field_->Draw(wtField_, _camera, nullptr, textureHandleField_);
 }
 
-void Field::ImGuiDraw()
-{
+void Field::ImGuiDraw() {
 	ImGui::Begin("Field");
 
 	ImGui::SliderFloat3("FieldSize", &wtField_.scale_.x, 0.0f, 50.0f);
@@ -69,8 +66,7 @@ void Field::ImGuiDraw()
 	ImGui::End();
 }
 
-void Field::OnCollision(const AppCollider* _other)
-{
+void Field::OnCollision(const AppCollider* _other) {
 	_other;
 	// 何もしない
 }
