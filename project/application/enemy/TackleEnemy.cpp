@@ -64,9 +64,16 @@ void TackleEnemy::EnemyUpdate()
         }
 	}
 
-    //移動
-    Move();
-    
+    //氷の上にいるとき
+    if (onIce_) 
+    {
+        MoveOnIce();
+    }
+    else 
+    {
+        //移動
+        Move();
+    }
    
 
 	// 場外処理
@@ -86,6 +93,7 @@ void TackleEnemy::EnemyUpdate()
     aabb_.max = transform_.translate_ + transform_.scale_;
     appCollider_->SetPosition(transform_.translate_);
 
+    onIce_ = false;
 }
 
 void TackleEnemy::EnemyDraw(const BaseCamera& camera)
@@ -168,6 +176,10 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
         knockBackTime_ = 30.0f;
 
         isAttack_ = false;
+    }
+    else if (_other->GetColliderID() == "IceFloor")
+    {
+        onIce_ = true;
     }
     if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
     {
@@ -273,10 +285,12 @@ Vector3 TackleEnemy::ComputePenetration(const AppAABB& otherAABB)
     float absZ = std::abs(penetrationZ);
 
     //最小のベクトルを求める
-    if (absX < absZ) {
+    if (absX < absZ) 
+    {
         penetration.x = penetrationX;
     }
-    else {
+    else
+    {
         penetration.z = penetrationZ;
     }
 
@@ -308,5 +322,28 @@ void TackleEnemy::Move()
     {
         transform_.translate_ += tackleVelocity_ * deltaTime;
     }
+}
+
+void TackleEnemy::MoveOnIce()
+{
+    // フレーム間の時間差（秒）
+    float deltaTime = 1.0f / 60.0f;
+
+    // 摩擦による減速を適用
+    tackleVelocity_ *= frictionOnIce_;
+
+    // 速度が非常に小さくなったら停止する
+    if (tackleVelocity_.Length() < 0.001f && isStop_)
+    {
+        isAttack_ = false;
+        isStop_ = false;
+
+        tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+    }
+
+    // 位置を更新
+    transform_.translate_ += tackleVelocity_ * deltaTime;
+    position_ = transform_.translate_;
+
 }
 
