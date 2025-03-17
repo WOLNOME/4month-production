@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "json.hpp"
 
 class ParticleCreatorScene : public BaseScene {
 public:
@@ -27,8 +28,7 @@ public:
 private:
 	// 編集するパーティクル
 	std::unique_ptr<Particle> partile_ = nullptr;
-
-
+	
 
 
 

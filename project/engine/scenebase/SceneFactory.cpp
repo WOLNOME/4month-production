@@ -28,7 +28,7 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	}
 	//パーティクルクリエイター
 	else if (sceneName == "PARTICLECREATOR") {
-		newScene=new ParticleCreatorScene():
+		newScene = new ParticleCreatorScene();
 	}
 
 	return newScene;

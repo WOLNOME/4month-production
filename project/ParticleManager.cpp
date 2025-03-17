@@ -123,7 +123,7 @@ void ParticleManager::GenerateGraphicsPipeline() {
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
 	//BlendStateの設定
-	std::array<D3D12_BLEND_DESC, (size_t)BlendMode::kMaxBlendModeNum> blendDesc;
+	std::array<D3D12_BLEND_DESC, (int)BlendMode::kMaxBlendModeNum> blendDesc{};
 	for (int i = 0; i < (int)BlendMode::kMaxBlendModeNum; i++) {
 		//共通部分の設定
 		blendDesc[i].RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
@@ -202,7 +202,7 @@ void ParticleManager::GenerateGraphicsPipeline() {
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-	std::array<D3D12_GRAPHICS_PIPELINE_STATE_DESC,(size_t)BlendMode::kMaxBlendModeNum> graphicsPipelineStateDesc;
+	std::array<D3D12_GRAPHICS_PIPELINE_STATE_DESC, (int)BlendMode::kMaxBlendModeNum> graphicsPipelineStateDesc{};
 	for (int i = 0; i < (int)BlendMode::kMaxBlendModeNum; i++) {
 		graphicsPipelineStateDesc[i].pRootSignature = rootSignature.Get();
 		graphicsPipelineStateDesc[i].InputLayout = inputLayoutDesc;

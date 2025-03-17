@@ -277,19 +277,6 @@ void DevelopScene::Draw() {
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
 
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-	particle_->Draw(*camera.get(), emitter_, &field_);
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
-	///------------------------------///
-
 
 	//線描画共通描画設定
 	LineDrawerCommon::GetInstance()->SettingCommonDrawing();

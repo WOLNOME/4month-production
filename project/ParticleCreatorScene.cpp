@@ -1,10 +1,15 @@
 #include "ParticleCreatorScene.h"
 #include "ImGuiManager.h"
+#include "JsonUtil.h"
 
 void ParticleCreatorScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
+	json jsonData;
+	jsonData["name"] = "particle";
+	jsonData["path"] = "Resources/particles/particle";
 
+	JsonUtil::CreateJson("particle.json", "Resources/particles", jsonData);
 
 }
 

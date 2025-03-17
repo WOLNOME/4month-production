@@ -107,6 +107,7 @@
     <ClCompile Include="engine\2d\TextWrite.cpp" />
     <ClCompile Include="ParticleCreatorScene.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="engine\util\JsonUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="engine\2d\TextWrite.h" />
     <ClInclude Include="ParticleCreatorScene.h" />
     <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="engine\util\JsonUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

@@ -1,4 +1,5 @@
 #pragma once
+#include "BaseCamera.h"
 #include <d3d12.h>
 #include <string>
 #include <array>
@@ -48,13 +49,14 @@ private://非公開メンバ関数
 
 public://ゲッター
 public://セッター
+	void SetCamera(BaseCamera* camera) { camera_ = camera; }
 private://インスタンス
-
+	BaseCamera* camera_ = nullptr;
 private://メンバ変数
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	//グラフィックスパイプライン
-	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, (size_t)BlendMode::kMaxBlendModeNum> graphicsPipelineState;
+	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, (int)BlendMode::kMaxBlendModeNum> graphicsPipelineState;
 
 	//パーティクルのコンテナ
 	std::unordered_map<std::string, std::unique_ptr<Particle>> particles;
