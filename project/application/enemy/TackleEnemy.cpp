@@ -149,6 +149,13 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     else if (_other->GetColliderID() == "Obstacle")
     {
         transform_.translate_ += ComputePenetration(*_other->GetAABB());
+        //行列の更新
+        transform_.UpdateMatrix();
+
+        // 当たり判定関係
+        aabb_.min = transform_.translate_ - transform_.scale_;
+        aabb_.max = transform_.translate_ + transform_.scale_;
+        appCollider_->SetPosition(transform_.translate_);
     }
     else if (_other->GetColliderID() == "Bumper")
     {

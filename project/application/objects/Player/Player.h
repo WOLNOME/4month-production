@@ -61,6 +61,17 @@ public: //セッター
 
 private:
 
+	//氷の上の移動
+	void MoveOnIce();
+
+	//氷の上の攻撃
+	void AttackOnIce();
+
+	//氷の上の移動更新
+	void MovePositionOnIce();
+
+private:
+
 	// 入力
 	Input* input_ = nullptr;
 
@@ -99,5 +110,14 @@ private:
 	// 死亡フラグ
 	bool isDead_ = false;
 
+	//氷の上にいるかどうか
+	bool onIce_ = false;
+
+	//氷の上にいるときの摩擦係数
+	float frictionOnIce_ = 0.98f;
+	//氷の上にいるときの移動速度
+	float moveSpeedOnIce_ = 0.01f;
+	//氷の上にいるときの最高速度
+	float MaxSpeedOnIce_ = 0.2f;
 };
 

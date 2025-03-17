@@ -46,7 +46,7 @@ void GamePlayScene::Initialize()
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
-	enemyManager_->SpawnTackleEnemy(7);
+	//enemyManager_->SpawnTackleEnemy(7);
 
 	// フィールド
 	field_ = std::make_unique<Field>();
@@ -63,6 +63,13 @@ void GamePlayScene::Initialize()
 	bumper = std::make_unique<Bumper>();
 	bumper->Initialize();
 	bumper->SetPosition({ 7.0f, 1.0f, 7.0f });
+
+	//氷の床
+	std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
+	iceFloor = std::make_unique<IceFloor>();
+	iceFloor->Initialize();
+	iceFloor->SetPosition({ -9.0f, 1.0f, 0.0f });
+	iceFloor->SetScale({ 5.0f, 1.0f, 5.0f });
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -130,6 +137,12 @@ void GamePlayScene::Update()
 		bumper->Update();
 	}
 
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Update();
+	}
+
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
 	{
@@ -182,6 +195,12 @@ void GamePlayScene::Draw()
 	for (std::unique_ptr<Bumper>& bumper : bumpers_)
 	{
 		bumper->Draw(*camera_.get());
+	}
+
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Draw(*camera_.get());
 	}
 
 	// プレイヤースポーン
