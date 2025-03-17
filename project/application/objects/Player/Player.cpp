@@ -448,7 +448,6 @@ void Player::AttackOnIce()
 
 void Player::MovePositionOnIce()
 {
-	isPlayerHit_ = false;
 
 	// 摩擦による減速を適用
 	moveVel_ *= frictionOnIce_;
