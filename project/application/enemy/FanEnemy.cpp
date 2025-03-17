@@ -42,8 +42,16 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 
 void FanEnemy::EnemyUpdate()
 {
-	// 移動
-	Move();
+	//氷の上にいるとき
+	if (onIce_) 
+	{
+		MoveOnIce();
+	}
+	else
+	{
+		// 移動
+		Move();
+	}
 	// 回転速度の変更
 	ChageRotationSpeed();
 	// 回転
@@ -56,6 +64,8 @@ void FanEnemy::EnemyUpdate()
 	transform_.UpdateMatrix();
 	// 当たり判定関係
 	UpdateCollider();
+
+	onIce_ = false;
 }
 
 void FanEnemy::EnemyDraw(const BaseCamera& camera)
@@ -69,6 +79,32 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 	{
 		// 地面にいる
 		isGround_ = true;
+	}
+	else if (_other->GetColliderID() == "Obstacle")
+	{
+		transform_.translate_ += ComputePenetration(*_other->GetAABB());
+		//行列の更新
+		transform_.UpdateMatrix();
+
+		// 当たり判定関係
+		aabb_.min = transform_.translate_ - transform_.scale_;
+		aabb_.max = transform_.translate_ + transform_.scale_;
+		appCollider_->SetPosition(transform_.translate_);
+	}
+	else if (_other->GetColliderID() == "Bumper")
+	{
+		Vector3 penetration = ComputePenetration(*_other->GetAABB());
+		transform_.translate_ += penetration;
+		penetration.Normalize();
+		// ノックバック
+		velocity_ = penetration;
+		velocity_ *= 20.0f;
+		velocity_.y = 0.0f;
+
+	}
+	else if (_other->GetColliderID() == "IceFloor")
+	{
+		onIce_ = true;
 	}
 }
 
@@ -168,4 +204,54 @@ void FanEnemy::UpdateCollider()
 	aabb_.min = transform_.translate_ - transform_.scale_;
 	aabb_.max = transform_.translate_ + transform_.scale_;
 	appCollider_->SetPosition(transform_.translate_);
+}
+
+Vector3 FanEnemy::ComputePenetration(const AppAABB& otherAABB)
+{
+	Vector3 penetration;
+
+	//X軸方向に押し戻すベクトル
+	float overlapX1 = otherAABB.max.x - aabb_.min.x;
+	float overlapX2 = aabb_.max.x - otherAABB.min.x;
+	float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
+
+	//Z軸方向に押し戻すベクトル
+	float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+	float overlapZ2 = aabb_.max.z - otherAABB.min.z;
+	float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
+
+	//ベクトルの絶対値を求める
+	float absX = std::abs(penetrationX);
+	float absZ = std::abs(penetrationZ);
+
+	//最小のベクトルを求める
+	if (absX < absZ) 
+	{
+		penetration.x = penetrationX;
+	}
+	else 
+	{
+		penetration.z = penetrationZ;
+	}
+
+	return penetration;
+}
+
+void FanEnemy::MoveOnIce()
+{
+	// フレーム間の時間差（秒）
+	float deltaTime = 1.0f / 60.0f;
+
+	// 摩擦による減速を適用
+	velocity_ *= frictionOnIce_;
+
+	// 速度が非常に小さくなったら停止する
+	if (velocity_.Length() < 0.001f)
+	{
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+	}
+
+	// 位置を更新
+	transform_.translate_ += velocity_ * deltaTime;
+	position_ = transform_.translate_;
 }

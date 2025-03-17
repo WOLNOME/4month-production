@@ -35,6 +35,12 @@ private:
 	void OutOfField();
 	void UpdateCollider();
 
+	// 障害物にぶつかったとき、最小の移動量で押し戻すベクトルを求める
+	Vector3 ComputePenetration(const AppAABB& otherAABB);
+
+	//氷の上の移動
+	void MoveOnIce();
+
 private:
 	//速度ベクトル
 	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
@@ -61,5 +67,8 @@ private:
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_;
 	bool isAlive_ = true;
+
+	//氷の上にいるときの摩擦係数
+	float frictionOnIce_ = 0.995f;
 };
 

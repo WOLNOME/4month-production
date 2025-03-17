@@ -19,5 +19,8 @@ protected:
 	std::unique_ptr<Object3d> object3d_;
 	//トランスフォーム
 	WorldTransform transform_;
+
+	//氷の上にいるかどうか
+	bool onIce_ = false;
 };
 
