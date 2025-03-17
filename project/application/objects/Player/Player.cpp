@@ -57,7 +57,7 @@ void Player::Update()
 	{
 		knockBackTime_ -= 1.0f;
 	}
-	else
+	else if(!isAftertaste_)
 	{
 		// 移動
 		Move();
@@ -132,7 +132,7 @@ void Player::MovePosition()
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.01f)
 	{
-
+		isAftertaste_ = false;
 		return;
 	}
 
@@ -276,6 +276,8 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// エネミーの攻撃を食らったとき
 		if (_other->GetOwner()->IsAttack() && !isAttack_)
 		{
+			isAftertaste_ = true;
+
 			// 当たったエネミーの位置を取得
 			enemyPosition_ = _other->GetOwner()->GetPosition();
 
@@ -293,6 +295,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 	// 風に当たったらノックバック
 	if (_other->GetColliderID() == "Wind" && !isAttack_)
 	{
+		isAftertaste_ = true;
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック

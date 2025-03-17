@@ -75,6 +75,8 @@ private:
 	Vector3 enemyPosition_{};
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
+	// ノックバックの余韻
+	bool isAftertaste_ = false;
 
 
 	// 移動速度

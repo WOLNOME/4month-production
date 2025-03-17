@@ -82,6 +82,8 @@ private:
     bool isGround_ = false;
 
 	bool isStop_ = false;
+    // ノックバックの余韻
+	bool isAftertaste_ = false;
 	
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
