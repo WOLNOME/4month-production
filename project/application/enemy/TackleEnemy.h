@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseEnemy.h"
-#include <random> // ランダム生成のために追加
+#include <random>
 
 #include "../appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"
@@ -77,14 +77,14 @@ private:
     // 落下速度
     float fallSpeed_ = 0.3f;
 
-    // 当たり判定関係
+    // 当たり判定
     AppCollisionManager* appCollisionManager_ = nullptr;
     std::unique_ptr<AppCollider> appCollider_ = nullptr;
     AppAABB aabb_{};
     bool isHit_ = false;
     bool isGround_ = false;
 
-	bool AAA = false;
+	bool isStop_ = false;
 	
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;

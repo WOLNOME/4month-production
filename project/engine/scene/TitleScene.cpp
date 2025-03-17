@@ -1,8 +1,11 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 
-void TitleScene::Initialize()
-{
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dwrite.lib")
+
+void TitleScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -17,15 +20,18 @@ void TitleScene::Initialize()
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
 	camera->SetRotate({ 0.6f,0.0f,0.0f });
+
+	title_ = std::make_unique<TextWrite>();
+	title_->Initialize("TITLE");
+	title_->SetParam({ 440.0f,300.0f }, Font::OnionScript, 80.0f, { 1,1,0,1 });
+	title_->SetEdgeParam({ 1,0,0,1 }, 5.0f, 0.0f, true);
 	
 }
 
-void TitleScene::Finalize()
-{
+void TitleScene::Finalize() {
 }
 
-void TitleScene::Update()
-{
+void TitleScene::Update() {
 	if (input_->TriggerKey(DIK_TAB)) {
 		sceneManager_->SetNextScene("GAMEPLAY");
 	}
@@ -37,14 +43,16 @@ void TitleScene::Update()
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "TITLE");
 	ImGui::End();
+	//タイトルテキスト用のImGui
+	title_->DebugWithImGui();
+
 #endif // _DEBUG
 
 	spriteTitle_->Update();
 
 }
 
-void TitleScene::Draw()
-{
+void TitleScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -78,7 +86,7 @@ void TitleScene::Draw()
 	///↓↓↓↓線描画開始↓↓↓↓
 	///------------------------------///
 
-	
+
 
 	///------------------------------///
 	///↑↑↑↑線描画終了↑↑↑↑
@@ -96,4 +104,20 @@ void TitleScene::Draw()
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
+
 }
+
+void TitleScene::TextDraw() {
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+
+	//タイトルテキスト
+	title_->WriteText(L"タイトル名");
+
+
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+}
+

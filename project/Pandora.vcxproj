@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -144,6 +144,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
+    <ClCompile Include="application\enemy\FanEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -171,6 +172,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\Shape.cpp" />
     <ClCompile Include="application\objects\Player\Player.cpp" />
     <ClCompile Include="application\objects\Player\SpawnPos\SpawnPos.cpp" />
+    <ClCompile Include="application\enemy\Wind.cpp" />
+    <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
+    <ClCompile Include="engine\2d\TextWrite.cpp" />
+    <ClCompile Include="engine\2d\TextWriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -229,6 +234,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\ModelFormat.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\objects\GameObject\GameObject.h" />
+    <ClInclude Include="application\enemy\FanEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
@@ -245,6 +251,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\appCollider\AppShape.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
+    <ClInclude Include="application\enemy\Wind.h" />
+    <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
+    <ClInclude Include="engine\2d\TextWrite.h" />
+    <ClInclude Include="engine\2d\TextWriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

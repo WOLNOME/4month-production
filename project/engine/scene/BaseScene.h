@@ -1,20 +1,25 @@
 #pragma once
+//シーンの基底クラス
 #include "SceneLight.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+//オブジェクトクラス
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Audio.h"
 #include "Input.h"
 #include "LineDrawer.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
+#include "TextWrite.h"
 #include "TextureManager.h"
+//シーン共通クラス
 #include "ImGuiManager.h"
 #include "Object3dCommon.h"
 #include "ParticleCommon.h"
 #include "LineDrawerCommon.h"
 #include "SpriteCommon.h"
+//シーン共通ヘッダー
 #include <cstdint>
 #include <chrono>
 #include <memory>
@@ -43,6 +48,11 @@ public:
 	/// 描画
 	/// </summary>
 	virtual void Draw();
+	/// <summary>
+	/// 文字描画
+	/// </summary>
+	virtual void TextDraw();
+	
 
 	//FPS表示
 	void ShowFPS();

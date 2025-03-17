@@ -20,6 +20,11 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+	/// <summary>
+	/// テキスト描画
+	/// </summary>
+	void TextDraw() override;
+
 private://メンバ変数
 	Input* input_ = nullptr;
 
@@ -29,5 +34,8 @@ private://メンバ変数
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
 	
+	//タイトル
+	std::unique_ptr<TextWrite> title_;
+
 };
 

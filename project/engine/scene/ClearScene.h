@@ -19,6 +19,10 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+	/// <summary>
+	/// テキスト描画
+	/// </summary>
+	void TextDraw() override;
 private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;

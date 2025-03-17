@@ -24,6 +24,10 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+	/// <summary>
+	///	テキスト描画
+	/// </summary>
+	void TextDraw() override;
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
@@ -77,5 +81,9 @@ private://メンバ変数
 	bool isDrawSphere_ = false;
 	std::unique_ptr<Audio> audio_ = nullptr;
 	float volume = 0.5f;
+
+	//テキスト
+	int timer_ = 0;
+	std::unique_ptr<TextWrite> text_;
 };
 

@@ -47,7 +47,6 @@ void GamePlayScene::Initialize()
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
 	//enemyManager_->SpawnTackleEnemy(7);
-
 	// フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
@@ -148,7 +147,7 @@ void GamePlayScene::Update()
 	{
 		playerSpawn->Update();
 	}
-	//playerSpawnRotation();
+	playerSpawnRotation();
 
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();
@@ -253,6 +252,18 @@ void GamePlayScene::Draw()
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
+	///------------------------------///
+}
+
+void GamePlayScene::TextDraw() {
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+
+
+
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 }
 

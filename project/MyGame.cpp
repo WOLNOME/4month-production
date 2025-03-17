@@ -3,6 +3,7 @@
 #include "MainRender.h"
 #include "TextureManager.h"
 #include "SrvManager.h"
+#include "TextWriteManager.h"
 #include "ImGuiManager.h"
 #include "ModelManager.h"
 #include "Model.h"
@@ -59,6 +60,26 @@ void MyGame::Draw()
 
 	//描画後処理
 	MainRender::GetInstance()->PostDraw();
+
+	///------------------------------///
+	///        テキスト描画処理
+	///------------------------------///
+
+	//テキスト描画前処理
+	TextWriteManager::GetInstance()->BeginDrawWithD2D();
+
+	//シーンの文字描画
+	SceneManager::GetInstance()->TextDraw();
+
+	//テキスト描画後処理
+	TextWriteManager::GetInstance()->EndDrawWithD2D();
+
+	///------------------------------///
+	///        全ての描画が終了
+	///------------------------------///
+
+	//画面切り替え
+	MainRender::GetInstance()->ExchangeScreen();
 	//単レンダー終了時の共通処理
 	DirectXCommon::GetInstance()->PostEachRender();
 	//コマンドのリセット

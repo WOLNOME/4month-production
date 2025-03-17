@@ -84,7 +84,6 @@ private:
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
 	bool isGround_ = false;
-	bool isPlayerHit_ = false;
 	bool isStop_ = false;
 	// エネミーの位置
 	Vector3 enemyPosition_{};

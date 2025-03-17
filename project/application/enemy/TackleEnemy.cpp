@@ -24,10 +24,8 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
     nextTackleWaitTime_ = waitTimeDist(randomEngine_);
     tackleWaitTimer_ = 0.0f;
 
-
-    // 当たり判定関係
+    // 当たり判定
     appCollisionManager_ = AppCollisionManager::GetInstance();
-
     objectName_ = "TackleEnemy";
     appCollider_ = std::make_unique<AppCollider>();
     appCollider_->SetOwner(this);
@@ -52,7 +50,7 @@ void TackleEnemy::EnemyUpdate()
 	{
 
          // タックル中でない場合、待機タイマーを更新
-        if (!isTackling_)
+        if (!isTackling_ && isGround_)
         {
             tackleWaitTimer_ += 1.0f / 60.0f;
             if (tackleWaitTimer_ >= nextTackleWaitTime_)
@@ -83,7 +81,7 @@ void TackleEnemy::EnemyUpdate()
     //行列の更新
 	transform_.UpdateMatrix();
 
-    // 当たり判定関係
+    // 当たり判定
     aabb_.min = transform_.translate_ - transform_.scale_;
     aabb_.max = transform_.translate_ + transform_.scale_;
     appCollider_->SetPosition(transform_.translate_);
@@ -204,21 +202,26 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
         tackleVelocity_ = playerVelocity;
     }
 
+	// エネミー同士の衝突
 	if (_other->GetColliderID() == "TackleEnemy")
 	{
-        // プレイヤーの速度
-        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+        // エネミー同士の衝突処理
+        Vector3 enemyPosition = transform_.translate_;
+        Vector3 otherEnemyPosition = _other->GetOwner()->GetPosition();
 
-        // プレイヤーの進行方向に対して垂直な方向を計算
-        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+        // エネミー同士が重ならないようにする
+        Vector3 direction = enemyPosition - otherEnemyPosition;
+        direction.Normalize();
+        float distance = 2.5f; // エネミー同士の間の距離を調整するための値
 
-        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
-        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
-        transform_.translate_ += perpendicularDirection * distance;
-
-        // tackleVelocity_ をプレイヤーの速度に設定
-        tackleVelocity_ = playerVelocity;
-		
+        // 互いに重ならないように少しずつ位置を調整
+        if ((enemyPosition - otherEnemyPosition).Length() < distance)
+        {
+            enemyPosition += direction * 0.1f; // 微調整のための値
+            enemyPosition.y = 0.7f;
+            transform_.translate_ = enemyPosition;
+            position_ = transform_.translate_;
+        }
 	}
 }
 
@@ -226,7 +229,11 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 {
     if (_other->GetColliderID() == "Player")
     {
-		AAA = true;
+        if (isAttack_)
+        {
+            isStop_ = true;
+        }
+
         if (_other->GetOwner()->IsAttack()) 
         {
 			isHit_ = true;
@@ -286,10 +293,10 @@ void TackleEnemy::Move()
     tackleVelocity_ += friction;
 
     // 速度が非常に小さくなったら停止する
-    if (tackleVelocity_.Length() < 0.01f or AAA == true)
+    if (tackleVelocity_.Length() < 0.01f or isStop_ == true)
     {
         isAttack_ = false;
-        AAA = false;
+        isStop_ = false;
 
 		//tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
 
@@ -297,7 +304,7 @@ void TackleEnemy::Move()
     }
 
     // 位置を更新
-    if (!AAA)
+    if (!isStop_)
     {
         transform_.translate_ += tackleVelocity_ * deltaTime;
     }

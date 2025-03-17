@@ -1,8 +1,7 @@
 #include "DevelopScene.h"
 #include <numbers>
 
-void DevelopScene::Initialize()
-{
+void DevelopScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -51,7 +50,7 @@ void DevelopScene::Initialize()
 	sprite2Position = { 100.0f,100.0f };
 	sprite2_->SetPosition(sprite2Position);
 	sprite2_->SetSize({ 300.0f,300.0f });
-	
+
 	wtAxis_.Initialize();
 	axis_ = std::make_unique<Object3d>();
 	axis_->InitializeModel("teapot");
@@ -100,19 +99,25 @@ void DevelopScene::Initialize()
 
 	audio_ = std::make_unique<Audio>();
 	audio_->Initialize("Alarm01.wav");
+
+	text_ = std::make_unique<TextWrite>();
+	text_->Initialize("text");
+	text_->SetParam({ 0.0f,0.0f }, Font::UDDegitalN_R, 32.0f, { 1,1,0,1 });
+	text_->SetEdgeParam({ 1,0,0,1 }, 10.0f, 0.0f, true);
 }
 
-void DevelopScene::Finalize()
-{
+void DevelopScene::Finalize() {
 }
 
-void DevelopScene::Update()
-{
+void DevelopScene::Update() {
+	//シーン共通の更新
+	BaseScene::Update();
+
 	//カメラの更新
 	camera->Update();
 
 	//シーンライトの更新処理
-	sceneLight_->Update(camera.get());
+	sceneLight_->Update();
 
 
 	//モデルの更新
@@ -242,12 +247,13 @@ void DevelopScene::Update()
 		MyMath::DrawSphere(slMarkSphere2, { 0.0f,1.0f,0.0f,1.0f }, slMark.get());
 	}
 	ImGui::End();
+	//テキスト用ImGui
+	text_->DebugWithImGui();
 
 #endif // _DEBUG
 }
 
-void DevelopScene::Draw()
-{
+void DevelopScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -316,5 +322,19 @@ void DevelopScene::Draw()
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
+	///------------------------------///
+}
+
+void DevelopScene::TextDraw() {
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
+	///------------------------------///
+
+	timer_++;
+	float time = timer_ / 60.0f;
+	text_->WriteText(L"フォント確認 0123 現在時刻 : {:.1f}",time);
+
+	///------------------------------///
+	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 }

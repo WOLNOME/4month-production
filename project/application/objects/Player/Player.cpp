@@ -11,7 +11,7 @@ void Player::Initialize()
 	wtPlayer_.Initialize();
 	wtPlayer_.scale_ = { 1.0f,1.0f,1.0f };
 	player_ = std::make_unique<Object3d>();
-	player_->InitializeModel("cube");
+	player_->InitializeModel("player");
 	
 
 	// 当たり判定関係
@@ -28,6 +28,7 @@ void Player::Initialize()
 	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
+	
 }
 
 void Player::Finalize()
@@ -145,8 +146,6 @@ void Player::Move()
 
 void Player::MovePosition()
 {
-	isPlayerHit_ = false;
-
 	// フレーム間の時間差（秒）
 	float deltaTime = 1.0f / 60.0f;
 
@@ -171,6 +170,10 @@ void Player::OutOfField()
 	if (isGround_ == false)
 	{
 		wtPlayer_.translate_.y -= fallSpeed_;
+	} 
+	else
+	{
+		wtPlayer_.translate_.y = 1.0f;
 	}
 
 	if (wtPlayer_.translate_.y < -10.0f)
@@ -291,19 +294,23 @@ void Player::OnCollision(const AppCollider* _other)
 	// プレイヤー同士の衝突
 	if (_other->GetColliderID() == "Player")
 	{
-		//isPlayerHit_ = true;
-		//// プレイヤーの速度
-		//Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+		// プレイヤー同士の衝突処理
+		Vector3 playerPosition = wtPlayer_.translate_;
+		Vector3 otherPlayerPosition = _other->GetOwner()->GetPosition();
 
-		//// プレイヤーの進行方向に対して垂直な方向を計算
-		//Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+		// プレイヤー同士が重ならないようにする
+		Vector3 direction = playerPosition - otherPlayerPosition;
+		direction.Normalize();
+		float distance = 2.5f; // プレイヤー同士の間の距離を調整するための値
 
-		//// プレイヤーの進行方向に対して垂直な方向にプレイヤーを移動
-		//float distance = 0.2f; // プレイヤーからプレイヤーを徐々に離す距離
-		//wtPlayer_.translate_ += perpendicularDirection * distance;
-
-		//// moveVel_ をプレイヤーの速度に設定
-		//moveVel_ = playerVelocity;
+		// 互いに重ならないように少しずつ位置を調整
+		if ((playerPosition - otherPlayerPosition).Length() < distance)
+		{
+			playerPosition += direction * 0.1f; // 微調整のための値
+			playerPosition.y = 1.0f;
+			wtPlayer_.translate_ = playerPosition;
+			position_ = wtPlayer_.translate_;
+		}
 	}
 
 }
@@ -333,6 +340,19 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
 		}
+	}
+
+	// 風に当たったらノックバック
+	if (_other->GetColliderID() == "Wind" && !isAttack_)
+	{
+		//当たった風の位置を取得
+		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
+		// ノックバック
+		moveVel_ += windDirection * 2.0f;
+		//moveVel_ *= 2.0f;
+		moveVel_.y = 0.0f;
+		// ノックバックタイマー
+		knockBackTime_ = 25.0f;
 	}
 }
 
