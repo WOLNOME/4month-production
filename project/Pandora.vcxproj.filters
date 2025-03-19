@@ -105,6 +105,16 @@
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="engine\2d\TextWrite.cpp" />
+    <ClCompile Include="application\objects\Gimmick\Obstacle.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Gimmick\Bumper.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Gimmick\IceFloor.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
     <ClCompile Include="ParticleCreatorScene.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
@@ -218,6 +228,16 @@
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="engine\2d\TextWrite.h" />
+    <ClInclude Include="application\objects\Gimmick\Obstacle.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Gimmick\Bumper.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Skydome\Skydome.h" />
     <ClInclude Include="ParticleCreatorScene.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="engine\util\JsonUtil.h" />
@@ -262,6 +282,9 @@
     </Filter>
     <Filter Include="engine\scenebase">
       <UniqueIdentifier>{4af1c3a2-e07c-46a3-a103-7a9fdd748669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gimmick">
+      <UniqueIdentifier>{1e064a18-e749-4820-92d2-624a28a940a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

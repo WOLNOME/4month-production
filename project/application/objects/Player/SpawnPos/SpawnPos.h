@@ -26,6 +26,7 @@ private:
 
 	// モデル情報
 	WorldTransform wtSpawn_{};
+	int32_t textureHandleSpawn_ = EOF;
 	std::unique_ptr<Object3d> spawn_{};
 
 };

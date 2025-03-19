@@ -46,9 +46,32 @@ void GamePlayScene::Initialize()
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
 	//enemyManager_->SpawnTackleEnemy(7);
+	
+	//スカイドーム
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
 	// フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
+
+	//障害物
+	std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+	obstacle = std::make_unique<Obstacle>();
+	obstacle->Initialize();
+	obstacle->SetPosition({ 0.0f, 1.0f, 7.0f });
+
+	//跳ね返る障害物
+	std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+	bumper = std::make_unique<Bumper>();
+	bumper->Initialize();
+	bumper->SetPosition({ 7.0f, 1.0f, 7.0f });
+
+	//氷の床
+	std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
+	iceFloor = std::make_unique<IceFloor>();
+	iceFloor->Initialize();
+	iceFloor->SetPosition({ -9.0f, 1.0f, 0.0f });
+	iceFloor->SetScale({ 5.0f, 1.0f, 5.0f });
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -101,8 +124,28 @@ void GamePlayScene::Update()
 	//エネミーマネージャーの更新
 	enemyManager_->Update();
 
+	//スカイドーム
+	skydome_->Update();
 	// フィールド
 	field_->Update();
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
+	{
+		obstacle->Update();
+	}
+
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Update();
+	}
+
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Update();
+	}
 
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
@@ -143,8 +186,28 @@ void GamePlayScene::Draw()
 	//エネミーマネージャーの描画
 	enemyManager_->Draw();
 
+	//スカイドーム
+	skydome_->Draw(*camera_.get());
 	// フィールド
 	field_->Draw(*camera_.get());
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
+	{
+		obstacle->Draw(*camera_.get());
+	}
+
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Draw(*camera_.get());
+	}
+
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Draw(*camera_.get());
+	}
 
 	// プレイヤースポーン
 	for (auto& playerSpawn : playerSpawn_)
