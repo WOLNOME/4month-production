@@ -2,7 +2,6 @@
 #include "DirectXCommon.h"
 #include "MainRender.h"
 #include "Logger.h"
-#include "Particle.h"
 
 ParticleManager* ParticleManager::instance = nullptr;
 
@@ -27,15 +26,24 @@ void ParticleManager::Draw() {
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	MainRender::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	///※グラフィックスパイプラインステートは各パーティクルで設定する
-
-
-
+	
 }
 
 void ParticleManager::Finalize() {
 	delete instance;
 	instance = nullptr;
+}
+
+void ParticleManager::RegisterParticle(const std::string& name, Particle* particle) {
+	//重複チェック
+	if (particles.find(name) != particles.end()) {
+		return;
+	}
+	//登録
+	particles[name] = particle;
+
+	//パーティクルのモデルリソースをコンテナに登録
+
 }
 
 void ParticleManager::GenerateGraphicsPipeline() {
@@ -45,6 +53,7 @@ void ParticleManager::GenerateGraphicsPipeline() {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	
 	//DescriptorRange作成
 	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
 	descriptorRangeForInstancing[0].BaseShaderRegister = 0;

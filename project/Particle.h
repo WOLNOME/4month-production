@@ -6,8 +6,11 @@
 #include <list>
 #include <memory>
 #include <numbers>
+#include "json.hpp"
 #include "Model.h"
 #include "MyMath.h"
+
+using json = nlohmann::json;
 
 class BaseCamera;
 //パーティクル
@@ -23,9 +26,6 @@ public:
 	struct ParticleResource {
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;
 		ParticleForGPU* instancingData;
-		TransformEuler transform;
-		D3D12_CPU_DESCRIPTOR_HANDLE SrvHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE SrvHandleGPU;
 		uint32_t srvIndex;
 	};
 	//エフェクト構造体
@@ -55,8 +55,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="filePath">オブジェクトファイルパス(.objはいらない)</param>
-	void Initialize(const std::string& filePath);
+	/// <param name="filePath">使用するパーティクルの名前(.jsonは省略)</param>
+	void Initialize(const std::string& name);
 	void Draw(const BaseCamera& camera, Emitter& emitter, AccelerationField* field = nullptr);
 private://メンバ関数(非公開)
 	//パーティクルリソース作成関数
@@ -68,7 +68,10 @@ private://メンバ関数(非公開)
 	//エミット
 	std::list<EffectData> Emit(const Emitter& emitter);
 
-private://インスタンス
+public://getter
+	const json& GetParam() { return param_; }
+public://setter
+
 private://メンバ変数
 	//モデル(見た目)
 	Model* model_;
@@ -77,12 +80,15 @@ private://メンバ変数
 
 	//各インスタンシング用書き換え情報
 	std::list<EffectData> effects_;
-	//表示するパーティクルの最大数
-	const uint32_t kNumMaxInstance_ = 64;
 	//δtの定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ビルボードのオンオフ
 	bool isBillboard = true;
 
+private://パラメーター
+	//各エフェクトのパラメーター
+	json param_;
+	//エミッター
+	Emitter emitter_;
 
 };

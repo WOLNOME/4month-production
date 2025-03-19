@@ -28,6 +28,7 @@ public:
 	///	テキスト描画
 	/// </summary>
 	void TextDraw() override;
+
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ

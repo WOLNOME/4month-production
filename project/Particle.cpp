@@ -6,33 +6,45 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "ParticleManager.h"
+#include "JsonUtil.h"
 #include "BaseCamera.h"
 #include "ModelFormat.h"
 #include <fstream>
 #include <sstream>
 #include <random>
 
-Particle::~Particle()
-{
+Particle::~Particle() {
 	//確保したSRVデスクリプタヒープの解放
 	SrvManager::GetInstance()->Free(particleResource_.srvIndex);
 }
 
-void Particle::Initialize(const std::string& filePath)
-{
+void Particle::Initialize(const std::string& name) {
+	//パラメータをセット
+	auto data = JsonUtil::GetJsonData("Resources/particles/" + name);
+	if (data) {
+		param_ = data;
+	}
+	else {
+		//エラー
+		assert(0 && "JSONファイルが存在しません");
+	}
+
 	//モデルマネージャーでモデル(見た目)を生成
-	ModelManager::GetInstance()->LoadModel(filePath, OBJ);
+	ModelManager::GetInstance()->LoadModel("plane");
 	//モデルマネージャーから検索してセットする
-	model_ = ModelManager::GetInstance()->FindModel(filePath);
+	model_ = ModelManager::GetInstance()->FindModel("plane");
 
 	//パーティクルのリソースを作成
 	particleResource_ = MakeParticleResource();
 	//インスタンシングをSRVにセット
 	SettingSRV();
+
+	//最後にマネージャーに登録
+	ParticleManager::GetInstance()->RegisterParticle(name, this);
 }
 
-void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationField* field)
-{
+void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationField* field) {
 	//インスタンスの番号
 	uint32_t instanceNum = 0;
 	//エミッターの更新
@@ -96,7 +108,7 @@ void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationFiel
 	}
 
 	//座標変換行列Tableの場所を設定
-	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleResource_.SrvHandleGPU);
+	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleResource_.srvIndex));
 	//CameraCBufferの場所を設定
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, camera.GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
 	//モデルの描画
@@ -104,50 +116,41 @@ void Particle::Draw(const BaseCamera& camera, Emitter& emitter, AccelerationFiel
 
 }
 
-Particle::ParticleResource Particle::MakeParticleResource()
-{
+Particle::ParticleResource Particle::MakeParticleResource() {
 	//Particleリソース
 	ParticleResource particleResource;
 	//インスタンシングリソース作成
-	particleResource.instancingResource = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance_);
+	uint32_t kNumMaxInstance = param_["MaxEffects"];
+	particleResource.instancingResource = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 	//リソースにデータを書き込む
 	particleResource.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&particleResource.instancingData));
 	//データに書き込む
-	for (uint32_t index = 0; index < kNumMaxInstance_; ++index) {
+	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 		particleResource.instancingData[index].World = MyMath::MakeIdentity4x4();
 		particleResource.instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	//トランスフォーム
-	particleResource.transform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};
 	//リターン
 	return particleResource;
 }
 
-void Particle::SettingSRV()
-{
+void Particle::SettingSRV() {
 	//SRVマネージャーからデスクリプタヒープの空き番号を取得
 	particleResource_.srvIndex = SrvManager::GetInstance()->Allocate();
 
 	//srv設定
+	uint32_t kNumMaxInstance = param_["MaxEffects"];
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = kNumMaxInstance_;
+	srvDesc.Buffer.NumElements = kNumMaxInstance;
 	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
-	particleResource_.SrvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(particleResource_.srvIndex);
-	particleResource_.SrvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(particleResource_.srvIndex);
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, particleResource_.SrvHandleCPU);
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, SrvManager::GetInstance()->GetCPUDescriptorHandle(particleResource_.srvIndex));
 }
 
-Particle::EffectData Particle::MakeNewParticle(const Vector3& translate)
-{
+Particle::EffectData Particle::MakeNewParticle(const Vector3& translate) {
 	EffectData particle;
 	//ランダムエンジンの生成
 	std::random_device seedGenerator;
@@ -171,8 +174,7 @@ Particle::EffectData Particle::MakeNewParticle(const Vector3& translate)
 	return particle;
 }
 
-std::list<Particle::EffectData> Particle::Emit(const Emitter& emitter)
-{
+std::list<Particle::EffectData> Particle::Emit(const Emitter& emitter) {
 	std::list<EffectData> particle;
 
 	for (uint32_t count = 0; count < emitter.count; ++count) {

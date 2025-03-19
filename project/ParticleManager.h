@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseCamera.h"
+#include "Particle.h"
 #include <d3d12.h>
 #include <string>
 #include <array>
@@ -17,8 +18,6 @@ enum class BlendMode {
 
 	kMaxBlendModeNum,
 };
-
-class Particle;
 
 class ParticleManager {
 private://コンストラクタ等の隠蔽
@@ -40,12 +39,18 @@ public://メンバ関数
 	void Draw();
 	//終了
 	void Finalize();
+
+	//パーティクルをコンテナに登録
+	void RegisterParticle(const std::string& name, Particle* particle);
+
 public://パーティクルコンテナの操作
 
 
-private://非公開メンバ関数
+private://パーティクル全体の操作
 	//グラフィックスパイプライン
 	void GenerateGraphicsPipeline();
+private://エフェクトの操作
+	
 
 public://ゲッター
 public://セッター
@@ -59,7 +64,9 @@ private://メンバ変数
 	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, (int)BlendMode::kMaxBlendModeNum> graphicsPipelineState;
 
 	//パーティクルのコンテナ
-	std::unordered_map<std::string, std::unique_ptr<Particle>> particles;
+	std::unordered_map<std::string, Particle*> particles;
+	//パーティクルのモデルリソースのコンテナ
+	std::unordered_map<std::string, Particle::ParticleResource> particleResources;
 
 };
 

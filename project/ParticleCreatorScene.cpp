@@ -1,4 +1,5 @@
 #include "ParticleCreatorScene.h"
+#include "SceneManager.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
 #include "JsonUtil.h"
@@ -6,6 +7,9 @@
 void ParticleCreatorScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
+
+	//インプット
+	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
 	camera_ = std::make_unique<DevelopCamera>();
@@ -35,21 +39,38 @@ void ParticleCreatorScene::Update() {
 	wtSkydome_.UpdateMatrix();
 	wtGround_.UpdateMatrix();
 
+	//リセットコマンド
+	if (input_->TriggerKey(DIK_ESCAPE)) {
+		isReset_ = true;
+	}
+
+
 	//ImGui操作
 #ifdef _DEBUG
 	//最初の操作
-	if (!isGenerateMode_ && !isEditMode_) {
-		ImGui::Begin("メニュー");
-		ImGui::Text("パーティクルエディタへようこそ。以下の項目を選択して下さい。");
-		if (ImGui::Button("新しくパーティクルを作成する")) {
-			isGenerateMode_ = true;
-		}
-		if (ImGui::Button("既存のパーティクルを編集する")) {
-			isEditMode_ = true;
-		}
-		ImGui::End();
+	StartWithImGui();
+	//新規作成の操作
+	GenerateWithImGui();
+	//編集の操作
+	EditWithImGui();
 
-		camera_->DebugWithImGui();
+	//リセット処理
+	if (isReset_) {
+		ImGui::OpenPopup("確認");
+	}
+	if (ImGui::BeginPopupModal("確認", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("リセットしますか？");
+		if (ImGui::Button("はい", ImVec2(120, 0))) {
+			sceneManager_->SetNextScene("PARTICLECREATOR");
+			isReset_ = false;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("いいえ", ImVec2(120, 0))) {
+			isReset_ = false;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 #endif // _DEBUG
 
@@ -75,4 +96,45 @@ void ParticleCreatorScene::Draw() {
 }
 
 void ParticleCreatorScene::TextDraw() {
+}
+
+void ParticleCreatorScene::StartWithImGui() {
+#ifdef _DEBUG
+	//最初の操作
+	if (!isGenerateMode_ && !isEditMode_) {
+		ImGui::Begin("メニュー");
+		ImGui::Text("パーティクルエディタへようこそ！\n以下の項目から希望のオプションを選択して下さい。\n");
+		if (ImGui::Button("新しくパーティクルを作成する")) {
+			isGenerateMode_ = true;
+			//パーティクルの生成
+
+			//基本パーティクルをロード
+
+			//jsonデータをロード
+
+			//カメラの位置をセット
+
+		}
+		if (ImGui::Button("既存のパーティクルを編集する")) {
+			isEditMode_ = true;
+		}
+		ImGui::End();
+	}
+
+#endif // _DEBUG
+}
+
+void ParticleCreatorScene::GenerateWithImGui() {
+#ifdef _DEBUG
+	//新規作成の操作
+	if (isGenerateMode_ && !isEditMode_) {
+		ImGui::Begin("新規作成");
+
+		ImGui::End();
+	}
+
+#endif // _DEBUG
+}
+
+void ParticleCreatorScene::EditWithImGui() {
 }

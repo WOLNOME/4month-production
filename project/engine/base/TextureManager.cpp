@@ -15,10 +15,10 @@ TextureManager* TextureManager::GetInstance()
 	return instance;
 }
 
-void TextureManager::Initialize(std::string directoryPath)
+void TextureManager::Initialize()
 {
 	//ディレクトリパスの登録
-	directoryPath_ = directoryPath;
+	directoryPath_ = "Resources/textures/";
 }
 
 void TextureManager::Finalize()

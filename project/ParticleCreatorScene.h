@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "WorldTransform.h"
 
+using json = nlohmann::json;
 
 class ParticleCreatorScene : public BaseScene {
 public:
@@ -28,7 +29,17 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
+private://ImGui操作
+	//最初の画面
+	void StartWithImGui();
+	//新規作成
+	void GenerateWithImGui();
+	//編集
+	void EditWithImGui();
+
 private://必要なオブジェクト
+	//インプット
+	Input* input_ = nullptr;
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera_ = nullptr;
 
@@ -42,11 +53,14 @@ private://必要なオブジェクト
 private:
 	// 編集するパーティクル
 	std::unique_ptr<Particle> partile_ = nullptr;
+	// 編集するパラメーター
+	json editParam_;
 	
 
 private://ImGui操作で必要な変数
 	bool isGenerateMode_ = false;
 	bool isEditMode_ = false;
+	bool isReset_ = false;
 
 
 
