@@ -30,6 +30,10 @@ void EnemyManager::Update()
 	{
 		SpawnFanEnemy(spawnCount_);
 	}
+	if (ImGui::Button("SpawnFreezeEnemy"))
+	{
+		SpawnFreezeEnemy(spawnCount_);
+	}
 	if (ImGui::Button("Tackle"))
 	{
 		TargetUpdate();
@@ -62,6 +66,11 @@ void EnemyManager::Update()
 	{
 		wind->Update();
 	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->EnemyUpdate();
+	}
 
 	//死んでいるエネミーをリストから削除
 	tackleEnemies_.erase(std::remove_if(tackleEnemies_.begin(), tackleEnemies_.end(),
@@ -84,6 +93,13 @@ void EnemyManager::Update()
 			return !wind->IsAlive();
 		}),
 		winds_.end());
+	//死んでいるエネミーをリストから削除
+	freezeEnemies_.erase(std::remove_if(freezeEnemies_.begin(), freezeEnemies_.end(),
+		[](const std::unique_ptr<FreezeEnemy>& enemy)
+		{
+			return !enemy->IsAlive();
+		}),
+		freezeEnemies_.end());
 }
 
 void EnemyManager::Draw()
@@ -102,6 +118,11 @@ void EnemyManager::Draw()
 	for (auto& wind : winds_)
 	{
 		wind->Draw(*camera_);
+	}
+	//フリーズエネミーの描画
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->EnemyDraw(*camera_);
 	}
 }
 
@@ -145,6 +166,22 @@ void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction)
 	auto wind = std::make_unique<Wind>();
 	wind->Initialize("Cube", position, direction);
 	winds_.emplace_back(std::move(wind));					
+}
+
+void EnemyManager::SpawnFreezeEnemy(uint32_t count)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(spawnMinPosition_.x, spawnMaxPosition_.x);
+	std::uniform_real_distribution<float> disZ(spawnMinPosition_.z, spawnMaxPosition_.z);
+	for (uint32_t i = 0; i < count; i++)
+	{
+		auto enemy = std::make_unique<FreezeEnemy>();
+		enemy->EnemyInitialize(tackleEnemyPath_);
+		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
+		enemy->SetPosition(spawnPosition);
+		freezeEnemies_.emplace_back(std::move(enemy));
+	}
 }
 
 void EnemyManager::TargetUpdate()

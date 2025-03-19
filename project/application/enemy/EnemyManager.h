@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "FanEnemy.h"
+#include "FreezeEnemy.h"
 #include "TackleEnemy.h"
 #include "Wind.h"
 
@@ -18,6 +19,7 @@ public:
 	void SpawnTackleEnemy(uint32_t count);
 	void SpawnFanEnemy(uint32_t count);
 	void SpawnWind(const Vector3& position, const Vector3& direction);
+	void SpawnFreezeEnemy(uint32_t count);
 
 	void TargetUpdate();
 	Vector3 GetTargetPosition() const { return targetPosition_; }
@@ -27,6 +29,7 @@ private:
 	std::vector<std::unique_ptr<TackleEnemy>> tackleEnemies_;
 	std::vector<std::unique_ptr<FanEnemy>> fanEnemies_;
 	std::vector<std::unique_ptr<Wind>> winds_;
+	std::vector<std::unique_ptr<FreezeEnemy>> freezeEnemies_;
 	std::string tackleEnemyPath_;
 	Vector3 targetPosition_ = { 0.0f,1.0f,3.0f };
 	Vector3 spawnMinPosition_ = { -10.0f,1.0f,-10.0f };
