@@ -41,6 +41,9 @@ private: // 衝突判定
 	// 当たった瞬間だけ呼ばれる
 	void OnCollisionTrigger(const AppCollider* _other);
 
+    // 障害物にぶつかったとき、最小の移動量で押し戻すベクトルを求める
+    Vector3 ComputePenetration(const AppAABB& otherAABB);
+
 private:
 
     /**
@@ -48,6 +51,9 @@ private:
 	 *
 	 */
 	void Move();
+
+    //氷の上の移動
+    void MoveOnIce();
 
 private:
     //生存フラグ
@@ -88,4 +94,6 @@ private:
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
 
+    //氷の上にいるときの摩擦係数
+    float frictionOnIce_ = 0.995f;
 };

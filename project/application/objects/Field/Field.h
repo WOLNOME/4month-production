@@ -30,6 +30,7 @@ private:
 
 	// モデル情報
 	WorldTransform wtField_{};
+	int32_t textureHandleField_ = EOF;
 	std::unique_ptr<Object3d> field_ = nullptr;
 
 	// 当たり判定関係

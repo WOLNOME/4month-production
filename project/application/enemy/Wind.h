@@ -27,6 +27,7 @@ private:
 
 private:
 	WorldTransform transform_;
+	int32_t textureHandle_ = EOF;
 	std::unique_ptr<Object3d> object3d_;
 	//当たり判定
 	AppCollisionManager* appCollisionManager_ = nullptr;
