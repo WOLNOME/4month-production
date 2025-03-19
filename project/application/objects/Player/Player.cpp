@@ -132,8 +132,11 @@ void Player::MovePosition()
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.01f)
 	{
-		isAftertaste_ = false;
 		return;
+	}
+	else if (moveVel_.Length() < 1.5f)
+	{
+		isAftertaste_ = false;
 	}
 
 	// 位置を更新
@@ -222,8 +225,8 @@ void Player::OnCollision(const AppCollider* _other)
 		isGround_ = true;
 	}
 
-	// どちらも攻撃していないとき
-	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
+	// どちらも攻撃していなくてノックバック中でないとき
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
 	{
 		// プレイヤーの速度を取得
 		Vector3 playerVelocity = moveVel_;
@@ -285,7 +288,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ *= 17.0f;
+			moveVel_ *= 10.0f;
 			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;

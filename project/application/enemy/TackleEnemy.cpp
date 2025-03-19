@@ -41,7 +41,7 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
 void TackleEnemy::EnemyUpdate()
 {
 	// ノックバック中は移動、攻撃できない
-	if (knockBackTime_ > 0.0f)
+	if (knockBackTime_ > 0.0f or isStop_)
 	{
         isHit_ = false;
 		knockBackTime_ -= 1.0f;
@@ -65,9 +65,7 @@ void TackleEnemy::EnemyUpdate()
 	}
 
     //移動
-    Move();
-    
-   
+    Move();   
 
 	// 場外処理
 	OutOfField();
@@ -186,7 +184,6 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
         }
     }
 
-	
 
 	// エネミー同士の衝突
 	if (_other->GetColliderID() == "TackleEnemy")
