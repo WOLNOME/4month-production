@@ -116,10 +116,6 @@ void DevelopScene::Update() {
 	//カメラの更新
 	camera->Update();
 
-	//シーンライトの更新処理
-	sceneLight_->Update();
-
-
 	//モデルの更新
 	wtAxis_.rotate_.y += 0.03f;
 	wtAxis_.UpdateMatrix();

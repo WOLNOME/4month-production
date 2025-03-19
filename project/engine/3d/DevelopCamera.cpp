@@ -53,6 +53,9 @@ void DevelopCamera::Update()
 	//行列の更新
 	BaseCamera::UpdateMatrix();
 
+}
+
+void DevelopCamera::DebugWithImGui() {
 #ifdef _DEBUG
 
 	ImGui::Begin("DevelopCamera");
@@ -75,6 +78,4 @@ void DevelopCamera::Update()
 	ImGui::End();
 
 #endif // _DEBUG
-
-
 }

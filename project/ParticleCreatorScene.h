@@ -1,6 +1,9 @@
 #pragma once
 #include "BaseScene.h"
+#include "DevelopCamera.h"
 #include "json.hpp"
+#include "WorldTransform.h"
+
 
 class ParticleCreatorScene : public BaseScene {
 public:
@@ -25,10 +28,25 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
+private://必要なオブジェクト
+	//開発用カメラ
+	std::unique_ptr<DevelopCamera> camera_ = nullptr;
+
+	//天球と地面
+	WorldTransform wtSkydome_;
+	std::unique_ptr<Object3d> skydome_ = nullptr;
+	WorldTransform wtGround_;
+	uint32_t textureHandleGround_ = EOF;
+	std::unique_ptr<Object3d> ground_ = nullptr;
+
 private:
 	// 編集するパーティクル
 	std::unique_ptr<Particle> partile_ = nullptr;
 	
+
+private://ImGui操作で必要な変数
+	bool isGenerateMode_ = false;
+	bool isEditMode_ = false;
 
 
 
