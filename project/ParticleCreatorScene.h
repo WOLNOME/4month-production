@@ -52,7 +52,7 @@ private://必要なオブジェクト
 
 private:
 	// 編集するパーティクル
-	std::unique_ptr<Particle> partile_ = nullptr;
+	std::unique_ptr<Particle> particle_ = nullptr;
 	// 編集するパラメーター
 	json editParam_;
 	

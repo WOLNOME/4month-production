@@ -14,8 +14,7 @@ using json = nlohmann::json;
 
 class BaseCamera;
 //パーティクル
-class Particle
-{
+class Particle {
 public:
 	//座標変換行列データ
 	struct ParticleForGPU {
@@ -31,8 +30,9 @@ public:
 	//エフェクト構造体
 	struct EffectData {
 		TransformEuler transform;
-		Vector3 velocity;
 		Vector4 color;
+		Vector3 velocity;
+		float size;
 		float lifeTime;
 		float currentTime;
 	};
@@ -42,13 +42,6 @@ public:
 		uint32_t count;//発生させるエフェクトの数
 		float frequency;//発生頻度
 		float frequencyTime;//頻度用時刻
-	};
-	//フィールド
-	struct AccelerationField
-	{
-		Vector3 acceleration;
-		AABB area;
-		bool isActive;
 	};
 public://メンバ関数
 	~Particle();
@@ -69,7 +62,14 @@ private://メンバ関数(非公開)
 	std::list<EffectData> Emit(const Emitter& emitter);
 
 public://getter
+	//パラメーター
 	const json& GetParam() { return param_; }
+	//モデル(見た目)
+	const Model* GetModel() { return model_; }
+	//パーティクル用のリソース
+	const ParticleResource& GetParticleResource() { return particleResource_; }
+	//エフェクトのリスト
+	std::list<EffectData> GetEffects() { return effects_; }
 public://setter
 
 private://メンバ変数
@@ -77,9 +77,9 @@ private://メンバ変数
 	Model* model_;
 	//パーティクル用リソース
 	ParticleResource particleResource_;
-
-	//各インスタンシング用書き換え情報
+	//各インスタンシング（エフェクト）用書き換え情報
 	std::list<EffectData> effects_;
+
 	//δtの定義
 	const float kDeltaTime = 1.0f / 60.0f;
 	//ビルボードのオンオフ

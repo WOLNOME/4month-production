@@ -20,6 +20,13 @@ enum class BlendMode {
 };
 
 class ParticleManager {
+public:
+	//フィールド
+	struct AccelerationField {
+		Vector3 acceleration;
+		AABB area;
+		bool isActive;
+	};
 private://コンストラクタ等の隠蔽
 	static ParticleManager* instance;
 
@@ -65,8 +72,9 @@ private://メンバ変数
 
 	//パーティクルのコンテナ
 	std::unordered_map<std::string, Particle*> particles;
-	//パーティクルのモデルリソースのコンテナ
-	std::unordered_map<std::string, Particle::ParticleResource> particleResources;
+
+	//共通フィールド
+	AccelerationField* field_ = nullptr;
 
 };
 

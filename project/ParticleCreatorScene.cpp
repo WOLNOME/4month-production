@@ -107,9 +107,9 @@ void ParticleCreatorScene::StartWithImGui() {
 		if (ImGui::Button("新しくパーティクルを作成する")) {
 			isGenerateMode_ = true;
 			//パーティクルの生成
-
+			particle_ = std::make_unique<Particle>();
 			//基本パーティクルをロード
-
+			particle_->Initialize("Basic");
 			//jsonデータをロード
 
 			//カメラの位置をセット

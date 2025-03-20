@@ -18,6 +18,28 @@ void ParticleManager::Initialize() {
 }
 
 void ParticleManager::Update() {
+	//空いているエフェクトの中から確率で生成
+
+	//各エフェクト(生きている)の寿命更新
+
+	//各エフェクトの生存チェック(寿命を迎えたら削除)
+
+	//各エフェクトとフィールドとの処理
+
+	//各エフェクトの速度更新
+
+	//各エフェクトの座標更新
+
+	//各エフェクトの色更新
+
+	//各エフェクトのサイズ更新
+
+	//座標情報からワールド行列を作成(ビルボード行列の計算もここで)
+
+	//各エフェクトのワールド行列と色情報をパーティクルリソーに書き込む
+
+	//モデル更新
+
 }
 
 void ParticleManager::Draw() {
@@ -26,7 +48,14 @@ void ParticleManager::Draw() {
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	MainRender::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
+	//カメラ情報をVSに送信(一括)
+
+	//各パーティクルのブレンドモード情報からパイプラインステートを選択
+
+	//各パーティクルのインスタンシングデータをVSに送信
+
+	//各パーティクルの描画
+
 }
 
 void ParticleManager::Finalize() {
