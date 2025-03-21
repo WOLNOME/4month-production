@@ -469,6 +469,10 @@ void Player::MovePositionOnIce()
 	{
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
 	}
+	if (moveVel_.Length() < 0.04f)
+	{
+		isAftertaste_ = false;
+	}
 
 	// 位置を更新
 	wtPlayer_.translate_ += moveVel_;
