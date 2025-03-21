@@ -116,6 +116,7 @@
       <Filter>gimmick</Filter>
     </ClCompile>
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
+    <ClCompile Include="engine\scene\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -237,6 +238,7 @@
       <Filter>gimmick</Filter>
     </ClInclude>
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
+    <ClInclude Include="engine\scene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

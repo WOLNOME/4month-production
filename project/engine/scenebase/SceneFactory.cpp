@@ -4,6 +4,7 @@
 #include "ClearScene.h"
 
 // 追加
+#include "StageSelectScene.h"
 #include "GamePlayScene.h"
 
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
@@ -21,6 +22,9 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 		newScene = new ClearScene();
 	}
 	// 追加
+	else if (sceneName == "STAGESELECT"){
+		newScene = new StageSelectScene();
+	}
 	else if (sceneName == "GAMEPLAY") {
 		newScene = new GamePlayScene();
 	}
