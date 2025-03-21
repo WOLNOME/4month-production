@@ -1,7 +1,13 @@
 #include "ParticleManager.h"
 #include "DirectXCommon.h"
 #include "MainRender.h"
+#include "SrvManager.h"
+#include "TextureManager.h"
 #include "Logger.h"
+#include <random>
+#undef min
+#undef max
+#include <algorithm>
 
 ParticleManager* ParticleManager::instance = nullptr;
 
@@ -18,44 +24,100 @@ void ParticleManager::Initialize() {
 }
 
 void ParticleManager::Update() {
-	//空いているエフェクトの中から確率で生成
+	//各パーティクルの更新
+	for (const auto& particle : particles) {
+		//空いているエフェクトの中から確率で生成
+		int max = particle.second->GetParam()["MaxEffects"];
+		int rate = particle.second->GetParam()["EmitRate"];
+		float ratePerFrame = rate * kDeltaTime;
+		int genNum = 0;
+		for (int i = 0; i < 60; i++) {
+			//ランダム
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dist(0.0f, 100.0f);
+			//確率でこのフレームの生成数をインクリメント
+			if (dist(gen) < ratePerFrame) {
+				genNum++;
+			}
+		}
+		//エフェクトの生成
+		if (genNum > 0 && particle.second->effects_.size() + genNum < max) {
+			particle.second->effects_.splice(particle.second->effects_.end(), GenerateEffect(particle.second, genNum));
+		}
 
-	//各エフェクト(生きている)の寿命更新
+		//インスタンスの番号
+		uint32_t instanceNum = 0;
+		//パーティクル内各エフェクトの更新
+		for (std::list<Particle::EffectData>::iterator effectIterator = particle.second->effects_.begin(); effectIterator != particle.second->effects_.end();) {
+			//各エフェクト(生きている)の寿命更新
+			(*effectIterator).currentTime += kDeltaTime;
+			//各エフェクトの生存チェック(寿命を迎えたら削除)
+			if ((*effectIterator).currentTime > (*effectIterator).lifeTime) {
+				effectIterator = particle.second->effects_.erase(effectIterator);
+				continue;
+			}
+			//各エフェクトとフィールドとの処理
+			if (field_) {
+				if (field_->isActive && particle.second->emitter_.isAffectedField) {
+					if (MyMath::IsCollision(field_->area, (*effectIterator).transform.translate)) {
+						(*effectIterator).velocity = (*effectIterator).velocity + (kDeltaTime * field_->acceleration);
+					}
+				}
+			}
+			//各エフェクトの速度加算
+			(*effectIterator).transform.translate = (*effectIterator).transform.translate + (kDeltaTime * (*effectIterator).velocity);
+			//各エフェクトの色更新
+			Vector4 currentColor = MyMath::Lerp((*effectIterator).startColor, (*effectIterator).endColor, (*effectIterator).currentTime / (*effectIterator).lifeTime);
+			//各エフェクトのサイズ更新
+			(*effectIterator).transform.scale = Vector3(MyMath::Lerp((*effectIterator).startSize, (*effectIterator).endSize, (*effectIterator).currentTime / (*effectIterator).lifeTime), MyMath::Lerp((*effectIterator).startSize, (*effectIterator).endSize, (*effectIterator).currentTime / (*effectIterator).lifeTime), MyMath::Lerp((*effectIterator).startSize, (*effectIterator).endSize, (*effectIterator).currentTime / (*effectIterator).lifeTime));
+			//座標情報からワールド行列を作成(ビルボード行列の計算もここで)
+			Matrix4x4 backToFrontMatrix = MyMath::MakeRotateYMatrix(std::numbers::pi_v<float>);
+			Matrix4x4 billboardMatrix = MyMath::Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
+			billboardMatrix.m[3][0] = 0.0f;
+			billboardMatrix.m[3][1] = 0.0f;
+			billboardMatrix.m[3][2] = 0.0f;
+			Matrix4x4 worldMatrix = MyMath::Multiply(MyMath::Multiply(MyMath::MakeScaleMatrix((*effectIterator).transform.scale), billboardMatrix), MyMath::MakeTranslateMatrix((*effectIterator).transform.translate));
+			if (!particle.second->emitter_.isBillboard) {
+				worldMatrix = MyMath::MakeAffineMatrix((*effectIterator).transform.scale, (*effectIterator).transform.rotate, (*effectIterator).transform.translate);
+			}
+			//各エフェクトのワールド行列と色情報をパーティクルリソーに書き込む
+			particle.second->particleResource_.instancingData[instanceNum].World = worldMatrix;
+			particle.second->particleResource_.instancingData[instanceNum].color = currentColor;
 
-	//各エフェクトの生存チェック(寿命を迎えたら削除)
-
-	//各エフェクトとフィールドとの処理
-
-	//各エフェクトの速度更新
-
-	//各エフェクトの座標更新
-
-	//各エフェクトの色更新
-
-	//各エフェクトのサイズ更新
-
-	//座標情報からワールド行列を作成(ビルボード行列の計算もここで)
-
-	//各エフェクトのワールド行列と色情報をパーティクルリソーに書き込む
-
-	//モデル更新
-
+			//次のエフェクトへ
+			++effectIterator;
+			//インスタンスの番号をインクリメント
+			++instanceNum;
+		}
+		//モデル更新
+		particle.second->model_->Update();
+	}
 }
 
 void ParticleManager::Draw() {
 	auto mainRender = MainRender::GetInstance();
+	//カメラの有無チェック
+	if (!camera_) {
+		assert(0 && "カメラがセットされていません。");
+	}
 	//ルートシグネチャをセットするコマンド
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	//プリミティブトポロジーをセットするコマンド
 	MainRender::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//カメラ情報をVSに送信(一括)
-
-	//各パーティクルのブレンドモード情報からパイプラインステートを選択
-
-	//各パーティクルのインスタンシングデータをVSに送信
-
-	//各パーティクルの描画
-
+	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, camera_->GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
+	//パーティクル個別の設定
+	for (const auto& particle : particles) {
+		//各パーティクルのブレンドモード情報からパイプラインステートを選択
+		MainRender::GetInstance()->GetCommandList()->SetPipelineState(graphicsPipelineState[particle.second->GetParam()["BlendMode"]].Get());
+		//各パーティクルのインスタンシングデータをVSに送信
+		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particle.second->particleResource_.srvIndex));
+		//各パーティクルモデルの描画
+		std::string textureName = particle.second->GetParam()["Texture"];
+		int textureHandle = TextureManager::GetInstance()->LoadTexture(textureName);
+		particle.second->model_->Draw(0, 3, (uint32_t)particle.second->effects_.size(), textureHandle);
+	}
 }
 
 void ParticleManager::Finalize() {
@@ -70,9 +132,14 @@ void ParticleManager::RegisterParticle(const std::string& name, Particle* partic
 	}
 	//登録
 	particles[name] = particle;
+}
 
-	//パーティクルのモデルリソースをコンテナに登録
-
+void ParticleManager::DeleteParticle(const std::string& name) {
+	// 名前がコンテナ内に存在するかチェック
+	auto it = particles.find(name);
+	if (it != particles.end()) {
+		particles.erase(it);  // コンテナから削除
+	}
 }
 
 void ParticleManager::GenerateGraphicsPipeline() {
@@ -82,7 +149,7 @@ void ParticleManager::GenerateGraphicsPipeline() {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	
+
 	//DescriptorRange作成
 	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
 	descriptorRangeForInstancing[0].BaseShaderRegister = 0;
@@ -267,4 +334,82 @@ void ParticleManager::GenerateGraphicsPipeline() {
 			IID_PPV_ARGS(&graphicsPipelineState[i]));
 		assert(SUCCEEDED(hr));
 	}
+}
+
+std::list<Particle::EffectData> ParticleManager::GenerateEffect(Particle* particle, int genNum) {
+
+
+	std::list<Particle::EffectData> effects;
+	for (int i = 0; i < genNum; i++) {
+		Particle::EffectData effect;
+		//ランダム
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		//一様分布
+		std::uniform_real_distribution<float> distTranslateX(particle->emitter_.transform.translate.x - particle->emitter_.transform.translate.x + particle->emitter_.transform.scale.x, particle->emitter_.transform.scale.x);
+		std::uniform_real_distribution<float> distTranslateY(particle->emitter_.transform.translate.y - particle->emitter_.transform.scale.y, particle->emitter_.transform.translate.y + particle->emitter_.transform.scale.y);
+		std::uniform_real_distribution<float> distTranslateZ(particle->emitter_.transform.translate.z - particle->emitter_.transform.scale.z, particle->emitter_.transform.translate.z + particle->emitter_.transform.scale.z);
+		std::uniform_real_distribution<float> distStartSize(particle->GetParam()["StartSize"]["Min"], particle->GetParam()["StartSize"]["Max"]);
+		std::uniform_real_distribution<float> distEndSize(particle->GetParam()["EndSize"]["Min"], particle->GetParam()["EndSize"]["Max"]);
+		Vector4 startColorMin = {
+			particle->GetParam()["StartColor"]["Min"]["x"],
+			particle->GetParam()["StartColor"]["Min"]["y"],
+			particle->GetParam()["StartColor"]["Min"]["z"],
+			particle->GetParam()["StartColor"]["Min"]["w"]
+		};
+		Vector4 startColorMax = {
+			particle->GetParam()["StartColor"]["Max"]["x"],
+			particle->GetParam()["StartColor"]["Max"]["y"],
+			particle->GetParam()["StartColor"]["Max"]["z"],
+			particle->GetParam()["StartColor"]["Max"]["w"]
+		};
+		std::uniform_real_distribution<float> distStartColorX(std::min(startColorMin.x, startColorMax.x), std::max(startColorMin.x, startColorMax.x));
+		std::uniform_real_distribution<float> distStartColorY(std::min(startColorMin.y, startColorMax.y), std::max(startColorMin.y, startColorMax.y));
+		std::uniform_real_distribution<float> distStartColorZ(std::min(startColorMin.z, startColorMax.z), std::max(startColorMin.z, startColorMax.z));
+		std::uniform_real_distribution<float> distStartColorW(std::min(startColorMin.w, startColorMax.w), std::max(startColorMin.w, startColorMax.w));
+		Vector4 endColorMin = {
+			particle->GetParam()["EndColor"]["Min"]["x"] ,
+			particle->GetParam()["EndColor"]["Min"]["y"] ,
+			particle->GetParam()["EndColor"]["Min"]["z"] ,
+			particle->GetParam()["EndColor"]["Min"]["w"]
+		};
+		Vector4 endColorMax = {
+			particle->GetParam()["EndColor"]["Max"]["x"] ,
+			particle->GetParam()["EndColor"]["Max"]["y"] ,
+			particle->GetParam()["EndColor"]["Max"]["z"] ,
+			particle->GetParam()["EndColor"]["Max"]["w"]
+		};
+		std::uniform_real_distribution<float> distEndColorX(std::min(endColorMin.x, endColorMax.x), std::max(endColorMin.x, endColorMax.x));
+		std::uniform_real_distribution<float> distEndColorY(std::min(endColorMin.y, endColorMax.y), std::max(endColorMin.y, endColorMax.y));
+		std::uniform_real_distribution<float> distEndColorZ(std::min(endColorMin.z, endColorMax.z), std::max(endColorMin.z, endColorMax.z));
+		std::uniform_real_distribution<float> distEndColorW(std::min(endColorMin.w, endColorMax.w), std::max(endColorMin.w, endColorMax.w));
+		Vector3 velocityMax = {
+			particle->GetParam()["Velocity"]["Max"]["x"],
+			particle->GetParam()["Velocity"]["Max"]["y"],
+			particle->GetParam()["Velocity"]["Max"]["z"],
+		};
+		Vector3 velocityMin = {
+			particle->GetParam()["Velocity"]["Min"]["x"],
+			particle->GetParam()["Velocity"]["Min"]["y"],
+			particle->GetParam()["Velocity"]["Min"]["z"],
+		};
+		std::uniform_real_distribution<float> distVelocityX(std::min(velocityMin.x, velocityMax.x), std::max(velocityMin.x, velocityMax.x));
+		std::uniform_real_distribution<float> distVelocityY(std::min(velocityMin.y, velocityMax.y), std::max(velocityMin.y, velocityMax.y));
+		std::uniform_real_distribution<float> distVelocityZ(std::min(velocityMin.z, velocityMax.z), std::max(velocityMin.z, velocityMax.z));
+		std::uniform_real_distribution<float> distLifeTime(particle->GetParam()["LifeTime"]["Min"], particle->GetParam()["LifeTime"]["Max"]);
+		//パラメータの初期化
+		effect.transform.translate = Vector3(distTranslateX(gen), distTranslateY(gen), distTranslateZ(gen));
+		effect.transform.rotate = Vector3(0.0f, 0.0f, 0.0f);
+		effect.startSize = distStartSize(gen);
+		effect.endSize = distEndSize(gen);
+		effect.transform.scale = Vector3(effect.startSize, effect.startSize, effect.startSize);
+		effect.startColor = Vector4(distStartColorX(gen), distStartColorY(gen), distStartColorZ(gen), distStartColorW(gen));
+		effect.endColor = Vector4(distEndColorX(gen), distEndColorY(gen), distEndColorZ(gen), distEndColorW(gen));
+		effect.velocity = Vector3(distVelocityX(gen), distVelocityY(gen), distVelocityZ(gen));
+		effect.lifeTime = distLifeTime(gen);
+		effect.currentTime = 0.0f;
+		//プッシュバック
+		effects.push_back(effect);
+	}
+	return effects;
 }

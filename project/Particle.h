@@ -12,7 +12,6 @@
 
 using json = nlohmann::json;
 
-class BaseCamera;
 //パーティクル
 class Particle {
 public:
@@ -29,66 +28,54 @@ public:
 	};
 	//エフェクト構造体
 	struct EffectData {
-		TransformEuler transform;
-		Vector4 color;
-		Vector3 velocity;
-		float size;
-		float lifeTime;
-		float currentTime;
+		TransformEuler transform;	//エフェクトのトランスフォーム
+		Vector4 startColor;			//最初の色
+		Vector4 endColor;			//最後の色
+		Vector3 velocity;			//速度
+		float startSize;			//最初のサイズ
+		float endSize;				//最後のサイズ
+		float lifeTime;				//寿命
+		float currentTime;			//現在の時間
 	};
 	//エミッター構造体
 	struct Emitter {
-		TransformEuler transform;//エミッターのトランスフォーム
-		uint32_t count;//発生させるエフェクトの数
-		float frequency;//発生頻度
-		float frequencyTime;//頻度用時刻
+		TransformEuler transform;	//エミッターのトランスフォーム
+		bool isAffectedField;		//フィールドに影響を受けるか
+		bool isBillboard;			//ビルボードを適用するか
 	};
 public://メンバ関数
 	~Particle();
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="filePath">使用するパーティクルの名前(.jsonは省略)</param>
-	void Initialize(const std::string& name);
-	void Draw(const BaseCamera& camera, Emitter& emitter, AccelerationField* field = nullptr);
+	/// <param name="name">インスタンスの名前</param>
+	/// <param name="fileName">使用するパーティクルの名前(.jsonは省略)</param>
+	void Initialize(const std::string& name,const std::string& fileName);
 private://メンバ関数(非公開)
 	//パーティクルリソース作成関数
 	ParticleResource MakeParticleResource();
 	//SRVの設定
 	void SettingSRV();
-	//パーティクルの生成
-	EffectData MakeNewParticle(const Vector3& translate);
-	//エミット
-	std::list<EffectData> Emit(const Emitter& emitter);
 
-public://getter
+public: //getter
 	//パラメーター
 	const json& GetParam() { return param_; }
-	//モデル(見た目)
-	const Model* GetModel() { return model_; }
-	//パーティクル用のリソース
-	const ParticleResource& GetParticleResource() { return particleResource_; }
-	//エフェクトのリスト
-	std::list<EffectData> GetEffects() { return effects_; }
-public://setter
-
-private://メンバ変数
+public: //setter
+	//パラメーター
+	void SetParam(const json& param) { param_ = param; }
+public: //マネージャー共有用変数
 	//モデル(見た目)
 	Model* model_;
 	//パーティクル用リソース
 	ParticleResource particleResource_;
 	//各インスタンシング（エフェクト）用書き換え情報
 	std::list<EffectData> effects_;
-
-	//δtの定義
-	const float kDeltaTime = 1.0f / 60.0f;
-	//ビルボードのオンオフ
-	bool isBillboard = true;
-
-private://パラメーター
+public://エミッター
+	Emitter emitter_;
+private: //メンバ変数
+	//インスタンスの名前
+	std::string name_;
 	//各エフェクトのパラメーター
 	json param_;
-	//エミッター
-	Emitter emitter_;
 
 };

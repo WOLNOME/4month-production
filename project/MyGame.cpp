@@ -34,6 +34,9 @@ void MyGame::Update()
 	//ゲーム基盤更新(シーンの処理もここ、ImGuiの処理も更新処理で)
 	Framework::Update();
 
+	//パーティクルマネージャーの更新
+	ParticleManager::GetInstance()->Update();
+
 	//ImGuiの内部コマンドを生成する
 	ImGuiManager::GetInstance()->End();
 }

@@ -1,22 +1,24 @@
 #pragma once
 #include "BaseCamera.h"
 #include "Particle.h"
+#include "MyMath.h"
 #include <d3d12.h>
 #include <string>
 #include <array>
+#include <list>
 #include <unordered_map>
 #include <wrl.h>
 
 enum class BlendMode {
-	None,
-	Normal,
-	Add,
-	Subtract,
-	Multiply,
-	Screen,
-	Execlution,
+	None,				//ブレンドなし
+	Normal,				//通常
+	Add,				//加算
+	Subtract,			//減算
+	Multiply,			//乗算
+	Screen,				//スクリーン
+	Execlution,			//除外
 
-	kMaxBlendModeNum,
+	kMaxBlendModeNum,	//ブレンドモードの最大数
 };
 
 class ParticleManager {
@@ -49,6 +51,8 @@ public://メンバ関数
 
 	//パーティクルをコンテナに登録
 	void RegisterParticle(const std::string& name, Particle* particle);
+	//登録されたパーティクルを削除
+	void DeleteParticle(const std::string& name);
 
 public://パーティクルコンテナの操作
 
@@ -57,7 +61,8 @@ private://パーティクル全体の操作
 	//グラフィックスパイプライン
 	void GenerateGraphicsPipeline();
 private://エフェクトの操作
-	
+	//エフェクトの生成
+	std::list<Particle::EffectData> GenerateEffect(Particle* particle, int genNum);
 
 public://ゲッター
 public://セッター

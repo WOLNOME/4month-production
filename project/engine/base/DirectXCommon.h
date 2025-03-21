@@ -32,7 +32,6 @@ public:
 	void PostEachRender();
 	//全てのレンダーが完了時の後処理
 	void PostAllRenders();
-	
 
 private://生成系メンバ関数
 	void GenerateDevice();//共通

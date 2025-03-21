@@ -3,6 +3,8 @@
 #include "DevelopCamera.h"
 #include "json.hpp"
 #include "WorldTransform.h"
+#include <vector>
+#include <string>
 
 using json = nlohmann::json;
 
@@ -36,6 +38,8 @@ private://ImGui操作
 	void GenerateWithImGui();
 	//編集
 	void EditWithImGui();
+	//リセット
+	void ResetWithImGui();
 
 private://必要なオブジェクト
 	//インプット
@@ -61,7 +65,8 @@ private://ImGui操作で必要な変数
 	bool isGenerateMode_ = false;
 	bool isEditMode_ = false;
 	bool isReset_ = false;
-
+	bool showFileDialog_ = false;
+	std::vector<std::string> textureFiles_;
 
 
 };
