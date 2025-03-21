@@ -1,12 +1,17 @@
 #pragma once
+#include <random>
+
 #include "BaseEnemy.h"
 #include "../appCollider/AppCollisionManager.h"
 #include "application/objects/GameObject/GameObject.h"
+
+class EnemyManager;
 
 class FreezeEnemy : public BaseEnemy, public GameObject
 {
 public:
 	~FreezeEnemy();
+	FreezeEnemy(EnemyManager* enemyManager);
 	void EnemyInitialize(const std::string& filePath) override;
 	void EnemyUpdate() override;
 	void EnemyDraw(const BaseCamera& camera) override;
@@ -35,6 +40,8 @@ private:
 	const float friction_ = 2.0f;
 	//地面にいるか
 	bool isGround_ = true;
+	//エネミーマネージャー
+	EnemyManager* enemyManager_ = nullptr;
 	//当たり判定
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	//当たり判定
@@ -43,4 +50,10 @@ private:
 	AppAABB aabb_;
 	//生存フラグ
 	bool isAlive_ = true;
+	//ランダムエンジン
+	std::mt19937 randomEngine_;
+	//凍結攻撃を行う間隔
+	float freezeAttackInterval_ = 0.5f;
+	//凍結攻撃を行うタイマー
+	float freezeAttackTimer_ = 0.0f;
 };

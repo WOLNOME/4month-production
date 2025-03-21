@@ -1,5 +1,9 @@
 #include "FreezeEnemy.h"
 
+#include <chrono>
+
+#include "EnemyManager.h"
+
 FreezeEnemy::~FreezeEnemy()
 {
 	// 当たり判定関係
@@ -7,12 +11,19 @@ FreezeEnemy::~FreezeEnemy()
 	appCollider_.reset();
 }
 
+FreezeEnemy::FreezeEnemy(EnemyManager* enemyManager)
+{
+	enemyManager_ = enemyManager;
+}
+
 void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 {
-	//オブジェクトの初期化
+	// ランダムエンジンの初期化
+	randomEngine_.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
+	// オブジェクトの初期化
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->InitializeModel(filePath);
-	//トランスフォームの初期化
+	// トランスフォームの初期化
 	transform_.Initialize();
 	transform_.scale_ = { 1.0f, 1.0f, 1.0f };
 	transform_.translate_ = { 0.0f, 0.0f, 0.0f };
@@ -35,6 +46,8 @@ void FreezeEnemy::EnemyUpdate()
 {
 	// 移動
 	Move();
+	// 凍結攻撃
+	FreezeUpdate();
 	// 場外処理
 	OutOfField();
 	//行列の更新
@@ -113,7 +126,39 @@ void FreezeEnemy::OutOfField()
 
 void FreezeEnemy::StartFreeze()
 {
-	// 凍結処理
+	// FreezeEnemyの正面方向を計算
+	Vector3 forward = { cos(transform_.rotate_.y), 0.0f, sin(transform_.rotate_.y) };
+	forward.Normalize();
+
+	// 扇状に広がる弾を発射
+	int numBullets = 3; // 発射する弾の数
+	float spreadAngle = 30.0f; // 扇状の角度（度）
+	float angleStep = spreadAngle / (numBullets - 1);
+
+	for (int i = 0; i < numBullets; i++)
+	{
+		// 弾の角度を計算
+		float angle = transform_.rotate_.y - spreadAngle / 2.0f + angleStep * i;
+		float radian = angle * 3.14159265f / 180.0f;
+		Vector3 direction = {
+			forward.x * cos(radian) - forward.z * sin(radian),
+			0.0f,
+			forward.x * sin(radian) + forward.z * cos(radian)
+		};
+		direction.Normalize();
+		// 弾を生成
+		enemyManager_->SpawnIceMist(transform_.translate_, direction);
+	}
+}
+
+void FreezeEnemy::FreezeUpdate()
+{// タイマーを更新
+	freezeAttackTimer_ += 1.0f / 60.0f;
+	if (freezeAttackTimer_ >= freezeAttackInterval_)
+	{
+		StartFreeze();
+		freezeAttackTimer_ = 0.0f;
+	}
 
 }
 

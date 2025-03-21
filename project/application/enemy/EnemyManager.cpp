@@ -71,6 +71,11 @@ void EnemyManager::Update()
 	{
 		enemy->EnemyUpdate();
 	}
+	//アイスミストの更新
+	for (auto& iceMist : iceMists_)
+	{
+		iceMist->Update();
+	}
 
 	//死んでいるエネミーをリストから削除
 	tackleEnemies_.erase(std::remove_if(tackleEnemies_.begin(), tackleEnemies_.end(),
@@ -100,6 +105,13 @@ void EnemyManager::Update()
 			return !enemy->IsAlive();
 		}),
 		freezeEnemies_.end());
+	//死んでいるアイスミストをリストから削除
+	iceMists_.erase(std::remove_if(iceMists_.begin(), iceMists_.end(),
+		[](const std::unique_ptr<IceMist>& iceMist)
+		{
+			return !iceMist->IsAlive();
+		}),
+		iceMists_.end());
 }
 
 void EnemyManager::Draw()
@@ -123,6 +135,11 @@ void EnemyManager::Draw()
 	for (auto& enemy : freezeEnemies_)
 	{
 		enemy->EnemyDraw(*camera_);
+	}
+	//アイスミストの描画
+	for (auto& iceMist : iceMists_)
+	{
+		iceMist->Draw(*camera_);
 	}
 }
 
@@ -176,12 +193,19 @@ void EnemyManager::SpawnFreezeEnemy(uint32_t count)
 	std::uniform_real_distribution<float> disZ(spawnMinPosition_.z, spawnMaxPosition_.z);
 	for (uint32_t i = 0; i < count; i++)
 	{
-		auto enemy = std::make_unique<FreezeEnemy>();
+		auto enemy = std::make_unique<FreezeEnemy>(this);
 		enemy->EnemyInitialize(tackleEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		freezeEnemies_.emplace_back(std::move(enemy));
 	}
+}
+
+void EnemyManager::SpawnIceMist(const Vector3& position, const Vector3& velocity)
+{
+	auto iceMist = std::make_unique<IceMist>();
+	iceMist->Initialize("Cube", position, velocity);
+	iceMists_.emplace_back(std::move(iceMist));
 }
 
 void EnemyManager::TargetUpdate()

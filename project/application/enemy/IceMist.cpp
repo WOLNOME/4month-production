@@ -19,6 +19,8 @@ void IceMist::Initialize(const std::string& filePath, const Vector3& position, c
 	transform_.rotate_ = { 0.0f,0.0f,0.0f };
 	// 速度ベクトル
 	velocity_ = velocity;
+	// スタート地点
+	startPosition_ = position;
     // 当たり判定関係
     appCollisionManager_ = AppCollisionManager::GetInstance();
     appCollider_ = std::make_unique<AppCollider>();
@@ -44,7 +46,7 @@ void IceMist::Update()
     UpdateCollider();
 }
 
-void IceMist::Draw(const BaseCamera& camera)
+void IceMist::Draw(BaseCamera camera)
 {
 	object3d_->Draw(transform_, camera);
 }
@@ -64,20 +66,15 @@ void IceMist::OnCollisionTrigger(const AppCollider* other)
 
 void IceMist::Move()
 {
-    const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = 1.0f / 60.0f;
 
-    // 摩擦
-    Vector3 friction = -velocity_ * friction_ * deltaTime;
-    velocity_ += friction;
+	transform_.translate_ += velocity_ * moveSpeed_ * deltaTime;
 
-    // 速度が小さくなったら停止
-    if (velocity_.Length() < 0.01f)
-    {
-        isAlive_ = false;
-    }
-    
-    // 移動
-    transform_.translate_ += velocity_ * deltaTime;
+	// スタート地点から一定距離離れたら消滅
+	if ((transform_.translate_ - startPosition_).Length() > moveRange_)
+	{
+		isAlive_ = false;
+	}
 }
 
 void IceMist::UpdateCollider()
