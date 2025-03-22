@@ -4,17 +4,8 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "JsonUtil.h"
-#include <d3d11.h>
-#include "DirectXTex.h"
 #include <filesystem>
 #include <iostream>
-
-#pragma comment(lib,"DirectXTex.lib")
-
-
-
-extern ID3D11Device* g_pd3dDevice;
-
 
 void ParticleCreatorScene::Initialize() {
 	//シーン共通の初期化
@@ -70,6 +61,8 @@ void ParticleCreatorScene::Update() {
 
 	//リセット処理
 	ResetWithImGui();
+	//セーブ処理
+	SaveWithImGui();
 
 #endif // _DEBUG
 
@@ -133,9 +126,11 @@ void ParticleCreatorScene::GenerateWithImGui() {
 		//パラメーター
 		ImGui::SetNextWindowPos(ImVec2(10, 80), ImGuiCond_FirstUseEver);
 		ImGui::Begin("パーティクルのパラメーター");
-		//テクスチャ
+		//テクスチャを写す
 		std::string selectedTexture = particle_->GetParam()["Texture"];
 		if (ImGui::CollapsingHeader("テクスチャの設定")) {
+			ImGui::Text("選択中のテクスチャ : %s", selectedTexture.c_str());
+
 			if (ImGui::Button("{textures}フォルダ内のテクスチャを検索")) {
 				showFileDialog_ = true;
 				textureFiles_.clear();
@@ -156,21 +151,6 @@ void ParticleCreatorScene::GenerateWithImGui() {
 					}
 				}
 				ImGui::End();
-			}
-
-			ImGui::Text("選択中のテクスチャ : %s", selectedTexture.c_str());
-			ID3D11ShaderResourceView* texture = nullptr;
-			DirectX::ScratchImage image;
-			std::string fileName = "Resources/textures/" + selectedTexture;
-			HRESULT hr = DirectX::LoadFromWICFile(
-				std::wstring(fileName.begin(), fileName.end()).c_str(),
-				DirectX::WIC_FLAGS_NONE,
-				nullptr,
-				image
-			);
-			if (SUCCEEDED(hr)) {
-				
-
 			}
 
 		}
@@ -228,6 +208,7 @@ void ParticleCreatorScene::GenerateWithImGui() {
 			ImGui::Combo("Blend Mode", &blendMode, blendModeList, (int)BlendMode::kMaxBlendModeNum);
 		}
 		//editParamに変更を反映
+		editParam_["Texture"] = selectedTexture;
 		editParam_["StartColor"]["Max"]["x"] = startColorMax.x;
 		editParam_["StartColor"]["Max"]["y"] = startColorMax.y;
 		editParam_["StartColor"]["Max"]["z"] = startColorMax.z;
@@ -264,7 +245,7 @@ void ParticleCreatorScene::GenerateWithImGui() {
 
 		//セーブボタン
 		if (ImGui::Button("セーブ")) {
-
+			isSave_ = true;
 		}
 		ImGui::End();
 
@@ -280,7 +261,7 @@ void ParticleCreatorScene::EditWithImGui() {
 
 void ParticleCreatorScene::ResetWithImGui() {
 #ifdef _DEBUG
-	if (isReset_) {
+	if (isReset_ && !checkContinue_ && !checkSameName_) {
 		ImGui::OpenPopup("確認");
 	}
 	ImGui::SetNextWindowPos(ImVec2(510, 30));
@@ -300,4 +281,79 @@ void ParticleCreatorScene::ResetWithImGui() {
 	}
 #endif // _DEBUG
 
+}
+
+void ParticleCreatorScene::SaveWithImGui() {
+#ifdef _DEBUG
+	if (isSave_) {
+		ImGui::SetNextWindowPos(ImVec2(470, 280));
+		ImGui::Begin("パーティクルのセーブ");
+
+		ImGui::Text("作成したパーティクルの名前を入力してください(.jsonは省略)");
+		char buffer[256];
+		strncpy_s(buffer, sizeof(buffer), jsonFileName_.c_str(), _TRUNCATE);
+		buffer[sizeof(buffer) - 1] = '\0';
+		if (ImGui::InputText("名前を入力", buffer, sizeof(buffer))) {
+			jsonFileName_ = buffer;
+		}
+		ImGui::Text("入力されている名前\n%s\n ", jsonFileName_.c_str());
+		if (jsonFileName_.size() != 0) {
+			if (ImGui::Button("名前を確定する")) {
+				//JsonUtilを使ってパーティクルを保存
+				if (JsonUtil::CreateJson(jsonFileName_, "Resources/particles/", editParam_)) {
+					checkContinue_ = true;
+				}
+				//すでに同名ファイルがある
+				else {
+					checkSameName_ = true;
+				}
+			}
+		}
+		//続行するかチェック
+		if (checkContinue_) {
+			ImGui::OpenPopup("パーティクルの作成に成功しました");
+		}
+		ImGui::SetNextWindowPos(ImVec2(510, 30));
+		if (ImGui::BeginPopupModal("パーティクルの作成に成功しました", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("作業を終了しますか？\n ");
+			if (ImGui::Button("はい", ImVec2(120, 0))) {
+				sceneManager_->SetNextScene("PARTICLECREATOR");
+				checkContinue_ = false;
+				isSave_ = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("いいえ", ImVec2(120, 0))) {
+				checkContinue_ = false;
+				isSave_ = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+		//同名ファイルがあった時の処理
+		if (checkSameName_) {
+			ImGui::OpenPopup("同名のファイルが見つかりました");
+		}
+		ImGui::SetNextWindowPos(ImVec2(510, 30));
+		if (ImGui::BeginPopupModal("同名のファイルが見つかりました", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("上書きしますか？\n ");
+			if (ImGui::Button("はい", ImVec2(120, 0))) {
+				//JsonUtilで既存のファイルを編集
+				std::string fullPath = "Resources/particles/" + jsonFileName_;
+				JsonUtil::EditJson(fullPath, editParam_);
+				checkSameName_ = false;
+				checkContinue_ = true;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("いいえ", ImVec2(120, 0))) {
+				checkSameName_ = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::End();
+	}
+#endif // _DEBUG
 }

@@ -23,7 +23,7 @@ public:
 	/// Jsonファイルを新しく作成する
 	/// </summary>
 	/// <param name="name">ファイル名(.jsonは省略)</param>
-	/// <param name="targetDir">作成するフォルダ名</param>
+	/// <param name="targetDir">作成するフォルダ名(/まで入れる)</param>
 	/// <param name="jsonData">jsonデータ</param>
 	static bool CreateJson(const std::string& name, const std::string& targetDir, const json& jsonData);
 };

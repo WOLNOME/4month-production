@@ -51,7 +51,7 @@ bool JsonUtil::EditJson(const std::string& filePath, const json& jsonData) {
 
 bool JsonUtil::CreateJson(const std::string& name, const std::string& targetDir, const json& jsonData) {
 	//すでにファイルが存在しているか確認
-	std::string fullPath = targetDir + "/" + name + ".json";
+	std::string fullPath = targetDir + name + ".json";
 	if (fs::exists(fullPath)) {
 		//すでにファイルが存在していたらfalseを返す
 		return false;

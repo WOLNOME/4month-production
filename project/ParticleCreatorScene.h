@@ -40,6 +40,8 @@ private://ImGui操作
 	void EditWithImGui();
 	//リセット
 	void ResetWithImGui();
+	//セーブ
+	void SaveWithImGui();
 
 private://必要なオブジェクト
 	//インプット
@@ -67,7 +69,10 @@ private://ImGui操作で必要な変数
 	bool isReset_ = false;
 	bool showFileDialog_ = false;
 	std::vector<std::string> textureFiles_;
-
+	bool isSave_ = false;
+	std::string jsonFileName_;
+	bool checkContinue_ = false;
+	bool checkSameName_ = false;
 
 };
 
