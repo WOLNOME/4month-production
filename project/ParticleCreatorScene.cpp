@@ -45,8 +45,10 @@ void ParticleCreatorScene::Update() {
 	wtGround_.UpdateMatrix();
 
 	//リセットコマンド
-	if (input_->TriggerKey(DIK_ESCAPE)) {
-		isReset_ = true;
+	if (!checkContinue_ && !checkSameName_) {
+		if (input_->TriggerKey(DIK_ESCAPE)) {
+			isReset_ = true;
+		}
 	}
 
 
@@ -113,6 +115,9 @@ void ParticleCreatorScene::StartWithImGui() {
 		}
 		if (ImGui::Button("既存のパーティクルを編集する")) {
 			isEditMode_ = true;
+			checkEditName_ = true;
+			//パーティクルの生成
+			particle_ = std::make_unique<Particle>();
 		}
 		ImGui::End();
 	}
@@ -257,11 +262,44 @@ void ParticleCreatorScene::GenerateWithImGui() {
 }
 
 void ParticleCreatorScene::EditWithImGui() {
+#ifdef _DEBUG
+	if (isEditMode_ && !isGenerateMode_) {
+		//パーティクル名の入力
+		if (checkEditName_) {
+			ImGui::OpenPopup("パーティクル名の入力");
+		}
+		ImGui::SetWindowSize(ImVec2(510, 120));
+		if (ImGui::BeginPopupModal("パーティクル名の入力", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::Text("{particles}フォルダ内のJsonファイル名を入力してください(.jsonは省略)\n ");
+			char buffer[256];
+			strncpy_s(buffer, sizeof(buffer), jsonFileName_.c_str(), _TRUNCATE);
+			buffer[sizeof(buffer) - 1] = '\0';
+			if (ImGui::InputText("入力欄", buffer, sizeof(buffer))) {
+				jsonFileName_ = buffer;
+			}
+			ImGui::Text("入力されている名前\n%s\n ", jsonFileName_.c_str());
+			if (jsonFileName_.size() != 0) {
+				if (ImGui::Button("名前を確定する")) {
+					//JsonUtilを使ってパーティクルを保存
+					if (JsonUtil::CreateJson(jsonFileName_, "Resources/particles/", editParam_)) {
+						checkContinue_ = true;
+					}
+					//すでに同名ファイルがある
+					else {
+						checkSameName_ = true;
+					}
+				}
+			}
+		}
+	}
+#endif // _DEBUG
+
+
 }
 
 void ParticleCreatorScene::ResetWithImGui() {
 #ifdef _DEBUG
-	if (isReset_ && !checkContinue_ && !checkSameName_) {
+	if (isReset_) {
 		ImGui::OpenPopup("確認");
 	}
 	ImGui::SetNextWindowPos(ImVec2(510, 30));
@@ -293,7 +331,7 @@ void ParticleCreatorScene::SaveWithImGui() {
 		char buffer[256];
 		strncpy_s(buffer, sizeof(buffer), jsonFileName_.c_str(), _TRUNCATE);
 		buffer[sizeof(buffer) - 1] = '\0';
-		if (ImGui::InputText("名前を入力", buffer, sizeof(buffer))) {
+		if (ImGui::InputText("入力欄", buffer, sizeof(buffer))) {
 			jsonFileName_ = buffer;
 		}
 		ImGui::Text("入力されている名前\n%s\n ", jsonFileName_.c_str());

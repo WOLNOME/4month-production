@@ -73,6 +73,6 @@ private://ImGui操作で必要な変数
 	std::string jsonFileName_;
 	bool checkContinue_ = false;
 	bool checkSameName_ = false;
-
+	bool checkEditName_ = false;
 };
 
