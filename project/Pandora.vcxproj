@@ -179,6 +179,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
     <ClCompile Include="engine\scene\StageSelectScene.cpp" />
+    <ClCompile Include="application\objects\Field\StageSelectObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -261,6 +262,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
     <ClInclude Include="engine\scene\StageSelectScene.h" />
+    <ClInclude Include="application\objects\Field\StageSelectObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

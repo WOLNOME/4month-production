@@ -1,6 +1,13 @@
 #include "StageSelectScene.h"
 
+#include "TextureManager.h"
+#include "ImGuiManager.h"
+#include "Object3dCommon.h"
+#include "ParticleCommon.h"
+#include "LineDrawerCommon.h"
+#include "SpriteCommon.h"
 #include "SceneManager.h"
+#include <numbers>
 
 void StageSelectScene::Initialize()
 {
@@ -8,23 +15,100 @@ void StageSelectScene::Initialize()
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
+
+	//カメラの生成と初期化
+	camera_ = std::make_unique<BaseCamera>();
+	camera_->Initialize();
+	camera_->SetRotate({ cameraRotate });
+	camera_->SetTranslate(cameraTranslate);
+	camera_->SetFarClip(80.0f);
+
+	// フィールドモデル
+	for (uint32_t i = 0; i < stageNum_; i++)
+	{
+		auto field0 = std::make_unique<StageSelectObject>();
+		field0->Initialize("cube", "grid.png");
+
+        selectObjects_.push_back(std::move(field0));
+	}
+
+	selectObjects_[0]->SetPosition({ 0.0f, 0.0f, 0.0f });
+	selectObjects_[1]->SetPosition({ 10.0f, 0.0f, 0.0f });
+	selectObjects_[2]->SetPosition({ 20.0f, 0.0f, 0.0f });
+	selectObjects_[3]->SetPosition({ 30.0f, 0.0f, 0.0f });
+	selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
+
+	selectStage_ = 0;
 }
 
 void StageSelectScene::Finalize()
 {
+	for (uint32_t i = 0; i < stageNum_; i++)
+	{
+		selectObjects_[i]->Finalize();
+	}
 }
 
 void StageSelectScene::Update()
 {
-	if (input_->TriggerKey(DIK_TAB)) 
+	// カメラの更新
+	camera_->UpdateMatrix();
+	camera_->SetRotate({ cameraRotate });
+	camera_->SetTranslate(cameraTranslate);
+
+	// ステージ選択
+	StageSelect();
+
+	for (uint32_t i = 0; i < stageNum_; i++)
 	{
-		sceneManager_->SetNextScene("GAMEPLAY");
+		selectObjects_[i]->Update();
+		selectObjects_[i]->SetStage(selectStage_);
 	}
+
+	if (input_->TriggerKey(DIK_TAB))
+	{
+		if (selectStage_ == 0)
+		{
+			sceneManager_->SetNextScene("GAMEPLAY");
+		} 
+		else if (selectStage_ == 1)
+		{
+			sceneManager_->SetNextScene("GAMEPLAY");
+		}
+		else if (selectStage_ == 2)
+		{
+			sceneManager_->SetNextScene("GAMEPLAY");
+		}
+		else if (selectStage_ == 3)
+		{
+			sceneManager_->SetNextScene("GAMEPLAY");
+		} 
+		else if (selectStage_ == 4)
+		{
+			sceneManager_->SetNextScene("GAMEPLAY");
+		}
+	}
+
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "StageSelect");
+
+	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -50.0f, 50.0f);
+	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
+
+	ImGui::Text("selectStage : %d", selectStage_);
+	bool isMove = selectObjects_[0]->IsMove();
+	ImGui::Text("selectObjects_[0]->IsMove() : %s", isMove ? "true" : "false");
+
+
 	ImGui::End();
+
+	for (uint32_t i = 0; i < stageNum_; i++)
+	{
+		selectObjects_[i]->ImGuiDraw();
+	}
+
 #endif // _DEBUG
 }
 
@@ -37,7 +121,10 @@ void StageSelectScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-
+	for (uint32_t i = 0; i < stageNum_; i++)
+	{
+		selectObjects_[i]->Draw(*camera_);
+	}
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
@@ -94,4 +181,26 @@ void StageSelectScene::TextDraw()
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
+}
+
+void StageSelectScene::StageSelect()
+{
+	if (!selectObjects_[0]->IsMove())
+	{
+		if (input_->TriggerKey(DIK_D))
+		{
+			if (selectStage_ < stageNum_ - 1)
+			{
+				selectStage_++;
+			}
+		}
+
+		if (input_->TriggerKey(DIK_A))
+		{
+			if (selectStage_ > 0)
+			{
+				selectStage_--;
+			}
+		}
+	}
 }
