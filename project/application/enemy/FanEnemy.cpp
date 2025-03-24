@@ -43,7 +43,7 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 void FanEnemy::EnemyUpdate()
 {
 	//氷の上にいるとき
-	if (onIce_) 
+	if (onIce_)
 	{
 		MoveOnIce();
 	}
@@ -145,7 +145,7 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 
 void FanEnemy::Move()
 {
- 	const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = 1.0f / 60.0f;
 
 	// 摩擦処理
 	Vector3 friction = -velocity_ * friction_ * deltaTime;
@@ -156,7 +156,7 @@ void FanEnemy::Move()
 	{
 		velocity_ = { 0.0f,0.0f,0.0f };
 	}
-	
+
 	// 移動処理
 	transform_.translate_ += velocity_ * deltaTime;
 }
@@ -243,11 +243,11 @@ Vector3 FanEnemy::ComputePenetration(const AppAABB& otherAABB)
 	float absZ = std::abs(penetrationZ);
 
 	//最小のベクトルを求める
-	if (absX < absZ) 
+	if (absX < absZ)
 	{
 		penetration.x = penetrationX;
 	}
-	else 
+	else
 	{
 		penetration.z = penetrationZ;
 	}
