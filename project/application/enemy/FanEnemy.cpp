@@ -70,6 +70,25 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 		// 地面にいる
 		isGround_ = true;
 	}
+
+	//敵同士の当たり判定
+	if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
+	{
+		// 敵の位置
+		Vector3 enemyPosition = _other->GetOwner()->GetPosition();
+
+		// 敵同士が重ならないようにする
+		Vector3 direction = transform_.translate_ - enemyPosition;
+		direction.Normalize();
+		float distance = 2.5f; // 敵同士の間の距離を調整するための値
+
+		// 互いに重ならないように少しずつ位置を調整
+		if ((transform_.translate_ - enemyPosition).Length() < distance)
+		{
+			transform_.translate_ += direction * 0.1f; // 微調整のための値
+			transform_.translate_.y = 1.0f;
+		}
+	}
 }
 
 void FanEnemy::OnCollisionTrigger(const AppCollider* other)

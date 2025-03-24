@@ -94,6 +94,8 @@ private:
 
 	// 死亡フラグ
 	bool isDead_ = false;
+	//速度低下率、1.0fで通常速度、これを下げていくと速度が遅くなる
+	float slowRate_ = 1.0f;
 
 };
 

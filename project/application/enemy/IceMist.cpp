@@ -60,7 +60,7 @@ void IceMist::OnCollisionTrigger(const AppCollider* other)
 {
     if (other->GetColliderID() == "Player")
     {
-        isAlive_ = false;
+        //isAlive_ = false;
     }
 }
 

@@ -21,6 +21,7 @@ public:
 	bool IsAlive() const { return isAlive_; }
 	void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	Vector3 GetPosition() const { return transform_.translate_; }
+	void SetTargetPosition(const Vector3& targetPosition) { targetPosition_ = targetPosition; }
 
 	void Initialize() override {}
 	void Update() override {}
@@ -52,8 +53,10 @@ private:
 	bool isAlive_ = true;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
+	//攻撃対象の座標
+	Vector3 targetPosition_ = {};
 	//凍結攻撃を行う間隔
-	float freezeAttackInterval_ = 0.5f;
+	float freezeAttackInterval_ = 0.4f;
 	//凍結攻撃を行うタイマー
 	float freezeAttackTimer_ = 0.0f;
 };

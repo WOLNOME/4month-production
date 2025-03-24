@@ -147,22 +147,6 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
 
     if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
     {
-        //// エネミーの位置を取得
-        //Vector3 enemyPosition = transform_.translate_;
-
-        //// プレイヤーの位置を取得
-        //Vector3 playerPosition = _other->GetOwner()->GetPosition();
-
-        //// エネミーとプレイヤーの位置を調整して、互いに重ならないようにする
-        //Vector3 direction = enemyPosition - playerPosition;
-        //direction.Normalize();
-        //float distance = 1.0f; // エネミーとプレイヤーの間の距離を調整するための値
-        //transform_.translate_ = playerPosition + direction * distance;
-
-
-
-
-
 		//////-------押し出される処理-------//////
         // プレイヤーの速度
         Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
@@ -178,27 +162,24 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
         tackleVelocity_ = playerVelocity;
     }
 
-	// エネミー同士の衝突
-	if (_other->GetColliderID() == "TackleEnemy")
-	{
-        // エネミー同士の衝突処理
-        Vector3 enemyPosition = transform_.translate_;
-        Vector3 otherEnemyPosition = _other->GetOwner()->GetPosition();
+    //敵同士の当たり判定
+    if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
+    {
+        // 敵の位置
+        Vector3 enemyPosition = _other->GetOwner()->GetPosition();
 
-        // エネミー同士が重ならないようにする
-        Vector3 direction = enemyPosition - otherEnemyPosition;
+        // 敵同士が重ならないようにする
+        Vector3 direction = transform_.translate_ - enemyPosition;
         direction.Normalize();
-        float distance = 2.5f; // エネミー同士の間の距離を調整するための値
+        float distance = 2.5f; // 敵同士の間の距離を調整するための値
 
         // 互いに重ならないように少しずつ位置を調整
-        if ((enemyPosition - otherEnemyPosition).Length() < distance)
+        if ((transform_.translate_ - enemyPosition).Length() < distance)
         {
-            enemyPosition += direction * 0.1f; // 微調整のための値
-            enemyPosition.y = 0.7f;
-            transform_.translate_ = enemyPosition;
-            position_ = transform_.translate_;
+            transform_.translate_ += direction * 0.1f; // 微調整のための値
+            transform_.translate_.y = 1.0f;
         }
-	}
+    }
 }
 
 void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)

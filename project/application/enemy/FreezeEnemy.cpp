@@ -81,6 +81,25 @@ void FreezeEnemy::OnCollision(const AppCollider* other)
 		velocity_ += runDirection * 0.5f;
 		velocity_.y = 0.0f;
 	}
+
+	//敵同士の当たり判定
+	if (other->GetColliderID() == "FreezeEnemy" || other->GetColliderID() == "TackleEnemy" || other->GetColliderID() == "FanEnemy")
+	{
+		// 敵の位置
+		Vector3 enemyPosition = other->GetOwner()->GetPosition();
+
+		// 敵同士が重ならないようにする
+		Vector3 direction = transform_.translate_ - enemyPosition;
+		direction.Normalize();
+		float distance = 2.5f; // 敵同士の間の距離を調整するための値
+
+		// 互いに重ならないように少しずつ位置を調整
+		if ((transform_.translate_ - enemyPosition).Length() < distance)
+		{
+			transform_.translate_ += direction * 0.1f; // 微調整のための値
+			transform_.translate_.y = 1.0f;
+		}
+	}
 }
 
 void FreezeEnemy::OnCollisionTrigger(const AppCollider* other)
@@ -126,9 +145,9 @@ void FreezeEnemy::OutOfField()
 
 void FreezeEnemy::StartFreeze()
 {
-	// FreezeEnemyの正面方向を計算
-	Vector3 forward = { cos(transform_.rotate_.y), 0.0f, sin(transform_.rotate_.y) };
-	forward.Normalize();
+	// targetPositionの方向を計算
+	Vector3 directionToTarget = targetPosition_ - transform_.translate_;
+	directionToTarget.Normalize();
 
 	// 扇状に広がる弾を発射
 	int numBullets = 3; // 発射する弾の数
@@ -138,12 +157,12 @@ void FreezeEnemy::StartFreeze()
 	for (int i = 0; i < numBullets; i++)
 	{
 		// 弾の角度を計算
-		float angle = transform_.rotate_.y - spreadAngle / 2.0f + angleStep * i;
+		float angle = -spreadAngle / 2.0f + angleStep * i;
 		float radian = angle * 3.14159265f / 180.0f;
 		Vector3 direction = {
-			forward.x * cos(radian) - forward.z * sin(radian),
+			directionToTarget.x * cos(radian) - directionToTarget.z * sin(radian),
 			0.0f,
-			forward.x * sin(radian) + forward.z * cos(radian)
+			directionToTarget.x * sin(radian) + directionToTarget.z * cos(radian)
 		};
 		direction.Normalize();
 		// 弾を生成

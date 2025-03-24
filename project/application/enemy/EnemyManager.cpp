@@ -16,9 +16,12 @@ void EnemyManager::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("EnemyManager");
-	ImGui::Text("TackleEnemyCount: %d", tackleEnemies_.size());
-	ImGui::Text("FanEnemyCount: %d", fanEnemies_.size());
-	ImGui::Text("WindCount: %d", winds_.size());
+	ImGui::SeparatorText("Count");
+	ImGui::Text("TackleEnemy: %d", tackleEnemies_.size());
+	ImGui::Text("FanEnemy: %d", fanEnemies_.size());
+	ImGui::Text("Wind: %d", winds_.size());
+	ImGui::Text("IceMist: %d", iceMists_.size());
+	ImGui::SeparatorText("Spawn");
 	ImGui::DragFloat3("SpawnMinPosition", &spawnMinPosition_.x, 0.1f);
 	ImGui::DragFloat3("SpawnMaxPosition", &spawnMaxPosition_.x, 0.1f);
 	ImGui::DragInt("SpawnCount", &spawnCount_, 1.0f, 1, 100);
@@ -36,7 +39,6 @@ void EnemyManager::Update()
 	}
 	if (ImGui::Button("Tackle"))
 	{
-		TargetUpdate();
 		for (auto& enemy : tackleEnemies_)
 		{
 			enemy->StartTackle();
@@ -45,7 +47,8 @@ void EnemyManager::Update()
 	ImGui::End();
 #endif
 	//ターゲットの更新
-	TargetUpdate();
+	TackleEnemyTargetUpdate();
+	FreezeEnemyTargetUpdate();
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
 	{
@@ -208,10 +211,36 @@ void EnemyManager::SpawnIceMist(const Vector3& position, const Vector3& velocity
 	iceMists_.emplace_back(std::move(iceMist));
 }
 
-void EnemyManager::TargetUpdate()
+void EnemyManager::TackleEnemyTargetUpdate()
 {
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
+	{
+		//敵から一番近いプレイヤーを探す
+		Vector3 target{};
+		for (auto& player : *players_)
+		{
+			if (target.Length() == 0.0f)
+			{
+				target = player->GetPosition();
+			}
+			else
+			{
+				if ((enemy->GetPosition() - player->GetPosition()).Length() < (enemy->GetPosition() - target).Length())
+				{
+					target = player->GetPosition();
+				}
+			}
+		}
+		enemy->SetTargetPosition(target);
+	}
+	
+}
+
+void EnemyManager::FreezeEnemyTargetUpdate()
+{
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
 	{
 		//敵から一番近いプレイヤーを探す
 		Vector3 target{};
