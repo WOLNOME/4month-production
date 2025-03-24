@@ -96,6 +96,21 @@ void GamePlayScene::Finalize()
 	enemyManager_->Finalize();
 
 	field_->Finalize();
+	
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Finalize();
+	}
+
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Finalize();
+	}
+
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Finalize();
+	}
 }
 
 void GamePlayScene::Update()
@@ -166,9 +181,14 @@ void GamePlayScene::Update()
 	}
 
 	// ゲームオーバーへ
-	if (playerNum_ <= 0)
+	if (playerNum_ <= 0  or input_->TriggerKey(DIK_RETURN))
 	{
 		sceneManager_->SetNextScene("GAMEOVER");
+	}
+	// クリア
+	if (input_ ->TriggerKey(DIK_TAB))
+	{
+		sceneManager_->SetNextScene("CLEAR");
 	}
 
 

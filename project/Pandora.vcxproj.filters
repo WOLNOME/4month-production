@@ -117,6 +117,7 @@
     </ClCompile>
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
     <ClCompile Include="engine\scene\StageSelectScene.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -239,6 +240,7 @@
     </ClInclude>
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
     <ClInclude Include="engine\scene\StageSelectScene.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

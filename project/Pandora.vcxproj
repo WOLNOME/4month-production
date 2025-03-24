@@ -146,6 +146,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
     <ClCompile Include="application\enemy\FanEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -238,6 +239,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\GameObject\GameObject.h" />
     <ClInclude Include="application\enemy\FanEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />

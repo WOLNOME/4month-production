@@ -2,7 +2,7 @@
 
 #include "BaseScene.h"
 
-class StageSelectScene : public BaseScene
+class GameOverScene : public BaseScene
 {
 public:
 
@@ -31,6 +31,5 @@ private://メンバ変数
 
 	//インプット
 	Input* input_ = nullptr;
-
 };
 

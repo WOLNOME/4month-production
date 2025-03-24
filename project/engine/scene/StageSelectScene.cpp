@@ -23,7 +23,7 @@ void StageSelectScene::Update()
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
-	ImGui::Text("%s", "CLEAR");
+	ImGui::Text("%s", "StageSelect");
 	ImGui::End();
 #endif // _DEBUG
 }

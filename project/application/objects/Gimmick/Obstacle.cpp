@@ -28,6 +28,7 @@ void Obstacle::Finalize()
 	if (appCollider_)
 	{
 		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
 	}
 }
 

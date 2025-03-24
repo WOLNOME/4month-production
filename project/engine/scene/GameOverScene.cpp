@@ -1,41 +1,34 @@
-#include "ClearScene.h"
+#include "GameOverScene.h"
+
 #include "SceneManager.h"
 
-void ClearScene::Initialize()
+void GameOverScene::Initialize()
 {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
-
-	textureHandleClear_ = TextureManager::GetInstance()->LoadTexture("heart.png");
-	spriteClear_ = std::make_unique<Sprite>();
-	spriteClear_->Initialize(textureHandleClear_);
-
-
 }
 
-void ClearScene::Finalize()
+void GameOverScene::Finalize()
 {
-	
 }
 
-void ClearScene::Update()
+void GameOverScene::Update()
 {
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_TAB))
+	{
 		sceneManager_->SetNextScene("TITLE");
 	}
 
-	spriteClear_->Update();
-
 #ifdef _DEBUG
 	ImGui::Begin("scene");
-	ImGui::Text("%s", "CLEAR");
+	ImGui::Text("%s", "GameOver");
 	ImGui::End();
 #endif // _DEBUG
 }
 
-void ClearScene::Draw()
+void GameOverScene::Draw()
 {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
@@ -83,19 +76,20 @@ void ClearScene::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	spriteClear_->Draw();
+
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
 }
 
-void ClearScene::TextDraw() {
+void GameOverScene::TextDraw()
+{
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
-	
+
 
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
