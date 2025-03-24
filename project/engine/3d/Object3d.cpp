@@ -11,8 +11,7 @@
 #include <sstream>
 #include <cassert>
 
-Object3d::Object3d()
-{
+Object3d::Object3d() {
 	//リソース作成
 	lightFlagResource_ = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(LightFlagForPS));
 	//リソースにマッピング
@@ -21,8 +20,7 @@ Object3d::Object3d()
 	lightFlagData_->isActiveLights = false;
 }
 
-void Object3d::InitializeModel(const std::string& filePath, ModelFormat format)
-{
+void Object3d::InitializeModel(const std::string& filePath, ModelFormat format) {
 	//モデルマネージャーでモデルを生成
 	ModelManager::GetInstance()->LoadModel(filePath, format);
 	//モデルマネージャーから検索してセットする
@@ -30,21 +28,23 @@ void Object3d::InitializeModel(const std::string& filePath, ModelFormat format)
 
 	objKind_ = kModel;
 
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
+	model_->SetColor(color_);
 }
 
-void Object3d::InitializeShape(Shape::ShapeKind kind)
-{
+void Object3d::InitializeShape(Shape::ShapeKind kind) {
 	//形状の生成と初期化
 	shape_ = std::make_unique<Shape>();
 	shape_->Initialize(kind);
 
 	objKind_ = kShape;
+
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
+	shape_->SetColor(color_);
 }
 
-void Object3d::Draw(WorldTransform& worldTransform, const  BaseCamera& camera, const SceneLight* sceneLight, int32_t textureHandle)
-{
-	switch (objKind_)
-	{
+void Object3d::Draw(WorldTransform& worldTransform, const  BaseCamera& camera, const SceneLight* sceneLight, int32_t textureHandle) {
+	switch (objKind_) {
 	case Object3d::kModel:
 		//アニメーション反映処理
 		model_->Update();
@@ -78,7 +78,7 @@ void Object3d::Draw(WorldTransform& worldTransform, const  BaseCamera& camera, c
 		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, camera.GetCameraPositionConstBuffer()->GetGPUVirtualAddress());
 
 		//モデルを描画する
-		model_->Draw(0, 3,1,textureHandle);
+		model_->Draw(0, 3, 1, textureHandle);
 		break;
 	case Object3d::kShape:
 		//形状の更新処理

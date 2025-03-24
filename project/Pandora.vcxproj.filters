@@ -42,7 +42,7 @@
     <ClCompile Include="engine\scenebase\SceneFactory.cpp" />
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
     <ClCompile Include="engine\scene\TitleScene.cpp" />
-    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="engine\3d\Particle.cpp" />
     <ClCompile Include="engine\3d\WorldTransform.cpp" />
     <ClCompile Include="engine\3d\PointLight.cpp" />
     <ClCompile Include="engine\3d\SceneLight.cpp" />
@@ -115,8 +115,8 @@
       <Filter>gimmick</Filter>
     </ClCompile>
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
-    <ClCompile Include="ParticleCreatorScene.cpp" />
-    <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
+    <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +154,7 @@
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
     <ClInclude Include="engine\scene\TitleScene.h" />
-    <ClInclude Include="Particle.h" />
+    <ClInclude Include="engine\3d\Particle.h" />
     <ClInclude Include="engine\3d\WorldTransform.h" />
     <ClInclude Include="engine\3d\PointLight.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
@@ -234,13 +234,9 @@
     <ClInclude Include="application\objects\Gimmick\Bumper.h">
       <Filter>gimmick</Filter>
     </ClInclude>
-    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
-      <Filter>gimmick</Filter>
-    </ClInclude>
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
-    <ClInclude Include="ParticleCreatorScene.h" />
-    <ClInclude Include="ParticleManager.h" />
-    <ClInclude Include="engine\util\JsonUtil.h" />
+    <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
+    <ClInclude Include="engine\3d\ParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

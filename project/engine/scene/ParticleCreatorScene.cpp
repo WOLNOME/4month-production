@@ -215,13 +215,13 @@ void ParticleCreatorScene::EditWithImGui() {
 				ImGui::Text("指定されたファイルが存在しません");
 				ImGui::PopStyleColor();
 			}
-
 		}
 		//戻る
 		if (ImGui::Button("Back")) {
 			showFileDialog_ = false;
 			checkSameName_ = false;
 			checkEditName_ = false;
+			jsonFileName_ = std::string();
 			particle_.release();
 			ImGui::CloseCurrentPopup();
 		}

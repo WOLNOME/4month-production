@@ -5,7 +5,6 @@
 #include <string>
 #include <list>
 #include <memory>
-#include <numbers>
 #include "json.hpp"
 #include "Model.h"
 #include "MyMath.h"

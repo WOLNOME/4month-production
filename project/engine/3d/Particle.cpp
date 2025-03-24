@@ -1,17 +1,9 @@
 #include "Particle.h"
-#include "WinApp.h"
 #include "DirectXCommon.h"
-#include "MainRender.h"
 #include "SrvManager.h"
-#include "TextureManager.h"
 #include "ModelManager.h"
-#include "ImGuiManager.h"
 #include "ParticleManager.h"
 #include "JsonUtil.h"
-#include "ModelFormat.h"
-#include <fstream>
-#include <sstream>
-#include <random>
 
 Particle::~Particle() {
 	//確保したSRVデスクリプタヒープの解放

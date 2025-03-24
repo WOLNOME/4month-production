@@ -117,6 +117,9 @@ void Model::Draw(uint32_t materialRootParameterIndex, uint32_t textureRootParame
 		//インデックスバッファビューを設定
 		MainRender::GetInstance()->GetCommandList()->IASetIndexBuffer(&modelResource_.indexBufferView.at(index));
 		//マテリアルCBufferの場所を設定
+		if (color_) {
+			modelResource_.materialData.at(index)->color = *color_;
+		}
 		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(materialRootParameterIndex, modelResource_.materialResource.at(index)->GetGPUVirtualAddress());
 		//テクスチャが外部から設定されている場合
 		if (textureHandle != -1) {
