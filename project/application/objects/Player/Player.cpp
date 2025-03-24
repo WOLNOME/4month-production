@@ -463,7 +463,7 @@ void Player::MovePositionOnIce()
 {
 
 	// 摩擦による減速を適用
-	moveVel_ *= frictionOnIce_;
+	moveVel_ *= frictionOnIce_ * slowRate_;
 
 	//速度を最高速度以下に抑える
 	if (moveVel_.Length() > MaxSpeedOnIce_)
