@@ -17,8 +17,10 @@ void EnemyManager::Update()
 #ifdef _DEBUG
 	ImGui::Begin("EnemyManager");
 	ImGui::SeparatorText("Count");
+	ImGui::Text("Total: %d", GetEnemyCount());
 	ImGui::Text("TackleEnemy: %d", tackleEnemies_.size());
 	ImGui::Text("FanEnemy: %d", fanEnemies_.size());
+	ImGui::Text("FreezeEnemy: %d", freezeEnemies_.size());
 	ImGui::Text("Wind: %d", winds_.size());
 	ImGui::Text("IceMist: %d", iceMists_.size());
 	ImGui::SeparatorText("Spawn");
