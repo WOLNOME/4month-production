@@ -31,6 +31,8 @@ void ClearScene::Update()
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "CLEAR");
+	ImGui::Text("%s", "ToTitle : TAB");
+
 	ImGui::End();
 #endif // _DEBUG
 }

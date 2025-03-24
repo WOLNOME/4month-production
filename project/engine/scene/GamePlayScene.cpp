@@ -310,6 +310,9 @@ void GamePlayScene::ImGuiDraw()
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "GAMEPLAY");;
 	
+	ImGui::Text("%s","ToClear : TAB");
+	ImGui::Text("%s", "ToGameOver : ENTER");
+
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -100.0f, 100.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
 

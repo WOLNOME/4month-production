@@ -24,6 +24,8 @@ void GameOverScene::Update()
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "GameOver");
+	ImGui::Text("%s", "ToTitle : TAB");
+
 	ImGui::End();
 #endif // _DEBUG
 }
