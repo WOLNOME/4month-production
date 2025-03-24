@@ -34,6 +34,12 @@ private:
 	void FreezeUpdate();
 	void UpdateCollider();
 
+	// 障害物にぶつかったとき、最小の移動量で押し戻すベクトルを求める
+	Vector3 ComputePenetration(const AppAABB& otherAABB);
+
+	//氷の上の移動
+	void MoveOnIce();
+
 private:
 	//速度ベクトル
 	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
@@ -59,4 +65,7 @@ private:
 	float freezeAttackInterval_ = 0.4f;
 	//凍結攻撃を行うタイマー
 	float freezeAttackTimer_ = 0.0f;
+
+	//氷の上にいるときの摩擦係数
+	float frictionOnIce_ = 0.995f;
 };

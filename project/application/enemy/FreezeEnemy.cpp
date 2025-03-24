@@ -44,8 +44,16 @@ void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 
 void FreezeEnemy::EnemyUpdate()
 {
-	// 移動
-	Move();
+	//氷の上にいるとき
+	if (onIce_)
+	{
+		MoveOnIce();
+	}
+	else
+	{
+		// 移動
+		Move();
+	}
 	// 凍結攻撃
 	FreezeUpdate();
 	// 場外処理
@@ -54,6 +62,8 @@ void FreezeEnemy::EnemyUpdate()
 	transform_.UpdateMatrix();
 	// 当たり判定関係
 	UpdateCollider();
+
+	onIce_ = false;
 }
 
 void FreezeEnemy::EnemyDraw(const BaseCamera& camera)
@@ -67,6 +77,32 @@ void FreezeEnemy::OnCollision(const AppCollider* other)
 	{
 		// 地面にいる
 		isGround_ = true;
+	}
+	else if (other->GetColliderID() == "Obstacle")
+	{
+		transform_.translate_ += ComputePenetration(*other->GetAABB());
+		//行列の更新
+		transform_.UpdateMatrix();
+
+		// 当たり判定関係
+		aabb_.min = transform_.translate_ - transform_.scale_;
+		aabb_.max = transform_.translate_ + transform_.scale_;
+		appCollider_->SetPosition(transform_.translate_);
+	}
+	else if (other->GetColliderID() == "Bumper")
+	{
+		Vector3 penetration = ComputePenetration(*other->GetAABB());
+		transform_.translate_ += penetration;
+		penetration.Normalize();
+		// ノックバック
+		velocity_ = penetration;
+		velocity_ *= 20.0f;
+		velocity_.y = 0.0f;
+
+	}
+	else if (other->GetColliderID() == "IceFloor")
+	{
+		onIce_ = true;
 	}
 
 	if (other->GetColliderID() == "Player")
@@ -187,4 +223,54 @@ void FreezeEnemy::UpdateCollider()
 	aabb_.min = transform_.translate_ - transform_.scale_;
 	aabb_.max = transform_.translate_ + transform_.scale_;
 	appCollider_->SetPosition(transform_.translate_);
+}
+
+Vector3 FreezeEnemy::ComputePenetration(const AppAABB& otherAABB)
+{
+	Vector3 penetration;
+
+	//X軸方向に押し戻すベクトル
+	float overlapX1 = otherAABB.max.x - aabb_.min.x;
+	float overlapX2 = aabb_.max.x - otherAABB.min.x;
+	float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
+
+	//Z軸方向に押し戻すベクトル
+	float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+	float overlapZ2 = aabb_.max.z - otherAABB.min.z;
+	float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
+
+	//ベクトルの絶対値を求める
+	float absX = std::abs(penetrationX);
+	float absZ = std::abs(penetrationZ);
+
+	//最小のベクトルを求める
+	if (absX < absZ)
+	{
+		penetration.x = penetrationX;
+	}
+	else
+	{
+		penetration.z = penetrationZ;
+	}
+
+	return penetration;
+}
+
+void FreezeEnemy::MoveOnIce()
+{
+	// フレーム間の時間差（秒）
+	float deltaTime = 1.0f / 60.0f;
+
+	// 摩擦による減速を適用
+	velocity_ *= frictionOnIce_;
+
+	// 速度が非常に小さくなったら停止する
+	if (velocity_.Length() < 0.001f)
+	{
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+	}
+
+	// 位置を更新
+	transform_.translate_ += velocity_ * deltaTime;
+	position_ = transform_.translate_;
 }

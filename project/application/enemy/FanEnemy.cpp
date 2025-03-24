@@ -75,7 +75,7 @@ void FanEnemy::EnemyDraw(const BaseCamera& camera)
 
 void FanEnemy::OnCollision(const AppCollider* _other)
 {
-	if(_other->GetColliderID() == "Field")
+	if (_other->GetColliderID() == "Field")
 	{
 		// 地面にいる
 		isGround_ = true;
@@ -97,31 +97,32 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 			transform_.translate_ += direction * 0.1f; // 微調整のための値
 			transform_.translate_.y = 1.0f;
 		}
-	else if (_other->GetColliderID() == "Obstacle")
-	{
-		transform_.translate_ += ComputePenetration(*_other->GetAABB());
-		//行列の更新
-		transform_.UpdateMatrix();
+		else if (_other->GetColliderID() == "Obstacle")
+		{
+			transform_.translate_ += ComputePenetration(*_other->GetAABB());
+			//行列の更新
+			transform_.UpdateMatrix();
 
-		// 当たり判定関係
-		aabb_.min = transform_.translate_ - transform_.scale_;
-		aabb_.max = transform_.translate_ + transform_.scale_;
-		appCollider_->SetPosition(transform_.translate_);
-	}
-	else if (_other->GetColliderID() == "Bumper")
-	{
-		Vector3 penetration = ComputePenetration(*_other->GetAABB());
-		transform_.translate_ += penetration;
-		penetration.Normalize();
-		// ノックバック
-		velocity_ = penetration;
-		velocity_ *= 20.0f;
-		velocity_.y = 0.0f;
+			// 当たり判定関係
+			aabb_.min = transform_.translate_ - transform_.scale_;
+			aabb_.max = transform_.translate_ + transform_.scale_;
+			appCollider_->SetPosition(transform_.translate_);
+		}
+		else if (_other->GetColliderID() == "Bumper")
+		{
+			Vector3 penetration = ComputePenetration(*_other->GetAABB());
+			transform_.translate_ += penetration;
+			penetration.Normalize();
+			// ノックバック
+			velocity_ = penetration;
+			velocity_ *= 20.0f;
+			velocity_.y = 0.0f;
 
-	}
-	else if (_other->GetColliderID() == "IceFloor")
-	{
-		onIce_ = true;
+		}
+		else if (_other->GetColliderID() == "IceFloor")
+		{
+			onIce_ = true;
+		}
 	}
 }
 
