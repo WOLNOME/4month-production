@@ -19,6 +19,7 @@ void Bumper::Initialize()
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
 	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_->SetOnCollision(std::bind(&Bumper::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 }
 
@@ -47,4 +48,8 @@ void Bumper::Update()
 void Bumper::Draw(BaseCamera _camera)
 {
 	object_->Draw(worldTransform_, _camera);
+}
+
+void Bumper::OnCollision(const AppCollider* _other)
+{
 }
