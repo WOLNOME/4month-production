@@ -109,6 +109,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="application\appCollider\AppCollider.cpp" />
     <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
+    <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
@@ -145,6 +146,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
     <ClCompile Include="application\enemy\FanEnemy.cpp" />
+    <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
     <ClCompile Include="engine\scene\GameOverScene.cpp" />
     <ClCompile Include="main.cpp" />
@@ -185,6 +187,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\appCollider\AppCollisionManager.h" />
     <ClInclude Include="application\enemy\BaseEnemy.h" />
     <ClInclude Include="application\enemy\EnemyManager.h" />
+    <ClInclude Include="application\enemy\IceMist.h" />
     <ClInclude Include="application\enemy\TackleEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
@@ -238,6 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\objects\GameObject\GameObject.h" />
     <ClInclude Include="application\enemy\FanEnemy.h" />
+    <ClInclude Include="application\enemy\FreezeEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
     <ClInclude Include="MyGame.h" />

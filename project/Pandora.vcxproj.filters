@@ -106,6 +106,8 @@
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="engine\2d\TextWrite.cpp" />
+    <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
+    <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp">
       <Filter>gimmick</Filter>
     </ClCompile>
@@ -229,6 +231,8 @@
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="engine\2d\TextWrite.h" />
+    <ClInclude Include="application\enemy\FreezeEnemy.h" />
+    <ClInclude Include="application\enemy\IceMist.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h">
       <Filter>gimmick</Filter>
     </ClInclude>
