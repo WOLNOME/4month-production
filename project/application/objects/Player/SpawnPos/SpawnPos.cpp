@@ -1,10 +1,13 @@
 #include "SpawnPos.h"
+#include "TextureManager.h"
 
 void SpawnPos::Initialize()
 {
 	wtSpawn_.Initialize();
 	wtSpawn_.translate_ = position_;
 	wtSpawn_.scale_ = { 0.4f,0.4f,0.4f };
+
+	textureHandleSpawn_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
 
 	spawn_ = std::make_unique<Object3d>();
 	spawn_->InitializeModel("cube");
@@ -22,7 +25,7 @@ void SpawnPos::Update()
 
 void SpawnPos::Draw(BaseCamera _camera)
 {
-	spawn_->Draw(wtSpawn_, _camera);
+	spawn_->Draw(wtSpawn_, _camera,nullptr,textureHandleSpawn_);
 }
 
 void SpawnPos::ImGuiDraw()

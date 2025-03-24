@@ -15,9 +15,13 @@
 // アプリケーションインクルード
 #include "../../application/objects/Player/Player.h"
 #include "../../application/objects/Player/SpawnPos/SpawnPos.h"
+#include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/Field.h"
 #include "../../application/appCollider/AppCollisionManager.h"
 #include "../../application/enemy/EnemyManager.h"
+#include "../../application/objects/Gimmick/Obstacle.h"
+#include "../../application/objects/Gimmick/Bumper.h"
+#include "../../application/objects/Gimmick/IceFloor.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -66,9 +70,19 @@ private://メンバ変数
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;
 
+	//スカイドーム
+	std::unique_ptr<Skydome> skydome_ = nullptr;
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
+	//障害物
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
+
+	//跳ね返る障害物
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
+
+	//氷の床
+	std::vector<std::unique_ptr<IceFloor>> icefloors_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
@@ -84,6 +98,8 @@ private://メンバ変数
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
 
+	// フィールド上にいるプレイヤーの数
+	uint32_t playerNum_ = 0;
 
 };
 

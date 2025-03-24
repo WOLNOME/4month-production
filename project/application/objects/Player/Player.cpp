@@ -45,33 +45,57 @@ void Player::Finalize()
 
 void Player::Update()
 {
-	wtPlayer_.UpdateMatrix();
-
-	// 当たり判定関係
-	aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
-	aabb_.max = wtPlayer_.translate_ + wtPlayer_.scale_;
-	appCollider_->SetPosition(wtPlayer_.translate_);
+	
 	
 	// ノックバック中は移動、攻撃できない
 	if (knockBackTime_ > 0.0f)
 	{
 		knockBackTime_ -= 1.0f;
 	}
-	else
+	else if(!isAftertaste_)
 	{
-		// 移動
-		Move();
+		//氷の上にいるとき
+		if (onIce_)
+		{
+			//移動
+			MoveOnIce();
 
-		// 攻撃	
-		Attack();
+			// 攻撃	
+			AttackOnIce();
+		}
+		else
+		{
+			// 移動
+			Move();
+
+			// 攻撃	
+			Attack();
+		}
 	}
 
-	// 位置更新
-	MovePosition();
+	//氷の上にいるとき
+	if (onIce_)
+	{
+		MovePositionOnIce();
+	}
+	else
+	{
+		// 位置更新
+		MovePosition();
+	}
+	
 
 	// 場外処理
 	OutOfField();
 
+	wtPlayer_.UpdateMatrix();
+
+	// 当たり判定関係
+	aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
+	aabb_.max = wtPlayer_.translate_ + wtPlayer_.scale_;
+	appCollider_->SetPosition(wtPlayer_.translate_);
+
+	onIce_ = false;
 }
 
 void Player::Draw(BaseCamera _camera)
@@ -132,8 +156,11 @@ void Player::MovePosition()
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.01f)
 	{
-
 		return;
+	}
+	else if (moveVel_.Length() < 1.5f)
+	{
+		isAftertaste_ = false;
 	}
 
 	// 位置を更新
@@ -221,9 +248,37 @@ void Player::OnCollision(const AppCollider* _other)
 	{
 		isGround_ = true;
 	}
+	else if (_other->GetColliderID() == "Obstacle")
+	{
+		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
+		wtPlayer_.UpdateMatrix();
 
-	// どちらも攻撃していないとき
-	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
+		// 当たり判定関係
+		aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
+		aabb_.max = wtPlayer_.translate_ + wtPlayer_.scale_;
+		appCollider_->SetPosition(wtPlayer_.translate_);
+	}
+	else if (_other->GetColliderID() == "Bumper")
+	{
+		Vector3 penetration = ComputePenetration(*_other->GetAABB());
+		wtPlayer_.translate_ += penetration;
+		penetration.Normalize();
+		// ノックバック
+		moveVel_ = penetration;
+		moveVel_ *= 20.0f;
+		moveVel_.y = 0.0f;
+		// ノックバックタイマー
+		knockBackTime_ = 30.0f;
+
+		isAttack_ = false;
+	}
+	else if (_other->GetColliderID() == "IceFloor")
+	{
+		onIce_ = true;
+	}
+
+	// どちらも攻撃していなくてノックバック中でないとき
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
 	{
 		// プレイヤーの速度を取得
 		Vector3 playerVelocity = moveVel_;
@@ -283,6 +338,8 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// エネミーの攻撃を食らったとき
 		if (_other->GetOwner()->IsAttack() && !isAttack_)
 		{
+			isAftertaste_ = true;
+
 			// 当たったエネミーの位置を取得
 			enemyPosition_ = _other->GetOwner()->GetPosition();
 
@@ -290,7 +347,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ *= 17.0f;
+			moveVel_ *= 10.0f;
 			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
@@ -300,6 +357,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 	// 風に当たったらノックバック
 	if (_other->GetColliderID() == "Wind" && !isAttack_)
 	{
+		isAftertaste_ = true;
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
@@ -309,4 +367,118 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// ノックバックタイマー
 		knockBackTime_ = 25.0f;
 	}
+}
+
+Vector3 Player::ComputePenetration(const AppAABB& otherAABB)
+{
+	Vector3 penetration;
+
+	//X軸方向に押し戻すベクトル
+	float overlapX1 = otherAABB.max.x - aabb_.min.x;
+	float overlapX2 = aabb_.max.x - otherAABB.min.x;
+	float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
+
+	//Z軸方向に押し戻すベクトル
+	float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+	float overlapZ2 = aabb_.max.z - otherAABB.min.z;
+	float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
+
+	//ベクトルの絶対値を求める
+	float absX = std::abs(penetrationX);
+	float absZ = std::abs(penetrationZ);
+
+	//最小のベクトルを求める
+	if (absX < absZ)
+	{
+		penetration.x = penetrationX;
+	}
+	else 
+	{
+		penetration.z = penetrationZ;
+	}
+
+	return penetration;
+}
+
+void Player::MoveOnIce()
+{
+
+	// 地面にいるとき
+	if (isGround_ && !isStop_)
+	{
+		// 移動
+		if (input_->PushKey(DIK_W))
+		{
+			moveVel_.z += moveSpeedOnIce_;
+		}
+		if (input_->PushKey(DIK_S))
+		{
+			moveVel_.z -= moveSpeedOnIce_;
+		}
+		if (input_->PushKey(DIK_A))
+		{
+			moveVel_.x -= moveSpeedOnIce_;
+		}
+		if (input_->PushKey(DIK_D))
+		{
+			moveVel_.x += moveSpeedOnIce_;
+		}
+	}
+
+	
+
+}
+
+void Player::AttackOnIce()
+{
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_)
+	{
+		isAttack_ = true;
+
+		// 攻撃時間リセット
+		attackTimeCounter_ = attackTime_;
+
+	}
+
+	if (isAttack_)
+	{
+		moveVel_ *= 1.5f * attackFriction_;
+
+		attackTimeCounter_ -= 1.0f;
+
+		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
+		moveVel_ += moveFriction_;
+		wtPlayer_.translate_ += moveVel_;
+		position_ = wtPlayer_.translate_;
+	}
+
+	if (attackTimeCounter_ <= 0.0f)
+	{
+		isAttack_ = false;
+		isStop_ = false;
+	}
+}
+
+void Player::MovePositionOnIce()
+{
+
+	// 摩擦による減速を適用
+	moveVel_ *= frictionOnIce_;
+
+	//速度を最高速度以下に抑える
+	if (moveVel_.Length() > MaxSpeedOnIce_)
+	{
+		moveVel_.Normalize();
+		moveVel_ *= MaxSpeedOnIce_;
+	}
+	// 速度が非常に小さくなったら停止する
+	else if (moveVel_.Length() < 0.001f)
+	{
+		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+
+	// 位置を更新
+	wtPlayer_.translate_ += moveVel_;
+	position_ = wtPlayer_.translate_;
+
 }

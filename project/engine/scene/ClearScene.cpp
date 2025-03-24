@@ -8,7 +8,7 @@ void ClearScene::Initialize()
 
 	input_ = Input::GetInstance();
 
-	textureHandleClear_ = TextureManager::GetInstance()->LoadTexture("clear.png");
+	textureHandleClear_ = TextureManager::GetInstance()->LoadTexture("heart.png");
 	spriteClear_ = std::make_unique<Sprite>();
 	spriteClear_->Initialize(textureHandleClear_);
 
@@ -17,6 +17,7 @@ void ClearScene::Initialize()
 
 void ClearScene::Finalize()
 {
+	
 }
 
 void ClearScene::Update()
@@ -30,6 +31,8 @@ void ClearScene::Update()
 #ifdef _DEBUG
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "CLEAR");
+	ImGui::Text("%s", "ToTitle : TAB");
+
 	ImGui::End();
 #endif // _DEBUG
 }

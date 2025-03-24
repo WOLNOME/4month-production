@@ -41,7 +41,7 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
 void TackleEnemy::EnemyUpdate()
 {
 	// ノックバック中は移動、攻撃できない
-	if (knockBackTime_ > 0.0f)
+	if (knockBackTime_ > 0.0f or isStop_)
 	{
         isHit_ = false;
 		knockBackTime_ -= 1.0f;
@@ -50,7 +50,7 @@ void TackleEnemy::EnemyUpdate()
 	{
 
          // タックル中でない場合、待機タイマーを更新
-        if (!isTackling_ && isGround_)
+        if (!isTackling_ && isGround_ && !isAftertaste_)
         {
             tackleWaitTimer_ += 1.0f / 60.0f;
             if (tackleWaitTimer_ >= nextTackleWaitTime_)
@@ -64,9 +64,16 @@ void TackleEnemy::EnemyUpdate()
         }
 	}
 
-    //移動
-    Move();
-    
+    //氷の上にいるとき
+    if (onIce_) 
+    {
+        MoveOnIce();
+    }
+    else 
+    {
+        //移動
+        Move();
+    }
    
 
 	// 場外処理
@@ -86,6 +93,7 @@ void TackleEnemy::EnemyUpdate()
     aabb_.max = transform_.translate_ + transform_.scale_;
     appCollider_->SetPosition(transform_.translate_);
 
+    onIce_ = false;
 }
 
 void TackleEnemy::EnemyDraw(const BaseCamera& camera)
@@ -144,24 +152,79 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         isGround_ = true;
     }
+    else if (_other->GetColliderID() == "Obstacle")
+    {
+        transform_.translate_ += ComputePenetration(*_other->GetAABB());
+        //行列の更新
+        transform_.UpdateMatrix();
 
-    if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
+        // 当たり判定関係
+        aabb_.min = transform_.translate_ - transform_.scale_;
+        aabb_.max = transform_.translate_ + transform_.scale_;
+        appCollider_->SetPosition(transform_.translate_);
+    }
+    else if (_other->GetColliderID() == "Bumper")
     {
 		//////-------押し出される処理-------//////
         // プレイヤーの速度
         Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+        Vector3 penetration = ComputePenetration(*_other->GetAABB());
+        transform_.translate_ += penetration;
+        penetration.Normalize();
+        // ノックバック
+        tackleVelocity_ = penetration;
+        tackleVelocity_ *= 20.0f;
+        tackleVelocity_.y = 0.0f;
+        // ノックバックタイマー
+        knockBackTime_ = 30.0f;
 
-        // プレイヤーの進行方向に対して垂直な方向を計算
-        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
-
-        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
-        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
-        transform_.translate_ += perpendicularDirection * distance;
-
-        // tackleVelocity_ をプレイヤーの速度に設定
-        tackleVelocity_ = playerVelocity;
+        isAttack_ = false;
     }
+    else if (_other->GetColliderID() == "IceFloor")
+    {
+        onIce_ = true;
+    }
+   
 
+    if (_other->GetColliderID() == "Player")
+    {
+        // どちらも攻撃してない状態かつノックバック中でないときプレイヤーに当たった場合
+        if (!_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
+        {
+            //////-------押し出される処理-------//////
+            // プレイヤーの速度
+            Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
+
+            // プレイヤーの進行方向に対して垂直な方向を計算
+            Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+
+            // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
+            float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
+            transform_.translate_ += perpendicularDirection * distance;
+
+            // tackleVelocity_ をプレイヤーの速度に設定
+            tackleVelocity_ = playerVelocity;
+        }
+
+        // 余韻中にプレイヤーに当たった場合
+        if (!_other->GetOwner()->IsAttack() && !isAttack_  && isAftertaste_)
+        {
+            // プレイヤーの位置を取得
+            Vector3 playerPosition = _other->GetOwner()->GetPosition();
+
+            // エネミーの位置を取得
+            Vector3 enemyPosition = transform_.translate_;
+
+            // プレイヤーからエネミーへの方向ベクトルを計算
+            Vector3 direction = enemyPosition - playerPosition;
+            direction.Normalize();
+			direction.y = 0.0f;
+
+            // エネミーの速度ベクトルを反転させる
+            tackleVelocity_ = direction * tackleVelocity_.Length();
+
+        }
+    }
     //敵同士の当たり判定
     if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
     {
@@ -194,6 +257,7 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
         if (_other->GetOwner()->IsAttack()) 
         {
 			isHit_ = true;
+			isAftertaste_ = true;
 
             // プレイヤーの位置
             Vector3 playerPosition = _other->GetOwner()->GetPosition();
@@ -211,6 +275,37 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
     }
 }
 
+Vector3 TackleEnemy::ComputePenetration(const AppAABB& otherAABB)
+{
+    Vector3 penetration;
+
+    //X軸方向に押し戻すベクトル
+    float overlapX1 = otherAABB.max.x - aabb_.min.x;
+    float overlapX2 = aabb_.max.x - otherAABB.min.x;
+    float penetrationX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
+
+    //Z軸方向に押し戻すベクトル
+    float overlapZ1 = otherAABB.max.z - aabb_.min.z;
+    float overlapZ2 = aabb_.max.z - otherAABB.min.z;
+    float penetrationZ = (overlapZ1 < overlapZ2) ? overlapZ1 : -overlapZ2;
+
+    //ベクトルの絶対値を求める
+    float absX = std::abs(penetrationX);
+    float absZ = std::abs(penetrationZ);
+
+    //最小のベクトルを求める
+    if (absX < absZ) 
+    {
+        penetration.x = penetrationX;
+    }
+    else
+    {
+        penetration.z = penetrationZ;
+    }
+
+    return penetration;
+}
+
 void TackleEnemy::Move()
 {
     // フレーム間の時間差（秒）
@@ -226,7 +321,7 @@ void TackleEnemy::Move()
         isAttack_ = false;
         isStop_ = false;
 
-		//tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+		isAftertaste_ = false;
 
         return;
     }
@@ -236,5 +331,28 @@ void TackleEnemy::Move()
     {
         transform_.translate_ += tackleVelocity_ * deltaTime;
     }
+}
+
+void TackleEnemy::MoveOnIce()
+{
+    // フレーム間の時間差（秒）
+    float deltaTime = 1.0f / 60.0f;
+
+    // 摩擦による減速を適用
+    tackleVelocity_ *= frictionOnIce_;
+
+    // 速度が非常に小さくなったら停止する
+    if (tackleVelocity_.Length() < 0.001f && isStop_)
+    {
+        isAttack_ = false;
+        isStop_ = false;
+
+        tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+    }
+
+    // 位置を更新
+    transform_.translate_ += tackleVelocity_ * deltaTime;
+    position_ = transform_.translate_;
+
 }
 

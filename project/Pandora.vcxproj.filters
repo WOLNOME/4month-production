@@ -108,6 +108,18 @@
     <ClCompile Include="engine\2d\TextWrite.cpp" />
     <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
     <ClCompile Include="application\enemy\IceMist.cpp" />
+    <ClCompile Include="application\objects\Gimmick\Obstacle.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Gimmick\Bumper.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Gimmick\IceFloor.cpp">
+      <Filter>gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
+    <ClCompile Include="engine\scene\StageSelectScene.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -221,6 +233,18 @@
     <ClInclude Include="engine\2d\TextWrite.h" />
     <ClInclude Include="application\enemy\FreezeEnemy.h" />
     <ClInclude Include="application\enemy\IceMist.h" />
+    <ClInclude Include="application\objects\Gimmick\Obstacle.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Gimmick\Bumper.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="application\objects\Skydome\Skydome.h" />
+    <ClInclude Include="engine\scene\StageSelectScene.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
@@ -262,6 +286,9 @@
     </Filter>
     <Filter Include="engine\scenebase">
       <UniqueIdentifier>{4af1c3a2-e07c-46a3-a103-7a9fdd748669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gimmick">
+      <UniqueIdentifier>{1e064a18-e749-4820-92d2-624a28a940a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
