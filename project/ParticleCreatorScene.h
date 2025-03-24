@@ -42,6 +42,8 @@ private://ImGui操作
 	void ResetWithImGui();
 	//セーブ
 	void SaveWithImGui();
+	//エディター本体
+	void Editor();
 
 private://必要なオブジェクト
 	//インプット
@@ -64,13 +66,14 @@ private:
 	
 
 private://ImGui操作で必要な変数
+	std::vector<std::string> textureFiles_;
+	std::vector<std::string> particleFiles_;
+	std::string jsonFileName_;
+	bool showFileDialog_ = false;
 	bool isGenerateMode_ = false;
 	bool isEditMode_ = false;
 	bool isReset_ = false;
-	bool showFileDialog_ = false;
-	std::vector<std::string> textureFiles_;
 	bool isSave_ = false;
-	std::string jsonFileName_;
 	bool checkContinue_ = false;
 	bool checkSameName_ = false;
 	bool checkEditName_ = false;

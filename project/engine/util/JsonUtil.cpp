@@ -71,3 +71,20 @@ bool JsonUtil::CreateJson(const std::string& name, const std::string& targetDir,
 
 
 }
+
+bool JsonUtil::CheckJson(const std::string& name, const std::string& targetDir) {
+	std::string fullName = name + ".json";
+	std::string targetPath = targetDir;
+	if (!targetPath.empty() && targetPath.back() == '/') {
+		targetPath.erase(targetPath.size() - 1);
+	}
+	//フォルダ内の全ファイルをループ
+	for (const auto& entry : fs::directory_iterator(targetPath)) {
+		if (entry.path().filename().string() == fullName) {
+			//一致するものを見つけたのでtrue
+			return true;
+		}
+	}
+	//無かったのでfalse
+	return false;
+}
