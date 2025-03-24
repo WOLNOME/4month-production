@@ -21,7 +21,7 @@ void GamePlayScene::Initialize()
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
-	camera_->SetFarClip(100.0f);
+	camera_->SetFarClip(200.0f);
 
 	// 当たり判定
 	appCollisionManager_ = AppCollisionManager::GetInstance();
@@ -41,6 +41,7 @@ void GamePlayScene::Initialize()
 		player->Initialize();
 
 		players_.push_back(std::move(player));
+		playerNum_++;
 	}
 
 	//エネミーマネージャーの生成と初期化
@@ -95,6 +96,21 @@ void GamePlayScene::Finalize()
 	enemyManager_->Finalize();
 
 	field_->Finalize();
+	
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Finalize();
+	}
+
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Finalize();
+	}
+
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Finalize();
+	}
 }
 
 void GamePlayScene::Update()
@@ -106,11 +122,12 @@ void GamePlayScene::Update()
 
 	// 死んだプレイヤーを削除
 	players_.erase(std::remove_if(players_.begin(), players_.end(),
-		[](const std::unique_ptr<Player>& player)
+		[this](const std::unique_ptr<Player>& player)
 		{
 			if (player->IsDead())
 			{
 				player->Finalize();
+				playerNum_--;
 				return true;
 			}
 			return false;
@@ -163,6 +180,16 @@ void GamePlayScene::Update()
 		sceneManager_->SetNextScene("TITLE");
 	}
 
+	// ゲームオーバーへ
+	if (playerNum_ <= 0  or input_->TriggerKey(DIK_RETURN))
+	{
+		sceneManager_->SetNextScene("GAMEOVER");
+	}
+	// クリア
+	if (input_ ->TriggerKey(DIK_TAB))
+	{
+		sceneManager_->SetNextScene("CLEAR");
+	}
 
 
 	// ImGui
@@ -283,6 +310,9 @@ void GamePlayScene::ImGuiDraw()
 	ImGui::Begin("scene");
 	ImGui::Text("%s", "GAMEPLAY");;
 	
+	ImGui::Text("%s","ToClear : TAB");
+	ImGui::Text("%s", "ToGameOver : ENTER");
+
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -100.0f, 100.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
 
@@ -320,7 +350,7 @@ void GamePlayScene::ImGuiDraw()
 void GamePlayScene::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
-	rotationTimer_ -= 1.0f;
+	//rotationTimer_ -= 1.0f;
 	if (rotationTimer_ <= 0.0f)
 	{
 		rotationTimer_ = rotation_;
@@ -332,6 +362,8 @@ void GamePlayScene::playerSpawnRotation()
 		player->Initialize();
 
 		players_.push_back(std::move(player));
+
+		playerNum_++;
 
 		// 位置ローテを0に戻す
 		playerSpawnIndex_++;

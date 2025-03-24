@@ -98,6 +98,8 @@ private://メンバ変数
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
 
+	// フィールド上にいるプレイヤーの数
+	uint32_t playerNum_ = 0;
 
 };
 
