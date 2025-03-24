@@ -43,7 +43,7 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 void FanEnemy::EnemyUpdate()
 {
 	//氷の上にいるとき
-	if (onIce_) 
+	if (onIce_)
 	{
 		MoveOnIce();
 	}
@@ -75,36 +75,54 @@ void FanEnemy::EnemyDraw(const BaseCamera& camera)
 
 void FanEnemy::OnCollision(const AppCollider* _other)
 {
-	if(_other->GetColliderID() == "Field")
+	if (_other->GetColliderID() == "Field")
 	{
 		// 地面にいる
 		isGround_ = true;
 	}
-	else if (_other->GetColliderID() == "Obstacle")
+	//敵同士の当たり判定
+	if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
 	{
-		transform_.translate_ += ComputePenetration(*_other->GetAABB());
-		//行列の更新
-		transform_.UpdateMatrix();
+		// 敵の位置
+		Vector3 enemyPosition = _other->GetOwner()->GetPosition();
 
-		// 当たり判定関係
-		aabb_.min = transform_.translate_ - transform_.scale_;
-		aabb_.max = transform_.translate_ + transform_.scale_;
-		appCollider_->SetPosition(transform_.translate_);
-	}
-	else if (_other->GetColliderID() == "Bumper")
-	{
-		Vector3 penetration = ComputePenetration(*_other->GetAABB());
-		transform_.translate_ += penetration;
-		penetration.Normalize();
-		// ノックバック
-		velocity_ = penetration;
-		velocity_ *= 20.0f;
-		velocity_.y = 0.0f;
+		// 敵同士が重ならないようにする
+		Vector3 direction = transform_.translate_ - enemyPosition;
+		direction.Normalize();
+		float distance = 2.5f; // 敵同士の間の距離を調整するための値
 
-	}
-	else if (_other->GetColliderID() == "IceFloor")
-	{
-		onIce_ = true;
+		// 互いに重ならないように少しずつ位置を調整
+		if ((transform_.translate_ - enemyPosition).Length() < distance)
+		{
+			transform_.translate_ += direction * 0.1f; // 微調整のための値
+			transform_.translate_.y = 1.0f;
+		}
+		else if (_other->GetColliderID() == "Obstacle")
+		{
+			transform_.translate_ += ComputePenetration(*_other->GetAABB());
+			//行列の更新
+			transform_.UpdateMatrix();
+
+			// 当たり判定関係
+			aabb_.min = transform_.translate_ - transform_.scale_;
+			aabb_.max = transform_.translate_ + transform_.scale_;
+			appCollider_->SetPosition(transform_.translate_);
+		}
+		else if (_other->GetColliderID() == "Bumper")
+		{
+			Vector3 penetration = ComputePenetration(*_other->GetAABB());
+			transform_.translate_ += penetration;
+			penetration.Normalize();
+			// ノックバック
+			velocity_ = penetration;
+			velocity_ *= 20.0f;
+			velocity_.y = 0.0f;
+
+		}
+		else if (_other->GetColliderID() == "IceFloor")
+		{
+			onIce_ = true;
+		}
 	}
 }
 
@@ -127,7 +145,7 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 
 void FanEnemy::Move()
 {
- 	const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = 1.0f / 60.0f;
 
 	// 摩擦処理
 	Vector3 friction = -velocity_ * friction_ * deltaTime;
@@ -138,7 +156,7 @@ void FanEnemy::Move()
 	{
 		velocity_ = { 0.0f,0.0f,0.0f };
 	}
-	
+
 	// 移動処理
 	transform_.translate_ += velocity_ * deltaTime;
 }
@@ -225,11 +243,11 @@ Vector3 FanEnemy::ComputePenetration(const AppAABB& otherAABB)
 	float absZ = std::abs(penetrationZ);
 
 	//最小のベクトルを求める
-	if (absX < absZ) 
+	if (absX < absZ)
 	{
 		penetration.x = penetrationX;
 	}
-	else 
+	else
 	{
 		penetration.z = penetrationZ;
 	}

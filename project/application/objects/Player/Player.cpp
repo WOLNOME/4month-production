@@ -117,19 +117,19 @@ void Player::Move()
 		// 移動
 		if (input_->PushKey(DIK_W))
 		{
-			moveVel_.z += moveSpeed_.z;
+			moveVel_.z += moveSpeed_.z * slowRate_;
 		}
 		if (input_->PushKey(DIK_S))
 		{
-			moveVel_.z -= moveSpeed_.z;
+			moveVel_.z -= moveSpeed_.z * slowRate_;
 		}
 		if (input_->PushKey(DIK_A))
 		{
-			moveVel_.x -= moveSpeed_.x;
+			moveVel_.x -= moveSpeed_.x * slowRate_;
 		}
 		if (input_->PushKey(DIK_D))
 		{
-			moveVel_.x += moveSpeed_.x;
+			moveVel_.x += moveSpeed_.x * slowRate_;
 		}
 	}
 
@@ -207,7 +207,7 @@ void Player::Attack()
 
 		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f/60.0f);
 		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_;
+		wtPlayer_.translate_ += moveVel_ * slowRate_;
 		position_ = wtPlayer_.translate_;
 	}
 
@@ -314,6 +314,13 @@ void Player::OnCollision(const AppCollider* _other)
 			wtPlayer_.translate_ = playerPosition;
 			position_ = wtPlayer_.translate_;
 		}
+	}
+
+	//アイスミストに当たっている間速度低下
+	slowRate_ = 1.0f;
+	if (_other->GetColliderID() == "IceMist")
+	{
+		slowRate_ = 0.25f;
 	}
 
 }
@@ -456,7 +463,7 @@ void Player::MovePositionOnIce()
 {
 
 	// 摩擦による減速を適用
-	moveVel_ *= frictionOnIce_;
+	moveVel_ *= frictionOnIce_ * slowRate_;
 
 	//速度を最高速度以下に抑える
 	if (moveVel_.Length() > MaxSpeedOnIce_)
@@ -468,6 +475,10 @@ void Player::MovePositionOnIce()
 	else if (moveVel_.Length() < 0.001f)
 	{
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+	if (moveVel_.Length() < 0.04f)
+	{
+		isAftertaste_ = false;
 	}
 
 	// 位置を更新

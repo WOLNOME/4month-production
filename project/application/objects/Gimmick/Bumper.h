@@ -14,6 +14,7 @@ public:
 	void Finalize() override;
 	void Update() override;
 	void Draw(BaseCamera _camera) override;
+	void OnCollision(const AppCollider* _other);
 
 private:
 
