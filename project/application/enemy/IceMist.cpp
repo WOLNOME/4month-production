@@ -62,6 +62,10 @@ void IceMist::OnCollisionTrigger(const AppCollider* other)
     {
         //isAlive_ = false;
     }
+    else if (other->GetColliderID() == "Obstacle" || other->GetColliderID() == "Bumper")
+    {
+        isAlive_ = false;
+    }
 }
 
 void IceMist::Move()
