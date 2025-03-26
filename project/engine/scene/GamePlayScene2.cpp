@@ -1,4 +1,4 @@
-#include "GamePlayScene.h"
+#include "GamePlayScene2.h"
 
 #include "TextureManager.h"
 #include "ImGuiManager.h"
@@ -9,7 +9,7 @@
 #include "SceneManager.h"
 #include <numbers>
 
-void GamePlayScene::Initialize()
+void GamePlayScene2::Initialize()
 {
 	//シーン共通の初期化
 	BaseScene::Initialize();
@@ -48,7 +48,7 @@ void GamePlayScene::Initialize()
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
 	//enemyManager_->SpawnTackleEnemy(7);
-	
+
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -57,10 +57,10 @@ void GamePlayScene::Initialize()
 	field_->Initialize();
 
 	//障害物
-	//std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
-	//obstacle = std::make_unique<Obstacle>();
-	//obstacle->Initialize();
-	//obstacle->SetPosition({ 0.0f, 1.0f, 7.0f });
+	std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+	obstacle = std::make_unique<Obstacle>();
+	obstacle->Initialize();
+	obstacle->SetPosition({ 0.0f, 1.0f, 7.0f });
 
 	////跳ね返る障害物
 	//std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
@@ -81,39 +81,39 @@ void GamePlayScene::Initialize()
 		auto playerSpawn = std::make_unique<SpawnPos>();
 		playerSpawn->SetPosition(playerSpawnPositions_[i]);
 		playerSpawn->Initialize();
-	
+
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
 }
 
-void GamePlayScene::Finalize()
+void GamePlayScene2::Finalize()
 {
 	for (auto& player : players_)
 	{
 		player->Finalize();
 	}
-	
+
 	enemyManager_->Finalize();
 
 	field_->Finalize();
-	
-	/*for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
 	{
 		obstacle->Finalize();
 	}
 
-	for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	{
-		bumper->Finalize();
-	}
+	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	//{
+	//	bumper->Finalize();
+	//}
 
-	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	{
-		iceFloor->Finalize();
-	}*/
+	//for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	//{
+	//	iceFloor->Finalize();
+	//}
 }
 
-void GamePlayScene::Update()
+void GamePlayScene2::Update()
 {
 	// カメラの更新
 	camera_->UpdateMatrix();
@@ -147,11 +147,11 @@ void GamePlayScene::Update()
 	// フィールド
 	field_->Update();
 
-	////障害物
-	//for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
-	//{
-	//	obstacle->Update();
-	//}
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Update();
+	}
 
 	////跳ね返る障害物
 	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
@@ -181,12 +181,12 @@ void GamePlayScene::Update()
 	}
 
 	// ゲームオーバーへ
-	if (playerNum_ <= 0  or input_->TriggerKey(DIK_RETURN))
+	if (playerNum_ <= 0 or input_->TriggerKey(DIK_RETURN))
 	{
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_ ->TriggerKey(DIK_TAB))
+	if (input_->TriggerKey(DIK_TAB))
 	{
 		sceneManager_->SetNextScene("CLEAR");
 	}
@@ -196,7 +196,7 @@ void GamePlayScene::Update()
 	ImGuiDraw();
 }
 
-void GamePlayScene::Draw()
+void GamePlayScene2::Draw()
 {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
@@ -208,7 +208,7 @@ void GamePlayScene::Draw()
 	// プレイヤー
 	for (auto& player : players_)
 	{
-        player->Draw(*camera_.get());
+		player->Draw(*camera_.get());
 	}
 
 	//エネミーマネージャーの描画
@@ -219,11 +219,11 @@ void GamePlayScene::Draw()
 	// フィールド
 	field_->Draw(*camera_.get());
 
-	////障害物
-	//for (std::unique_ptr<Obstacle>& obstacle : obstacles_) 
-	//{
-	//	obstacle->Draw(*camera_.get());
-	//}
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Draw(*camera_.get());
+	}
 
 	////跳ね返る障害物
 	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
@@ -290,7 +290,8 @@ void GamePlayScene::Draw()
 	///------------------------------///
 }
 
-void GamePlayScene::TextDraw() {
+void GamePlayScene2::TextDraw()
+{
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
@@ -302,15 +303,15 @@ void GamePlayScene::TextDraw() {
 	///------------------------------///
 }
 
-void GamePlayScene::ImGuiDraw()
+void GamePlayScene2::ImGuiDraw()
 {
 
 #ifdef _DEBUG
 
 	ImGui::Begin("scene");
-	ImGui::Text("%s", "GAMEPLAY");;
-	
-	ImGui::Text("%s","ToClear : TAB");
+	ImGui::Text("%s", "GAMEPLAY2");;
+
+	ImGui::Text("%s", "ToClear : TAB");
 	ImGui::Text("%s", "ToGameOver : ENTER");
 
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -100.0f, 100.0f);
@@ -336,7 +337,7 @@ void GamePlayScene::ImGuiDraw()
 		player->ImGuiDraw();
 	}
 
-	
+
 
 	// フィールド
 	field_->ImGuiDraw();
@@ -344,10 +345,9 @@ void GamePlayScene::ImGuiDraw()
 
 
 #endif // _DEBUG
-
 }
 
-void GamePlayScene::playerSpawnRotation()
+void GamePlayScene2::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	//rotationTimer_ -= 1.0f;

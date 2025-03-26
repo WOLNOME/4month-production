@@ -23,9 +23,10 @@
 #include "../../application/objects/Gimmick/Bumper.h"
 #include "../../application/objects/Gimmick/IceFloor.h"
 
-class GamePlayScene : public BaseScene
+class GamePlayScene4 : public BaseScene
 {
 public:
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -55,10 +56,10 @@ public:
 private://メンバ変数
 
 	Input* input_ = nullptr;
-	
+
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
-	Vector3 cameraTranslate = { 0.0f,70.0f,-50.0f };
+	Vector3 cameraTranslate = { 0.0f,100.0f,-75.0f };
 	Vector3 cameraRotate = { 0.95f,0.0f,0.0f };
 
 	// 当たり判定
@@ -76,13 +77,13 @@ private://メンバ変数
 	std::unique_ptr<Field> field_ = nullptr;
 
 	//障害物
-	//std::vector<std::unique_ptr<Obstacle>> obstacles_;
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
 
 	//跳ね返る障害物
-	//std::vector<std::unique_ptr<Bumper>> bumpers_;
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
 
 	//氷の床
-	//std::vector<std::unique_ptr<IceFloor>> icefloors_;
+	std::vector<std::unique_ptr<IceFloor>> icefloors_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};

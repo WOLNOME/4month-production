@@ -73,19 +73,19 @@ void StageSelectScene::Update()
 		} 
 		else if (selectStage_ == 1)
 		{
-			sceneManager_->SetNextScene("GAMEPLAY");
+			sceneManager_->SetNextScene("GAMEPLAY2");
 		}
 		else if (selectStage_ == 2)
 		{
-			sceneManager_->SetNextScene("GAMEPLAY");
+			sceneManager_->SetNextScene("GAMEPLAY3");
 		}
 		else if (selectStage_ == 3)
 		{
-			sceneManager_->SetNextScene("GAMEPLAY");
+			sceneManager_->SetNextScene("GAMEPLAY4");
 		} 
 		else if (selectStage_ == 4)
 		{
-			sceneManager_->SetNextScene("GAMEPLAY");
+			sceneManager_->SetNextScene("GAMEPLAY5");
 		}
 	}
 
