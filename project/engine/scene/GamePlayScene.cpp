@@ -46,7 +46,7 @@ void GamePlayScene::Initialize()
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
-	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
+	enemyManager_->Initialize(camera_.get(), &players_, "enemy", "Fan","Freeze");
 	//enemyManager_->SpawnTackleEnemy(7);
 	
 	//スカイドーム
