@@ -31,5 +31,9 @@ private://メンバ変数
 
 	//インプット
 	Input* input_ = nullptr;
+
+	//スプライト
+	uint32_t textureHandleGO_ = 0u;
+	std::unique_ptr<Sprite> spriteGO_ = nullptr;
 };
 

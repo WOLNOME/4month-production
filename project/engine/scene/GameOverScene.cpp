@@ -8,6 +8,10 @@ void GameOverScene::Initialize()
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
+
+	textureHandleGO_ = TextureManager::GetInstance()->LoadTexture("GameOver.png");
+	spriteGO_ = std::make_unique<Sprite>();
+	spriteGO_->Initialize(textureHandleGO_);
 }
 
 void GameOverScene::Finalize()
@@ -20,6 +24,8 @@ void GameOverScene::Update()
 	{
 		sceneManager_->SetNextScene("TITLE");
 	}
+
+	spriteGO_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -78,7 +84,7 @@ void GameOverScene::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-
+	spriteGO_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑

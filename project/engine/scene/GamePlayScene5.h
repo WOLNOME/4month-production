@@ -76,9 +76,6 @@ private://メンバ変数
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
-	//障害物
-	std::vector<std::unique_ptr<Obstacle>> obstacles_;
-
 	//跳ね返る障害物
 	std::vector<std::unique_ptr<Bumper>> bumpers_;
 

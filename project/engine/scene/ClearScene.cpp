@@ -8,7 +8,7 @@ void ClearScene::Initialize()
 
 	input_ = Input::GetInstance();
 
-	textureHandleClear_ = TextureManager::GetInstance()->LoadTexture("heart.png");
+	textureHandleClear_ = TextureManager::GetInstance()->LoadTexture("Clear.png");
 	spriteClear_ = std::make_unique<Sprite>();
 	spriteClear_->Initialize(textureHandleClear_);
 

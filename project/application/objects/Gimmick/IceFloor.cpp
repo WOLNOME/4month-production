@@ -36,6 +36,7 @@ void IceFloor::Update()
 {
 	worldTransform_.translate_ = position_;
 	worldTransform_.scale_ = scale_;
+	worldTransform_.rotate_ = rotation_;
 
 	worldTransform_.UpdateMatrix();
 

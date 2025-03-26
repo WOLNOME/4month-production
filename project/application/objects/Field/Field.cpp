@@ -7,7 +7,7 @@
 void Field::Initialize() {
 	wtField_.Initialize();
 	wtField_.translate_ = { 0.0f,-1.0f,0.0f };
-	wtField_.scale_ = { 20.0f,1.0f,20.0f };
+	wtField_.scale_ = scale_;
 
 	textureHandleField_ = TextureManager::GetInstance()->LoadTexture("grid.png");
 
@@ -41,6 +41,8 @@ void Field::Finalize() {
 
 void Field::Update() {
 	wtField_.UpdateMatrix();
+
+	wtField_.scale_ = scale_;
 
 	// 当たり判定関係
 	aabb_.min = wtField_.translate_ - wtField_.scale_;

@@ -76,14 +76,8 @@ private://メンバ変数
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
-	//障害物
-	std::vector<std::unique_ptr<Obstacle>> obstacles_;
-
 	//跳ね返る障害物
 	std::vector<std::unique_ptr<Bumper>> bumpers_;
-
-	//氷の床
-	std::vector<std::unique_ptr<IceFloor>> icefloors_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};

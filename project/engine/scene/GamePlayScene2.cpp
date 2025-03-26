@@ -28,9 +28,9 @@ void GamePlayScene2::Initialize()
 	appCollisionManager_->Initialize();
 
 	// スポーン位置
-	playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-	playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-	playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
+	playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
+	playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
+	playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
 
 	// プレイヤー
 	for (uint32_t i = 0; i < 1; ++i)
@@ -55,25 +55,30 @@ void GamePlayScene2::Initialize()
 	// フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
+	field_->SetScale({ 20.0f,1.0f,20.0f });
 
-	//障害物
-	std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
-	obstacle = std::make_unique<Obstacle>();
-	obstacle->Initialize();
-	obstacle->SetPosition({ 0.0f, 1.0f, 7.0f });
 
-	////跳ね返る障害物
-	//std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
-	//bumper = std::make_unique<Bumper>();
-	//bumper->Initialize();
-	//bumper->SetPosition({ 7.0f, 1.0f, 7.0f });
+	//障害物の生成
+	std::vector<Vector3> obstaclePositions = {
+		{ 0.0f, 1.0f, 7.0f },
+		{ -15.0f, 1.0f, 0.0f },
+		{ 10.0f, 1.0f, -15.0f }
+	};
+	std::vector<Vector3> obstacleScales = {
+		{ 5.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 5.0f },
+		{ 1.0f, 1.0f, 5.0f }
+	};
 
-	////氷の床
-	//std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
-	//iceFloor = std::make_unique<IceFloor>();
-	//iceFloor->Initialize();
-	//iceFloor->SetPosition({ -9.0f, 1.0f, 0.0f });
-	//iceFloor->SetScale({ 5.0f, 1.0f, 5.0f });
+	for (size_t i = 0; i < obstaclePositions.size(); ++i)
+	{
+		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+		obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->SetPosition(obstaclePositions[i]);
+		obstacle->SetScale(obstacleScales[i]);
+	}
+
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -101,16 +106,6 @@ void GamePlayScene2::Finalize()
 	{
 		obstacle->Finalize();
 	}
-
-	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	//{
-	//	bumper->Finalize();
-	//}
-
-	//for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	//{
-	//	iceFloor->Finalize();
-	//}
 }
 
 void GamePlayScene2::Update()
@@ -152,18 +147,6 @@ void GamePlayScene2::Update()
 	{
 		obstacle->Update();
 	}
-
-	////跳ね返る障害物
-	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	//{
-	//	bumper->Update();
-	//}
-
-	////氷の床
-	//for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	//{
-	//	iceFloor->Update();
-	//}
 
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
@@ -224,18 +207,6 @@ void GamePlayScene2::Draw()
 	{
 		obstacle->Draw(*camera_.get());
 	}
-
-	////跳ね返る障害物
-	//for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	//{
-	//	bumper->Draw(*camera_.get());
-	//}
-
-	////氷の床
-	//for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	//{
-	//	iceFloor->Draw(*camera_.get());
-	//}
 
 	// プレイヤースポーン
 	for (auto& playerSpawn : playerSpawn_)
@@ -329,6 +300,16 @@ void GamePlayScene2::ImGuiDraw()
 		players_.push_back(std::move(player));
 	}
 
+	// 障害物の位置調整
+	for (size_t i = 0; i < obstacles_.size(); ++i)
+	{
+		Vector3 pos = obstacles_[i]->GetPosition();
+		if (ImGui::SliderFloat3(("ObstaclePos" + std::to_string(i)).c_str(), &pos.x, -10.0f, 10.0f))
+		{
+			obstacles_[i]->SetPosition(pos);
+		}
+	}
+
 	ImGui::End();
 
 	// プレイヤー
@@ -336,8 +317,6 @@ void GamePlayScene2::ImGuiDraw()
 	{
 		player->ImGuiDraw();
 	}
-
-
 
 	// フィールド
 	field_->ImGuiDraw();
@@ -350,7 +329,7 @@ void GamePlayScene2::ImGuiDraw()
 void GamePlayScene2::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
-	//rotationTimer_ -= 1.0f;
+	rotationTimer_ -= 1.0f;
 	if (rotationTimer_ <= 0.0f)
 	{
 		rotationTimer_ = rotation_;

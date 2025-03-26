@@ -35,6 +35,7 @@ void Obstacle::Finalize()
 void Obstacle::Update()
 {
 	worldTransform_.translate_ = position_;
+	worldTransform_.scale_ = scale_;
 
 	worldTransform_.UpdateMatrix();
 
