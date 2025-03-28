@@ -88,6 +88,8 @@ private://メンバ変数
 	const float rotation_ = 300.0f;
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
+	// 何体出たか
+	uint32_t howManyBoogie_ = 0;
 
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;

@@ -47,7 +47,8 @@ void GamePlayScene3::Initialize()
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy");
-	//enemyManager_->SpawnTackleEnemy(7);
+	enemyManager_->SpawnTackleEnemy(7);
+	enemyManager_->SpawnFreezeEnemy(4);
 
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
@@ -325,6 +326,8 @@ void GamePlayScene3::ImGuiDraw()
 		}
 	}
 
+	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
+
 	ImGui::End();
 
 	// プレイヤー
@@ -347,12 +350,13 @@ void GamePlayScene3::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f)
+	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 15)
 	{
 		rotationTimer_ = rotation_;
 
 		// プレイヤーを追加
 		auto player = std::make_unique<Player>();
+		howManyBoogie_++;
 
 		player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
 		player->Initialize();
