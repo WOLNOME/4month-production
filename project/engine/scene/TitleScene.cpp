@@ -16,6 +16,8 @@ void TitleScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
 	camera->SetRotate({ 0.6f,0.0f,0.0f });
+	//パーティクルマネージャーにカメラをセット
+	ParticleManager::GetInstance()->SetCamera(camera.get());
 
 	title_ = std::make_unique<TextWrite>();
 	title_->Initialize("TITLE");

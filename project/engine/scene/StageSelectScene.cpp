@@ -21,6 +21,8 @@ void StageSelectScene::Initialize()
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
 	camera_->SetFarClip(80.0f);
+	//パーティクルマネージャーにカメラをセット
+	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
 	// フィールドモデル
 	for (uint32_t i = 0; i < stageNum_; i++)

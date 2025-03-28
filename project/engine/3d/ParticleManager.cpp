@@ -96,6 +96,9 @@ void ParticleManager::Update() {
 }
 
 void ParticleManager::Draw() {
+	//パーティクルが一つもセットされてなかったら抜ける
+	if (particles.empty()) return;
+
 	auto mainRender = MainRender::GetInstance();
 	//カメラの有無チェック
 	if (!camera_) {

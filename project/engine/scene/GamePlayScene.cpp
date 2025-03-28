@@ -21,6 +21,8 @@ void GamePlayScene::Initialize()
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
 	camera_->SetFarClip(200.0f);
+	//パーティクルマネージャーにカメラをセット
+	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
 	// 当たり判定
 	appCollisionManager_ = AppCollisionManager::GetInstance();
