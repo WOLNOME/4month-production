@@ -22,9 +22,10 @@ public:
 	void SpawnWind(const Vector3& position, const Vector3& direction);
 	void SpawnFreezeEnemy(uint32_t count);
 	void SpawnIceMist(const Vector3& position, const Vector3& velocity);
-
 	void TackleEnemyTargetUpdate();
 	void FreezeEnemyTargetUpdate();
+
+	void SetSpawnPosition(const Vector3& min, const Vector3& max) { spawnMinPosition_ = min; spawnMaxPosition_ = max; }
 	Vector3 GetTargetPosition() const { return targetPosition_; }
 	// タックルエネミーの数を取得
 	uint32_t GetTackleEnemyCount() const { return static_cast<uint32_t>(tackleEnemies_.size()); }
@@ -52,8 +53,8 @@ private:
 	std::string freezeEnemyPath_;
 	Vector3 targetPosition_ = { 0.0f,1.0f,3.0f };
 	//スポーンの範囲
-	Vector3 spawnMinPosition_ = { -10.0f,1.0f,-10.0f };
-	Vector3 spawnMaxPosition_ = { 10.0f,1.0f,10.0f };
+	Vector3 spawnMinPosition_ = { -20.0f,1.0f,-20.0f };
+	Vector3 spawnMaxPosition_ = { 20.0f,1.0f,20.0f };
 	int spawnCount_ = 1;
 	std::vector<std::unique_ptr<Player>>* players_ = nullptr; // プレイヤーリストのポインタ
 };

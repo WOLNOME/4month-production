@@ -58,6 +58,8 @@ void GamePlayScene5::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 	field_->SetScale({ 30.0f, 1.0f, 30.0f });
+	//フィールドの大きさに合わせて敵のスポーン範囲を設定
+	enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
 
 	//跳ね返る障害物の生成
 	std::vector<Vector3> bumperPositions = {

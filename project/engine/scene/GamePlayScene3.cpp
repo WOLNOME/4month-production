@@ -58,6 +58,8 @@ void GamePlayScene3::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 	field_->SetScale({ 30.0f, 1.0f, 30.0f });
+	//フィールドの大きさに合わせて敵のスポーン範囲を設定
+	enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
 
 	//氷の床
 	std::vector<Vector3> iceFloorPositions = {

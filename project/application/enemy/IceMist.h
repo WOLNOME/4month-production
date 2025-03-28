@@ -34,9 +34,9 @@ private:
     //スタート地点
 	Vector3 startPosition_;
     //移動範囲
-	float moveRange_ = 5.0f;
+	float moveRange_ = 10.0f;
     //移動速度
-	float moveSpeed_ = 5.0f;
+	float moveSpeed_ = 7.0f;
     //生存フラグ
     bool isAlive_ = true;
     //当たり判定
