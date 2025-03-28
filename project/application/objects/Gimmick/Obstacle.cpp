@@ -28,12 +28,14 @@ void Obstacle::Finalize()
 	if (appCollider_)
 	{
 		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
 	}
 }
 
 void Obstacle::Update()
 {
 	worldTransform_.translate_ = position_;
+	worldTransform_.scale_ = scale_;
 
 	worldTransform_.UpdateMatrix();
 

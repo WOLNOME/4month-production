@@ -20,8 +20,6 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
-
-
 private:
 
 	// モデル情報

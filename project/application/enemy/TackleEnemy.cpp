@@ -41,7 +41,7 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath)
 void TackleEnemy::EnemyUpdate()
 {
 	// ノックバック中は移動、攻撃できない
-	if (knockBackTime_ > 0.0f)
+	if (knockBackTime_ > 0.0f or isStop_)
 	{
         isHit_ = false;
 		knockBackTime_ -= 1.0f;
@@ -50,7 +50,7 @@ void TackleEnemy::EnemyUpdate()
 	{
 
          // タックル中でない場合、待機タイマーを更新
-        if (!isTackling_ && isGround_)
+        if (!isTackling_ && isGround_ && !isAftertaste_)
         {
             tackleWaitTimer_ += 1.0f / 60.0f;
             if (tackleWaitTimer_ >= nextTackleWaitTime_)
@@ -64,9 +64,16 @@ void TackleEnemy::EnemyUpdate()
         }
 	}
 
-    //移動
-    Move();
-    
+    //氷の上にいるとき
+    if (onIce_) 
+    {
+        MoveOnIce();
+    }
+    else 
+    {
+        //移動
+        Move();
+    }
    
 
 	// 場外処理
@@ -86,6 +93,7 @@ void TackleEnemy::EnemyUpdate()
     aabb_.max = transform_.translate_ + transform_.scale_;
     appCollider_->SetPosition(transform_.translate_);
 
+    onIce_ = false;
 }
 
 void TackleEnemy::EnemyDraw(const BaseCamera& camera)
@@ -157,6 +165,9 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     }
     else if (_other->GetColliderID() == "Bumper")
     {
+		//////-------押し出される処理-------//////
+        // プレイヤーの速度
+        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
         Vector3 penetration = ComputePenetration(*_other->GetAABB());
         transform_.translate_ += penetration;
         penetration.Normalize();
@@ -169,60 +180,69 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
 
         isAttack_ = false;
     }
-    if (_other->GetColliderID() == "Player" && !_other->GetOwner()->IsAttack() && !isAttack_)
+    else if (_other->GetColliderID() == "IceFloor")
     {
-        //// エネミーの位置を取得
-        //Vector3 enemyPosition = transform_.translate_;
-
-        //// プレイヤーの位置を取得
-        //Vector3 playerPosition = _other->GetOwner()->GetPosition();
-
-        //// エネミーとプレイヤーの位置を調整して、互いに重ならないようにする
-        //Vector3 direction = enemyPosition - playerPosition;
-        //direction.Normalize();
-        //float distance = 1.0f; // エネミーとプレイヤーの間の距離を調整するための値
-        //transform_.translate_ = playerPosition + direction * distance;
-
-
-
-
-
-		//////-------押し出される処理-------//////
-        // プレイヤーの速度
-        Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
-
-        // プレイヤーの進行方向に対して垂直な方向を計算
-        Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
-
-        // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
-        float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
-        transform_.translate_ += perpendicularDirection * distance;
-
-        // tackleVelocity_ をプレイヤーの速度に設定
-        tackleVelocity_ = playerVelocity;
+        onIce_ = true;
     }
+   
 
-	// エネミー同士の衝突
-	if (_other->GetColliderID() == "TackleEnemy")
-	{
-        // エネミー同士の衝突処理
-        Vector3 enemyPosition = transform_.translate_;
-        Vector3 otherEnemyPosition = _other->GetOwner()->GetPosition();
+    if (_other->GetColliderID() == "Player")
+    {
+        // どちらも攻撃してない状態かつノックバック中でないときプレイヤーに当たった場合
+        if (!_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
+        {
+            //////-------押し出される処理-------//////
+            // プレイヤーの速度
+            Vector3 playerVelocity = _other->GetOwner()->GetVelocity();
 
-        // エネミー同士が重ならないようにする
-        Vector3 direction = enemyPosition - otherEnemyPosition;
+            // プレイヤーの進行方向に対して垂直な方向を計算
+            Vector3 perpendicularDirection = Vector3(-playerVelocity.z, 0.0f, playerVelocity.x).Normalized();
+
+            // プレイヤーの進行方向に対して垂直な方向にエネミーを移動
+            float distance = 0.2f; // プレイヤーからエネミーを徐々に離す距離
+            transform_.translate_ += perpendicularDirection * distance;
+
+            // tackleVelocity_ をプレイヤーの速度に設定
+            tackleVelocity_ = playerVelocity;
+        }
+
+        // 余韻中にプレイヤーに当たった場合
+        if (!_other->GetOwner()->IsAttack() && !isAttack_  && isAftertaste_)
+        {
+            // プレイヤーの位置を取得
+            Vector3 playerPosition = _other->GetOwner()->GetPosition();
+
+            // エネミーの位置を取得
+            Vector3 enemyPosition = transform_.translate_;
+
+            // プレイヤーからエネミーへの方向ベクトルを計算
+            Vector3 direction = enemyPosition - playerPosition;
+            direction.Normalize();
+			direction.y = 0.0f;
+
+            // エネミーの速度ベクトルを反転させる
+            tackleVelocity_ = direction * tackleVelocity_.Length();
+
+        }
+    }
+    //敵同士の当たり判定
+    if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
+    {
+        // 敵の位置
+        Vector3 enemyPosition = _other->GetOwner()->GetPosition();
+
+        // 敵同士が重ならないようにする
+        Vector3 direction = transform_.translate_ - enemyPosition;
         direction.Normalize();
-        float distance = 2.5f; // エネミー同士の間の距離を調整するための値
+        float distance = 2.5f; // 敵同士の間の距離を調整するための値
 
         // 互いに重ならないように少しずつ位置を調整
-        if ((enemyPosition - otherEnemyPosition).Length() < distance)
+        if ((transform_.translate_ - enemyPosition).Length() < distance)
         {
-            enemyPosition += direction * 0.1f; // 微調整のための値
-            enemyPosition.y = 0.7f;
-            transform_.translate_ = enemyPosition;
-            position_ = transform_.translate_;
+            transform_.translate_ += direction * 0.1f; // 微調整のための値
+            transform_.translate_.y = 1.0f;
         }
-	}
+    }
 }
 
 void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
@@ -237,6 +257,7 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
         if (_other->GetOwner()->IsAttack()) 
         {
 			isHit_ = true;
+			isAftertaste_ = true;
 
             // プレイヤーの位置
             Vector3 playerPosition = _other->GetOwner()->GetPosition();
@@ -273,10 +294,12 @@ Vector3 TackleEnemy::ComputePenetration(const AppAABB& otherAABB)
     float absZ = std::abs(penetrationZ);
 
     //最小のベクトルを求める
-    if (absX < absZ) {
+    if (absX < absZ) 
+    {
         penetration.x = penetrationX;
     }
-    else {
+    else
+    {
         penetration.z = penetrationZ;
     }
 
@@ -298,7 +321,7 @@ void TackleEnemy::Move()
         isAttack_ = false;
         isStop_ = false;
 
-		//tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+		isAftertaste_ = false;
 
         return;
     }
@@ -308,5 +331,28 @@ void TackleEnemy::Move()
     {
         transform_.translate_ += tackleVelocity_ * deltaTime;
     }
+}
+
+void TackleEnemy::MoveOnIce()
+{
+    // フレーム間の時間差（秒）
+    float deltaTime = 1.0f / 60.0f;
+
+    // 摩擦による減速を適用
+    tackleVelocity_ *= frictionOnIce_;
+
+    // 速度が非常に小さくなったら停止する
+    if (tackleVelocity_.Length() < 0.001f && isStop_)
+    {
+        isAttack_ = false;
+        isStop_ = false;
+
+        tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
+    }
+
+    // 位置を更新
+    transform_.translate_ += tackleVelocity_ * deltaTime;
+    position_ = transform_.translate_;
+
 }
 

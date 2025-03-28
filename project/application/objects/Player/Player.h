@@ -89,6 +89,8 @@ private:
 	Vector3 enemyPosition_{};
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
+	// ノックバックの余韻
+	bool isAftertaste_ = false;
 
 
 	// 移動速度
@@ -108,6 +110,8 @@ private:
 
 	// 死亡フラグ
 	bool isDead_ = false;
+	//速度低下率、1.0fで通常速度、これを下げていくと速度が遅くなる
+	float slowRate_ = 1.0f;
 
 	//氷の上にいるかどうか
 	bool onIce_ = false;

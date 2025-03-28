@@ -1,54 +1,43 @@
-#include "TitleScene.h"
+#include "GameOverScene.h"
+
 #include "SceneManager.h"
 
-void TitleScene::Initialize() {
+void GameOverScene::Initialize()
+{
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
 
-	//生成と初期化
-	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
-	spriteTitle_ = std::make_unique<Sprite>();
-	spriteTitle_->Initialize(textureHandleTitle_);
-	//カメラの生成と初期化
-	camera = std::make_unique<DevelopCamera>();
-	camera->Initialize();
-	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
-	camera->SetRotate({ 0.6f,0.0f,0.0f });
-
-	title_ = std::make_unique<TextWrite>();
-	title_->Initialize("TITLE");
-	title_->SetParam({ 440.0f,300.0f }, Font::OnionScript, 80.0f, { 1,1,0,1 });
-	title_->SetEdgeParam({ 1,0,0,1 }, 5.0f, 0.0f, true);
-	
+	textureHandleGO_ = TextureManager::GetInstance()->LoadTexture("GameOver.png");
+	spriteGO_ = std::make_unique<Sprite>();
+	spriteGO_->Initialize(textureHandleGO_);
 }
 
-void TitleScene::Finalize() {
+void GameOverScene::Finalize()
+{
 }
 
-void TitleScene::Update() {
-	if (input_->TriggerKey(DIK_TAB)) {
-		sceneManager_->SetNextScene("STAGESELECT");
+void GameOverScene::Update()
+{
+	if (input_->TriggerKey(DIK_TAB))
+	{
+		sceneManager_->SetNextScene("TITLE");
 	}
 
-	//カメラの更新
-	camera->Update();
+	spriteGO_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
-	ImGui::Text("%s", "TITLE");
+	ImGui::Text("%s", "GameOver");
+	ImGui::Text("%s", "ToTitle : TAB");
+
 	ImGui::End();
-	//タイトルテキスト用のImGui
-	title_->DebugWithImGui();
-
 #endif // _DEBUG
-
-	spriteTitle_->Update();
-
 }
 
-void TitleScene::Draw() {
+void GameOverScene::Draw()
+{
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -60,6 +49,18 @@ void TitleScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
+	///------------------------------///
+
+	//パーティクルの共通描画設定
+	ParticleCommon::GetInstance()->SettingCommonDrawing();
+
+	///------------------------------///
+	///↓↓↓↓パーティクル描画開始↓↓↓↓
+	///------------------------------///
+
+
+	///------------------------------///
+	///↑↑↑↑パーティクル描画終了↑↑↑↑
 	///------------------------------///
 
 
@@ -83,25 +84,22 @@ void TitleScene::Draw() {
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	spriteTitle_->Draw();
+	spriteGO_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
-
 }
 
-void TitleScene::TextDraw() {
+void GameOverScene::TextDraw()
+{
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
-	//タイトルテキスト
-	title_->WriteText(L"タイトル名");
 
 
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 }
-

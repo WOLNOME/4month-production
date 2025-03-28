@@ -5,10 +5,12 @@
 #include "imgui.h"
 #include "application/objects/Player/Player.h"
 
-void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy)
+void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy, const std::string& fanEnemy, const std::string& freezeEnemy)
 {
 	camera_ = camera;
 	tackleEnemyPath_ = tackleEnemy;
+	fanEnemyPath_ = fanEnemy;
+	freezeEnemyPath_ = freezeEnemy;
 	players_ = players;
 }
 
@@ -16,9 +18,14 @@ void EnemyManager::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("EnemyManager");
-	ImGui::Text("TackleEnemyCount: %d", tackleEnemies_.size());
-	ImGui::Text("FanEnemyCount: %d", fanEnemies_.size());
-	ImGui::Text("WindCount: %d", winds_.size());
+	ImGui::SeparatorText("Count");
+	ImGui::Text("Total: %d", GetEnemyCount());
+	ImGui::Text("TackleEnemy: %d", tackleEnemies_.size());
+	ImGui::Text("FanEnemy: %d", fanEnemies_.size());
+	ImGui::Text("FreezeEnemy: %d", freezeEnemies_.size());
+	ImGui::Text("Wind: %d", winds_.size());
+	ImGui::Text("IceMist: %d", iceMists_.size());
+	ImGui::SeparatorText("Spawn");
 	ImGui::DragFloat3("SpawnMinPosition", &spawnMinPosition_.x, 0.1f);
 	ImGui::DragFloat3("SpawnMaxPosition", &spawnMaxPosition_.x, 0.1f);
 	ImGui::DragInt("SpawnCount", &spawnCount_, 1.0f, 1, 100);
@@ -30,9 +37,12 @@ void EnemyManager::Update()
 	{
 		SpawnFanEnemy(spawnCount_);
 	}
+	if (ImGui::Button("SpawnFreezeEnemy"))
+	{
+		SpawnFreezeEnemy(spawnCount_);
+	}
 	if (ImGui::Button("Tackle"))
 	{
-		TargetUpdate();
 		for (auto& enemy : tackleEnemies_)
 		{
 			enemy->StartTackle();
@@ -41,7 +51,8 @@ void EnemyManager::Update()
 	ImGui::End();
 #endif
 	//ターゲットの更新
-	TargetUpdate();
+	TackleEnemyTargetUpdate();
+	FreezeEnemyTargetUpdate();
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
 	{
@@ -61,6 +72,16 @@ void EnemyManager::Update()
 	for (auto& wind : winds_)
 	{
 		wind->Update();
+	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->EnemyUpdate();
+	}
+	//アイスミストの更新
+	for (auto& iceMist : iceMists_)
+	{
+		iceMist->Update();
 	}
 
 	//死んでいるエネミーをリストから削除
@@ -84,6 +105,20 @@ void EnemyManager::Update()
 			return !wind->IsAlive();
 		}),
 		winds_.end());
+	//死んでいるエネミーをリストから削除
+	freezeEnemies_.erase(std::remove_if(freezeEnemies_.begin(), freezeEnemies_.end(),
+		[](const std::unique_ptr<FreezeEnemy>& enemy)
+		{
+			return !enemy->IsAlive();
+		}),
+		freezeEnemies_.end());
+	//死んでいるアイスミストをリストから削除
+	iceMists_.erase(std::remove_if(iceMists_.begin(), iceMists_.end(),
+		[](const std::unique_ptr<IceMist>& iceMist)
+		{
+			return !iceMist->IsAlive();
+		}),
+		iceMists_.end());
 }
 
 void EnemyManager::Draw()
@@ -102,6 +137,16 @@ void EnemyManager::Draw()
 	for (auto& wind : winds_)
 	{
 		wind->Draw(*camera_);
+	}
+	//フリーズエネミーの描画
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->EnemyDraw(*camera_);
+	}
+	//アイスミストの描画
+	for (auto& iceMist : iceMists_)
+	{
+		iceMist->Draw(*camera_);
 	}
 }
 
@@ -133,7 +178,7 @@ void EnemyManager::SpawnFanEnemy(uint32_t count)
 	{
 		auto enemy = std::make_unique<FanEnemy>();
 		enemy->SetEnemyManager(this);
-		enemy->EnemyInitialize(tackleEnemyPath_);
+		enemy->EnemyInitialize(fanEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		fanEnemies_.emplace_back(std::move(enemy));
@@ -147,10 +192,59 @@ void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction)
 	winds_.emplace_back(std::move(wind));					
 }
 
-void EnemyManager::TargetUpdate()
+void EnemyManager::SpawnFreezeEnemy(uint32_t count)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> disX(spawnMinPosition_.x, spawnMaxPosition_.x);
+	std::uniform_real_distribution<float> disZ(spawnMinPosition_.z, spawnMaxPosition_.z);
+	for (uint32_t i = 0; i < count; i++)
+	{
+		auto enemy = std::make_unique<FreezeEnemy>(this);
+		enemy->EnemyInitialize(freezeEnemyPath_);
+		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
+		enemy->SetPosition(spawnPosition);
+		freezeEnemies_.emplace_back(std::move(enemy));
+	}
+}
+
+void EnemyManager::SpawnIceMist(const Vector3& position, const Vector3& velocity)
+{
+	auto iceMist = std::make_unique<IceMist>();
+	iceMist->Initialize("Cube", position, velocity);
+	iceMists_.emplace_back(std::move(iceMist));
+}
+
+void EnemyManager::TackleEnemyTargetUpdate()
 {
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
+	{
+		//敵から一番近いプレイヤーを探す
+		Vector3 target{};
+		for (auto& player : *players_)
+		{
+			if (target.Length() == 0.0f)
+			{
+				target = player->GetPosition();
+			}
+			else
+			{
+				if ((enemy->GetPosition() - player->GetPosition()).Length() < (enemy->GetPosition() - target).Length())
+				{
+					target = player->GetPosition();
+				}
+			}
+		}
+		enemy->SetTargetPosition(target);
+	}
+	
+}
+
+void EnemyManager::FreezeEnemyTargetUpdate()
+{
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
 	{
 		//敵から一番近いプレイヤーを探す
 		Vector3 target{};

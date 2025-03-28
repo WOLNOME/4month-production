@@ -52,7 +52,7 @@ void Player::Update()
 	{
 		knockBackTime_ -= 1.0f;
 	}
-	else
+	else if(!isAftertaste_)
 	{
 		//氷の上にいるとき
 		if (onIce_)
@@ -117,19 +117,19 @@ void Player::Move()
 		// 移動
 		if (input_->PushKey(DIK_W))
 		{
-			moveVel_.z += moveSpeed_.z;
+			moveVel_.z += moveSpeed_.z * slowRate_;
 		}
 		if (input_->PushKey(DIK_S))
 		{
-			moveVel_.z -= moveSpeed_.z;
+			moveVel_.z -= moveSpeed_.z * slowRate_;
 		}
 		if (input_->PushKey(DIK_A))
 		{
-			moveVel_.x -= moveSpeed_.x;
+			moveVel_.x -= moveSpeed_.x * slowRate_;
 		}
 		if (input_->PushKey(DIK_D))
 		{
-			moveVel_.x += moveSpeed_.x;
+			moveVel_.x += moveSpeed_.x * slowRate_;
 		}
 	}
 
@@ -156,8 +156,11 @@ void Player::MovePosition()
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.01f)
 	{
-
 		return;
+	}
+	else if (moveVel_.Length() < 1.5f)
+	{
+		isAftertaste_ = false;
 	}
 
 	// 位置を更新
@@ -204,7 +207,7 @@ void Player::Attack()
 
 		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f/60.0f);
 		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_;
+		wtPlayer_.translate_ += moveVel_ * slowRate_;
 		position_ = wtPlayer_.translate_;
 	}
 
@@ -274,8 +277,8 @@ void Player::OnCollision(const AppCollider* _other)
 		onIce_ = true;
 	}
 
-	// どちらも攻撃していないとき
-	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_)
+	// どちらも攻撃していなくてノックバック中でないとき
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
 	{
 		// プレイヤーの速度を取得
 		Vector3 playerVelocity = moveVel_;
@@ -313,6 +316,13 @@ void Player::OnCollision(const AppCollider* _other)
 		}
 	}
 
+	//アイスミストに当たっている間速度低下
+	slowRate_ = 1.0f;
+	if (_other->GetColliderID() == "IceMist")
+	{
+		slowRate_ = 0.25f;
+	}
+
 }
 
 void Player::OnCollisionTrigger(const AppCollider* _other)
@@ -328,6 +338,8 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// エネミーの攻撃を食らったとき
 		if (_other->GetOwner()->IsAttack() && !isAttack_)
 		{
+			isAftertaste_ = true;
+
 			// 当たったエネミーの位置を取得
 			enemyPosition_ = _other->GetOwner()->GetPosition();
 
@@ -335,7 +347,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ *= 17.0f;
+			moveVel_ *= 10.0f;
 			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
@@ -345,6 +357,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 	// 風に当たったらノックバック
 	if (_other->GetColliderID() == "Wind" && !isAttack_)
 	{
+		isAftertaste_ = true;
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
@@ -450,7 +463,7 @@ void Player::MovePositionOnIce()
 {
 
 	// 摩擦による減速を適用
-	moveVel_ *= frictionOnIce_;
+	moveVel_ *= frictionOnIce_ * slowRate_;
 
 	//速度を最高速度以下に抑える
 	if (moveVel_.Length() > MaxSpeedOnIce_)
@@ -462,6 +475,10 @@ void Player::MovePositionOnIce()
 	else if (moveVel_.Length() < 0.001f)
 	{
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+	if (moveVel_.Length() < 0.04f)
+	{
+		isAftertaste_ = false;
 	}
 
 	// 位置を更新

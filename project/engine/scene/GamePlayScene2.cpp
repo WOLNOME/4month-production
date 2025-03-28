@@ -1,14 +1,15 @@
-#include "GamePlayScene.h"
+#include "GamePlayScene2.h"
 
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "Object3dCommon.h"
+#include "ParticleCommon.h"
 #include "LineDrawerCommon.h"
 #include "SpriteCommon.h"
 #include "SceneManager.h"
 #include <numbers>
 
-void GamePlayScene::Initialize()
+void GamePlayScene2::Initialize()
 {
 	//シーン共通の初期化
 	BaseScene::Initialize();
@@ -27,9 +28,9 @@ void GamePlayScene::Initialize()
 	appCollisionManager_->Initialize();
 
 	// スポーン位置
-	playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-	playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-	playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
+	playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
+	playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
+	playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
 
 	// プレイヤー
 	for (uint32_t i = 0; i < 1; ++i)
@@ -45,9 +46,10 @@ void GamePlayScene::Initialize()
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
-	enemyManager_->Initialize(camera_.get(), &players_, "enemy", "Fan","Freeze");
-	enemyManager_->SpawnTackleEnemy(7);
-	
+	enemyManager_->Initialize(camera_.get(), &players_, "enemy", "Fan", "Freeze");
+	enemyManager_->SpawnTackleEnemy(4);
+	enemyManager_->SpawnFanEnemy(3);
+
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -56,31 +58,58 @@ void GamePlayScene::Initialize()
 	field_->Initialize();
 	field_->SetScale({ 20.0f,1.0f,20.0f });
 
+
+	//障害物の生成
+	std::vector<Vector3> obstaclePositions = {
+		{ 0.0f, 1.0f, 7.0f },
+		{ -15.0f, 1.0f, 0.0f },
+		{ 10.0f, 1.0f, -15.0f }
+	};
+	std::vector<Vector3> obstacleScales = {
+		{ 5.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 5.0f },
+		{ 1.0f, 1.0f, 5.0f }
+	};
+
+	for (size_t i = 0; i < obstaclePositions.size(); ++i)
+	{
+		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+		obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->SetPosition(obstaclePositions[i]);
+		obstacle->SetScale(obstacleScales[i]);
+	}
+
+
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
 	{
 		auto playerSpawn = std::make_unique<SpawnPos>();
 		playerSpawn->SetPosition(playerSpawnPositions_[i]);
 		playerSpawn->Initialize();
-	
+
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
 }
 
-void GamePlayScene::Finalize()
+void GamePlayScene2::Finalize()
 {
 	for (auto& player : players_)
 	{
 		player->Finalize();
 	}
-	
+
 	enemyManager_->Finalize();
 
 	field_->Finalize();
 
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Finalize();
+	}
 }
 
-void GamePlayScene::Update()
+void GamePlayScene2::Update()
 {
 	// カメラの更新
 	camera_->UpdateMatrix();
@@ -114,6 +143,11 @@ void GamePlayScene::Update()
 	// フィールド
 	field_->Update();
 
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Update();
+	}
 
 	// プレイヤースポーンのオブジェクト
 	for (auto& playerSpawn : playerSpawn_)
@@ -131,12 +165,12 @@ void GamePlayScene::Update()
 	}
 
 	// ゲームオーバーへ
-	if (playerNum_ <= 0  or input_->TriggerKey(DIK_RETURN))
+	if (playerNum_ <= 0 or input_->TriggerKey(DIK_RETURN))
 	{
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_ ->TriggerKey(DIK_TAB) or enemyManager_->GetEnemyCount() == 0)
+	if (input_->TriggerKey(DIK_TAB) or enemyManager_->GetEnemyCount() == 0)
 	{
 		sceneManager_->SetNextScene("CLEAR");
 	}
@@ -146,7 +180,7 @@ void GamePlayScene::Update()
 	ImGuiDraw();
 }
 
-void GamePlayScene::Draw()
+void GamePlayScene2::Draw()
 {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
@@ -158,7 +192,7 @@ void GamePlayScene::Draw()
 	// プレイヤー
 	for (auto& player : players_)
 	{
-        player->Draw(*camera_.get());
+		player->Draw(*camera_.get());
 	}
 
 	//エネミーマネージャーの描画
@@ -168,6 +202,12 @@ void GamePlayScene::Draw()
 	skydome_->Draw(*camera_.get());
 	// フィールド
 	field_->Draw(*camera_.get());
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Draw(*camera_.get());
+	}
 
 	// プレイヤースポーン
 	for (auto& playerSpawn : playerSpawn_)
@@ -179,6 +219,21 @@ void GamePlayScene::Draw()
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
+
+
+	//パーティクルの共通描画設定
+	ParticleCommon::GetInstance()->SettingCommonDrawing();
+
+	///------------------------------///
+	///↓↓↓↓パーティクル描画開始↓↓↓↓
+	///------------------------------///
+
+
+
+	///------------------------------///
+	///↑↑↑↑パーティクル描画終了↑↑↑↑
+	///------------------------------///
+
 
 	//線描画共通描画設定
 	LineDrawerCommon::GetInstance()->SettingCommonDrawing();
@@ -207,7 +262,8 @@ void GamePlayScene::Draw()
 	///------------------------------///
 }
 
-void GamePlayScene::TextDraw() {
+void GamePlayScene2::TextDraw()
+{
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
@@ -219,15 +275,15 @@ void GamePlayScene::TextDraw() {
 	///------------------------------///
 }
 
-void GamePlayScene::ImGuiDraw()
+void GamePlayScene2::ImGuiDraw()
 {
 
 #ifdef _DEBUG
 
 	ImGui::Begin("scene");
-	ImGui::Text("%s", "GAMEPLAY");;
-	
-	ImGui::Text("%s","ToClear : TAB");
+	ImGui::Text("%s", "GAMEPLAY2");;
+
+	ImGui::Text("%s", "ToClear : TAB");
 	ImGui::Text("%s", "ToGameOver : ENTER");
 
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -100.0f, 100.0f);
@@ -245,6 +301,16 @@ void GamePlayScene::ImGuiDraw()
 		players_.push_back(std::move(player));
 	}
 
+	// 障害物の位置調整
+	for (size_t i = 0; i < obstacles_.size(); ++i)
+	{
+		Vector3 pos = obstacles_[i]->GetPosition();
+		if (ImGui::SliderFloat3(("ObstaclePos" + std::to_string(i)).c_str(), &pos.x, -10.0f, 10.0f))
+		{
+			obstacles_[i]->SetPosition(pos);
+		}
+	}
+
 	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
 
 	ImGui::End();
@@ -255,26 +321,19 @@ void GamePlayScene::ImGuiDraw()
 		player->ImGuiDraw();
 	}
 
-	
-
 	// フィールド
 	field_->ImGuiDraw();
 
-	// スポーン位置
-	for (auto& playerSpawn : playerSpawn_)
-	{
-		playerSpawn->ImGuiDraw();
-	}
+
 
 #endif // _DEBUG
-
 }
 
-void GamePlayScene::playerSpawnRotation()
+void GamePlayScene2::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 15)
+	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 30)
 	{
 		rotationTimer_ = rotation_;
 

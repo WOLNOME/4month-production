@@ -28,6 +28,7 @@ void IceFloor::Finalize()
 	if (appCollider_)
 	{
 		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appCollider_.reset();
 	}
 }
 
@@ -35,6 +36,7 @@ void IceFloor::Update()
 {
 	worldTransform_.translate_ = position_;
 	worldTransform_.scale_ = scale_;
+	worldTransform_.rotate_ = rotation_;
 
 	worldTransform_.UpdateMatrix();
 

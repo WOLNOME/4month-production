@@ -105,6 +105,8 @@
     <ClCompile Include="engine\scenebase\SceneTransitionAnimation.cpp" />
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="engine\2d\TextWrite.cpp" />
+    <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
+    <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp">
       <Filter>gimmick</Filter>
     </ClCompile>
@@ -115,6 +117,13 @@
       <Filter>gimmick</Filter>
     </ClCompile>
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
+    <ClCompile Include="engine\scene\StageSelectScene.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
+    <ClCompile Include="application\objects\Field\StageSelectObject.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
@@ -228,6 +237,8 @@
     <ClInclude Include="engine\scenebase\SceneTransitionAnimation.h" />
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="engine\2d\TextWrite.h" />
+    <ClInclude Include="application\enemy\FreezeEnemy.h" />
+    <ClInclude Include="application\enemy\IceMist.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h">
       <Filter>gimmick</Filter>
     </ClInclude>
@@ -235,6 +246,13 @@
       <Filter>gimmick</Filter>
     </ClInclude>
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
+    <ClInclude Include="engine\scene\StageSelectScene.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
+    <ClInclude Include="application\objects\Field\StageSelectObject.h" />
+    <ClInclude Include="engine\scene\GamePlayScene2.h" />
+    <ClInclude Include="engine\scene\GamePlayScene3.h" />
+    <ClInclude Include="engine\scene\GamePlayScene4.h" />
+    <ClInclude Include="engine\scene\GamePlayScene5.h" />
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
   </ItemGroup>

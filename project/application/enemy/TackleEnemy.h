@@ -52,6 +52,9 @@ private:
 	 */
 	void Move();
 
+    //氷の上の移動
+    void MoveOnIce();
+
 private:
     //生存フラグ
 	bool isAlive_ = true;
@@ -85,8 +88,12 @@ private:
     bool isGround_ = false;
 
 	bool isStop_ = false;
+    // ノックバックの余韻
+	bool isAftertaste_ = false;
 	
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
 
+    //氷の上にいるときの摩擦係数
+    float frictionOnIce_ = 0.995f;
 };

@@ -67,5 +67,8 @@ void Wind::OnCollision(const AppCollider* other)
 
 void Wind::OnCollisionTrigger(const AppCollider* other)
 {
-
+	if (other->GetColliderID() == "Obstacle" || other->GetColliderID() == "Bumper")
+	{
+		isAlive_ = false;
+	}
 }

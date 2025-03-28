@@ -14,6 +14,14 @@ public:
 	void Finalize() override;
 	void Update() override;
 	void Draw(BaseCamera _camera) override;
+	void OnCollision(const AppCollider* _other);
+
+	// 移動方向と速度を設定するメソッドを追加
+	void SetMoveDirection(const Vector3& direction);
+	void SetMoveSpeed(float speed);
+	void SetMoveRange(float range);
+
+
 
 private:
 
@@ -25,4 +33,10 @@ private:
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
+
+	// 移動方向と速度のプロパティを追加
+	Vector3 moveDirection_ = { 0.0f, 0.0f, 0.0f };
+	float moveSpeed_ = 0.0f;
+	float moveRange_ = 0.0f;
+	float movedDistance_ = 0.0f;
 };
