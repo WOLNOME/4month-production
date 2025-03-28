@@ -5,10 +5,12 @@
 #include "imgui.h"
 #include "application/objects/Player/Player.h"
 
-void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy)
+void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy, const std::string& fanEnemy, const std::string& freezeEnemy)
 {
 	camera_ = camera;
 	tackleEnemyPath_ = tackleEnemy;
+	fanEnemyPath_ = fanEnemy;
+	freezeEnemyPath_ = freezeEnemy;
 	players_ = players;
 }
 
@@ -176,7 +178,7 @@ void EnemyManager::SpawnFanEnemy(uint32_t count)
 	{
 		auto enemy = std::make_unique<FanEnemy>();
 		enemy->SetEnemyManager(this);
-		enemy->EnemyInitialize(tackleEnemyPath_);
+		enemy->EnemyInitialize(fanEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		fanEnemies_.emplace_back(std::move(enemy));
@@ -199,7 +201,7 @@ void EnemyManager::SpawnFreezeEnemy(uint32_t count)
 	for (uint32_t i = 0; i < count; i++)
 	{
 		auto enemy = std::make_unique<FreezeEnemy>(this);
-		enemy->EnemyInitialize(tackleEnemyPath_);
+		enemy->EnemyInitialize(freezeEnemyPath_);
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		freezeEnemies_.emplace_back(std::move(enemy));

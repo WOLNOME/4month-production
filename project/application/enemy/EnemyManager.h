@@ -14,7 +14,7 @@ class Player;
 class EnemyManager
 {
 public:
-	void Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy);
+	void Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Player>>* players, const std::string& tackleEnemy, const std::string& fanEnemy, const std::string& freezeEnemy);
 	void Update();
 	void Draw();
 	void SpawnTackleEnemy(uint32_t count);
@@ -48,6 +48,8 @@ private:
 	std::vector<std::unique_ptr<FreezeEnemy>> freezeEnemies_;
 	std::vector<std::unique_ptr<IceMist>> iceMists_;
 	std::string tackleEnemyPath_;
+	std::string fanEnemyPath_;
+	std::string freezeEnemyPath_;
 	Vector3 targetPosition_ = { 0.0f,1.0f,3.0f };
 	//スポーンの範囲
 	Vector3 spawnMinPosition_ = { -10.0f,1.0f,-10.0f };
