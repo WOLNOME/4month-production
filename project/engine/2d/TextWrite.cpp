@@ -80,7 +80,7 @@ void TextWrite::DebugWithImGui() {
 		ImGui::Checkbox("display", &isDisplay);
 		SetIsEdgeDisplay(isDisplay);
 		//アウトラインのカラー
-		ImGui::ColorEdit3("colorEdge", &edgeColor_.x);
+		ImGui::ColorEdit4("colorEdge", &edgeColor_.x);
 		SetEdgeColor(edgeColor_);
 		//アウトラインの幅
 		ImGui::SliderFloat("strokeWidth", &edgeStrokeWidth_, 1.0f, 30.0f);
