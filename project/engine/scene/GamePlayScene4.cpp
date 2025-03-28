@@ -170,7 +170,7 @@ void GamePlayScene4::Update()
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_->TriggerKey(DIK_TAB))
+	if (input_->TriggerKey(DIK_TAB) or enemyManager_->GetEnemyCount() == 0)
 	{
 		sceneManager_->SetNextScene("CLEAR");
 	}
@@ -340,7 +340,7 @@ void GamePlayScene4::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 15)
+	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 30)
 	{
 		rotationTimer_ = rotation_;
 

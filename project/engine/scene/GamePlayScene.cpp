@@ -137,7 +137,7 @@ void GamePlayScene::Update()
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_ ->TriggerKey(DIK_TAB))
+	if (input_ ->TriggerKey(DIK_TAB) or enemyManager_->GetEnemyCount() == 0)
 	{
 		sceneManager_->SetNextScene("CLEAR");
 	}
