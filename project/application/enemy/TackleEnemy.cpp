@@ -267,7 +267,7 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other)
 
             // ノックバック
             tackleVelocity_ = runDirection;
-            tackleVelocity_ *= 9.0f;
+            tackleVelocity_ *= 20.0f;
             tackleVelocity_.y = 0.0f;
             // ノックバックタイマー
             knockBackTime_ = 4.0f;
