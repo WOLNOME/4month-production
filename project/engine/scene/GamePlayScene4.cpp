@@ -3,7 +3,6 @@
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "Object3dCommon.h"
-#include "ParticleCommon.h"
 #include "LineDrawerCommon.h"
 #include "SpriteCommon.h"
 #include "SceneManager.h"
@@ -222,21 +221,6 @@ void GamePlayScene4::Draw()
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
-
-
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
-	///------------------------------///
-
 
 	//線描画共通描画設定
 	LineDrawerCommon::GetInstance()->SettingCommonDrawing();
