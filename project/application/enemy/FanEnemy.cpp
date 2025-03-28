@@ -163,12 +163,12 @@ void FanEnemy::Move()
 
 void FanEnemy::StartFan()
 {
-	// 風の方向を設定
-	Vector3 direction = { cos(transform_.rotate_.y), 0.0f, sin(transform_.rotate_.y) };
+	 // 風の進行方向を計算
+	Vector3 direction = { -sin(transform_.rotate_.y), 0.0f, -cos(transform_.rotate_.y) };
 	direction.Normalize();
 
-	// 風を生成
-	enemyManager_->SpawnWind(transform_.translate_, direction);
+    // 風を生成
+    enemyManager_->SpawnWind(transform_.translate_, direction);
 }
 
 void FanEnemy::FanUpdate()
