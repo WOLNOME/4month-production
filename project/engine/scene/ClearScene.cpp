@@ -22,7 +22,7 @@ void ClearScene::Finalize()
 
 void ClearScene::Update()
 {
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
 

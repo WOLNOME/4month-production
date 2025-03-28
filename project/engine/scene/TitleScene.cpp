@@ -30,7 +30,7 @@ void TitleScene::Finalize() {
 }
 
 void TitleScene::Update() {
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("STAGESELECT");
 	}
 

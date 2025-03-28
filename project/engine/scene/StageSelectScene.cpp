@@ -66,7 +66,7 @@ void StageSelectScene::Update()
 		selectObjects_[i]->SetStage(selectStage_);
 	}
 
-	if (input_->TriggerKey(DIK_TAB))
+	if (input_->TriggerKey(DIK_SPACE))
 	{
 		if (selectStage_ == 0)
 		{
