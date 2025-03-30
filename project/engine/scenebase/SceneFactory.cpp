@@ -11,6 +11,8 @@
 #include "GamePlayScene4.h"
 #include "GamePlayScene5.h"
 #include "GameOverScene.h"
+// パーティクルクリエイター
+#include "ParticleCreatorScene.h"
 
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 {
@@ -47,6 +49,10 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	}
 	else if (sceneName == "GAMEOVER") {
 		newScene = new GameOverScene();
+	}
+	//パーティクルクリエイター
+	else if (sceneName == "PARTICLECREATOR") {
+		newScene = new ParticleCreatorScene();
 	}
 
 	return newScene;

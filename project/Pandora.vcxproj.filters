@@ -43,7 +43,6 @@
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
     <ClCompile Include="engine\scene\TitleScene.cpp" />
     <ClCompile Include="engine\3d\Particle.cpp" />
-    <ClCompile Include="engine\3d\ParticleCommon.cpp" />
     <ClCompile Include="engine\3d\WorldTransform.cpp" />
     <ClCompile Include="engine\3d\PointLight.cpp" />
     <ClCompile Include="engine\3d\SceneLight.cpp" />
@@ -125,6 +124,9 @@
     <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
+    <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
+    <ClCompile Include="engine\3d\ParticleManager.cpp" />
+    <ClCompile Include="engine\util\JsonUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -162,7 +164,6 @@
     <ClInclude Include="engine\scenebase\SceneManager.h" />
     <ClInclude Include="engine\scene\TitleScene.h" />
     <ClInclude Include="engine\3d\Particle.h" />
-    <ClInclude Include="engine\3d\ParticleCommon.h" />
     <ClInclude Include="engine\3d\WorldTransform.h" />
     <ClInclude Include="engine\3d\PointLight.h" />
     <ClInclude Include="engine\math\Quaternion.h" />
@@ -244,9 +245,6 @@
     <ClInclude Include="application\objects\Gimmick\Bumper.h">
       <Filter>gimmick</Filter>
     </ClInclude>
-    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
-      <Filter>gimmick</Filter>
-    </ClInclude>
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
     <ClInclude Include="engine\scene\StageSelectScene.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
@@ -255,6 +253,8 @@
     <ClInclude Include="engine\scene\GamePlayScene3.h" />
     <ClInclude Include="engine\scene\GamePlayScene4.h" />
     <ClInclude Include="engine\scene\GamePlayScene5.h" />
+    <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
+    <ClInclude Include="engine\3d\ParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

@@ -140,7 +140,19 @@ void FreezeEnemy::OnCollision(const AppCollider* other)
 
 void FreezeEnemy::OnCollisionTrigger(const AppCollider* other)
 {
-	
+	if (other->GetColliderID() == "Player" && other->GetOwner()->IsAttack())
+	{
+		// プレイヤーの位置
+		Vector3 playerPosition = other->GetOwner()->GetPosition();
+
+		// プレイヤーの位置から逃げる
+		Vector3 runDirection = transform_.translate_ - playerPosition;
+
+		// ノックバック
+		velocity_ = runDirection;
+		velocity_ *= 20.0f;
+		velocity_.y = 0.0f;
+	}
 }
 
 void FreezeEnemy::Move()

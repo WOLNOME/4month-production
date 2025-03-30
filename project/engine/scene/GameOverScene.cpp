@@ -25,7 +25,7 @@ void GameOverScene::Finalize()
 
 void GameOverScene::Update()
 {
-	if (input_->TriggerKey(DIK_TAB))
+	if (input_->TriggerKey(DIK_SPACE))
 	{
 		sceneManager_->SetNextScene("TITLE");
 	}
@@ -55,18 +55,6 @@ void GameOverScene::Draw()
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
-	///------------------------------///
-
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
 	///------------------------------///
 
 

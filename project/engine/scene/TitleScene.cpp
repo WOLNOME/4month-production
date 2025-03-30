@@ -1,10 +1,6 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dwrite.lib")
-
 void TitleScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
@@ -21,6 +17,8 @@ void TitleScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,20.0f,-20.0f });
 	camera->SetRotate({ 0.6f,0.0f,0.0f });
+	//パーティクルマネージャーにカメラをセット
+	ParticleManager::GetInstance()->SetCamera(camera.get());
 
 	title_ = std::make_unique<TextWrite>();
 	title_->Initialize("TITLE");
@@ -33,7 +31,7 @@ void TitleScene::Finalize() {
 }
 
 void TitleScene::Update() {
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("STAGESELECT");
 	}
 
@@ -65,18 +63,6 @@ void TitleScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
-	///------------------------------///
-
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
 	///------------------------------///
 
 

@@ -161,7 +161,7 @@ public://ゲッター
 	const ModelResource& GetModelResource() { return modelResource_; }
 	bool IsAnimation() { return isAnimation_; }
 public://セッター
-
+	void SetColor(Vector4& color) { color_ = &color; }
 private:
 	//モデルファイルの読み取り
 	std::vector<ModelData> LoadModelFile();
@@ -195,6 +195,8 @@ private:
 	ModelResource modelResource_;
 	//モデル数
 	size_t modelNum_;
+	//色
+	Vector4* color_ = nullptr;
 
 	//ディレクトリパス
 	std::string directoryPath_;

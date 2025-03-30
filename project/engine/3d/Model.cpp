@@ -117,6 +117,9 @@ void Model::Draw(uint32_t materialRootParameterIndex, uint32_t textureRootParame
 		//インデックスバッファビューを設定
 		MainRender::GetInstance()->GetCommandList()->IASetIndexBuffer(&modelResource_.indexBufferView.at(index));
 		//マテリアルCBufferの場所を設定
+		if (color_) {
+			modelResource_.materialData.at(index)->color = *color_;
+		}
 		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(materialRootParameterIndex, modelResource_.materialResource.at(index)->GetGPUVirtualAddress());
 		//テクスチャが外部から設定されている場合
 		if (textureHandle != -1) {
@@ -452,7 +455,7 @@ Model::SkinCluster Model::CreateSkinCluster() {
 void Model::SettingTexture() {
 	for (size_t index = 0; index < modelResource_.modelData.size(); index++) {
 		//.objの参照しているテクスチャファイル読み込み(TextureManagerはResources/をカットできるので)
-		modelResource_.modelData.at(index).material.textureHandle = TextureManager::GetInstance()->LoadTexture("models/" + fileName_ + "/" + modelResource_.modelData.at(index).material.textureFilePath);
+		modelResource_.modelData.at(index).material.textureHandle = TextureManager::GetInstance()->LoadTexture("../models/" + fileName_ + "/" + modelResource_.modelData.at(index).material.textureFilePath);
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "ParticleManager.h"
 #include "Audio.h"
 #include "Input.h"
 #include "LineDrawer.h"
@@ -16,7 +17,6 @@
 //シーン共通クラス
 #include "ImGuiManager.h"
 #include "Object3dCommon.h"
-#include "ParticleCommon.h"
 #include "LineDrawerCommon.h"
 #include "SpriteCommon.h"
 //シーン共通ヘッダー

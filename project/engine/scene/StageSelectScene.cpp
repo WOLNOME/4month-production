@@ -3,7 +3,6 @@
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "Object3dCommon.h"
-#include "ParticleCommon.h"
 #include "LineDrawerCommon.h"
 #include "SpriteCommon.h"
 #include "SceneManager.h"
@@ -22,6 +21,8 @@ void StageSelectScene::Initialize()
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
 	camera_->SetFarClip(80.0f);
+	//パーティクルマネージャーにカメラをセット
+	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
 	// ステージ選択スプライト
 	textureHandleSelect_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
@@ -94,7 +95,7 @@ void StageSelectScene::Update()
 		selectObjects_[i]->SetStage(selectStage_);
 	}
 
-	if (input_->TriggerKey(DIK_TAB))
+	if (input_->TriggerKey(DIK_SPACE))
 	{
 		if (selectStage_ == 0)
 		{
@@ -168,19 +169,6 @@ void StageSelectScene::Draw()
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
 	///------------------------------///
-
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
-	///------------------------------///
-
 
 	//線描画共通描画設定
 	LineDrawerCommon::GetInstance()->SettingCommonDrawing();

@@ -28,6 +28,7 @@ public:
 	///	テキスト描画
 	/// </summary>
 	void TextDraw() override;
+
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
@@ -47,13 +48,13 @@ private://メンバ変数
 	std::unique_ptr<SpotLight> spotLight;
 	std::unique_ptr<LineDrawer> slMark;
 	bool isDrawSLMark = false;
-
+	//スプライト
 	uint32_t textureHandleSprite_ = 0u;
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 	uint32_t textureHandleSprite2_ = 0u;
 	std::unique_ptr<Sprite> sprite2_ = nullptr;
 	Vector2 sprite2Position;
-
+	//3Dオブジェクト
 	WorldTransform wtAxis_;
 	std::unique_ptr<Object3d> axis_ = nullptr;
 
@@ -72,12 +73,13 @@ private://メンバ変数
 	WorldTransform wtSimpleSkin_;
 	std::unique_ptr<Object3d> simpleSkin_ = nullptr;
 
-	Particle::Emitter emitter_;
-	Particle::AccelerationField field_;
+	//パーティクル
 	std::unique_ptr<Particle> particle_ = nullptr;
-
+	
+	//線
 	std::unique_ptr<LineDrawer> line_ = nullptr;
 
+	//オーディオ
 	bool isDrawSphere_ = false;
 	std::unique_ptr<Audio> audio_ = nullptr;
 	float volume = 0.5f;

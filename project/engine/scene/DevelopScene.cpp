@@ -80,19 +80,9 @@ void DevelopScene::Initialize() {
 	simpleSkin_ = std::make_unique<Object3d>();
 	simpleSkin_->InitializeModel("simpleSkin", GLTF);
 
-
-	emitter_.transform.scale = { 1.0f,1.0f,1.0f };
-	emitter_.transform.rotate = { 0.0f,0.0f,0.0f };
-	emitter_.transform.translate = { 0.0f,0.0f,0.0f };
-	emitter_.count = 3;
-	emitter_.frequency = 0.3f;
-	emitter_.frequencyTime = 0.0f;
-	field_.acceleration = { 0.0f,5.0f,0.0f };
-	field_.area.min = { -100.0f,-100.0f,-100.0f };
-	field_.area.max = { 100.0f,100.0f,100.0f };
-	field_.isActive = true;
+	ParticleManager::GetInstance()->SetCamera(camera.get());
 	particle_ = std::make_unique<Particle>();
-	particle_->Initialize("circle");
+	particle_->Initialize("develop", "heart");
 
 	line_ = std::make_unique<LineDrawer>();
 	line_->Initialize();
@@ -115,10 +105,6 @@ void DevelopScene::Update() {
 
 	//カメラの更新
 	camera->Update();
-
-	//シーンライトの更新処理
-	sceneLight_->Update();
-
 
 	//モデルの更新
 	wtAxis_.rotate_.y += 0.03f;
@@ -173,6 +159,7 @@ void DevelopScene::Update() {
 	ImGui::Begin("teapot");
 	ImGui::DragFloat3("translate", &wtAxis_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtAxis_.scale_.x, 0.01f);
+	ImGui::ColorEdit4("color", &axis_->color_.x);
 	ImGui::End();
 
 	ImGui::Begin("terrain");
@@ -261,9 +248,9 @@ void DevelopScene::Draw() {
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
 
 	terrain_->Draw(wtTerrain_, *camera.get(), sceneLight_.get());
+	axis_->Draw(wtAxis_, *camera.get(), sceneLight_.get());
 
 	animatedCube_->Draw(wtAnimatedCube_, *camera.get(), sceneLight_.get());
 
@@ -275,19 +262,6 @@ void DevelopScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
-	///------------------------------///
-
-	//パーティクルの共通描画設定
-	ParticleCommon::GetInstance()->SettingCommonDrawing();
-
-	///------------------------------///
-	///↓↓↓↓パーティクル描画開始↓↓↓↓
-	///------------------------------///
-
-	particle_->Draw(*camera.get(), emitter_, &field_);
-
-	///------------------------------///
-	///↑↑↑↑パーティクル描画終了↑↑↑↑
 	///------------------------------///
 
 
@@ -315,9 +289,9 @@ void DevelopScene::Draw() {
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	//スプライト描画
-	sprite_->Draw();
-	sprite2_->Draw();
+	////スプライト描画
+	//sprite_->Draw();
+	//sprite2_->Draw();
 
 
 	///------------------------------///
