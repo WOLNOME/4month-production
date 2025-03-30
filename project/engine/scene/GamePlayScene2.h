@@ -58,6 +58,10 @@ private://メンバ変数
 
 	Input* input_ = nullptr;
 
+	// プライト
+	uint32_t textureHandleUI_PLAY_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
+
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
 	Vector3 cameraTranslate = { 0.0f,70.0f,-50.0f };

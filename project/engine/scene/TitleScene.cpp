@@ -8,9 +8,10 @@ void TitleScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//生成と初期化
-	textureHandleTitle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
-	spriteTitle_ = std::make_unique<Sprite>();
-	spriteTitle_->Initialize(textureHandleTitle_);
+	textureHandleUI_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
+	spriteUI_ = std::make_unique<Sprite>();
+	spriteUI_->Initialize(textureHandleUI_);
+
 	//カメラの生成と初期化
 	camera = std::make_unique<DevelopCamera>();
 	camera->Initialize();
@@ -21,7 +22,7 @@ void TitleScene::Initialize() {
 
 	title_ = std::make_unique<TextWrite>();
 	title_->Initialize("TITLE");
-	title_->SetParam({ 440.0f,300.0f }, Font::OnionScript, 80.0f, { 1,1,0,1 });
+	title_->SetParam({ 320.0f,300.0f }, Font::OnionScript, 80.0f, { 1,1,0,1 });
 	title_->SetEdgeParam({ 1,0,0,1 }, 5.0f, 0.0f, true);
 	
 }
@@ -46,7 +47,7 @@ void TitleScene::Update() {
 
 #endif // _DEBUG
 
-	spriteTitle_->Update();
+	spriteUI_->Update();
 
 }
 
@@ -85,7 +86,7 @@ void TitleScene::Draw() {
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	spriteTitle_->Draw();
+	spriteUI_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -99,7 +100,7 @@ void TitleScene::TextDraw() {
 	///------------------------------///
 
 	//タイトルテキスト
-	title_->WriteText(L"タイトル名");
+	title_->WriteText(L"ふえるぶつかり屋");
 
 
 	///------------------------------///

@@ -12,6 +12,11 @@ void GameOverScene::Initialize()
 	textureHandleGO_ = TextureManager::GetInstance()->LoadTexture("GameOver.png");
 	spriteGO_ = std::make_unique<Sprite>();
 	spriteGO_->Initialize(textureHandleGO_);
+
+	textureHandleUI_SPACE_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
+	spriteUI_SPACE_ = std::make_unique<Sprite>();
+	spriteUI_SPACE_->Initialize(textureHandleUI_SPACE_);
+
 }
 
 void GameOverScene::Finalize()
@@ -26,6 +31,7 @@ void GameOverScene::Update()
 	}
 
 	spriteGO_->Update();
+	spriteUI_SPACE_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -73,6 +79,7 @@ void GameOverScene::Draw()
 	///------------------------------///
 
 	spriteGO_->Draw();
+	spriteUI_SPACE_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
