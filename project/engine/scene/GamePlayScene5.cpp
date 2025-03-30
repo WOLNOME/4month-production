@@ -16,6 +16,11 @@ void GamePlayScene5::Initialize()
 
 	input_ = Input::GetInstance();
 
+	// スプライト
+	textureHandleUI_PLAY_ = TextureManager::GetInstance()->LoadTexture("UI_PLAY.png");
+	spriteUI_PLAY_ = std::make_unique<Sprite>();
+	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
+
 	//カメラの生成と初期化
 	camera_ = std::make_unique<BaseCamera>();
 	camera_->Initialize();
@@ -163,6 +168,9 @@ void GamePlayScene5::Finalize()
 
 void GamePlayScene5::Update()
 {
+	// スプライト
+	spriteUI_PLAY_->Update();
+
 	// カメラの更新
 	camera_->UpdateMatrix();
 	camera_->SetRotate({ cameraRotate });
@@ -212,7 +220,10 @@ void GamePlayScene5::Update()
 	{
 		playerSpawn->Update();
 	}
-	playerSpawnRotation();
+	if (playerNum_ > 0)
+	{
+		playerSpawnRotation();
+	}
 
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();
@@ -319,7 +330,7 @@ void GamePlayScene5::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-
+	spriteUI_PLAY_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑

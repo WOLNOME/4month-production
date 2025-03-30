@@ -23,6 +23,35 @@ void StageSelectScene::Initialize()
 	camera_->SetTranslate(cameraTranslate);
 	camera_->SetFarClip(80.0f);
 
+	// ステージ選択スプライト
+	textureHandleSelect_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
+	spriteSelect_ = std::make_unique<Sprite>();
+	spriteSelect_->Initialize(textureHandleSelect_);
+
+	textureHandleUI_A_ = TextureManager::GetInstance()->LoadTexture("UI_A.png");
+	spriteUI_A_ = std::make_unique<Sprite>();
+	spriteUI_A_->Initialize(textureHandleUI_A_);
+
+	textureHandleUI_D_ = TextureManager::GetInstance()->LoadTexture("UI_D.png");
+	spriteUI_D_ = std::make_unique<Sprite>();
+	spriteUI_D_->Initialize(textureHandleUI_D_);
+
+	spritePos_ = { 0.0f,0.0f };
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum1.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum2.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum3.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum4.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum5.png"));
+	for (uint32_t i = 0; i < 5; i++)
+	{
+		auto num = std::make_unique<Sprite>();
+
+		num->SetPosition(spritePos_);
+		num->Initialize(textureHandleSelectNum_[i]);
+
+		spriteSelectNum_.push_back(std::move(num));
+	}
+
 	// フィールドモデル
 	for (uint32_t i = 0; i < stageNum_; i++)
 	{
@@ -89,6 +118,15 @@ void StageSelectScene::Update()
 		}
 	}
 
+	spriteSelect_->Update();
+	spriteUI_A_->Update();
+	spriteUI_D_->Update();
+
+	for (auto& sprite : spriteSelectNum_)
+	{
+		sprite->Update();
+		sprite->SetPosition(spritePos_);
+	}
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -101,6 +139,7 @@ void StageSelectScene::Update()
 	bool isMove = selectObjects_[0]->IsMove();
 	ImGui::Text("selectObjects_[0]->IsMove() : %s", isMove ? "true" : "false");
 
+	ImGui::SliderFloat2("spritePos", &spritePos_.x, 0, 100.0f);
 
 	ImGui::End();
 
@@ -163,7 +202,18 @@ void StageSelectScene::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
+	spriteSelect_->Draw();
 
+	if (selectStage_ != 0)
+	{
+		spriteUI_A_->Draw();
+	}
+	if (selectStage_ != 4)
+	{
+		spriteUI_D_->Draw();
+	}
+
+	spriteSelectNum_[selectStage_]->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑

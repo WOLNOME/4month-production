@@ -29,8 +29,9 @@ private://メンバ変数
 	Input* input_ = nullptr;
 
 	//タイトルスプライト
-	uint32_t textureHandleTitle_ = 0u;
-	std::unique_ptr<Sprite> spriteTitle_ = nullptr;
+	uint32_t textureHandleUI_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_ = nullptr;
+
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
 	
