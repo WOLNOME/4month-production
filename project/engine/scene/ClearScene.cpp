@@ -12,6 +12,9 @@ void ClearScene::Initialize()
 	spriteClear_ = std::make_unique<Sprite>();
 	spriteClear_->Initialize(textureHandleClear_);
 
+	textureHandleUI_SPACE_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE2.png");
+	spriteUI_SPACE_ = std::make_unique<Sprite>();
+	spriteUI_SPACE_->Initialize(textureHandleUI_SPACE_);
 
 }
 
@@ -22,11 +25,12 @@ void ClearScene::Finalize()
 
 void ClearScene::Update()
 {
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
 
 	spriteClear_->Update();
+	spriteUI_SPACE_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -74,6 +78,7 @@ void ClearScene::Draw()
 	///------------------------------///
 
 	spriteClear_->Draw();
+	spriteUI_SPACE_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑

@@ -35,5 +35,8 @@ private://メンバ変数
 	//スプライト
 	uint32_t textureHandleGO_ = 0u;
 	std::unique_ptr<Sprite> spriteGO_ = nullptr;
+
+	uint32_t textureHandleUI_SPACE_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_SPACE_ = nullptr;
 };
 
