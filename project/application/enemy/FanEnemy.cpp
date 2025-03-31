@@ -97,7 +97,9 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 			transform_.translate_ += direction * 0.1f; // 微調整のための値
 			transform_.translate_.y = 1.0f;
 		}
-		else if (_other->GetColliderID() == "Obstacle")
+		
+	}
+	if (_other->GetColliderID() == "Obstacle")
 		{
 			transform_.translate_ += ComputePenetration(*_other->GetAABB());
 			//行列の更新
@@ -123,7 +125,6 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 		{
 			onIce_ = true;
 		}
-	}
 }
 
 void FanEnemy::OnCollisionTrigger(const AppCollider* other)
