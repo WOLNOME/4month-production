@@ -45,10 +45,6 @@ public://メンバ関数
 		const SceneLight* sceneLight = nullptr,
 		int32_t textureHandle = EOF
 	);
-
-public://公開変数
-	//カラー
-	Vector4 color_;
 private://非公開メンバ関数
 
 private://メンバ変数

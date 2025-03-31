@@ -159,7 +159,6 @@ void DevelopScene::Update() {
 	ImGui::Begin("teapot");
 	ImGui::DragFloat3("translate", &wtAxis_.translate_.x, 0.01f);
 	ImGui::DragFloat3("scale", &wtAxis_.scale_.x, 0.01f);
-	ImGui::ColorEdit4("color", &axis_->color_.x);
 	ImGui::End();
 
 	ImGui::Begin("terrain");
