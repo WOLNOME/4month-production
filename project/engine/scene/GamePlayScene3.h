@@ -102,5 +102,11 @@ private://メンバ変数
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
 
+	//プレイヤーが障害物とぶつかったときの効果音
+	std::unique_ptr<Audio> playerCollisionSE_ = nullptr;
+	//プレイヤーがアイスミストに当たったときの効果音
+	std::unique_ptr<Audio> playerCollisionIceMistSE_ = nullptr;
+	//落ちているときの効果音
+	std::unique_ptr<Audio> fallSE_ = nullptr;
 };
 

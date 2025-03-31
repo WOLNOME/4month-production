@@ -11,6 +11,8 @@
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
+class Audio;
+
 class Player : public GameObject
 {
 public:
@@ -58,6 +60,9 @@ public: //セッター
 
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
+	// 効果音のセット
+	void SetObstacleSE(Audio* _obstacleSE) { obstacleSE_ = _obstacleSE; }
+	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
 
 private:
 
@@ -74,6 +79,10 @@ private:
 
 	// 入力
 	Input* input_ = nullptr;
+
+	//効果音のポインタ
+	Audio* obstacleSE_ = nullptr;
+	Audio* freezeSE_ = nullptr;
 
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};

@@ -2,6 +2,7 @@
 
 #include "../../appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
+#include "Audio.h"
 
 void Player::Initialize()
 {
@@ -366,6 +367,13 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
 		knockBackTime_ = 25.0f;
+	}
+
+	// 障害物に当たったら効果音の再生
+	if (_other->GetColliderID() == "Obstacle")
+	{
+		if (!obstacleSE_) { return; }
+		obstacleSE_->Play();
 	}
 }
 

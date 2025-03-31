@@ -15,6 +15,14 @@ void GamePlayScene3::Initialize()
 
 	input_ = Input::GetInstance();
 
+	//効果音の初期化
+	//プレイヤーが障害物とぶつかったときの効果音
+	playerCollisionSE_ = std::make_unique<Audio>();
+	playerCollisionSE_->Initialize("obstacle_collision.wav");
+	//プレイヤーがアイスミストに当たったときの効果音
+	playerCollisionIceMistSE_ = std::make_unique<Audio>();
+	playerCollisionIceMistSE_->Initialize("freeze.wav");
+
 	// スプライト
 	textureHandleUI_PLAY_ = TextureManager::GetInstance()->LoadTexture("UI_PLAY.png");
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
@@ -45,6 +53,7 @@ void GamePlayScene3::Initialize()
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
+		player->SetObstacleSE(playerCollisionSE_.get());
 
 		players_.push_back(std::move(player));
 		playerNum_++;
