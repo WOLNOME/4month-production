@@ -81,7 +81,7 @@ void ParticleManager::Update() {
 			if (!particle.second->emitter_.isBillboard) {
 				worldMatrix = MyMath::MakeAffineMatrix((*effectIterator).transform.scale, (*effectIterator).transform.rotate, (*effectIterator).transform.translate);
 			}
-			//各エフェクトのワールド行列と色情報をパーティクルリソーに書き込む
+			//各エフェクトのワールド行列と色情報をパーティクルリソースに書き込む
 			particle.second->particleResource_.instancingData[instanceNum].World = worldMatrix;
 			particle.second->particleResource_.instancingData[instanceNum].color = currentColor;
 
@@ -341,7 +341,6 @@ void ParticleManager::GenerateGraphicsPipeline() {
 
 std::list<Particle::EffectData> ParticleManager::GenerateEffect(Particle* particle, int genNum) {
 
-
 	std::list<Particle::EffectData> effects;
 	for (int i = 0; i < genNum; i++) {
 		Particle::EffectData effect;
@@ -349,7 +348,7 @@ std::list<Particle::EffectData> ParticleManager::GenerateEffect(Particle* partic
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		//一様分布
-		std::uniform_real_distribution<float> distTranslateX(particle->emitter_.transform.translate.x - particle->emitter_.transform.translate.x + particle->emitter_.transform.scale.x, particle->emitter_.transform.scale.x);
+		std::uniform_real_distribution<float> distTranslateX(particle->emitter_.transform.translate.x - particle->emitter_.transform.scale.x, particle->emitter_.transform.translate.x + particle->emitter_.transform.scale.x);
 		std::uniform_real_distribution<float> distTranslateY(particle->emitter_.transform.translate.y - particle->emitter_.transform.scale.y, particle->emitter_.transform.translate.y + particle->emitter_.transform.scale.y);
 		std::uniform_real_distribution<float> distTranslateZ(particle->emitter_.transform.translate.z - particle->emitter_.transform.scale.z, particle->emitter_.transform.translate.z + particle->emitter_.transform.scale.z);
 		std::uniform_real_distribution<float> distStartSize(particle->GetParam()["StartSize"]["Min"], particle->GetParam()["StartSize"]["Max"]);
