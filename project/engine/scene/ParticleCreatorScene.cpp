@@ -44,6 +44,10 @@ void ParticleCreatorScene::Update() {
 	wtSkydome_.UpdateMatrix();
 	wtGround_.UpdateMatrix();
 
+	//エミッター可視化ラインの生成初期化
+	lineEmitter_ = std::make_unique<LineDrawer>();
+	lineEmitter_->Initialize();
+
 	//リセットコマンド
 	if (!checkContinue_ && !checkSameName_ && !checkEditName_) {
 		if (input_->TriggerKey(DIK_ESCAPE)) {
@@ -85,6 +89,20 @@ void ParticleCreatorScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
+	///------------------------------///
+
+	//線描画共通描画設定
+	LineDrawerCommon::GetInstance()->SettingCommonDrawing();
+
+	///------------------------------///
+	///↓↓↓↓線描画開始↓↓↓↓
+	///------------------------------///
+
+	//線描画
+	lineEmitter_->Draw(*camera_.get());
+
+	///------------------------------///
+	///↑↑↑↑線描画終了↑↑↑↑
 	///------------------------------///
 
 }
@@ -467,5 +485,62 @@ void ParticleCreatorScene::Editor() {
 	ImGui::End();
 
 	//エミッター
+	ImGui::Begin("エミッター");
+	//エミッター可視化
+	if (ImGui::Checkbox("エミッターの枠を表示する", &displayLineEmitter_)) {
+		Vector3 prbf;		//右下前
+		Vector3 plbf;		//左下前
+		Vector3 prtf;		//右上前
+		Vector3 pltf;		//左上前
+		Vector3 prbb;		//右下奥
+		Vector3 plbb;		//左下奥
+		Vector3 prtb;		//右上奥
+		Vector3 pltb;		//左上奥
+		prbf = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		plbf = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		prtf = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		pltf = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		prbb = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		plbb = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		prtb = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		pltb = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		Vector4
 
+		lineEmitter_->CreateLine(prbf, plbf, Vector4(1, 1, 0, 1));
+	}
+
+
+	ImGui::End();
 }
