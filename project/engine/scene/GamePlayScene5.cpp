@@ -400,6 +400,14 @@ void GamePlayScene5::ImGuiDraw()
 
 	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
 
+	ImGui::Text("charge : % .0f", charge_);
+
+	if (!players_.empty())
+	{
+		bool isChargeMax = players_[0]->IsChargeMax();
+		ImGui::Text("player ChargeMax : %s", isChargeMax ? "true" : "false");
+	}
+
 	ImGui::End();
 
 	// プレイヤー
@@ -448,5 +456,26 @@ void GamePlayScene5::playerSpawnRotation()
 
 void GamePlayScene5::playerTackleCharge()
 {
+	// プレイヤーが1体以上いるとき
+	if (playerNum_ > 0)
+	{
+		// プレイヤーの攻撃フラグが立っているとき
+		if (!players_[0]->IsChargeMax())
+		{
+			charge_ += 1.0f;
+		}
 
+		// チャージが最大値に達したら
+		if (charge_ >= chargeMax_)
+		{
+			for (auto& player : players_)
+			{
+				// 攻撃できるようにする
+				player->SetIsChargeMax(true);
+			}
+
+			charge_ = 0.0f;
+		}
+
+	}
 }

@@ -261,6 +261,8 @@ void GamePlayScene::ImGuiDraw()
 
 	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
 
+	ImGui::Text("charge : % .0f", charge_);
+
 	if (!players_.empty())
 	{
 		bool isChargeMax = players_[0]->IsChargeMax();
