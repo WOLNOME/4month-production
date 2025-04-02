@@ -30,6 +30,11 @@ void ParticleCreatorScene::Initialize() {
 	textureHandleGround_ = TextureManager::GetInstance()->LoadTexture("grid.png");
 	ground_ = std::make_unique<Object3d>();
 	ground_->InitializeModel("ground");
+
+	//エミッター可視化ラインの生成初期化
+	lineEmitter_ = std::make_unique<LineDrawer>();
+	lineEmitter_->Initialize();
+
 }
 
 void ParticleCreatorScene::Finalize() {
@@ -50,7 +55,6 @@ void ParticleCreatorScene::Update() {
 			isReset_ = true;
 		}
 	}
-
 
 	//ImGui操作
 #ifdef _DEBUG
@@ -85,6 +89,20 @@ void ParticleCreatorScene::Draw() {
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
+	///------------------------------///
+
+	//線描画共通描画設定
+	LineDrawerCommon::GetInstance()->SettingCommonDrawing();
+
+	///------------------------------///
+	///↓↓↓↓線描画開始↓↓↓↓
+	///------------------------------///
+
+	//線描画
+	lineEmitter_->Draw(*camera_.get());
+
+	///------------------------------///
+	///↑↑↑↑線描画終了↑↑↑↑
 	///------------------------------///
 
 }
@@ -232,8 +250,6 @@ void ParticleCreatorScene::EditWithImGui() {
 		Editor();
 	}
 #endif // _DEBUG
-
-
 }
 
 void ParticleCreatorScene::ResetWithImGui() {
@@ -340,6 +356,7 @@ void ParticleCreatorScene::SaveWithImGui() {
 }
 
 void ParticleCreatorScene::Editor() {
+#ifdef _DEBUG
 	//パラメーター
 	ImGui::SetNextWindowPos(ImVec2(10, 80), ImGuiCond_FirstUseEver);
 	ImGui::Begin("パーティクルのパラメーター");
@@ -467,5 +484,95 @@ void ParticleCreatorScene::Editor() {
 	ImGui::End();
 
 	//エミッター
+	ImGui::Begin("エミッター");
+	//エミッター可視化
+	ImGui::Checkbox("エミッターの枠を表示する", &displayLineEmitter_);
+	if (displayLineEmitter_) {
+		Vector3 prbf;		//右下前
+		Vector3 plbf;		//左下前
+		Vector3 prtf;		//右上前
+		Vector3 pltf;		//左上前
+		Vector3 prbb;		//右下奥
+		Vector3 plbb;		//左下奥
+		Vector3 prtb;		//右上奥
+		Vector3 pltb;		//左上奥
+		prbf = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		plbf = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		prtf = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		pltf = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z - particle_->emitter_.transform.scale.z
+		};
+		prbb = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		plbb = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y - particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		prtb = {
+			particle_->emitter_.transform.translate.x + particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		pltb = {
+			particle_->emitter_.transform.translate.x - particle_->emitter_.transform.scale.x,
+			particle_->emitter_.transform.translate.y + particle_->emitter_.transform.scale.y,
+			particle_->emitter_.transform.translate.z + particle_->emitter_.transform.scale.z
+		};
+		Vector4 color = { 1,0,0,1 };
 
+		lineEmitter_->CreateLine(prbf, plbf, color);
+		lineEmitter_->CreateLine(plbf, pltf, color);
+		lineEmitter_->CreateLine(pltf, prtf, color);
+		lineEmitter_->CreateLine(prtf, prbf, color);
+
+		lineEmitter_->CreateLine(prbb, plbb, color);
+		lineEmitter_->CreateLine(plbb, pltb, color);
+		lineEmitter_->CreateLine(pltb, prtb, color);
+		lineEmitter_->CreateLine(prtb, prbb, color);
+
+		lineEmitter_->CreateLine(prbf, prbb, color);
+		lineEmitter_->CreateLine(plbf, plbb, color);
+		lineEmitter_->CreateLine(prtf, prtb, color);
+		lineEmitter_->CreateLine(pltf, pltb, color);
+	}
+	//エミッターのトランスフォーム
+	if (ImGui::CollapsingHeader("エミッターのトランスフォーム")) {
+		ImGui::DragFloat3("平行移動", &particle_->emitter_.transform.translate.x, 0.1f);
+		ImGui::DragFloat3("拡縮", &particle_->emitter_.transform.scale.x, 0.1f);
+	}
+	//重力関係
+	if (ImGui::CollapsingHeader("重力")) {
+		ImGui::Checkbox("重力の処理をするか", &particle_->emitter_.isGravity);
+		ImGui::DragFloat("重力値", &particle_->emitter_.gravity);
+	}
+	//床関係
+	if (ImGui::CollapsingHeader("床")) {
+		ImGui::Checkbox("床の処理をするか", &particle_->emitter_.isBound);
+		ImGui::DragFloat("床の反発値", &particle_->emitter_.repulsion);
+		ImGui::DragFloat("床の高さ", &particle_->emitter_.floorHeight);
+	}
+	//ビルボードを適用するか
+	if (ImGui::CollapsingHeader("ビルボード")) {
+		ImGui::Checkbox("ビルボードの処理をするか", &particle_->emitter_.isBillboard);
+	}
+	ImGui::End();
+#endif // _DEBUG
 }

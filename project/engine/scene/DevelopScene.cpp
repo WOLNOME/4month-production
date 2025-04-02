@@ -88,7 +88,7 @@ void DevelopScene::Initialize() {
 	line_->Initialize();
 
 	audio_ = std::make_unique<Audio>();
-	audio_->Initialize("Alarm01.wav");
+	audio_->Initialize("demo2.wav");
 
 	text_ = std::make_unique<TextWrite>();
 	text_->Initialize("text");

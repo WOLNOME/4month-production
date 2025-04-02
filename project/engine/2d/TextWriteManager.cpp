@@ -414,7 +414,7 @@ void TextWriteManager::DrawOutline(const std::string& key) {
 		position.y += textWriteMap[key]->GetSize() * (15.0f / 16.0f);
 		break;
 	default:
-		assert(0 && "不明のフォントです。ポジションの計算をしてください。");
+		assert(0 && "不明なフォントです。ポジションの計算をしてください。");
 		break;
 	}
 

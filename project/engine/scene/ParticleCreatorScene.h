@@ -58,6 +58,9 @@ private://必要なオブジェクト
 	uint32_t textureHandleGround_ = EOF;
 	std::unique_ptr<Object3d> ground_ = nullptr;
 
+	//エミッターの線描画
+	std::unique_ptr<LineDrawer> lineEmitter_ = nullptr;
+
 private:
 	// 編集するパーティクル
 	std::unique_ptr<Particle> particle_ = nullptr;
@@ -77,5 +80,6 @@ private://ImGui操作で必要な変数
 	bool checkContinue_ = false;
 	bool checkSameName_ = false;
 	bool checkEditName_ = false;
+	bool displayLineEmitter_ = true;
 };
 
