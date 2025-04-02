@@ -69,6 +69,15 @@ void StageSelectScene::Initialize()
 	selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
 
 	selectStage_ = 0;
+
+	//パーティクル
+	particle_ = std::make_unique<Particle>();
+	particle_->Initialize("RainbowSnow", "RainbowSnow");
+	particle_->emitter_.transform.translate = cameraTranslate;
+	particle_->emitter_.transform.translate.z += 10.0f;
+	particle_->emitter_.transform.translate.y += -8.0f;
+	particle_->emitter_.transform.scale = { 30.0f,30.0f,20.0f };
+
 }
 
 void StageSelectScene::Finalize()
@@ -117,6 +126,7 @@ void StageSelectScene::Update()
 		{
 			sceneManager_->SetNextScene("GAMEPLAY5");
 		}
+
 	}
 
 	spriteSelect_->Update();
