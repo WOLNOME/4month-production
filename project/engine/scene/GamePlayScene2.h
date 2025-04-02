@@ -52,7 +52,11 @@ public:
 	// ImGui
 	void ImGuiDraw();
 	
+	// プレイヤースポーン処理
 	void playerSpawnRotation();
+
+	// Player攻撃チャージ
+	void playerTackleCharge();
 
 private://メンバ変数
 

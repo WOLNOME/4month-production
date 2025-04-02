@@ -149,6 +149,8 @@ void GamePlayScene3::Update()
 	{
 		player->Update();
 	}
+	// プレイヤー攻撃チャージ
+	playerTackleCharge();
 
 
 	//エネミーマネージャーの更新
@@ -372,4 +374,9 @@ void GamePlayScene3::playerSpawnRotation()
 			playerSpawnIndex_ = 0;
 		}
 	}
+}
+
+void GamePlayScene3::playerTackleCharge()
+{
+
 }
