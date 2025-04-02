@@ -27,9 +27,6 @@ void Object3d::InitializeModel(const std::string& filePath, ModelFormat format) 
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
 
 	objKind_ = kModel;
-
-	color_ = { 1.0f,1.0f,1.0f,1.0f };
-	model_->SetColor(color_);
 }
 
 void Object3d::InitializeShape(Shape::ShapeKind kind) {
@@ -38,9 +35,6 @@ void Object3d::InitializeShape(Shape::ShapeKind kind) {
 	shape_->Initialize(kind);
 
 	objKind_ = kShape;
-
-	color_ = { 1.0f,1.0f,1.0f,1.0f };
-	shape_->SetColor(color_);
 }
 
 void Object3d::Draw(WorldTransform& worldTransform, const  BaseCamera& camera, const SceneLight* sceneLight, int32_t textureHandle) {

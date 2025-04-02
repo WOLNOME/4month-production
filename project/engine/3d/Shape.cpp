@@ -18,10 +18,6 @@ void Shape::Update() {
 void Shape::Draw(uint32_t materialRootParameterIndex, uint32_t textureRootParameterIndex, int32_t textureHandle) {
 	//頂点バッファビューを設定
 	MainRender::GetInstance()->GetCommandList()->IASetVertexBuffers(0, 1, &shapeResource_.vertexBufferView);
-	//マテリアルCBufferの場所を設定
-	if (color_) {
-		shapeResource_.materialData->color = *color_;
-	}
 	MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(materialRootParameterIndex, shapeResource_.materialResource->GetGPUVirtualAddress());
 	//テクスチャがない場合は飛ばす
 	shapeResource_.materialData->isTexture = (textureHandle != EOF) ? true : false;

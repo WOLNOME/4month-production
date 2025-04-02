@@ -43,17 +43,11 @@ public:
 private://非公開メンバ関数
 	//形状リソース作成関数
 	ShapeResource MakeShapeResource();
-
-public://setter
-	void SetColor(Vector4 color) { color_ = &color; }
 private:
 	//形状の種類
 	ShapeKind shapeKind_;
 	//形状用リソース
 	ShapeResource shapeResource_;
-	//色
-	Vector4* color_ = nullptr;
-
 	//球体の分割数
 	const uint32_t kSubdivision = 15;
 
