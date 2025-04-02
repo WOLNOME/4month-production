@@ -430,7 +430,7 @@ void ParticleCreatorScene::Editor() {
 	if (ImGui::CollapsingHeader("エフェクトの最大数")) {
 		//推奨値の計算
 		int RecommendValue = lifeTimeMax * editParam_["EmitRate"];
-		ImGui::Text("推奨値 : %d(最低限の数で回せる値)", RecommendValue);
+		ImGui::Text("推奨値 : %d　(最低限の数で回せる値)", RecommendValue);
 		if (ImGui::Button("推奨値を適用")) {
 			maxEffects = RecommendValue;
 		}
