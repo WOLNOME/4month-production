@@ -484,6 +484,7 @@ void ParticleCreatorScene::Editor() {
 	ImGui::End();
 
 	//エミッター
+	ImGui::SetNextWindowPos(ImVec2(1000, 80), ImGuiCond_FirstUseEver);
 	ImGui::Begin("エミッター");
 	//エミッター可視化
 	ImGui::Checkbox("エミッターの枠を表示する", &displayLineEmitter_);
@@ -561,13 +562,13 @@ void ParticleCreatorScene::Editor() {
 	//重力関係
 	if (ImGui::CollapsingHeader("重力")) {
 		ImGui::Checkbox("重力の処理をするか", &particle_->emitter_.isGravity);
-		ImGui::DragFloat("重力値", &particle_->emitter_.gravity);
+		ImGui::DragFloat("重力値", &particle_->emitter_.gravity,0.1f);
 	}
 	//床関係
 	if (ImGui::CollapsingHeader("床")) {
 		ImGui::Checkbox("床の処理をするか", &particle_->emitter_.isBound);
-		ImGui::DragFloat("床の反発値", &particle_->emitter_.repulsion);
-		ImGui::DragFloat("床の高さ", &particle_->emitter_.floorHeight);
+		ImGui::DragFloat("床の反発値", &particle_->emitter_.repulsion,0.1f);
+		ImGui::DragFloat("床の高さ", &particle_->emitter_.floorHeight,0.1f);
 	}
 	//ビルボードを適用するか
 	if (ImGui::CollapsingHeader("ビルボード")) {

@@ -57,6 +57,19 @@ void ParticleManager::Update() {
 				effectIterator = particle.second->effects_.erase(effectIterator);
 				continue;
 			}
+			//各エフェクトとエミッターとの処理
+			if (particle.second->emitter_.isGravity) {
+				//重力処理
+				(*effectIterator).velocity.y += particle.second->emitter_.gravity * kDeltaTime;
+			}
+			if (particle.second->emitter_.isBound) {
+				//エフェクトの足
+				float leg = (*effectIterator).transform.translate.y - MyMath::Lerp((*effectIterator).startSize, (*effectIterator).endSize, (*effectIterator).currentTime);
+				//床の反発処理
+				if (leg > particle.second->emitter_.floorHeight && leg + (kDeltaTime * (*effectIterator).velocity.y) < particle.second->emitter_.floorHeight) {
+					(*effectIterator).velocity.y *= (-1.0f) * particle.second->emitter_.repulsion;
+				}
+			}
 			//各エフェクトとフィールドとの処理
 			if (field_) {
 				if (field_->isActive && particle.second->emitter_.isAffectedField) {
