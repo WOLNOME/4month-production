@@ -52,7 +52,11 @@ public:
 	// ImGui
 	void ImGuiDraw();
 	
+	// プレイヤースポーン処理
 	void playerSpawnRotation();
+
+	// Player攻撃チャージ
+	void playerTackleCharge();
 
 private://メンバ変数
 
@@ -102,6 +106,12 @@ private://メンバ変数
 
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
+
+	// 攻撃チャージMax
+	const float chargeMax_ = 80.0f;
+	// 攻撃チャージ
+	float charge_ = 0.0f;
+
 
 };
 

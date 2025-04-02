@@ -54,10 +54,16 @@ public: // ゲッター
 	// プレイヤーの速度を取得
 	Vector3 GetVelocity() const { return moveVel_; }
 
+	// 攻撃チャージフラグを取得
+	bool IsChargeMax() const { return isChargeMax_; }
+
 public: //セッター
 
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
+
+	// 攻撃チャージフラグをセット
+	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
 
 private:
 
@@ -105,6 +111,8 @@ private:
 	// 攻撃時間
 	const float attackTime_ = 12;
 	float attackTimeCounter_ = attackTime_;
+	// 攻撃チャージがMaxかどうか
+	bool isChargeMax_ = true;
 
 	Vector3 attackToEnemy_{};
 
@@ -122,5 +130,6 @@ private:
 	float moveSpeedOnIce_ = 0.01f;
 	//氷の上にいるときの最高速度
 	float MaxSpeedOnIce_ = 0.2f;
+
 };
 
