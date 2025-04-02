@@ -428,6 +428,12 @@ void ParticleCreatorScene::Editor() {
 	//エフェクトの最大数を写す
 	int maxEffects = editParam_["MaxEffects"];
 	if (ImGui::CollapsingHeader("エフェクトの最大数")) {
+		//推奨値の計算
+		int RecommendValue = lifeTimeMax * editParam_["EmitRate"];
+		ImGui::Text("推奨値 : %d(最低限の数で回せる値)", RecommendValue);
+		if (ImGui::Button("推奨値を適用")) {
+			maxEffects = RecommendValue;
+		}
 		ImGui::SliderInt("MaxEffects", &maxEffects, 1, 1000);
 	}
 	//1秒あたりのエフェクトの生成量を写す
@@ -484,6 +490,7 @@ void ParticleCreatorScene::Editor() {
 	ImGui::End();
 
 	//エミッター
+	ImGui::SetNextWindowPos(ImVec2(1000, 80), ImGuiCond_FirstUseEver);
 	ImGui::Begin("エミッター");
 	//エミッター可視化
 	ImGui::Checkbox("エミッターの枠を表示する", &displayLineEmitter_);
@@ -561,13 +568,13 @@ void ParticleCreatorScene::Editor() {
 	//重力関係
 	if (ImGui::CollapsingHeader("重力")) {
 		ImGui::Checkbox("重力の処理をするか", &particle_->emitter_.isGravity);
-		ImGui::DragFloat("重力値", &particle_->emitter_.gravity);
+		ImGui::DragFloat("重力値", &particle_->emitter_.gravity, 0.1f);
 	}
 	//床関係
 	if (ImGui::CollapsingHeader("床")) {
 		ImGui::Checkbox("床の処理をするか", &particle_->emitter_.isBound);
-		ImGui::DragFloat("床の反発値", &particle_->emitter_.repulsion);
-		ImGui::DragFloat("床の高さ", &particle_->emitter_.floorHeight);
+		ImGui::DragFloat("床の反発値", &particle_->emitter_.repulsion, 0.1f);
+		ImGui::DragFloat("床の高さ", &particle_->emitter_.floorHeight, 0.1f);
 	}
 	//ビルボードを適用するか
 	if (ImGui::CollapsingHeader("ビルボード")) {
