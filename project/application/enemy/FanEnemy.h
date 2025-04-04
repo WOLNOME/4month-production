@@ -24,8 +24,11 @@ public:
 
 	void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	Vector3 GetPosition() const { return transform_.translate_; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
+	Vector3 GetRotate() const { return transform_.rotate_; }
 	void SetEnemyManager(EnemyManager* enemyManager) { enemyManager_ = enemyManager; }
 	bool IsAlive() const { return isAlive_; }
+	bool IsGround() const { return isGround_; }
 
 private:
 	void Move();

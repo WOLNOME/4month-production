@@ -56,6 +56,9 @@ public: // ゲッター
 	// プレイヤーの速度を取得
 	Vector3 GetVelocity() const { return moveVel_; }
 
+	// 落下中かどうか
+	bool IsGround() const { return isGround_; }
+
 public: //セッター
 
 	// プレイヤーの位置をセット

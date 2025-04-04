@@ -16,6 +16,8 @@ public:
     void SetTargetPosition(const Vector3& target) { target_ = target; }
     Vector3 GetPosition() const { return transform_.translate_; }
     void SetPosition(const Vector3& position) { transform_.translate_ = position; }
+	Vector3 GetRotate() const { return transform_.rotate_; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
 
 	/////////// GameObjectとの競合を無くすための関数 ///////////
 
@@ -32,6 +34,7 @@ public:
     void OutOfField();
 	//生存フラグ
 	bool IsAlive() const { return isAlive_; }
+	bool IsGround() const { return isGround_; }
 
 private: // 衝突判定
 
