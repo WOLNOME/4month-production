@@ -5,6 +5,7 @@
 #include <memory>
 #include <MyMath.h>
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../../GameObject/GameObject.h"
 
@@ -20,6 +21,10 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	void ParticleStart();
+
+	void ParticleStop();
+
 private:
 
 	// モデル情報
@@ -27,5 +32,7 @@ private:
 	int32_t textureHandleSpawn_ = EOF;
 	std::unique_ptr<Object3d> spawn_{};
 
+	// パーティクル
+	std::unique_ptr<Particle> particle_{};
 };
 

@@ -47,5 +47,6 @@ private:
 	bool isMoveRight_ = false;
 
 	uint32_t nowStage_ = 0;
+
 };
 
