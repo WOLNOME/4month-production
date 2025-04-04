@@ -296,26 +296,40 @@ void GamePlayScene::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 15)
+
+	// タイマーが120になったら準備
+	if (rotationTimer_ == 120.0f && howManyBoogie_ < 15)
 	{
-		rotationTimer_ = rotation_;
+		// プレイヤースポーン位置の演出
+		playerSpawn_[playerSpawnIndex_]->ParticleStart();
+	}
 
-		// プレイヤーを追加
-		auto player = std::make_unique<Player>();
-		howManyBoogie_++;
+	// タイマーが0になったら追加
+	if (rotationTimer_ <= 0.0f)
+	{
+		playerSpawn_[playerSpawnIndex_]->ParticleStop();
 
-		player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
-		player->Initialize();
-
-		players_.push_back(std::move(player));
-
-		playerNum_++;
-
-		// 位置ローテを0に戻す
-		playerSpawnIndex_++;
-		if (playerSpawnIndex_ > playerSpawnNum_ - 1)
+		if (howManyBoogie_ < 15)
 		{
-			playerSpawnIndex_ = 0;
+			rotationTimer_ = rotation_;
+
+			// プレイヤーを追加
+			auto player = std::make_unique<Player>();
+			howManyBoogie_++;
+
+			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
+			player->Initialize();
+
+			players_.push_back(std::move(player));
+
+			playerNum_++;
+
+			// 位置ローテを0に戻す
+			playerSpawnIndex_++;
+			if (playerSpawnIndex_ > playerSpawnNum_ - 1)
+			{
+				playerSpawnIndex_ = 0;
+			}
 		}
 	}
 }
