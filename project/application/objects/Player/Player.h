@@ -7,6 +7,7 @@
 #include <memory>
 #include <MyMath.h>
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
@@ -97,6 +98,14 @@ private:
 	float knockBackTime_ = 0.0f;
 	// ノックバックの余韻
 	bool isAftertaste_ = false;
+
+	//パーティクル
+	std::unique_ptr<Particle> hitEffect_ = nullptr;
+	int countHitEffect_;
+	std::unique_ptr<Particle> deadEffect_ = nullptr;
+	int countDeadEffect_;
+	std::unique_ptr<Particle> walkEffect_ = nullptr;
+	std::unique_ptr<Particle> tackleEffect_ = nullptr;
 
 
 	// 移動速度

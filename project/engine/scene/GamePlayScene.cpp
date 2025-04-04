@@ -144,7 +144,7 @@ void GamePlayScene::Update()
 	if (input_->TriggerKey(DIK_ESCAPE)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
-
+	
 	// ゲームオーバーへ
 	if (playerNum_ <= 0  or input_->TriggerKey(DIK_RETURN))
 	{

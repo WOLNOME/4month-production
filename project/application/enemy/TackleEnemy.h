@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseEnemy.h"
 #include <random>
+#include <Particle.h>
 
 #include "../appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"
@@ -56,6 +57,10 @@ private:
     void MoveOnIce();
 
 private:
+    //パーティクル
+	std::unique_ptr<Particle> deadEffect_ = nullptr;
+	int countDeadEffect_;
+
     //生存フラグ
 	bool isAlive_ = true;
     // タックル中かどうか
