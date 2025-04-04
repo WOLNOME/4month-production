@@ -95,7 +95,7 @@ private://メンバ変数
 	// プレイヤースポーン位置
 	std::vector<Vector3> playerSpawnPositions_{};
 	// ローテーション間隔
-	const float rotation_ = 300.0f;
+	const float rotation_ = 240.0f;
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
 	// 何体出たか
