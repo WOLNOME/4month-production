@@ -89,6 +89,7 @@ void Player::Update()
 	OutOfField();
 
 	wtPlayer_.UpdateMatrix();
+	wtPlayer_.rotate_ = rotation_;
 
 	// 当たり判定関係
 	aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
@@ -137,6 +138,12 @@ void Player::Move()
 	if (moveVel_.Length() < 0.01f)
 	{
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+	else
+	{
+		// 移動方向に向きを変更
+		float targetRotationY = atan2f(moveVel_.x, moveVel_.z);
+		rotation_.y = MyMath::Lerp(rotation_.y, targetRotationY, 0.1f); // 0.1fは補間係数
 	}
 
 	wtPlayer_.translate_ += moveVel_;
