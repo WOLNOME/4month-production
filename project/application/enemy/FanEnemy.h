@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <Particle.h>
 
 #include "BaseEnemy.h"
 #include "../appCollider/AppCollisionManager.h"
@@ -42,6 +43,10 @@ private:
 	void MoveOnIce();
 
 private:
+	//パーティクル
+	std::unique_ptr<Particle> deadEffect_ = nullptr;
+	int countDeadEffect_;
+
 	//速度ベクトル
 	Vector3 velocity_ = { 0.0f,0.0f,0.0f };
 	//摩擦係数

@@ -127,7 +127,7 @@
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
-    <ClCompile Include="RandomStringUtil.cpp" />
+    <ClCompile Include="engine\util\RandomStringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -257,7 +257,7 @@
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
-    <ClInclude Include="RandomStringUtil.h" />
+    <ClInclude Include="engine\util\RandomStringUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

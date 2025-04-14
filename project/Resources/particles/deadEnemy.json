@@ -1,6 +1,6 @@
 {
     "BlendMode": 2,
-    "EmitRate": 30,
+    "EmitRate": 120,
     "EndColor": {
         "Max": {
             "w": 0.0,
@@ -20,10 +20,10 @@
         "Min": 0.3
     },
     "LifeTime": {
-        "Max": 3.0,
+        "Max": 1.5,
         "Min": 1.0
     },
-    "MaxEffects": 90,
+    "MaxEffects": 180,
     "StartColor": {
         "Max": {
             "w": 1.0,
@@ -39,20 +39,20 @@
         }
     },
     "StartSize": {
-        "Max": 4.0,
-        "Min": 3.0
+        "Max": 6.0,
+        "Min": 4.0
     },
     "Texture": "circle.png",
     "Velocity": {
         "Max": {
-            "x": 5.0,
-            "y": 200.0,
-            "z": 5.0
+            "x": 20.0,
+            "y": 400.0,
+            "z": 20.0
         },
         "Min": {
-            "x": -5.0,
-            "y": 150.0,
-            "z": -5.0
+            "x": -20.0,
+            "y": 200.0,
+            "z": -20.0
         }
     }
 }

@@ -1,6 +1,6 @@
 {
     "BlendMode": 2,
-    "EmitRate": 150,
+    "EmitRate": 200,
     "EndColor": {
         "Max": {
             "w": 0.0,
@@ -20,10 +20,10 @@
         "Min": 0.2
     },
     "LifeTime": {
-        "Max": 1.0,
+        "Max": 1.5,
         "Min": 0.5
     },
-    "MaxEffects": 450,
+    "MaxEffects": 300,
     "StartColor": {
         "Max": {
             "w": 1.0,

@@ -80,10 +80,10 @@ void TackleEnemy::EnemyUpdate() {
 	//パーティクル
 	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {
 		countDeadEffect_++;
-		if (countDeadEffect_ == 40) {
+		if (countDeadEffect_ == 30) {
 			deadEffect_->emitter_.isPlay = false;
 		}
-		else if (countDeadEffect_ > 80) {
+		else if (countDeadEffect_ > 60) {
 			isAlive_ = false;
 			countDeadEffect_ = 0;
 		}

@@ -299,7 +299,6 @@ void ParticleManager::GenerateGraphicsPipeline() {
 		}
 	}
 
-
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	//裏面を表示しない
