@@ -69,5 +69,6 @@ private:
 	Vector3 spawnMaxPosition_ = { 20.0f,1.0f,20.0f };
 	int spawnCount_ = 1;
 	std::vector<std::unique_ptr<Player>>* players_ = nullptr; // プレイヤーリストのポインタ
+	std::unique_ptr<Audio> fallSE_ = nullptr;
 };
 

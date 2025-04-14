@@ -184,6 +184,13 @@ void TackleEnemy::OnCollision(const AppCollider* _other)
     {
         onIce_ = true;
     }
+    else
+    {
+		if (fallSE_)
+		{
+			fallSE_->Play(false);
+		}
+    }
    
 
     if (_other->GetColliderID() == "Player")
