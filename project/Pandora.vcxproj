@@ -149,10 +149,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
     <ClCompile Include="engine\scene\GameOverScene.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -252,10 +248,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\enemy\FreezeEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
-    <ClInclude Include="engine\scene\GamePlayScene2.h" />
-    <ClInclude Include="engine\scene\GamePlayScene3.h" />
-    <ClInclude Include="engine\scene\GamePlayScene4.h" />
-    <ClInclude Include="engine\scene\GamePlayScene5.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />

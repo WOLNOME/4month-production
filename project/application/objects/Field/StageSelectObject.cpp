@@ -20,6 +20,7 @@ void StageSelectObject::Initialize(const std::string& modelFilePath, const std::
     field_->InitializeModel(modelFilePath);
 
 	isMove_ = false;
+
 }
 
 void StageSelectObject::Finalize()
