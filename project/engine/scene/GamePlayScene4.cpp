@@ -195,7 +195,7 @@ void GamePlayScene4::Update()
 		}
 	}
 	// ゲームオーバーへ
-	if (playerNum_ <= 0 and isGameEnd_ and !isZoomIn_)
+	if (playerNum_ <= 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)
 	{
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
