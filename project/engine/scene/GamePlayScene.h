@@ -50,6 +50,7 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	// プレイヤースポーン処理
 	void playerSpawnRotation();
 
 	// カメラの更新
@@ -60,6 +61,12 @@ public:
 	void UpdateZoomOut();
 	// 最も近い敵やプレイヤーの位置を計算
 	void CalculateNearestPosition();
+
+	// Player攻撃チャージ
+	void playerTackleCharge();
+
+	//ステージ番号
+	static uint32_t stageNum_;
 
 private://メンバ変数
 
@@ -90,6 +97,15 @@ private://メンバ変数
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
+	//障害物
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
+
+	//跳ね返る障害物
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
+
+	//氷の床
+	std::vector<std::unique_ptr<IceFloor>> icefloors_;
+
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
 
@@ -100,7 +116,7 @@ private://メンバ変数
 	// プレイヤースポーン位置
 	std::vector<Vector3> playerSpawnPositions_{};
 	// ローテーション間隔
-	const float rotation_ = 300.0f;
+	const float rotation_ = 240.0f;
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
 	// 何体出たか
@@ -137,6 +153,11 @@ private://メンバ変数
 	float waitTime_ = 0.0f;
 	// 待機時間の長さ
 	float waitTimeDuration_ = 0.13f;
+
+	// 攻撃チャージMax
+	const float chargeMax_ = 80.0f;
+	// 攻撃チャージ
+	float charge_ = 0.0f;
 
 };
 

@@ -1,4 +1,5 @@
 #include "FanEnemy.h"
+#include "RandomStringUtil.h"
 
 #include <chrono>
 
@@ -38,6 +39,14 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 	appCollider_->SetOnCollisionTrigger(std::bind(&FanEnemy::OnCollisionTrigger, this, std::placeholders::_1));
 	appCollider_->SetOnCollision(std::bind(&FanEnemy::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
+
+	// パーティクル
+	deadEffect_ = std::make_unique<Particle>();
+	deadEffect_->Initialize("deadFanEnemy" + RandomStringUtil::GenerateRandomString(3), "deadEnemy");
+	deadEffect_->emitter_.isGravity = true;
+	deadEffect_->emitter_.gravity = -150.0f;
+	deadEffect_->emitter_.isPlay = false;
+	countDeadEffect_ = 0;
 }
 
 void FanEnemy::EnemyUpdate()
@@ -58,8 +67,28 @@ void FanEnemy::EnemyUpdate()
 	transform_.rotate_.y = fmod(transform_.rotate_.y + rotateSpeed_, 2.0f * 3.14159265359f);
 	// 風の更新
 	FanUpdate();
+
+	//パーティクル
+	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {
+		countDeadEffect_++;
+		if (countDeadEffect_ == 30) {
+			deadEffect_->emitter_.isPlay = false;
+		}
+		else if (countDeadEffect_ > 60) {
+			isAlive_ = false;
+			countDeadEffect_ = 0;
+		}
+	}
+
 	// 場外処理
 	OutOfField();
+
+	//生存中か
+	if (transform_.translate_.y <= -10.0f && countDeadEffect_ == 0) {
+		deadEffect_->emitter_.isPlay = true;
+		deadEffect_->emitter_.transform.translate = transform_.translate_;
+	}
+
 	//行列の更新
 	transform_.UpdateMatrix();
 	// 当たり判定関係
@@ -217,7 +246,6 @@ void FanEnemy::OutOfField()
 
 	if (transform_.translate_.y < -10.0f)
 	{
-		isAlive_ = false;
 		isGround_ = true;
 	}
 

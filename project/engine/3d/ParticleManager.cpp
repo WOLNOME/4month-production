@@ -27,23 +27,25 @@ void ParticleManager::Update() {
 	//各パーティクルの更新
 	for (const auto& particle : particles) {
 		//空いているエフェクトの中から確率で生成
-		int max = particle.second->GetParam()["MaxEffects"];
-		int rate = particle.second->GetParam()["EmitRate"];
-		float ratePerFrame = rate * kDeltaTime;
-		int genNum = 0;
-		for (int i = 0; i < 60; i++) {
-			//ランダム
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dist(0.0f, 100.0f);
-			//確率でこのフレームの生成数をインクリメント
-			if (dist(gen) < ratePerFrame) {
-				genNum++;
+		if (particle.second->emitter_.isPlay) {
+			int max = particle.second->GetParam()["MaxEffects"];
+			int rate = particle.second->GetParam()["EmitRate"];
+			float ratePerFrame = rate * kDeltaTime;
+			int genNum = 0;
+			for (int i = 0; i < 60; i++) {
+				//ランダム
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_real_distribution<float> dist(0.0f, 100.0f);
+				//確率でこのフレームの生成数をインクリメント
+				if (dist(gen) < ratePerFrame) {
+					genNum++;
+				}
 			}
-		}
-		//エフェクトの生成
-		if (genNum > 0 && particle.second->effects_.size() + genNum < max) {
-			particle.second->effects_.splice(particle.second->effects_.end(), GenerateEffect(particle.second, genNum));
+			//エフェクトの生成
+			if (genNum > 0 && particle.second->effects_.size() + genNum < max) {
+				particle.second->effects_.splice(particle.second->effects_.end(), GenerateEffect(particle.second, genNum));
+			}
 		}
 
 		//インスタンスの番号
@@ -56,6 +58,19 @@ void ParticleManager::Update() {
 			if ((*effectIterator).currentTime > (*effectIterator).lifeTime) {
 				effectIterator = particle.second->effects_.erase(effectIterator);
 				continue;
+			}
+			//各エフェクトとエミッターとの処理
+			if (particle.second->emitter_.isGravity) {
+				//重力処理
+				(*effectIterator).velocity.y += particle.second->emitter_.gravity * kDeltaTime;
+			}
+			if (particle.second->emitter_.isBound) {
+				//エフェクトの足
+				float leg = (*effectIterator).transform.translate.y - MyMath::Lerp((*effectIterator).startSize, (*effectIterator).endSize, (*effectIterator).currentTime);
+				//床の反発処理
+				if (leg > particle.second->emitter_.floorHeight && leg + (kDeltaTime * (*effectIterator).velocity.y) < particle.second->emitter_.floorHeight) {
+					(*effectIterator).velocity.y *= (-1.0f) * particle.second->emitter_.repulsion;
+				}
 			}
 			//各エフェクトとフィールドとの処理
 			if (field_) {
@@ -81,7 +96,7 @@ void ParticleManager::Update() {
 			if (!particle.second->emitter_.isBillboard) {
 				worldMatrix = MyMath::MakeAffineMatrix((*effectIterator).transform.scale, (*effectIterator).transform.rotate, (*effectIterator).transform.translate);
 			}
-			//各エフェクトのワールド行列と色情報をパーティクルリソーに書き込む
+			//各エフェクトのワールド行列と色情報をパーティクルリソースに書き込む
 			particle.second->particleResource_.instancingData[instanceNum].World = worldMatrix;
 			particle.second->particleResource_.instancingData[instanceNum].color = currentColor;
 
@@ -284,7 +299,6 @@ void ParticleManager::GenerateGraphicsPipeline() {
 		}
 	}
 
-
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	//裏面を表示しない
@@ -341,7 +355,6 @@ void ParticleManager::GenerateGraphicsPipeline() {
 
 std::list<Particle::EffectData> ParticleManager::GenerateEffect(Particle* particle, int genNum) {
 
-
 	std::list<Particle::EffectData> effects;
 	for (int i = 0; i < genNum; i++) {
 		Particle::EffectData effect;
@@ -349,7 +362,7 @@ std::list<Particle::EffectData> ParticleManager::GenerateEffect(Particle* partic
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		//一様分布
-		std::uniform_real_distribution<float> distTranslateX(particle->emitter_.transform.translate.x - particle->emitter_.transform.translate.x + particle->emitter_.transform.scale.x, particle->emitter_.transform.scale.x);
+		std::uniform_real_distribution<float> distTranslateX(particle->emitter_.transform.translate.x - particle->emitter_.transform.scale.x, particle->emitter_.transform.translate.x + particle->emitter_.transform.scale.x);
 		std::uniform_real_distribution<float> distTranslateY(particle->emitter_.transform.translate.y - particle->emitter_.transform.scale.y, particle->emitter_.transform.translate.y + particle->emitter_.transform.scale.y);
 		std::uniform_real_distribution<float> distTranslateZ(particle->emitter_.transform.translate.z - particle->emitter_.transform.scale.z, particle->emitter_.transform.translate.z + particle->emitter_.transform.scale.z);
 		std::uniform_real_distribution<float> distStartSize(particle->GetParam()["StartSize"]["Min"], particle->GetParam()["StartSize"]["Max"]);

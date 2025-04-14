@@ -5,7 +5,6 @@
 class GameOverScene : public BaseScene
 {
 public:
-
 	/// <summary>
 	/// 初期化
 	/// </summary>

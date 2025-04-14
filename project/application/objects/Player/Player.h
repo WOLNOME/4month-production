@@ -7,6 +7,7 @@
 #include <memory>
 #include <MyMath.h>
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
@@ -59,6 +60,9 @@ public: // ゲッター
 	// 落下中かどうか
 	bool IsGround() const { return isGround_; }
 
+	// 攻撃チャージフラグを取得
+	bool IsChargeMax() const { return isChargeMax_; }
+
 public: //セッター
 
 	// プレイヤーの位置をセット
@@ -66,6 +70,9 @@ public: //セッター
 	// 効果音のセット
 	void SetObstacleSE(Audio* _obstacleSE) { obstacleSE_ = _obstacleSE; }
 	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
+
+	// 攻撃チャージフラグをセット
+	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
 
 private:
 
@@ -104,6 +111,14 @@ private:
 	// ノックバックの余韻
 	bool isAftertaste_ = false;
 
+	//パーティクル
+	std::unique_ptr<Particle> hitEffect_ = nullptr;
+	int countHitEffect_;
+	std::unique_ptr<Particle> deadEffect_ = nullptr;
+	int countDeadEffect_;
+	std::unique_ptr<Particle> walkEffect_ = nullptr;
+	std::unique_ptr<Particle> tackleEffect_ = nullptr;
+
 
 	// 移動速度
 	Vector3 moveSpeed_ = { 0.1f,0.0f,0.1f };
@@ -117,6 +132,8 @@ private:
 	// 攻撃時間
 	const float attackTime_ = 12;
 	float attackTimeCounter_ = attackTime_;
+	// 攻撃チャージがMaxかどうか
+	bool isChargeMax_ = true;
 
 	Vector3 attackToEnemy_{};
 
@@ -134,5 +151,6 @@ private:
 	float moveSpeedOnIce_ = 0.01f;
 	//氷の上にいるときの最高速度
 	float MaxSpeedOnIce_ = 0.2f;
+
 };
 

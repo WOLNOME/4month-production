@@ -120,14 +120,11 @@
     <ClCompile Include="engine\scene\StageSelectScene.cpp" />
     <ClCompile Include="engine\scene\GameOverScene.cpp" />
     <ClCompile Include="application\objects\Field\StageSelectObject.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="application\MathUtils.cpp" />
+    <ClCompile Include="engine\util\RandomStringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -250,14 +247,11 @@
     <ClInclude Include="engine\scene\StageSelectScene.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
     <ClInclude Include="application\objects\Field\StageSelectObject.h" />
-    <ClInclude Include="engine\scene\GamePlayScene2.h" />
-    <ClInclude Include="engine\scene\GamePlayScene3.h" />
-    <ClInclude Include="engine\scene\GamePlayScene4.h" />
-    <ClInclude Include="engine\scene\GamePlayScene5.h" />
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="application\MathUtils.h" />
+    <ClInclude Include="engine\util\RandomStringUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

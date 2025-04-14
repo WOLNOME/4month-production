@@ -2,6 +2,9 @@
 #include "SceneManager.h"
 #include <ImGuiManager.h>
 
+BaseScene::~BaseScene() {
+}
+
 void BaseScene::Initialize() {
 	//シーンの初期化
 	sceneManager_ = SceneManager::GetInstance();

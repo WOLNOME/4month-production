@@ -31,7 +31,7 @@ public:
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~BaseScene() = default;
+	virtual ~BaseScene();
 	/// <summary>
 	/// 初期化
 	/// </summary>

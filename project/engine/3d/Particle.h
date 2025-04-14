@@ -36,11 +36,17 @@ public:
 		float lifeTime;				//寿命
 		float currentTime;			//現在の時間
 	};
-	//エミッター構造体
+	//エミッター
 	struct Emitter {
 		TransformEuler transform;	//エミッターのトランスフォーム
+		float gravity;				//重力値
+		float repulsion;			//床の反発値
+		float floorHeight;			//床の高さ
 		bool isAffectedField;		//フィールドに影響を受けるか
 		bool isBillboard;			//ビルボードを適用するか
+		bool isGravity;				//重力を適用するか
+		bool isBound;				//バウンドを適用するか
+		bool isPlay;				//パーティクルを生成するか
 	};
 public://メンバ関数
 	~Particle();

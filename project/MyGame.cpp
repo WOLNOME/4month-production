@@ -18,6 +18,7 @@ void MyGame::Initialize()
 	//シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->SetNextScene("TITLE");
 
+	//パーティクルエディター→PARTICLECREATOR
 }
 
 void MyGame::Finalize()
@@ -74,10 +75,8 @@ void MyGame::Draw()
 
 	//テキスト描画前処理
 	TextWriteManager::GetInstance()->BeginDrawWithD2D();
-
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
-
 	//テキスト描画後処理
 	TextWriteManager::GetInstance()->EndDrawWithD2D();
 

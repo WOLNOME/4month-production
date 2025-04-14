@@ -28,8 +28,14 @@ void Particle::Initialize(const std::string& name, const std::string& fileName) 
 	emitter_.transform.translate = Vector3(0.0f, 0.0f, 0.0f);
 	emitter_.transform.rotate = Vector3(0.0f, 0.0f, 0.0f);
 	emitter_.transform.scale = Vector3(1.0f, 1.0f, 1.0f);
+	emitter_.gravity = -1.0f;
+	emitter_.repulsion = 0.5f;
+	emitter_.floorHeight = 0.0f;
 	emitter_.isAffectedField = false;
 	emitter_.isBillboard = true;
+	emitter_.isGravity = false;
+	emitter_.isBound = false;
+	emitter_.isPlay = true;
 
 	//モデルマネージャーでモデル(見た目)を生成
 	ModelManager::GetInstance()->LoadModel("plane");
