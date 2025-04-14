@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\appCollider\AppCollider.cpp" />
     <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
     <ClCompile Include="application\enemy\IceMist.cpp" />
+    <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
@@ -196,6 +197,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\enemy\EnemyManager.h" />
     <ClInclude Include="application\enemy\IceMist.h" />
     <ClInclude Include="application\enemy\TackleEnemy.h" />
+    <ClInclude Include="application\MathUtils.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />

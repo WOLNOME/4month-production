@@ -144,6 +144,6 @@ private://メンバ変数
 	//　待機時間
 	float waitTime_ = 0.0f;
 	// 待機時間の長さ
-	float waitTimeDuration_ = 1.0f;
+	float waitTimeDuration_ = 0.13f;
 };
 

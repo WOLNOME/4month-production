@@ -53,6 +53,15 @@ public:
 
 	void playerSpawnRotation();
 
+	// カメラの更新
+	void UpdateCamera();
+	// カメラのズームイン
+	void UpdateZoomIn();
+	// カメラのズームアウト
+	void UpdateZoomOut();
+	// 最も近い敵やプレイヤーの位置を計算
+	void CalculateNearestPosition();
+
 private://メンバ変数
 
 	Input* input_ = nullptr;
@@ -105,5 +114,39 @@ private://メンバ変数
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
 
+	//プレイヤーが障害物とぶつかったときの効果音
+	std::unique_ptr<Audio> playerCollisionSE_ = nullptr;
+	//プレイヤーがアイスミストに当たったときの効果音
+	std::unique_ptr<Audio> playerCollisionIceMistSE_ = nullptr;
+	//落ちているときの効果音
+	std::unique_ptr<Audio> fallSE_ = nullptr;
+	//　クリアまたはゲームオーバー時の演出フラグ
+	bool isGameEnd_ = false;
+	// カメラを引くフラグ
+	bool isZoomOut_ = false;
+	// カメラを寄せるフラグ
+	bool isZoomIn_ = false;
+	// カメラのイージング経過時間
+	float cameraEaseTime_ = 0.0f;
+	// カメラのイージング時間
+	const float cameraEaseDuration_ = 2.0f;
+	// カメラの開始位置
+	Vector3 cameraStartPosition_ = { 0.0f, 100.0f, -75.0f };
+	// カメラの終了位置
+	Vector3 cameraEndPosition_ = { 0.0f, 50.0f, -30.0f };
+	// 最も近いプレイヤーの位置
+	Vector3 nearestPlayerPos_ = {};
+	//　最も近いプレイヤーの番号
+	uint32_t nearestPlayerNum_ = 0;
+	// 最も近い敵の位置
+	Vector3 nearestEnemyPos_ = {};
+	// 最も近い敵の番号
+	uint32_t nearestEnemyNum_ = 0;
+	// 最も近い敵の種類
+	std::string nearestEnemyType_ = "";
+	//　待機時間
+	float waitTime_ = 0.0f;
+	// 待機時間の長さ
+	float waitTimeDuration_ = 0.13f;
 };
 

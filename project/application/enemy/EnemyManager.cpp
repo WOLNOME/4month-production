@@ -272,4 +272,12 @@ void EnemyManager::Finalize()
 	{
 		enemy->Finalize();
 	}
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->Finalize();
+	}
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->Finalize();
+	}
 }
