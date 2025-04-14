@@ -57,35 +57,30 @@ void GamePlayScene::Initialize()
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
 		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
 		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-		rotation_ = 300.0f;
 		break;
 
 	case 2:
 		playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
 		playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
-		rotation_ = 120.0f;
 		break;
 
 	case 3:
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
 		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
 		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		rotation_ = 120.0f;
 		break;
 
 	case 4:
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,13.0f });
 		playerSpawnPositions_.push_back({ 8.0f,1.0f,-10.0f });
 		playerSpawnPositions_.push_back({ -10.0f,1.0f,-10.0f });
-		rotation_ = 120.0f;
 		break;
 
 	case 5:
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
 		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
 		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		rotation_ = 120.0f;
 		break;
 	
 	default:
@@ -657,26 +652,40 @@ void GamePlayScene::playerSpawnRotation()
 {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 15)
+
+	// タイマーが120になったら準備
+	if (rotationTimer_ == 120.0f && howManyBoogie_ < 15)
 	{
-		rotationTimer_ = rotation_;
+		// プレイヤースポーン位置の演出
+		playerSpawn_[playerSpawnIndex_]->ParticleStart();
+	}
 
-		// プレイヤーを追加
-		auto player = std::make_unique<Player>();
-		howManyBoogie_++;
+	// タイマーが0になったら追加
+	if (rotationTimer_ <= 0.0f)
+	{
+		playerSpawn_[playerSpawnIndex_]->ParticleStop();
 
-		player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
-		player->Initialize();
-
-		players_.push_back(std::move(player));
-
-		playerNum_++;
-
-		// 位置ローテを0に戻す
-		playerSpawnIndex_++;
-		if (playerSpawnIndex_ > playerSpawnNum_ - 1)
+		if (howManyBoogie_ < 15)
 		{
-			playerSpawnIndex_ = 0;
+			rotationTimer_ = rotation_;
+
+			// プレイヤーを追加
+			auto player = std::make_unique<Player>();
+			howManyBoogie_++;
+
+			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
+			player->Initialize();
+
+			players_.push_back(std::move(player));
+
+			playerNum_++;
+
+			// 位置ローテを0に戻す
+			playerSpawnIndex_++;
+			if (playerSpawnIndex_ > playerSpawnNum_ - 1)
+			{
+				playerSpawnIndex_ = 0;
+			}
 		}
 	}
 }
