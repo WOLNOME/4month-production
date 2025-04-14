@@ -432,9 +432,10 @@ void Player::MoveOnIce()
 
 void Player::AttackOnIce()
 {
-	if (input_->TriggerKey(DIK_SPACE) && !isAttack_)
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_)
 	{
 		isAttack_ = true;
+		isChargeMax_ = false;
 
 		// 攻撃時間リセット
 		attackTimeCounter_ = attackTime_;
