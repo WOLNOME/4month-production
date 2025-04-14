@@ -731,13 +731,11 @@ void GamePlayScene::playerTackleCharge()
 		}
 
 	}
-}
-		// 位置ローテを0に戻す
-		playerSpawnIndex_++;
-		if (playerSpawnIndex_ > playerSpawnNum_ - 1)
-		{
-			playerSpawnIndex_ = 0;
-		}
+	// 位置ローテを0に戻す
+	playerSpawnIndex_++;
+	if (playerSpawnIndex_ > playerSpawnNum_ - 1)
+	{
+		playerSpawnIndex_ = 0;
 	}
 }
 
