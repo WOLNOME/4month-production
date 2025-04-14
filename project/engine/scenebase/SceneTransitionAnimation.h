@@ -1,8 +1,9 @@
 #pragma once
-#include "Sprite.h"
-#include "MyMath.h"
+#include <d2d1_3.h>
 #include <cstdint>
 #include <memory>
+#include <wrl.h>
+#include "MyMath.h"
 
 class SceneTransitionAnimation {
 public:
@@ -43,6 +44,19 @@ public:
 	void SetFrame(const uint32_t frame) { frame_ = frame; timer_ = frame; }
 
 private:
+	//D2D1の初期化
+	void InitD2D1();
+	//D2D1の描画
+	void DrawD2D1();
+
+private:
+	//Direct2D関連リソース
+	Microsoft::WRL::ComPtr<ID2D1Factory3> d2dFactory_;
+	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> renderTarget_;
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> blackBrush_;
+
+	//α値
+	float alpha_;
 	//遷移の状態
 	TransitionState state_;
 	//遷移の種類
@@ -53,8 +67,5 @@ private:
 	//遷移中フラグ
 	bool isTransitioning_;
 
-	//スプライト
-	uint32_t textureHandle_;
-	std::unique_ptr<Sprite> sprite_;
 };
 

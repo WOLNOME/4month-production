@@ -112,6 +112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp" />
+    <ClCompile Include="D2DRender.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="application\enemy\BaseEnemy.cpp" />
     <ClCompile Include="application\enemy\EnemyManager.cpp" />
@@ -195,6 +196,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\enemy\TackleEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
+    <ClInclude Include="D2DRender.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />

@@ -1,38 +1,34 @@
 #include "SceneTransitionAnimation.h"
-#include "SpriteCommon.h"
-#include "TextureManager.h"
+#include "WinApp.h"
 #include <cassert>
 
-SceneTransitionAnimation::SceneTransitionAnimation() {
+SceneTransitionAnimation::SceneTransitionAnimation()
+	: state_(TransitionState::NONE), type_(TransitionType::NONE), frame_(0), timer_(0), isTransitioning_(false), alpha_(1.0f) {
 }
 
 SceneTransitionAnimation::~SceneTransitionAnimation() {
 }
 
 void SceneTransitionAnimation::Initialize() {
+	//Direct2Dの初期化
+	InitD2D1();
+
 	//変数の初期化
 	state_ = TransitionState::NONE;
 	type_ = TransitionType::NONE;
 	frame_ = 0;
 	timer_ = 0;
 	isTransitioning_ = false;
-	//スプライトの初期化
-	sprite_ = std::make_unique<Sprite>();
-	textureHandle_ = TextureManager::GetInstance()->LoadTexture("black.png");
-	sprite_->Initialize(textureHandle_);
 }
 
 void SceneTransitionAnimation::Update() {
-	//スプライトの更新
-	sprite_->Update();
+	
 }
 
 void SceneTransitionAnimation::Draw() {
-	//共通部分の描画設定
-	SpriteCommon::GetInstance()->SettingCommonDrawing();
-	//スプライトの描画
+	//描画
 	if (isTransitioning_) {
-		sprite_->Draw();
+		DrawD2D1();
 	}
 }
 
@@ -67,7 +63,7 @@ void SceneTransitionAnimation::UpdateIn() {
 				//透明度を計算
 				float alpha = 1.0f - MyMath::Lerp(0.0f, 1.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
-				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
+				alpha_ = alpha;
 			}
 		}
 		break;
@@ -87,7 +83,7 @@ void SceneTransitionAnimation::EndIn() {
 			//フレームをリセット
 			timer_ = frame_;
 			//スプライトの透明度を設定
-			sprite_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+			alpha_ = 1.0f;
 		}
 		break;
 	default:
@@ -111,7 +107,7 @@ void SceneTransitionAnimation::UpdateOut() {
 				//透明度を計算
 				float alpha = 1.0f - MyMath::Lerp(1.0f, 0.0f, static_cast<float>(timer_) / static_cast<float>(frame_));
 				//スプライトの透明度を設定
-				sprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
+				alpha_ = alpha;
 			}
 		}
 		break;
@@ -130,7 +126,7 @@ void SceneTransitionAnimation::EndOut() {
 			//遷移中フラグを下げる
 			isTransitioning_ = false;
 			//スプライトの透明度を設定
-			sprite_->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+			alpha_ = 0.0f;
 		}
 		break;
 	default:
@@ -146,4 +142,46 @@ void SceneTransitionAnimation::EndAll() {
 	timer_ = 0;
 	//遷移中フラグを下げる
 	isTransitioning_ = false;
+}
+
+void SceneTransitionAnimation::InitD2D1() {
+	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory_.GetAddressOf());
+	assert(SUCCEEDED(hr) && "D2D1ファクトリーの生成に失敗しました");
+
+	// ウィンドウハンドルを取得
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+
+	// RenderTargetの作成
+	D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
+	hr = d2dFactory_->CreateHwndRenderTarget(
+		D2D1::RenderTargetProperties(),
+		D2D1::HwndRenderTargetProperties(hwnd, size),
+		renderTarget_.GetAddressOf()
+	);
+	assert(SUCCEEDED(hr) && "Hwndレンダーターゲットの生成に失敗しました");
+
+	// 黒色ブラシの作成
+	hr = renderTarget_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), blackBrush_.GetAddressOf());
+	assert(SUCCEEDED(hr) && "カラーブラシの生成に失敗しました");
+}
+
+void SceneTransitionAnimation::DrawD2D1() {
+	// 描画開始
+	renderTarget_->BeginDraw();
+
+	// 背景をクリア
+	renderTarget_->Clear(D2D1::ColorF(D2D1::ColorF::White));
+
+	// 黒幕を描画
+	blackBrush_->SetOpacity(alpha_);
+	renderTarget_->FillRectangle(
+		D2D1::RectF(0, 0, static_cast<float>(renderTarget_->GetSize().width), static_cast<float>(renderTarget_->GetSize().height)),
+		blackBrush_.Get()
+	);
+
+	// 描画終了
+	HRESULT hr = renderTarget_->EndDraw();
+	assert(SUCCEEDED(hr) && "D2Dの描画に失敗しました");
 }

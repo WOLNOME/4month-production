@@ -50,7 +50,7 @@ void MyGame::Draw()
 
 	
 	///------------------------------///
-	///        メインレンダー
+	///        D3D12の描画処理
 	///------------------------------///
 
 	//描画前処理
@@ -70,7 +70,7 @@ void MyGame::Draw()
 	MainRender::GetInstance()->PostDraw();
 
 	///------------------------------///
-	///        テキスト描画処理
+	///        D2Dの描画処理
 	///------------------------------///
 
 	//テキスト描画前処理
@@ -79,6 +79,9 @@ void MyGame::Draw()
 	SceneManager::GetInstance()->TextDraw();
 	//テキスト描画後処理
 	TextWriteManager::GetInstance()->EndDrawWithD2D();
+
+	//シーン遷移アニメーションの描画
+	SceneManager::GetInstance()->CurtainDraw();
 
 	///------------------------------///
 	///        全ての描画が終了

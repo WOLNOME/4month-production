@@ -124,6 +124,7 @@
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
+    <ClCompile Include="D2DRender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
+    <ClInclude Include="D2DRender.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

@@ -82,8 +82,6 @@ private:
 	ComPtr<IDWriteFactory8> directWriteFactory = nullptr;
 	ComPtr<ID3D11On12Device> d3d11On12Device = nullptr;
 	ComPtr<ID3D11DeviceContext> d3d11On12DeviceContext = nullptr;
-	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
-	ComPtr<ID2D1DeviceContext2> d2dDeviceContext = nullptr;
 	ComPtr<IDWriteFontCollection1> dwriteFontCollection = nullptr;
 
 	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
