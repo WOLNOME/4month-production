@@ -56,6 +56,9 @@ public:
 	// Player攻撃チャージ
 	void playerTackleCharge();
 
+	//ステージ番号
+	static uint32_t stageNum_;
+
 private://メンバ変数
 
 	Input* input_ = nullptr;
@@ -84,6 +87,15 @@ private://メンバ変数
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
+
+	//障害物
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
+
+	//跳ね返る障害物
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
+
+	//氷の床
+	std::vector<std::unique_ptr<IceFloor>> icefloors_;
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
