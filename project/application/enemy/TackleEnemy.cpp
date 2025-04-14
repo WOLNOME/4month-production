@@ -182,12 +182,20 @@ void TackleEnemy::OnCollision(const AppCollider* _other) {
 		// ノックバックタイマー
 		knockBackTime_ = 30.0f;
 
-		isAttack_ = false;
-	}
-	else if (_other->GetColliderID() == "IceFloor") {
-		onIce_ = true;
-	}
-
+        isAttack_ = false;
+    }
+    else if (_other->GetColliderID() == "IceFloor")
+    {
+        onIce_ = true;
+    }
+    else
+    {
+		if (fallSE_)
+		{
+			fallSE_->Play(false);
+		}
+    }
+   
 
 	if (_other->GetColliderID() == "Player") {
 		// どちらも攻撃してない状態かつノックバック中でないときプレイヤーに当たった場合

@@ -109,6 +109,13 @@ void FanEnemy::OnCollision(const AppCollider* _other)
 		// 地面にいる
 		isGround_ = true;
 	}
+	else
+	{
+		if(fallSE_)
+		{
+			fallSE_->Play(false);
+		}
+	}
 	//敵同士の当たり判定
 	if (_other->GetColliderID() == "FreezeEnemy" || _other->GetColliderID() == "TackleEnemy" || _other->GetColliderID() == "FanEnemy")
 	{

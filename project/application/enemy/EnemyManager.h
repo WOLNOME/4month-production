@@ -39,6 +39,18 @@ public:
 	uint32_t GetIceMistCount() const { return static_cast<uint32_t>(iceMists_.size()); }
 	// 敵の総数を取得
 	uint32_t GetEnemyCount() const { return GetTackleEnemyCount() + GetFanEnemyCount() + GetFreezeEnemyCount(); }
+	// タックルエネミーのポインタを取得
+	TackleEnemy* GetTackleEnemy(uint32_t index) { return tackleEnemies_[index].get(); }
+	//扇エネミーのポインタを取得
+	FanEnemy* GetFanEnemy(uint32_t index) { return fanEnemies_[index].get(); }
+	//風のポインタを取得
+	FreezeEnemy* GetFreezeEnemy(uint32_t index) { return freezeEnemies_[index].get(); }
+	//タックルエネミーの位置を取得
+	Vector3 GetTackleEnemyPosition(uint32_t index) const { return tackleEnemies_[index]->GetPosition(); }
+	//扇エネミーの位置を取得
+	Vector3 GetFanEnemyPosition(uint32_t index) const { return fanEnemies_[index]->GetPosition(); }
+	//凍結エネミーの位置を取得
+	Vector3 GetFreezeEnemyPosition(uint32_t index) const { return freezeEnemies_[index]->GetPosition(); }
 	void Finalize();
 
 private:
@@ -57,5 +69,6 @@ private:
 	Vector3 spawnMaxPosition_ = { 20.0f,1.0f,20.0f };
 	int spawnCount_ = 1;
 	std::vector<std::unique_ptr<Player>>* players_ = nullptr; // プレイヤーリストのポインタ
+	std::unique_ptr<Audio> fallSE_ = nullptr;
 };
 

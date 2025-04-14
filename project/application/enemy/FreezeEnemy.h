@@ -20,8 +20,11 @@ public:
 	void OnCollisionTrigger(const AppCollider* other);
 
 	bool IsAlive() const { return isAlive_; }
+	bool IsGround() const { return isGround_; }
 	void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	Vector3 GetPosition() const { return transform_.translate_; }
+	Vector3 GetRotate() const { return transform_.rotate_; }
+	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
 	void SetTargetPosition(const Vector3& targetPosition) { targetPosition_ = targetPosition; }
 
 	void Initialize() override {}
