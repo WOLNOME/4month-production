@@ -17,7 +17,7 @@ void MyGame::Initialize()
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene("TITLE");
+	SceneManager::GetInstance()->SetNextScene("DEVELOP");
 
 	//パーティクルエディター→PARTICLECREATOR
 }
@@ -79,8 +79,7 @@ void MyGame::Draw()
 
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
-
-	//シーン遷移アニメーションの描画
+	//シーン遷移アニメーションの描画(一番上に描画)
 	SceneManager::GetInstance()->CurtainDraw();
 
 	//D2Dの描画後処理
