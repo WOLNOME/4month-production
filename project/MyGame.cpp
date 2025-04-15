@@ -8,7 +8,6 @@
 #include "ImGuiManager.h"
 #include "ModelManager.h"
 #include "ParticleManager.h"
-#include "Model.h"
 #include "SceneManager.h"
 
 void MyGame::Initialize() {
