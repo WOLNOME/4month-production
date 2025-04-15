@@ -1,9 +1,10 @@
 #pragma once
+#include "D2DRender.h"
+#include "MyMath.h"
+#include <wrl.h>
 #include <d2d1_3.h>
 #include <cstdint>
 #include <memory>
-#include <wrl.h>
-#include "MyMath.h"
 
 class SceneTransitionAnimation {
 public:
@@ -45,14 +46,14 @@ public:
 
 private:
 	//D2D1の初期化
-	void InitD2D1();
+	void ColorDecide();
 	//D2D1の描画
-	void DrawD2D1();
+	void DrawD2D();
 
 private:
+	D2DRender* d2drender = D2DRender::GetInstance();
+private:
 	//Direct2D関連リソース
-	Microsoft::WRL::ComPtr<ID2D1Factory3> d2dFactory_;
-	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> renderTarget_;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> blackBrush_;
 
 	//α値

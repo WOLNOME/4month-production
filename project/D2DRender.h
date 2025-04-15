@@ -1,6 +1,12 @@
 #pragma once
+#include "WinApp.h"
+#include "DirectXCommon.h"
+#include "MainRender.h"
 #include <d2d1_3.h>
+#include <d3d11on12.h>
 #include <wrl.h>
+#include <vector>
+
 
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -18,27 +24,42 @@ public:
 public:
 	//初期化
 	void Initialize();
-	//更新
-	void Update();
 	//終了
 	void Finalize();
-	//描画
-	void Draw();
+
+	//描画前処理
+	void PreDraw();
+	//描画後処理
+	void PostDraw();
+
 public://getter
-	//D2DDeviceContext
-	ID2D1DeviceContext2* GetD2DDeviceContext() const { return d2dDeviceContext.Get(); }
+	//D3D11On12Device
+	ID3D11On12Device* GetD3D11On12Device() const { return d3d11On12Device.Get(); }
+	//D3D11On12DeviceContext
+	ID3D11DeviceContext* GetD3D11On12DeviceContext() const { return d3d11On12DeviceContext.Get(); }
 	//D2DFactory
 	ID2D1Factory3* GetD2DFactory() const { return d2dFactory.Get(); }
+	//D2DDeviceContext
+	ID2D1DeviceContext2* GetD2DDeviceContext() const { return d2dDeviceContext.Get(); }
 private:
-	//D2DDeviceContextの生成
-	void CreateD2DDeviceContext();
 	//D2DFactoryの生成
-	void CreateD2DFactory();
+	void CreateD2DResources();
+
+private://インスタンス
+	WinApp* winapp = WinApp::GetInstance();
+	DirectXCommon* dxcommon = DirectXCommon::GetInstance();
+	MainRender* mainrender = MainRender::GetInstance();
 
 private:
-	//D2DDevice
-	ComPtr<ID2D1DeviceContext2> d2dDeviceContext = nullptr;
+	//D3D11On12Device
+	ComPtr<ID3D11On12Device> d3d11On12Device = nullptr;
+	//D3D11On12DeviceContext
+	ComPtr<ID3D11DeviceContext> d3d11On12DeviceContext = nullptr;
 	//D2DFactory
 	ComPtr<ID2D1Factory3> d2dFactory = nullptr;
+	//D2DDevice
+	ComPtr<ID2D1DeviceContext2> d2dDeviceContext = nullptr;
+	std::vector<ComPtr<ID3D11Resource>> wrappedBackBuffers;
+	std::vector<ComPtr<ID2D1Bitmap1>> d2dRenderTargets;
 };
 

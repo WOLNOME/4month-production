@@ -10,10 +10,11 @@ SceneTransitionAnimation::~SceneTransitionAnimation() {
 }
 
 void SceneTransitionAnimation::Initialize() {
-	//Direct2Dの初期化
-	InitD2D1();
+	//ブラシの色を決定
+	ColorDecide();
 
 	//変数の初期化
+	alpha_ = 1.0f;
 	state_ = TransitionState::NONE;
 	type_ = TransitionType::NONE;
 	frame_ = 0;
@@ -28,7 +29,7 @@ void SceneTransitionAnimation::Update() {
 void SceneTransitionAnimation::Draw() {
 	//描画
 	if (isTransitioning_) {
-		DrawD2D1();
+		DrawD2D();
 	}
 }
 
@@ -144,44 +145,21 @@ void SceneTransitionAnimation::EndAll() {
 	isTransitioning_ = false;
 }
 
-void SceneTransitionAnimation::InitD2D1() {
-	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory_.GetAddressOf());
-	assert(SUCCEEDED(hr) && "D2D1ファクトリーの生成に失敗しました");
-
-	// ウィンドウハンドルを取得
-	HWND hwnd = WinApp::GetInstance()->GetHwnd();
-	RECT rc;
-	GetClientRect(hwnd, &rc);
-
-	// RenderTargetの作成
-	D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
-	hr = d2dFactory_->CreateHwndRenderTarget(
-		D2D1::RenderTargetProperties(),
-		D2D1::HwndRenderTargetProperties(hwnd, size),
-		renderTarget_.GetAddressOf()
-	);
-	assert(SUCCEEDED(hr) && "Hwndレンダーターゲットの生成に失敗しました");
-
+void SceneTransitionAnimation::ColorDecide() {
+	HRESULT hr;
 	// 黒色ブラシの作成
-	hr = renderTarget_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), blackBrush_.GetAddressOf());
+	hr = d2drender->GetD2DDeviceContext()->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::Black),
+		&blackBrush_
+	);
 	assert(SUCCEEDED(hr) && "カラーブラシの生成に失敗しました");
 }
 
-void SceneTransitionAnimation::DrawD2D1() {
-	// 描画開始
-	renderTarget_->BeginDraw();
-
-	// 背景をクリア
-	renderTarget_->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
+void SceneTransitionAnimation::DrawD2D() {
 	// 黒幕を描画
 	blackBrush_->SetOpacity(alpha_);
-	renderTarget_->FillRectangle(
-		D2D1::RectF(0, 0, static_cast<float>(renderTarget_->GetSize().width), static_cast<float>(renderTarget_->GetSize().height)),
+	d2drender->GetD2DDeviceContext()->FillRectangle(
+		D2D1::RectF(0, 0, static_cast<float>(d2drender->GetD2DDeviceContext()->GetSize().width), static_cast<float>(d2drender->GetD2DDeviceContext()->GetSize().height)),
 		blackBrush_.Get()
 	);
-
-	// 描画終了
-	HRESULT hr = renderTarget_->EndDraw();
-	assert(SUCCEEDED(hr) && "D2Dの描画に失敗しました");
 }
