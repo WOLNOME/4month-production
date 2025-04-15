@@ -5,7 +5,6 @@
 #include "D2DRender.h"
 #include <Vector4.h>
 #include <d2d1_3.h>
-#include <d3d11on12.h>
 #include <dwrite_3.h>
 #include <wrl.h>
 #include <string>
@@ -49,9 +48,6 @@ private:
 	///=======================
 
 	void CreateIDWriteFactory();
-	void CreateD3D11On12Device();
-	void CreateDirect2DDeviceContext();
-	void CreateD2DRenderTarget();
 	void CreateFontFile();
 
 public:

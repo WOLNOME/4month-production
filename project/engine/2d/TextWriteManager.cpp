@@ -3,10 +3,6 @@
 #include <filesystem>
 #include <cassert>
 
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dwrite.lib")
-
 namespace fs = std::filesystem;
 
 TextWriteManager* TextWriteManager::instance = nullptr;
@@ -21,12 +17,6 @@ TextWriteManager* TextWriteManager::GetInstance() {
 void TextWriteManager::Initialize() {
 	//DWriteFactoryの生成
 	CreateIDWriteFactory();
-	//D3D11On12Deviceの生成
-	CreateD3D11On12Device();
-	//d2drender->GetD2DDeviceContext()の生成
-	CreateDirect2DDeviceContext();
-	//D2DRenderTargetの生成
-	CreateD2DRenderTarget();
 
 	//フォントファイルの生成
 	CreateFontFile();
@@ -99,21 +89,6 @@ void TextWriteManager::CreateIDWriteFactory() {
 	//IDWriteFactoryの生成
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &directWriteFactory);
 	assert(SUCCEEDED(hr));
-}
-
-void TextWriteManager::CreateD3D11On12Device() {
-	HRESULT hr;
-	
-}
-
-void TextWriteManager::CreateDirect2DDeviceContext() {
-	HRESULT hr;
-	
-}
-
-void TextWriteManager::CreateD2DRenderTarget() {
-	HRESULT hr;
-	
 }
 
 void TextWriteManager::CreateFontFile() {
