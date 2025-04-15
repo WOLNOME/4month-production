@@ -7,6 +7,9 @@
 #include <wrl.h>
 #include <vector>
 
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib")
+
 
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;

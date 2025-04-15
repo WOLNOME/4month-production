@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <memory>
 
+#pragma comment(lib, "dwrite.lib")
+
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 

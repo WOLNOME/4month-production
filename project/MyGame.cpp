@@ -11,25 +11,22 @@
 #include "Model.h"
 #include "SceneManager.h"
 
-void MyGame::Initialize()
-{
+void MyGame::Initialize() {
 	//ゲーム基盤部の初期化
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene("DEVELOP");
+	SceneManager::GetInstance()->SetNextScene("TITLE");
 
 	//パーティクルエディター→PARTICLECREATOR
 }
 
-void MyGame::Finalize()
-{
+void MyGame::Finalize() {
 	//ゲーム基盤解放
 	Framework::Finalize();
 }
 
-void MyGame::Update()
-{
+void MyGame::Update() {
 	//ImGui受付開始
 	ImGuiManager::GetInstance()->Begin();
 
@@ -43,13 +40,12 @@ void MyGame::Update()
 	ImGuiManager::GetInstance()->End();
 }
 
-void MyGame::Draw()
-{
+void MyGame::Draw() {
 	///==============================///
 	///          描画処理
 	///==============================///
 
-	
+
 	///------------------------------///
 	///        D3D12の描画処理
 	///------------------------------///
