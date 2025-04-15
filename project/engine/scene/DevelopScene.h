@@ -87,5 +87,9 @@ private://メンバ変数
 	//テキスト
 	int timer_ = 0;
 	std::unique_ptr<TextWrite> text_;
+
+	//シェイク
+	float shakeTime_ = 1.0f;
+	float shakePower_ = 0.5f;
 };
 
