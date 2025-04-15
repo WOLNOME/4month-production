@@ -12,6 +12,8 @@ void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Pl
 	fanEnemyPath_ = fanEnemy;
 	freezeEnemyPath_ = freezeEnemy;
 	players_ = players;
+	fallSE_ = std::make_unique<Audio>();
+	//fallSE_->Initialize("fall.wav");
 }
 
 void EnemyManager::Update()
@@ -164,6 +166,7 @@ void EnemyManager::SpawnTackleEnemy(uint32_t count)
 		Vector3 spawnPosition = { disX(gen), 1.5f, disZ(gen) };
 		enemy->SetPosition(spawnPosition);
 		enemy->SetTargetPosition(targetPosition_);
+		//enemy->SetFallSE(fallSE_.get());
 		tackleEnemies_.emplace_back(std::move(enemy));
 	}
 }
@@ -269,6 +272,14 @@ void EnemyManager::FreezeEnemyTargetUpdate()
 void EnemyManager::Finalize()
 {
 	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->Finalize();
+	}
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->Finalize();
+	}
+	for (auto& enemy : freezeEnemies_)
 	{
 		enemy->Finalize();
 	}

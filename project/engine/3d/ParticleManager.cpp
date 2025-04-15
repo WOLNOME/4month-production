@@ -27,23 +27,25 @@ void ParticleManager::Update() {
 	//各パーティクルの更新
 	for (const auto& particle : particles) {
 		//空いているエフェクトの中から確率で生成
-		int max = particle.second->GetParam()["MaxEffects"];
-		int rate = particle.second->GetParam()["EmitRate"];
-		float ratePerFrame = rate * kDeltaTime;
-		int genNum = 0;
-		for (int i = 0; i < 60; i++) {
-			//ランダム
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dist(0.0f, 100.0f);
-			//確率でこのフレームの生成数をインクリメント
-			if (dist(gen) < ratePerFrame) {
-				genNum++;
+		if (particle.second->emitter_.isPlay) {
+			int max = particle.second->GetParam()["MaxEffects"];
+			int rate = particle.second->GetParam()["EmitRate"];
+			float ratePerFrame = rate * kDeltaTime;
+			int genNum = 0;
+			for (int i = 0; i < 60; i++) {
+				//ランダム
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_real_distribution<float> dist(0.0f, 100.0f);
+				//確率でこのフレームの生成数をインクリメント
+				if (dist(gen) < ratePerFrame) {
+					genNum++;
+				}
 			}
-		}
-		//エフェクトの生成
-		if (genNum > 0 && particle.second->effects_.size() + genNum < max) {
-			particle.second->effects_.splice(particle.second->effects_.end(), GenerateEffect(particle.second, genNum));
+			//エフェクトの生成
+			if (genNum > 0 && particle.second->effects_.size() + genNum < max) {
+				particle.second->effects_.splice(particle.second->effects_.end(), GenerateEffect(particle.second, genNum));
+			}
 		}
 
 		//インスタンスの番号
@@ -296,7 +298,6 @@ void ParticleManager::GenerateGraphicsPipeline() {
 			break;
 		}
 	}
-
 
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};

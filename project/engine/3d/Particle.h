@@ -46,6 +46,7 @@ public:
 		bool isBillboard;			//ビルボードを適用するか
 		bool isGravity;				//重力を適用するか
 		bool isBound;				//バウンドを適用するか
+		bool isPlay;				//パーティクルを生成するか
 	};
 public://メンバ関数
 	~Particle();

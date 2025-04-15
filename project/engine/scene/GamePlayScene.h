@@ -53,8 +53,20 @@ public:
 	// プレイヤースポーン処理
 	void playerSpawnRotation();
 
+	// カメラの更新
+	void UpdateCamera();
+	// カメラのズームイン
+	void UpdateZoomIn();
+	// カメラのズームアウト
+	void UpdateZoomOut();
+	// 最も近い敵やプレイヤーの位置を計算
+	void CalculateNearestPosition();
+
 	// Player攻撃チャージ
 	void playerTackleCharge();
+
+	//ステージ番号
+	static uint32_t stageNum_;
 
 private://メンバ変数
 
@@ -85,6 +97,15 @@ private://メンバ変数
 	// フィールド
 	std::unique_ptr<Field> field_ = nullptr;
 
+	//障害物
+	std::vector<std::unique_ptr<Obstacle>> obstacles_;
+
+	//跳ね返る障害物
+	std::vector<std::unique_ptr<Bumper>> bumpers_;
+
+	//氷の床
+	std::vector<std::unique_ptr<IceFloor>> icefloors_;
+
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
 
@@ -103,6 +124,35 @@ private://メンバ変数
 
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
+
+	//ゲーム終了フラグ
+	bool isGameEnd_ = false;
+	// カメラを引くフラグ
+	bool isZoomOut_ = false;
+	// カメラを寄せるフラグ
+	bool isZoomIn_ = false;
+	// カメラのイージング経過時間
+	float cameraEaseTime_ = 0.0f;
+	// カメラのイージング時間
+	const float cameraEaseDuration_ = 2.0f;
+	// カメラの開始位置
+	Vector3 cameraStartPosition_ = { 0.0f,70.0f,-50.0f };
+	// カメラの終了位置
+	Vector3 cameraEndPosition_ = { 0.0f, 50.0f, -30.0f };
+	// 最も近いプレイヤーの位置
+	Vector3 nearestPlayerPos_ = {};
+	//　最も近いプレイヤーの番号
+	uint32_t nearestPlayerNum_ = 0;
+	// 最も近い敵の位置
+	Vector3 nearestEnemyPos_ = {};
+	// 最も近い敵の番号
+	uint32_t nearestEnemyNum_ = 0;
+	// 最も近い敵の種類
+	std::string nearestEnemyType_ = "";
+	//　待機時間
+	float waitTime_ = 0.0f;
+	// 待機時間の長さ
+	float waitTimeDuration_ = 0.13f;
 
 	// 攻撃チャージMax
 	const float chargeMax_ = 80.0f;

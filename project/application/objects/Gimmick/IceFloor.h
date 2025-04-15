@@ -1,5 +1,6 @@
 #pragma once
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../GameObject/GameObject.h"
 #include "../../appCollider/AppCollider.h"
@@ -25,5 +26,8 @@ private:
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
+
+	//パーティクル
+	std::unique_ptr<Particle> particle_;
 };
 

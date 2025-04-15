@@ -1,4 +1,5 @@
 #include "FreezeEnemy.h"
+#include "RandomStringUtil.h"
 
 #include <chrono>
 
@@ -40,6 +41,14 @@ void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 	appCollider_->SetOnCollisionTrigger(std::bind(&FreezeEnemy::OnCollisionTrigger, this, std::placeholders::_1));
 	appCollider_->SetOnCollision(std::bind(&FreezeEnemy::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
+
+	// パーティクル
+	deadEffect_ = std::make_unique<Particle>();
+	deadEffect_->Initialize("deadFreezeEnemy" + RandomStringUtil::GenerateRandomString(3), "deadEnemy");
+	deadEffect_->emitter_.isGravity = true;
+	deadEffect_->emitter_.gravity = -150.0f;
+	deadEffect_->emitter_.isPlay = false;
+	countDeadEffect_ = 0;
 }
 
 void FreezeEnemy::EnemyUpdate()
@@ -56,8 +65,28 @@ void FreezeEnemy::EnemyUpdate()
 	}
 	// 凍結攻撃
 	FreezeUpdate();
+
+	//パーティクル
+	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {
+		countDeadEffect_++;
+		if (countDeadEffect_ == 30) {
+			deadEffect_->emitter_.isPlay = false;
+		}
+		else if (countDeadEffect_ > 60) {
+			isAlive_ = false;
+			countDeadEffect_ = 0;
+		}
+	}
+
 	// 場外処理
 	OutOfField();
+
+	//生存中か
+	if (transform_.translate_.y <= -10.0f && countDeadEffect_ == 0) {
+		deadEffect_->emitter_.isPlay = true;
+		deadEffect_->emitter_.transform.translate = transform_.translate_;
+	}
+
 	//行列の更新
 	transform_.UpdateMatrix();
 	// 当たり判定関係
@@ -182,11 +211,6 @@ void FreezeEnemy::OutOfField()
 	{
 		transform_.translate_.y -= fallSpeed;
 	}	
-
-	if (transform_.translate_.y < -10.0f)
-	{
-		isAlive_ = false;
-	}
 
 	isGround_ = false;
 }

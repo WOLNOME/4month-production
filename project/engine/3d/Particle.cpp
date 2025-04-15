@@ -35,6 +35,7 @@ void Particle::Initialize(const std::string& name, const std::string& fileName) 
 	emitter_.isBillboard = true;
 	emitter_.isGravity = false;
 	emitter_.isBound = false;
+	emitter_.isPlay = true;
 
 	//モデルマネージャーでモデル(見た目)を生成
 	ModelManager::GetInstance()->LoadModel("plane");

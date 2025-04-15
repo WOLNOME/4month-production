@@ -406,10 +406,10 @@ void ParticleCreatorScene::Editor() {
 	float endSizeMax = editParam_["EndSize"]["Max"];
 	float endSizeMin = editParam_["EndSize"]["Min"];
 	if (ImGui::CollapsingHeader("サイズの設定")) {
-		ImGui::SliderFloat("StartSizeMax", &startSizeMax, startSizeMin, 10.0f);
-		ImGui::SliderFloat("StartSizeMin", &startSizeMin, 0.0f, startSizeMax);
-		ImGui::SliderFloat("EndSizeMax", &endSizeMax, endSizeMin, 10.0f);
-		ImGui::SliderFloat("EndSizeMin", &endSizeMin, 0.0f, endSizeMax);
+		ImGui::DragFloat("StartSizeMax", &startSizeMax, 0.1f, startSizeMin, 10.0f);
+		ImGui::DragFloat("StartSizeMin", &startSizeMin, 0.1f, 0.0f, startSizeMax);
+		ImGui::DragFloat("EndSizeMax", &endSizeMax, 0.1f, endSizeMin, 10.0f);
+		ImGui::DragFloat("EndSizeMin", &endSizeMin, 0.1f, 0.0f, endSizeMax);
 	}
 	//速度を写す
 	Vector3 velocityMax = { editParam_["Velocity"]["Max"]["x"],editParam_["Velocity"]["Max"]["y"],editParam_["Velocity"]["Max"]["z"] };
@@ -422,17 +422,17 @@ void ParticleCreatorScene::Editor() {
 	float lifeTimeMax = editParam_["LifeTime"]["Max"];
 	float lifeTimeMin = editParam_["LifeTime"]["Min"];
 	if (ImGui::CollapsingHeader("寿命の設定")) {
-		ImGui::SliderFloat("LifeTimeMax", &lifeTimeMax, lifeTimeMin, 30.0f);
-		ImGui::SliderFloat("LifeTimeMin", &lifeTimeMin, 0.0f, lifeTimeMax);
+		ImGui::DragFloat("LifeTimeMax", &lifeTimeMax, 0.1f, lifeTimeMin, 30.0f);
+		ImGui::DragFloat("LifeTimeMin", &lifeTimeMin, 0.1f, 0.0f, lifeTimeMax);
 	}
 	//エフェクトの最大数を写す
 	int maxEffects = editParam_["MaxEffects"];
 	if (ImGui::CollapsingHeader("エフェクトの最大数")) {
 		//推奨値の計算
-		int RecommendValue = lifeTimeMax * editParam_["EmitRate"];
-		ImGui::Text("推奨値 : %d　(最低限の数で回せる値)", RecommendValue);
+		float RecommendValue = lifeTimeMax * editParam_["EmitRate"];
+		ImGui::Text("推奨値 : %.0f　(最低限の数で回せる値)", RecommendValue);
 		if (ImGui::Button("推奨値を適用")) {
-			maxEffects = RecommendValue;
+			maxEffects = (int)RecommendValue;
 		}
 		ImGui::SliderInt("MaxEffects", &maxEffects, 1, 1000);
 	}

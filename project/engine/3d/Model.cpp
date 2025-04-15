@@ -9,8 +9,6 @@
 #include "Object3d.h"
 #include "TextureManager.h"
 
-
-
 void Model::Initialize(const std::string& filename, ModelFormat format, std::string directorypath) {
 	//ディレクトリパス
 	directoryPath_ = directorypath;
@@ -68,7 +66,6 @@ void Model::UpdateJoints(Skeleton& skeleton) {
 			joint.skeletonSpaceMatrix = joint.localMatrix;
 		}
 	}
-
 }
 
 void Model::ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animationTime) {

@@ -7,9 +7,12 @@
 #include <memory>
 #include <MyMath.h>
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
+
+class Audio;
 
 class Player : public GameObject
 {
@@ -54,6 +57,9 @@ public: // ゲッター
 	// プレイヤーの速度を取得
 	Vector3 GetVelocity() const { return moveVel_; }
 
+	// 落下中かどうか
+	bool IsGround() const { return isGround_; }
+
 	// 攻撃チャージフラグを取得
 	bool IsChargeMax() const { return isChargeMax_; }
 
@@ -61,6 +67,9 @@ public: //セッター
 
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
+	// 効果音のセット
+	void SetObstacleSE(Audio* _obstacleSE) { obstacleSE_ = _obstacleSE; }
+	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
 
 	// 攻撃チャージフラグをセット
 	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
@@ -81,6 +90,10 @@ private:
 	// 入力
 	Input* input_ = nullptr;
 
+	//効果音のポインタ
+	Audio* obstacleSE_ = nullptr;
+	Audio* freezeSE_ = nullptr;
+
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};
 	std::unique_ptr<Object3d> player_ = nullptr;
@@ -97,6 +110,14 @@ private:
 	float knockBackTime_ = 0.0f;
 	// ノックバックの余韻
 	bool isAftertaste_ = false;
+
+	//パーティクル
+	std::unique_ptr<Particle> hitEffect_ = nullptr;
+	int countHitEffect_;
+	std::unique_ptr<Particle> deadEffect_ = nullptr;
+	int countDeadEffect_;
+	std::unique_ptr<Particle> walkEffect_ = nullptr;
+	std::unique_ptr<Particle> tackleEffect_ = nullptr;
 
 
 	// 移動速度

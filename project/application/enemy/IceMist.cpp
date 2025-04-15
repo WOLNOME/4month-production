@@ -14,7 +14,7 @@ void IceMist::Initialize(const std::string& filePath, const Vector3& position, c
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->InitializeModel(filePath);
 	transform_.Initialize();
-    transform_.scale_ = { 1.0f,1.0f,1.0f };
+    transform_.scale_ = { 1.0f, 0.5f,1.0f };
 	transform_.translate_ = position;
 	transform_.rotate_ = { 0.0f,0.0f,0.0f };
 	// 速度ベクトル

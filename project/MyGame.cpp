@@ -1,33 +1,31 @@
 #include "MyGame.h"
 #include "DirectXCommon.h"
 #include "MainRender.h"
+#include "D2DRender.h"
 #include "TextureManager.h"
 #include "SrvManager.h"
 #include "TextWriteManager.h"
 #include "ImGuiManager.h"
 #include "ModelManager.h"
 #include "ParticleManager.h"
-#include "Model.h"
 #include "SceneManager.h"
 
-void MyGame::Initialize()
-{
+void MyGame::Initialize() {
 	//ゲーム基盤部の初期化
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->SetNextScene("TITLE");
 
+	//パーティクルエディター→PARTICLECREATOR
 }
 
-void MyGame::Finalize()
-{
+void MyGame::Finalize() {
 	//ゲーム基盤解放
 	Framework::Finalize();
 }
 
-void MyGame::Update()
-{
+void MyGame::Update() {
 	//ImGui受付開始
 	ImGuiManager::GetInstance()->Begin();
 
@@ -41,15 +39,14 @@ void MyGame::Update()
 	ImGuiManager::GetInstance()->End();
 }
 
-void MyGame::Draw()
-{
+void MyGame::Draw() {
 	///==============================///
 	///          描画処理
 	///==============================///
 
-	
+
 	///------------------------------///
-	///        メインレンダー
+	///        D3D12の描画処理
 	///------------------------------///
 
 	//描画前処理
@@ -69,17 +66,19 @@ void MyGame::Draw()
 	MainRender::GetInstance()->PostDraw();
 
 	///------------------------------///
-	///        テキスト描画処理
+	///        D2Dの描画処理
 	///------------------------------///
 
-	//テキスト描画前処理
-	TextWriteManager::GetInstance()->BeginDrawWithD2D();
+	//D2Dの描画前処理
+	D2DRender::GetInstance()->PreDraw();
 
 	//シーンの文字描画
 	SceneManager::GetInstance()->TextDraw();
+	//シーン遷移アニメーションの描画(一番上に描画)
+	SceneManager::GetInstance()->CurtainDraw();
 
-	//テキスト描画後処理
-	TextWriteManager::GetInstance()->EndDrawWithD2D();
+	//D2Dの描画後処理
+	D2DRender::GetInstance()->PostDraw();
 
 	///------------------------------///
 	///        全ての描画が終了

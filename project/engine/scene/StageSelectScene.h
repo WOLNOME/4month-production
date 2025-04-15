@@ -14,8 +14,7 @@
 
 #include "../../application/objects/Field/StageSelectObject.h"
 
-class StageSelectScene : public BaseScene
-{
+class StageSelectScene : public BaseScene {
 public:
 
 	/// <summary>
@@ -70,7 +69,10 @@ private://メンバ変数
 
 	std::vector<uint32_t>textureHandleSelectNum_;
 	std::vector<std::unique_ptr<Sprite>> spriteSelectNum_;
-	
+
 	Vector2 spritePos_{};
+
+	//パーティクル情報
+	std::unique_ptr<Particle> particle_ = nullptr;
 };
 

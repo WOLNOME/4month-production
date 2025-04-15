@@ -2,9 +2,10 @@
 
 #include "../../appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
+#include "Audio.h"
+#include "RandomStringUtil.h"
 
-void Player::Initialize()
-{
+void Player::Initialize() {
 	input_ = Input::GetInstance();
 
 	// プレーヤーモデル
@@ -12,11 +13,11 @@ void Player::Initialize()
 	wtPlayer_.scale_ = { 1.0f,1.0f,1.0f };
 	player_ = std::make_unique<Object3d>();
 	player_->InitializeModel("player");
-	
+
 
 	// 当たり判定関係
 	appCollisionManager_ = AppCollisionManager::GetInstance();
-	
+
 	objectName_ = "Player";
 	appCollider_ = std::make_unique<AppCollider>();
 	appCollider_->SetOwner(this);
@@ -28,14 +29,38 @@ void Player::Initialize()
 	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
-	
+	//パーティクル
+	hitEffect_ = std::make_unique<Particle>();
+	hitEffect_->Initialize("hitPlayer" + RandomStringUtil::GenerateRandomString(3), "star");
+	hitEffect_->emitter_.isGravity = true;
+	hitEffect_->emitter_.gravity = -150.0f;
+	hitEffect_->emitter_.isBound = true;
+	hitEffect_->emitter_.repulsion = 0.8f;
+	hitEffect_->emitter_.floorHeight = 0.0f;
+	hitEffect_->emitter_.isPlay = false;
+	countHitEffect_ = 0;
+
+	deadEffect_ = std::make_unique<Particle>();
+	deadEffect_->Initialize("deadPlayer" + RandomStringUtil::GenerateRandomString(3), "deadPlayer");
+	deadEffect_->emitter_.isGravity = true;
+	deadEffect_->emitter_.gravity = -150.0f;
+	deadEffect_->emitter_.isPlay = false;
+	countDeadEffect_ = 0;
+
+	walkEffect_ = std::make_unique<Particle>();
+	walkEffect_->Initialize("walkPlayer" + RandomStringUtil::GenerateRandomString(3), "walkPlayer");
+
+	tackleEffect_ = std::make_unique<Particle>();
+	tackleEffect_->Initialize("tacklePlayer" + RandomStringUtil::GenerateRandomString(3), "tackle");
+	tackleEffect_->emitter_.isGravity = true;
+	tackleEffect_->emitter_.gravity = 0.3f;
+	tackleEffect_->emitter_.isPlay = false;
+
 }
 
-void Player::Finalize()
-{
+void Player::Finalize() {
 	// 各解放処理
-	if (appCollider_)
-	{
+	if (appCollider_) {
 		appCollisionManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
@@ -43,28 +68,23 @@ void Player::Finalize()
 	player_.reset();
 }
 
-void Player::Update()
-{
-	
-	
+void Player::Update() {
+
+
 	// ノックバック中は移動、攻撃できない
-	if (knockBackTime_ > 0.0f)
-	{
+	if (knockBackTime_ > 0.0f) {
 		knockBackTime_ -= 1.0f;
 	}
-	else if(!isAftertaste_)
-	{
+	else if (!isAftertaste_) {
 		//氷の上にいるとき
-		if (onIce_)
-		{
+		if (onIce_) {
 			//移動
 			MoveOnIce();
 
 			// 攻撃	
 			AttackOnIce();
 		}
-		else
-		{
+		else {
 			// 移動
 			Move();
 
@@ -74,21 +94,39 @@ void Player::Update()
 	}
 
 	//氷の上にいるとき
-	if (onIce_)
-	{
+	if (onIce_) {
 		MovePositionOnIce();
 	}
-	else
-	{
+	else {
 		// 位置更新
 		MovePosition();
 	}
-	
+
 
 	// 場外処理
 	OutOfField();
 
+	//パーティクル処理
+	if (hitEffect_->emitter_.isPlay) {
+		countHitEffect_++;
+		if (countHitEffect_ > 30) {
+			hitEffect_->emitter_.isPlay = false;
+			countHitEffect_ = 0;
+		}
+	}
+	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {
+		countDeadEffect_++;
+		if (countDeadEffect_ == 30) {
+			deadEffect_->emitter_.isPlay = false;
+		}
+		else if (countDeadEffect_ > 60) {
+			isDead_ = true;
+			countDeadEffect_ = 0;
+		}
+	}
+
 	wtPlayer_.UpdateMatrix();
+	wtPlayer_.rotate_ = rotation_;
 
 	// 当たり判定関係
 	aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
@@ -98,45 +136,48 @@ void Player::Update()
 	onIce_ = false;
 }
 
-void Player::Draw(BaseCamera _camera)
-{
-	if (!isDead_)
-	{
+void Player::Draw(BaseCamera _camera) {
+	if (!isDead_ && !deadEffect_->emitter_.isPlay) {
 		player_->Draw(wtPlayer_, _camera);
 	}
 }
 
-void Player::Move()
-{
+void Player::Move() {
 	// 摩擦による減速を適用
 	moveVel_ *= friction_;
 
 	// 地面にいるとき
-	if (isGround_ && !isStop_)
-	{
+	if (isGround_ && !isStop_) {
 		// 移動
-		if (input_->PushKey(DIK_W))
-		{
+		walkEffect_->emitter_.isPlay = false;
+		walkEffect_->emitter_.transform.translate = wtPlayer_.translate_;
+		if (input_->PushKey(DIK_W)) {
 			moveVel_.z += moveSpeed_.z * slowRate_;
+			walkEffect_->emitter_.isPlay = true;
 		}
-		if (input_->PushKey(DIK_S))
-		{
+		if (input_->PushKey(DIK_S)) {
 			moveVel_.z -= moveSpeed_.z * slowRate_;
+			walkEffect_->emitter_.isPlay = true;
 		}
-		if (input_->PushKey(DIK_A))
-		{
+		if (input_->PushKey(DIK_A)) {
 			moveVel_.x -= moveSpeed_.x * slowRate_;
+			walkEffect_->emitter_.isPlay = true;
 		}
-		if (input_->PushKey(DIK_D))
-		{
+		if (input_->PushKey(DIK_D)) {
 			moveVel_.x += moveSpeed_.x * slowRate_;
+			walkEffect_->emitter_.isPlay = true;
 		}
 	}
 
 	// 速度が非常に小さくなったら停止する
-	if (moveVel_.Length() < 0.01f)
-	{
+	if (moveVel_.Length() < 0.01f) {
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
+	}
+	else
+	{
+		// 移動方向に向きを変更
+		float targetRotationY = atan2f(moveVel_.x, moveVel_.z);
+		rotation_.y = MyMath::Lerp(rotation_.y, targetRotationY, 0.1f); // 0.1fは補間係数
 	}
 
 	wtPlayer_.translate_ += moveVel_;
@@ -144,8 +185,7 @@ void Player::Move()
 
 }
 
-void Player::MovePosition()
-{
+void Player::MovePosition() {
 	// フレーム間の時間差（秒）
 	float deltaTime = 1.0f / 60.0f;
 
@@ -154,12 +194,10 @@ void Player::MovePosition()
 	moveVel_ += friction;
 
 	// 速度が非常に小さくなったら停止する
-	if (moveVel_.Length() < 0.01f)
-	{
+	if (moveVel_.Length() < 0.01f) {
 		return;
 	}
-	else if (moveVel_.Length() < 1.5f)
-	{
+	else if (moveVel_.Length() < 1.5f) {
 		isAftertaste_ = false;
 	}
 
@@ -168,30 +206,25 @@ void Player::MovePosition()
 	position_ = wtPlayer_.translate_;
 }
 
-void Player::OutOfField()
-{
-	if (isGround_ == false)
-	{
+void Player::OutOfField() {
+	if (isGround_ == false) {
 		wtPlayer_.translate_.y -= fallSpeed_;
-	} 
-	else
-	{
+	}
+	else {
 		wtPlayer_.translate_.y = 1.0f;
 	}
 
-	if (wtPlayer_.translate_.y < -10.0f)
-	{
-		isDead_ = true;
+	if (wtPlayer_.translate_.y < -10.0f && countDeadEffect_ == 0) {
+		deadEffect_->emitter_.isPlay = true;
+		deadEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		isGround_ = true;
 	}
 
 	isGround_ = false;
 }
 
-void Player::Attack()
-{
-	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_)
-	{
+void Player::Attack() {
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_) {
 		isAttack_ = true;
 		isChargeMax_ = false;
 
@@ -200,27 +233,33 @@ void Player::Attack()
 
 	}
 
-	if (isAttack_)
-	{
+	if (isAttack_) {
 		moveVel_ *= 1.5f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
 
-		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f/60.0f);
+		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
 		moveVel_ += moveFriction_;
 		wtPlayer_.translate_ += moveVel_ * slowRate_;
 		position_ = wtPlayer_.translate_;
+
+		// 攻撃エフェクト
+		tackleEffect_->emitter_.isPlay = true;
+		tackleEffect_->emitter_.transform.translate = wtPlayer_.translate_;
+		tackleEffect_->emitter_.transform.translate.y += 0.5f;
+		tackleEffect_->emitter_.transform.scale = { 0.5f,0.5f,0.5f };
 	}
 
-	if (attackTimeCounter_ <= 0.0f)
-	{
+	if (attackTimeCounter_ <= 0.0f) {
 		isAttack_ = false;
 		isStop_ = false;
+
+		// 攻撃エフェクトオフ
+		tackleEffect_->emitter_.isPlay = false;
 	}
 }
 
-void Player::ImGuiDraw()
-{
+void Player::ImGuiDraw() {
 	// プレイヤー
 	ImGui::Begin("Player");
 
@@ -230,8 +269,7 @@ void Player::ImGuiDraw()
 
 	ImGui::Text("isGround_ : %s", isGround_ ? "true" : "false");
 
-	if (ImGui::Button("ReSetPos"))
-	{
+	if (ImGui::Button("ReSetPos")) {
 		wtPlayer_.translate_ = { 0.0f,3.0f,0.0f };
 	}
 
@@ -242,15 +280,12 @@ void Player::ImGuiDraw()
 
 }
 
-void Player::OnCollision(const AppCollider* _other)
-{
+void Player::OnCollision(const AppCollider* _other) {
 	// フィールドの内にいるかどうか
-	if (_other->GetColliderID() == "Field")
-	{
+	if (_other->GetColliderID() == "Field") {
 		isGround_ = true;
 	}
-	else if (_other->GetColliderID() == "Obstacle")
-	{
+	else if (_other->GetColliderID() == "Obstacle") {
 		wtPlayer_.translate_ += ComputePenetration(*_other->GetAABB());
 		wtPlayer_.UpdateMatrix();
 
@@ -259,8 +294,7 @@ void Player::OnCollision(const AppCollider* _other)
 		aabb_.max = wtPlayer_.translate_ + wtPlayer_.scale_;
 		appCollider_->SetPosition(wtPlayer_.translate_);
 	}
-	else if (_other->GetColliderID() == "Bumper")
-	{
+	else if (_other->GetColliderID() == "Bumper") {
 		Vector3 penetration = ComputePenetration(*_other->GetAABB());
 		wtPlayer_.translate_ += penetration;
 		penetration.Normalize();
@@ -273,14 +307,12 @@ void Player::OnCollision(const AppCollider* _other)
 
 		isAttack_ = false;
 	}
-	else if (_other->GetColliderID() == "IceFloor")
-	{
+	else if (_other->GetColliderID() == "IceFloor") {
 		onIce_ = true;
 	}
 
 	// どちらも攻撃していなくてノックバック中でないとき
-	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_)
-	{
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_) {
 		// プレイヤーの速度を取得
 		Vector3 playerVelocity = moveVel_;
 
@@ -296,8 +328,7 @@ void Player::OnCollision(const AppCollider* _other)
 	}
 
 	// プレイヤー同士の衝突
-	if (_other->GetColliderID() == "Player")
-	{
+	if (_other->GetColliderID() == "Player") {
 		// プレイヤー同士の衝突処理
 		Vector3 playerPosition = wtPlayer_.translate_;
 		Vector3 otherPlayerPosition = _other->GetOwner()->GetPosition();
@@ -308,8 +339,7 @@ void Player::OnCollision(const AppCollider* _other)
 		float distance = 2.5f; // プレイヤー同士の間の距離を調整するための値
 
 		// 互いに重ならないように少しずつ位置を調整
-		if ((playerPosition - otherPlayerPosition).Length() < distance)
-		{
+		if ((playerPosition - otherPlayerPosition).Length() < distance) {
 			playerPosition += direction * 0.1f; // 微調整のための値
 			playerPosition.y = 1.0f;
 			wtPlayer_.translate_ = playerPosition;
@@ -319,26 +349,21 @@ void Player::OnCollision(const AppCollider* _other)
 
 	//アイスミストに当たっている間速度低下
 	slowRate_ = 1.0f;
-	if (_other->GetColliderID() == "IceMist")
-	{
+	if (_other->GetColliderID() == "IceMist") {
 		slowRate_ = 0.25f;
 	}
 
 }
 
-void Player::OnCollisionTrigger(const AppCollider* _other)
-{
-	if (_other->GetColliderID() == "TackleEnemy")
-	{
+void Player::OnCollisionTrigger(const AppCollider* _other) {
+	if (_other->GetColliderID() == "TackleEnemy") {
 		// 攻撃が当たったとき攻撃を止める
-		if (isAttack_)
-		{
+		if (isAttack_) {
 			isStop_ = true;
 		}
 
 		// エネミーの攻撃を食らったとき
-		if (_other->GetOwner()->IsAttack() && !isAttack_)
-		{
+		if (_other->GetOwner()->IsAttack() && !isAttack_) {
 			isAftertaste_ = true;
 
 			// 当たったエネミーの位置を取得
@@ -352,12 +377,16 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
+
+			//パーティクルをオン
+			hitEffect_->emitter_.isPlay = true;
+			hitEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		}
+
 	}
 
 	// 風に当たったらノックバック
-	if (_other->GetColliderID() == "Wind" && !isAttack_)
-	{
+	if (_other->GetColliderID() == "Wind" && !isAttack_) {
 		isAftertaste_ = true;
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
@@ -368,10 +397,16 @@ void Player::OnCollisionTrigger(const AppCollider* _other)
 		// ノックバックタイマー
 		knockBackTime_ = 25.0f;
 	}
+
+	// 障害物に当たったら効果音の再生
+	if (_other->GetColliderID() == "Obstacle")
+	{
+		if (!obstacleSE_) { return; }
+		obstacleSE_->Play();
+	}
 }
 
-Vector3 Player::ComputePenetration(const AppAABB& otherAABB)
-{
+Vector3 Player::ComputePenetration(const AppAABB& otherAABB) {
 	Vector3 penetration;
 
 	//X軸方向に押し戻すベクトル
@@ -389,60 +424,52 @@ Vector3 Player::ComputePenetration(const AppAABB& otherAABB)
 	float absZ = std::abs(penetrationZ);
 
 	//最小のベクトルを求める
-	if (absX < absZ)
-	{
+	if (absX < absZ) {
 		penetration.x = penetrationX;
 	}
-	else 
-	{
+	else {
 		penetration.z = penetrationZ;
 	}
 
 	return penetration;
 }
 
-void Player::MoveOnIce()
-{
+void Player::MoveOnIce() {
 
 	// 地面にいるとき
-	if (isGround_ && !isStop_)
-	{
+	if (isGround_ && !isStop_) {
 		// 移動
-		if (input_->PushKey(DIK_W))
-		{
+		if (input_->PushKey(DIK_W)) {
 			moveVel_.z += moveSpeedOnIce_;
 		}
-		if (input_->PushKey(DIK_S))
-		{
+		if (input_->PushKey(DIK_S)) {
 			moveVel_.z -= moveSpeedOnIce_;
 		}
-		if (input_->PushKey(DIK_A))
-		{
+		if (input_->PushKey(DIK_A)) {
 			moveVel_.x -= moveSpeedOnIce_;
 		}
-		if (input_->PushKey(DIK_D))
-		{
+		if (input_->PushKey(DIK_D)) {
 			moveVel_.x += moveSpeedOnIce_;
 		}
 	}
 
-	
+
 
 }
 
 void Player::AttackOnIce()
 {
-	if (input_->TriggerKey(DIK_SPACE) && !isAttack_)
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_)
 	{
 		isAttack_ = true;
+		isChargeMax_ = false;
 
 		// 攻撃時間リセット
 		attackTimeCounter_ = attackTime_;
 
 	}
 
-	if (isAttack_)
-	{
+	if (isAttack_) {
 		moveVel_ *= 1.5f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
@@ -451,34 +478,38 @@ void Player::AttackOnIce()
 		moveVel_ += moveFriction_;
 		wtPlayer_.translate_ += moveVel_;
 		position_ = wtPlayer_.translate_;
+
+		// 攻撃エフェクト
+		tackleEffect_->emitter_.isPlay = true;
+		tackleEffect_->emitter_.transform.translate = wtPlayer_.translate_;
+		tackleEffect_->emitter_.transform.translate.y += 0.5f;
+		tackleEffect_->emitter_.transform.scale = { 0.5f,0.5f,0.5f };
 	}
 
-	if (attackTimeCounter_ <= 0.0f)
-	{
+	if (attackTimeCounter_ <= 0.0f) {
 		isAttack_ = false;
 		isStop_ = false;
+
+		// 攻撃エフェクトオフ
+		tackleEffect_->emitter_.isPlay = false;
 	}
 }
 
-void Player::MovePositionOnIce()
-{
+void Player::MovePositionOnIce() {
 
 	// 摩擦による減速を適用
 	moveVel_ *= frictionOnIce_ * slowRate_;
 
 	//速度を最高速度以下に抑える
-	if (moveVel_.Length() > MaxSpeedOnIce_)
-	{
+	if (moveVel_.Length() > MaxSpeedOnIce_) {
 		moveVel_.Normalize();
 		moveVel_ *= MaxSpeedOnIce_;
 	}
 	// 速度が非常に小さくなったら停止する
-	else if (moveVel_.Length() < 0.001f)
-	{
+	else if (moveVel_.Length() < 0.001f) {
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
 	}
-	if (moveVel_.Length() < 0.04f)
-	{
+	if (moveVel_.Length() < 0.04f) {
 		isAftertaste_ = false;
 	}
 

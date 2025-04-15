@@ -27,6 +27,12 @@ void Field::Initialize() {
 	appCollider_->SetOnCollision(std::bind(&Field::OnCollision, this, std::placeholders::_1));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
+	//パーティクル
+	particle_ = std::make_unique<Particle>();
+	particle_->Initialize("field","StageEffect");
+	particle_->emitter_.transform.scale = { 30.0f,1.0f,30.0f };
+	particle_->emitter_.isGravity = true;
+	particle_->emitter_.gravity = 1.0f;
 }
 
 void Field::Finalize() {

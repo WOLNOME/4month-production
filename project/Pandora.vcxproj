@@ -110,8 +110,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\appCollider\AppCollider.cpp" />
     <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
     <ClCompile Include="application\enemy\IceMist.cpp" />
+    <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp" />
+    <ClCompile Include="engine\base\D2DRender.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="application\enemy\BaseEnemy.cpp" />
     <ClCompile Include="application\enemy\EnemyManager.cpp" />
@@ -149,10 +151,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
     <ClCompile Include="engine\scene\GameOverScene.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -161,7 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\Object3dCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\base\StringUtility.cpp" />
+    <ClCompile Include="engine\util\StringUtility.cpp" />
     <ClCompile Include="engine\base\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinApp.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
@@ -188,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\objects\Field\StageSelectObject.cpp" />
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
+    <ClCompile Include="engine\util\RandomStringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -196,8 +195,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\enemy\EnemyManager.h" />
     <ClInclude Include="application\enemy\IceMist.h" />
     <ClInclude Include="application\enemy\TackleEnemy.h" />
+    <ClInclude Include="application\MathUtils.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
+    <ClInclude Include="engine\base\D2DRender.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />
@@ -230,7 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\Object3dCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="engine\base\StringUtility.h" />
+    <ClInclude Include="engine\util\StringUtility.h" />
     <ClInclude Include="engine\base\TextureManager.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />
@@ -251,10 +252,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\enemy\FreezeEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
-    <ClInclude Include="engine\scene\GamePlayScene2.h" />
-    <ClInclude Include="engine\scene\GamePlayScene3.h" />
-    <ClInclude Include="engine\scene\GamePlayScene4.h" />
-    <ClInclude Include="engine\scene\GamePlayScene5.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
@@ -278,6 +275,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\Field\StageSelectObject.h" />
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
+    <ClInclude Include="engine\util\RandomStringUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

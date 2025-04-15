@@ -97,6 +97,6 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
 	//インクルードハンドラ
 	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
-	
+
 };
 

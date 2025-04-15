@@ -6,10 +6,6 @@
 // 追加
 #include "StageSelectScene.h"
 #include "GamePlayScene.h"
-#include "GamePlayScene2.h"
-#include "GamePlayScene3.h"
-#include "GamePlayScene4.h"
-#include "GamePlayScene5.h"
 #include "GameOverScene.h"
 // パーティクルクリエイター
 #include "ParticleCreatorScene.h"
@@ -34,18 +30,23 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	}
 	else if (sceneName == "GAMEPLAY") {
 		newScene = new GamePlayScene();
+		GamePlayScene::stageNum_ = 1;
 	}
 	else if (sceneName == "GAMEPLAY2") {
-		newScene = new GamePlayScene2();
+		newScene = new GamePlayScene();
+		GamePlayScene::stageNum_ = 2;
 	}
 	else if (sceneName == "GAMEPLAY3") {
-		newScene = new GamePlayScene3();
+		newScene = new GamePlayScene();
+		GamePlayScene::stageNum_ = 3;
 	}
 	else if (sceneName == "GAMEPLAY4") {
-		newScene = new GamePlayScene4();
+		newScene = new GamePlayScene();
+		GamePlayScene::stageNum_ = 4;
 	} 
 	else if (sceneName == "GAMEPLAY5") {
-		newScene = new GamePlayScene5();
+		newScene = new GamePlayScene();
+		GamePlayScene::stageNum_ = 5;
 	}
 	else if (sceneName == "GAMEOVER") {
 		newScene = new GameOverScene();

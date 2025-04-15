@@ -5,6 +5,7 @@
 #include <memory>
 #include <MyMath.h>
 #include <Object3d.h>
+#include <Particle.h>
 
 #include "../../appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
@@ -38,5 +39,7 @@ private:
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
 
+	// パーティクル
+	std::unique_ptr<Particle> particle_ = nullptr;
 };
 
