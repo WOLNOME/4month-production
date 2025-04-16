@@ -92,6 +92,7 @@ void BaseCamera::RegistShake(float time, float power) {
 	ShakeData shakeData;
 	shakeData.maxTime = time;
 	shakeData.time = time;
+	shakeData.maxPower = power;
 	shakeData.power = power;
 	//リストに登録
 	shakeList_.push_back(shakeData);
@@ -107,12 +108,13 @@ void BaseCamera::UpdateShake() {
 	//全てのリストを更新
 	for (auto it = shakeList_.begin(); it != shakeList_.end();) {
 		//揺れの大きさを線形補完で決める
-		it->power = MyMath::Lerp(0.0f, it->power, it->time / it->maxTime);
+		it->power = MyMath::Lerp(it->maxPower, 0.0f, 1.0 - (it->time / it->maxTime));
 		//時間を減らす
 		it->time -= kDeltaTime;
 		//時間が0未満になったら削除
 		if (it->time < 0.0f) {
 			it = shakeList_.erase(it);
+			//次の要素へ
 			continue;
 		}
 		//揺れの大きさが大きいほうを使う
@@ -123,7 +125,6 @@ void BaseCamera::UpdateShake() {
 		it++;
 	}
 	//最終的に決まった揺れの大きさを使ってオフセットを決める
-	//オフセットを決める
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
 	std::uniform_real_distribution<float> dist(-usePower, usePower);

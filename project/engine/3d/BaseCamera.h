@@ -93,6 +93,7 @@ private:
 	struct ShakeData {
 		float maxTime;		// 揺れの最大時間
 		float time;			// 揺れの時間
+		float maxPower;		// 揺れの最大強さ
 		float power;		// 揺れの強さ
 	};
 	// カメラの揺れを管理する変数
