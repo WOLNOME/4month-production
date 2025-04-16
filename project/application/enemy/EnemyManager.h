@@ -52,6 +52,20 @@ public:
 	//凍結エネミーの位置を取得
 	Vector3 GetFreezeEnemyPosition(uint32_t index) const { return freezeEnemies_[index]->GetPosition(); }
 	void Finalize();
+	//全ての敵を取得
+	std::vector<GameObject*> GetAllEnemies() {
+		std::vector<GameObject*> allEnemies;
+		for (auto& enemy : tackleEnemies_) {
+			allEnemies.push_back(enemy.get());
+		}
+		for (auto& enemy : fanEnemies_) {
+			allEnemies.push_back(enemy.get());
+		}
+		for (auto& enemy : freezeEnemies_) {
+			allEnemies.push_back(enemy.get());
+		}
+		return allEnemies;
+	}
 
 private:
 	BaseCamera* camera_ = nullptr;

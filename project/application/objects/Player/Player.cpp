@@ -218,6 +218,7 @@ void Player::OutOfField() {
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		isGround_ = true;
+		isDeadShake_ = true;
 	}
 
 	isGround_ = false;
@@ -381,6 +382,9 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 			//パーティクルをオン
 			hitEffect_->emitter_.isPlay = true;
 			hitEffect_->emitter_.transform.translate = wtPlayer_.translate_;
+
+			//被弾時のシェイクを送る合図
+			isDamageShake_ = true;
 		}
 
 	}

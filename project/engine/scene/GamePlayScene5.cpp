@@ -260,6 +260,9 @@ void GamePlayScene5::Update()
 		sceneManager_->SetNextScene("CLEAR");
 	}
 
+	//揺れの処理
+	CheckShake();
+
 	// ImGui
 	ImGuiDraw();
 }
@@ -691,4 +694,29 @@ void GamePlayScene5::CalculateNearestPosition()
 
 	}
 
+}
+
+void GamePlayScene5::CheckShake() {
+	//全てのプレイヤーのシェイク判定を処理
+	for (auto& player : players_) {
+		if (player->isDamageShake_) {
+			camera_->RegistShake(0.4f, 0.15f);
+			player->isDamageShake_ = false;
+		}
+		if (player->isDeadShake_) {
+			camera_->RegistShake(0.4f, 0.4f);
+			player->isDeadShake_ = false;
+		}
+	}
+	//全てのエネミーのシェイク判定を処理
+	for (auto& enemy : enemyManager_->GetAllEnemies()) {
+		if (enemy->isDamageShake_) {
+			camera_->RegistShake(0.4f, 0.25f);
+			enemy->isDamageShake_ = false;
+		}
+		if (enemy->isDeadShake_) {
+			camera_->RegistShake(0.4f, 0.5f);
+			enemy->isDeadShake_ = false;
+		}
+	}
 }

@@ -68,6 +68,9 @@ public:
 	//ステージ番号
 	static uint32_t stageNum_;
 
+	//シェイクのチェック
+	void CheckShake();
+
 private://メンバ変数
 
 	Input* input_ = nullptr;

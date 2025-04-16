@@ -15,7 +15,7 @@ public:
     virtual void Update() = 0;
     virtual void Draw(BaseCamera _camera) = 0;
     virtual void Finalize() = 0;
-
+    
 
 public: // ゲッター
     virtual Vector3 GetScale() const { return scale_; };
@@ -31,7 +31,6 @@ public: // セッター
     virtual void SetPosition(const Vector3& _position) { position_ = _position; };
     virtual void SetHP(float _hp) { hp_ = _hp; };
 
-
 protected: // メンバー
     std::string objectName_;
     Vector3 scale_;
@@ -40,4 +39,9 @@ protected: // メンバー
     float   hp_;
 	bool isAttack_;
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
+
+    //追加項目
+public:
+	bool isDamageShake_ = false;
+    bool isDeadShake_ = false;
 };

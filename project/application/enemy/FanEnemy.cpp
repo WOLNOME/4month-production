@@ -75,6 +75,7 @@ void FanEnemy::EnemyUpdate()
 			deadEffect_->emitter_.isPlay = false;
 		}
 		else if (countDeadEffect_ > 60) {
+			//パーティクル出し切った後に死ぬ
 			isAlive_ = false;
 			countDeadEffect_ = 0;
 		}
@@ -85,8 +86,11 @@ void FanEnemy::EnemyUpdate()
 
 	//生存中か
 	if (transform_.translate_.y <= -10.0f && countDeadEffect_ == 0) {
+		//死亡時パーティクル
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = transform_.translate_;
+		//死亡時シェイク
+		isDeadShake_ = true;
 	}
 
 	//行列の更新
@@ -177,6 +181,9 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 		velocity_ = runDirection;
 		velocity_ *= 20.0f;
 		velocity_.y = 0.0f;
+
+		//被弾時シェイク
+		isDamageShake_ = true;
 	}
 }
 

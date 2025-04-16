@@ -63,6 +63,8 @@ public:
 	// 最も近い敵やプレイヤーの位置を計算
 	void CalculateNearestPosition();
 
+	//シェイクのチェック
+	void CheckShake();
 
 private://メンバ変数
 

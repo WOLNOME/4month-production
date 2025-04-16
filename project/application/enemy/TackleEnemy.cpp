@@ -84,6 +84,7 @@ void TackleEnemy::EnemyUpdate() {
 			deadEffect_->emitter_.isPlay = false;
 		}
 		else if (countDeadEffect_ > 60) {
+			//パーティクル出し切った後に死ぬ
 			isAlive_ = false;
 			countDeadEffect_ = 0;
 		}
@@ -94,8 +95,11 @@ void TackleEnemy::EnemyUpdate() {
 
 	//生存中か
 	if (transform_.translate_.y <= -10.0f && countDeadEffect_ == 0) {
+		//死亡時パーティクル
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = transform_.translate_;
+		//死亡時シェイク
+		isDeadShake_ = true;
 	}
 
 	//行列の更新
@@ -273,6 +277,9 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other) {
 			tackleVelocity_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 4.0f;
+
+			//被弾時シェイク
+			isDamageShake_ = true;
 		}
 	}
 }

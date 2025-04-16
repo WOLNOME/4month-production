@@ -9,8 +9,7 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
-void GamePlayScene2::Initialize()
-{
+void GamePlayScene2::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -40,8 +39,7 @@ void GamePlayScene2::Initialize()
 	playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
 
 	// プレイヤー
-	for (uint32_t i = 0; i < 1; ++i)
-	{
+	for (uint32_t i = 0; i < 1; ++i) {
 		auto player = std::make_unique<Player>();
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
@@ -78,8 +76,7 @@ void GamePlayScene2::Initialize()
 		{ 1.0f, 1.0f, 5.0f }
 	};
 
-	for (size_t i = 0; i < obstaclePositions.size(); ++i)
-	{
+	for (size_t i = 0; i < obstaclePositions.size(); ++i) {
 		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
 		obstacle = std::make_unique<Obstacle>();
 		obstacle->Initialize();
@@ -89,8 +86,7 @@ void GamePlayScene2::Initialize()
 
 
 	// プレイヤースポーン位置モデル
-	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
-	{
+	for (uint32_t i = 0; i < playerSpawnNum_; ++i) {
 		auto playerSpawn = std::make_unique<SpawnPos>();
 		playerSpawn->SetPosition(playerSpawnPositions_[i]);
 		playerSpawn->Initialize();
@@ -99,10 +95,8 @@ void GamePlayScene2::Initialize()
 	}
 }
 
-void GamePlayScene2::Finalize()
-{
-	for (auto& player : players_)
-	{
+void GamePlayScene2::Finalize() {
+	for (auto& player : players_) {
 		player->Finalize();
 	}
 
@@ -110,14 +104,12 @@ void GamePlayScene2::Finalize()
 
 	field_->Finalize();
 
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
-	{
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->Finalize();
 	}
 }
 
-void GamePlayScene2::Update()
-{
+void GamePlayScene2::Update() {
 	// スプライト
 	spriteUI_PLAY_->Update();
 
@@ -126,10 +118,8 @@ void GamePlayScene2::Update()
 
 	// 死んだプレイヤーを削除
 	players_.erase(std::remove_if(players_.begin(), players_.end(),
-		[this](const std::unique_ptr<Player>& player)
-		{
-			if (player->IsDead())
-			{
+		[this](const std::unique_ptr<Player>& player) {
+			if (player->IsDead()) {
 				player->Finalize();
 				playerNum_--;
 				return true;
@@ -137,8 +127,7 @@ void GamePlayScene2::Update()
 			return false;
 		}), players_.end());
 	// プレイヤー
-	for (auto& player : players_)
-	{
+	for (auto& player : players_) {
 		player->Update();
 	}
 
@@ -151,18 +140,15 @@ void GamePlayScene2::Update()
 	field_->Update();
 
 	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
-	{
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->Update();
 	}
 
 	// プレイヤースポーンのオブジェクト
-	for (auto& playerSpawn : playerSpawn_)
-	{
+	for (auto& playerSpawn : playerSpawn_) {
 		playerSpawn->Update();
 	}
-	if (playerNum_ > 0)
-	{
+	if (playerNum_ > 0) {
 		playerSpawnRotation();
 	}
 
@@ -178,36 +164,33 @@ void GamePlayScene2::Update()
 	CalculateNearestPosition();
 
 	//ゲーム終了判定
-	if ((playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0) and !isGameEnd_)
-	{
+	if ((playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0) and !isGameEnd_) {
 		isGameEnd_ = true;
 		isZoomIn_ = true;
-		if (playerNum_ <= 0)
-		{
+		if (playerNum_ <= 0) {
 			cameraEndPosition_ = nearestEnemyPos_;
 		}
-		else if (enemyManager_->GetEnemyCount() == 0)
-		{
+		else if (enemyManager_->GetEnemyCount() == 0) {
 			cameraEndPosition_ = nearestPlayerPos_;
 		}
 	}
 	// ゲームオーバーへ
-	if (playerNum_ <= 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)
-	{
+	if (playerNum_ <= 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f) {
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_->TriggerKey(DIK_TAB) or (enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f))
-	{
+	if (input_->TriggerKey(DIK_TAB) or (enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)) {
 		sceneManager_->SetNextScene("CLEAR");
 	}
+
+	//揺らす処理
+	CheckShake();
 
 	// ImGui
 	ImGuiDraw();
 }
 
-void GamePlayScene2::Draw()
-{
+void GamePlayScene2::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -216,8 +199,7 @@ void GamePlayScene2::Draw()
 	///------------------------------///
 
 	// プレイヤー
-	for (auto& player : players_)
-	{
+	for (auto& player : players_) {
 		player->Draw(*camera_.get());
 	}
 
@@ -230,14 +212,12 @@ void GamePlayScene2::Draw()
 	field_->Draw(*camera_.get());
 
 	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
-	{
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->Draw(*camera_.get());
 	}
 
 	// プレイヤースポーン
-	for (auto& playerSpawn : playerSpawn_)
-	{
+	for (auto& playerSpawn : playerSpawn_) {
 		playerSpawn->Draw(*camera_.get());
 	}
 
@@ -274,8 +254,7 @@ void GamePlayScene2::Draw()
 	///------------------------------///
 }
 
-void GamePlayScene2::TextDraw()
-{
+void GamePlayScene2::TextDraw() {
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
@@ -287,8 +266,7 @@ void GamePlayScene2::TextDraw()
 	///------------------------------///
 }
 
-void GamePlayScene2::ImGuiDraw()
-{
+void GamePlayScene2::ImGuiDraw() {
 
 #ifdef _DEBUG
 
@@ -303,8 +281,7 @@ void GamePlayScene2::ImGuiDraw()
 
 	ImGui::SliderFloat3("playerSpawnPos", &playerSpawnPositions_[0].x, -10.0f, 10.0f);
 	// プレイヤーを追加するボタン
-	if (ImGui::Button("Add Player"))
-	{
+	if (ImGui::Button("Add Player")) {
 		auto player = std::make_unique<Player>();
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
@@ -314,11 +291,9 @@ void GamePlayScene2::ImGuiDraw()
 	}
 
 	// 障害物の位置調整
-	for (size_t i = 0; i < obstacles_.size(); ++i)
-	{
+	for (size_t i = 0; i < obstacles_.size(); ++i) {
 		Vector3 pos = obstacles_[i]->GetPosition();
-		if (ImGui::SliderFloat3(("ObstaclePos" + std::to_string(i)).c_str(), &pos.x, -10.0f, 10.0f))
-		{
+		if (ImGui::SliderFloat3(("ObstaclePos" + std::to_string(i)).c_str(), &pos.x, -10.0f, 10.0f)) {
 			obstacles_[i]->SetPosition(pos);
 		}
 	}
@@ -328,8 +303,7 @@ void GamePlayScene2::ImGuiDraw()
 	ImGui::End();
 
 	// プレイヤー
-	for (auto& player : players_)
-	{
+	for (auto& player : players_) {
 		player->ImGuiDraw();
 	}
 
@@ -341,12 +315,10 @@ void GamePlayScene2::ImGuiDraw()
 #endif // _DEBUG
 }
 
-void GamePlayScene2::playerSpawnRotation()
-{
+void GamePlayScene2::playerSpawnRotation() {
 	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
-	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 30)
-	{
+	if (rotationTimer_ <= 0.0f && howManyBoogie_ < 30) {
 		rotationTimer_ = rotation_;
 
 		// プレイヤーを追加
@@ -362,38 +334,31 @@ void GamePlayScene2::playerSpawnRotation()
 
 		// 位置ローテを0に戻す
 		playerSpawnIndex_++;
-		if (playerSpawnIndex_ > playerSpawnNum_ - 1)
-		{
+		if (playerSpawnIndex_ > playerSpawnNum_ - 1) {
 			playerSpawnIndex_ = 0;
 		}
 	}
 }
 
-void GamePlayScene2::UpdateCamera()
-{
+void GamePlayScene2::UpdateCamera() {
 	//　カメラの演出
-	if (isZoomIn_)
-	{
+	if (isZoomIn_) {
 		UpdateZoomIn();
 	}
-	else if (waitTime_ > 0.0f)
-	{
+	else if (waitTime_ > 0.0f) {
 		waitTime_ -= 1.0f / 60.0f;
-		if (waitTime_ <= 0.0f)
-		{
+		if (waitTime_ <= 0.0f) {
 			isZoomOut_ = true;
 		}
 	}
-	else if (isZoomOut_)
-	{
+	else if (isZoomOut_) {
 		UpdateZoomOut();
 	}
 	// カメラの行列を更新
 	camera_->UpdateMatrix();
 }
 
-void GamePlayScene2::UpdateZoomIn()
-{
+void GamePlayScene2::UpdateZoomIn() {
 	// 時間を経過させる
 	cameraEaseTime_ += 1.0f / 60.0f;
 	float t = cameraEaseTime_ / cameraEaseDuration_;
@@ -412,20 +377,16 @@ void GamePlayScene2::UpdateZoomIn()
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
 
 	// 敵の向きを補間
-	if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0)
-	{
+	if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0) {
 		Vector3 rotation = { 0.0f, 0.0f, 0.0f };
 		//敵の現在の向き
-		if (nearestEnemyType_ == "TackleEnemy")
-		{
+		if (nearestEnemyType_ == "TackleEnemy") {
 			rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
 		}
-		else if (nearestEnemyType_ == "FanEnemy")
-		{
+		else if (nearestEnemyType_ == "FanEnemy") {
 			rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
 		}
-		else if (nearestEnemyType_ == "FreezeEnemy")
-		{
+		else if (nearestEnemyType_ == "FreezeEnemy") {
 			rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
 		}
 		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
@@ -433,8 +394,7 @@ void GamePlayScene2::UpdateZoomIn()
 	}
 
 	// プレイヤーの向きを補間
-	if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty())
-	{
+	if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty()) {
 		Vector3 rotation = players_[nearestPlayerNum_]->GetRotation();
 		Vector3 newPlayerRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(cameraEndPosition, nearestPlayerPos_) * easeT;
 		players_[nearestPlayerNum_]->SetRotation(newPlayerRotate);
@@ -445,16 +405,14 @@ void GamePlayScene2::UpdateZoomIn()
 	camera_->SetRotate(newRotation);
 
 	//補間が終わったら
-	if (t >= 1.0f)
-	{
+	if (t >= 1.0f) {
 		isZoomIn_ = false;
 		cameraEaseTime_ = 0.0f;
 		waitTime_ = waitTimeDuration_;
 	}
 }
 
-void GamePlayScene2::UpdateZoomOut()
-{
+void GamePlayScene2::UpdateZoomOut() {
 	// 時間を経過させる
 	cameraEaseTime_ += 1.0f / 60.0f;
 	float t = cameraEaseTime_ / cameraEaseDuration_;
@@ -477,31 +435,26 @@ void GamePlayScene2::UpdateZoomOut()
 	camera_->SetRotate(newRotation);
 
 	//補間が終わったら
-	if (t >= 1.0f)
-	{
+	if (t >= 1.0f) {
 		isZoomOut_ = false;
 		cameraEaseTime_ = 0.0f;
 	}
 }
 
-void GamePlayScene2::CalculateNearestPosition()
-{
+void GamePlayScene2::CalculateNearestPosition() {
 	// プレイヤーが残り1人のとき
-	if (players_.size() == 1)
-	{
+	if (players_.size() == 1) {
 		//最も近い敵の座標を取得
 		float closestDistance_ = (std::numeric_limits<float>::max)();
 
 		//最も近い敵の座標を取得
 		//タックルエネミー
-		for (uint32_t i = 0; i < enemyManager_->GetTackleEnemyCount(); i++)
-		{
+		for (uint32_t i = 0; i < enemyManager_->GetTackleEnemyCount(); i++) {
 			//地面にいないエネミーは無視
 			if (!enemyManager_->GetTackleEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager_->GetTackleEnemyPosition(i);
 			float distance = (players_[0]->GetPosition() - enemyPos).Length();
-			if (distance < closestDistance_)
-			{
+			if (distance < closestDistance_) {
 				closestDistance_ = distance;
 				nearestEnemyPos_ = enemyPos;
 				nearestEnemyType_ = "TackleEnemy";
@@ -509,14 +462,12 @@ void GamePlayScene2::CalculateNearestPosition()
 			}
 		}
 		//ファンエネミー
-		for (uint32_t i = 0; i < enemyManager_->GetFanEnemyCount(); i++)
-		{
+		for (uint32_t i = 0; i < enemyManager_->GetFanEnemyCount(); i++) {
 			//地面にいないエネミーは無視
 			if (!enemyManager_->GetFanEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager_->GetFanEnemyPosition(i);
 			float distance = (players_[0]->GetPosition() - enemyPos).Length();
-			if (distance < closestDistance_)
-			{
+			if (distance < closestDistance_) {
 				closestDistance_ = distance;
 				nearestEnemyPos_ = enemyPos;
 				nearestEnemyType_ = "FanEnemy";
@@ -524,20 +475,17 @@ void GamePlayScene2::CalculateNearestPosition()
 			}
 		}
 		//フリーズエネミー
-		for (uint32_t i = 0; i < enemyManager_->GetFreezeEnemyCount(); i++)
-		{
+		for (uint32_t i = 0; i < enemyManager_->GetFreezeEnemyCount(); i++) {
 			if (!enemyManager_->GetFreezeEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager_->GetFreezeEnemyPosition(i);
 			float distance = (players_[0]->GetPosition() - enemyPos).Length();
-			if (distance < closestDistance_)
-			{
+			if (distance < closestDistance_) {
 				closestDistance_ = distance;
 				nearestEnemyPos_ = enemyPos;
 				nearestEnemyType_ = "FreezeEnemy";
 			}
 		}
-		if (closestDistance_ == (std::numeric_limits<float>::max)())
-		{
+		if (closestDistance_ == (std::numeric_limits<float>::max)()) {
 			//敵がみんな地面にいない時はフィールドの中心を向く
 			nearestEnemyPos_ = { 0.0f, 1.0f, 0.0f };
 			nearestEnemyType_ = "";
@@ -545,56 +493,47 @@ void GamePlayScene2::CalculateNearestPosition()
 	}
 
 	// エネミーが残り1体のとき
-	if (enemyManager_->GetEnemyCount() == 1)
-	{
+	if (enemyManager_->GetEnemyCount() == 1) {
 		//最も近いプレイヤーの座標を取得
 		float closestDistance_ = (std::numeric_limits<float>::max)();
 		//最も近いプレイヤーの座標を取得
-		for (uint32_t i = 0; i < playerNum_; i++)
-		{
+		for (uint32_t i = 0; i < playerNum_; i++) {
 			//地面にいないプレイヤーは無視
 			if (!players_[i]->IsGround()) { continue; }
 			Vector3 playerPos = players_[i]->GetPosition();
 			float distance;
 			//タックルエネミー
-			for (uint32_t j = 0; j < enemyManager_->GetTackleEnemyCount(); j++)
-			{
+			for (uint32_t j = 0; j < enemyManager_->GetTackleEnemyCount(); j++) {
 				Vector3 enemyPos = enemyManager_->GetTackleEnemyPosition(j);
 				distance = (playerPos - enemyPos).Length();
-				if (distance < closestDistance_)
-				{
+				if (distance < closestDistance_) {
 					closestDistance_ = distance;
 					nearestPlayerPos_ = playerPos;
 					nearestPlayerNum_ = i;
 				}
 			}
 			//ファンエネミー
-			for (uint32_t j = 0; j < enemyManager_->GetFanEnemyCount(); j++)
-			{
+			for (uint32_t j = 0; j < enemyManager_->GetFanEnemyCount(); j++) {
 				Vector3 enemyPos = enemyManager_->GetFanEnemyPosition(j);
 				distance = (playerPos - enemyPos).Length();
-				if (distance < closestDistance_)
-				{
+				if (distance < closestDistance_) {
 					closestDistance_ = distance;
 					nearestPlayerPos_ = playerPos;
 					nearestPlayerNum_ = i;
 				}
 			}
 			//フリーズエネミー
-			for (uint32_t j = 0; j < enemyManager_->GetFreezeEnemyCount(); j++)
-			{
+			for (uint32_t j = 0; j < enemyManager_->GetFreezeEnemyCount(); j++) {
 				Vector3 enemyPos = enemyManager_->GetFreezeEnemyPosition(j);
 				distance = (playerPos - enemyPos).Length();
-				if (distance < closestDistance_)
-				{
+				if (distance < closestDistance_) {
 					closestDistance_ = distance;
 					nearestPlayerPos_ = playerPos;
 					nearestPlayerNum_ = i;
 				}
 			}
 		}
-		if (closestDistance_ == (std::numeric_limits<float>::max)())
-		{
+		if (closestDistance_ == (std::numeric_limits<float>::max)()) {
 			//プレイヤーがみんな地面にいない時はフィールドの中心を向く
 			nearestPlayerPos_ = { 0.0f, 1.0f, 0.0f };
 			nearestPlayerNum_ = (std::numeric_limits<uint32_t>::max)();
@@ -602,4 +541,29 @@ void GamePlayScene2::CalculateNearestPosition()
 
 	}
 
+}
+
+void GamePlayScene2::CheckShake() {
+	//全てのプレイヤーのシェイク判定を処理
+	for (auto& player : players_) {
+		if (player->isDamageShake_) {
+			camera_->RegistShake(0.4f, 0.15f);
+			player->isDamageShake_ = false;
+		}
+		if (player->isDeadShake_) {
+			camera_->RegistShake(0.4f, 0.4f);
+			player->isDeadShake_ = false;
+		}
+	}
+	//全てのエネミーのシェイク判定を処理
+	for (auto& enemy : enemyManager_->GetAllEnemies()) {
+		if (enemy->isDamageShake_) {
+			camera_->RegistShake(0.4f, 0.25f);
+			enemy->isDamageShake_ = false;
+		}
+		if (enemy->isDeadShake_) {
+			camera_->RegistShake(0.4f, 0.5f);
+			enemy->isDeadShake_ = false;
+		}
+	}
 }
