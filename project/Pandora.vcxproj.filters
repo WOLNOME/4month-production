@@ -126,6 +126,10 @@
     <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="engine\base\D2DRender.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -254,6 +258,10 @@
     <ClInclude Include="application\MathUtils.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
     <ClInclude Include="engine\base\D2DRender.h" />
+    <ClInclude Include="engine\scene\GamePlayScene2.h" />
+    <ClInclude Include="engine\scene\GamePlayScene3.h" />
+    <ClInclude Include="engine\scene\GamePlayScene4.h" />
+    <ClInclude Include="engine\scene\GamePlayScene5.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

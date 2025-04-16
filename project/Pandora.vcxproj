@@ -131,6 +131,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\BaseCamera.cpp" />
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXCommon.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene2.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -213,6 +217,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\BaseCamera.h" />
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
+    <ClInclude Include="engine\scene\GamePlayScene2.h" />
+    <ClInclude Include="engine\scene\GamePlayScene3.h" />
+    <ClInclude Include="engine\scene\GamePlayScene4.h" />
+    <ClInclude Include="engine\scene\GamePlayScene5.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
