@@ -49,8 +49,6 @@ private://メンバ変数
 	WorldTransform enemyTransform_;
 	//フィールド
 	std::unique_ptr<Field> field_ = nullptr;
-	//当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
 	// 演出用の変数
 	float cutsceneTime_ = 0.0f;
 	const float cutsceneDuration_ = 1.0f; // カットシーンの長さ（秒）
@@ -90,5 +88,9 @@ private://メンバ変数
 	std::unique_ptr<Particle> hitEffect_;
 	//背景のエフェクト
 	std::unique_ptr<Particle> backgroundEffect_;
+	//BGM
+	std::unique_ptr<Audio> bgm_ = nullptr;
+	//タップ音
+	std::unique_ptr<Audio> tapSound_ = nullptr;
 };
 

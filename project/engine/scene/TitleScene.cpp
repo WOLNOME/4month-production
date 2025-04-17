@@ -45,10 +45,6 @@ void TitleScene::Initialize() {
     field_->Initialize();
     field_->SetScale({ 23.0f, 1.0f,26.0f });
 
-    //当たり判定
-    appCollisionManager_ = AppCollisionManager::GetInstance();
-    appCollisionManager_->Initialize();
-
     //パーティクルの初期化
 	hitEffect_ = std::make_unique<Particle>();
 
@@ -59,9 +55,19 @@ void TitleScene::Initialize() {
 	backgroundEffect_->emitter_.isPlay = true;
 	backgroundEffect_->emitter_.transform.translate = { 0.0f, 0.0f, 26.0f };
 	backgroundEffect_->emitter_.transform.scale = { 24.0f, 1.0f, 1.0f };
+
+    //BGM
+	bgm_ = std::make_unique<Audio>();
+    bgm_->Initialize("title/bgm.wav");
+    bgm_->Play(true,0.3f);
+	//タップ音
+	tapSound_ = std::make_unique<Audio>();
+	tapSound_->Initialize("title/tap.wav");
 }
 
 void TitleScene::Finalize() {
+    bgm_->Pause();
+	bgm_.reset();
 }
 
 void TitleScene::Update() {
@@ -126,9 +132,7 @@ void TitleScene::Update() {
     enemyTransform_.UpdateMatrix();
     //フィールドの更新
     field_->Update();
-    //当たり判定
-    appCollisionManager_->CheckAllCollision();
-
+    
     // ロゴのフェードイン・フェードアウト
     if (isFadingIn_) {
         logoAlpha_ += 0.01f;
@@ -153,6 +157,7 @@ void TitleScene::Update() {
     //次のシーンへ
 	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("STAGESELECT");
+		tapSound_->Play(false, 0.7f);
 	}
 
 }

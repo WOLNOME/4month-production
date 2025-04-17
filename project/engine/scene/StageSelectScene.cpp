@@ -78,6 +78,9 @@ void StageSelectScene::Initialize()
 	particle_->emitter_.transform.translate.y += -8.0f;
 	particle_->emitter_.transform.scale = { 30.0f,30.0f,20.0f };
 
+	//タップ音
+	tapSound_ = std::make_unique<Audio>();
+	tapSound_->Initialize("title/tap.wav");
 }
 
 void StageSelectScene::Finalize()
@@ -86,6 +89,8 @@ void StageSelectScene::Finalize()
 	{
 		selectObjects_[i]->Finalize();
 	}
+	tapSound_->Stop();
+	tapSound_.reset();
 }
 
 void StageSelectScene::Update()
@@ -106,6 +111,7 @@ void StageSelectScene::Update()
 
 	if (input_->TriggerKey(DIK_SPACE))
 	{
+		tapSound_->Play(false, 0.7f);
 		if (selectStage_ == 0)
 		{
 			sceneManager_->SetNextScene("GAMEPLAY");
@@ -237,6 +243,7 @@ void StageSelectScene::StageSelect()
 	{
 		if (input_->TriggerKey(DIK_D))
 		{
+			tapSound_->Play(false, 0.7f);
 			if (selectStage_ < stageNum_ - 1)
 			{
 				selectStage_++;
@@ -245,6 +252,7 @@ void StageSelectScene::StageSelect()
 
 		if (input_->TriggerKey(DIK_A))
 		{
+			tapSound_->Play(false, 0.7f);
 			if (selectStage_ > 0)
 			{
 				selectStage_--;

@@ -74,5 +74,7 @@ private://メンバ変数
 
 	//パーティクル情報
 	std::unique_ptr<Particle> particle_ = nullptr;
+	//タップ音
+	std::unique_ptr<Audio> tapSound_ = nullptr;
 };
 

@@ -471,7 +471,6 @@ void GamePlayScene::Update()
 
 	// ImGui
 	ImGuiDraw();
-
 }
 
 void GamePlayScene::Draw()

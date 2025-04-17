@@ -133,13 +133,10 @@ void TackleEnemy::StartTackle() {
 	nextTackleWaitTime_ = waitTimeDist(randomEngine_);
 }
 
-void TackleEnemy::Finalize() {
-	// 各解放処理
-	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
-		appCollider_.reset();
-	}
-
+void TackleEnemy::Finalize()
+{
+	appCollisionManager_->DeleteCollider(appCollider_.get());
+	appCollider_.reset();
 }
 
 void TackleEnemy::OutOfField() {
