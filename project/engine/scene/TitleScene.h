@@ -66,6 +66,7 @@ private://メンバ変数
 	Vector3 enemyAcceleration_ = { 1.0f, 0.0f, 0.0f }; // 加速度
 	float friction_ = 0.98f; // 摩擦係数
 	enum class CutsceneState {
+		ZoomInOnPlayer,
 		PlayerRunningIn,
 		PlayerPreparing,
 		Hit,

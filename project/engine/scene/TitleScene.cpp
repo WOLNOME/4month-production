@@ -17,7 +17,7 @@ void TitleScene::Initialize() {
     //カメラの生成と初期化
     camera = std::make_unique<DevelopCamera>();
     camera->Initialize();
-    camera->SetTranslate({ 0.0f, 10.0f, -40.0f }); // カメラの位置を調整
+    camera->SetTranslate({ 0.0f, 10.0f, -30.0f }); // カメラの位置を調整
     camera->SetRotate({ 0.3f, 0.0f, 0.0f }); // カメラの回転を調整
     //パーティクルマネージャーにカメラをセット
     ParticleManager::GetInstance()->SetCamera(camera.get());
@@ -150,6 +150,11 @@ void TitleScene::Update() {
     title_->SetColor(titleColor);
     title_->SetEdgeColor(titleOutlineColor);
 
+    //次のシーンへ
+	if (input_->TriggerKey(DIK_RETURN)) {
+		sceneManager_->SetNextScene("STAGESELECT");
+	}
+
 }
 
 void TitleScene::Draw() {
@@ -216,6 +221,19 @@ void TitleScene::UpdateCutscene()
     cutsceneTime_ += 1.0f / 60.0f;
 
     switch (cutsceneState_) {
+    case CutsceneState::ZoomInOnPlayer:
+	{
+		// カメラをプレイヤーにズームイン
+		Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 10.0f, -30.0f);
+		camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.1f)); // カメラの位置を調整
+		camera->SetRotate(Lerp(camera->GetRotate(), { 0.3f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
+		if (cutsceneTime_ >= cutsceneDuration_ * 0.5) {
+			cutsceneTime_ = 0.0f;
+			cutsceneState_ = CutsceneState::PlayerRunningIn;
+		}
+	}
+   
+    break;
     case CutsceneState::PlayerRunningIn:
     {
         playerVelocity_ *= friction_; // 摩擦を適用
@@ -252,7 +270,7 @@ void TitleScene::UpdateCutscene()
         hitEffect_->emitter_.floorHeight = 0.0f;
         // 画面フラッシュやカメラぶれを実装
         Vector3 targetCameraPos = enemyTransform_.translate_ + Vector3(0.0f, 10.0f, -30.0f);
-        camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.07f)); // カメラの位置を調整
+        camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.04f)); // カメラの位置を調整
         camera->SetRotate({ 0.3f, 0.0f, 0.0f }); // カメラの回転を調整
         if (cutsceneTime_ >= 0.2f) {
             cutsceneTime_ = 0.0f;
@@ -269,7 +287,7 @@ void TitleScene::UpdateCutscene()
         enemyVelocity_ *= friction_; // 摩擦を適用
         enemyTransform_.translate_ += enemyVelocity_ * (1.0f / 60.0f);
         Vector3 targetCameraPos = enemyTransform_.translate_ + Vector3(0.0f, 10.0f, -30.0f);
-        camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.1f)); // カメラの位置を調整
+        camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.2f)); // カメラの位置を調整
         camera->SetRotate({ 0.3f, 0.0f, 0.0f }); // カメラの回転を調整
         if (cutsceneTime_ >= cutsceneDuration_) {
             cutsceneTime_ = 0.0f;
@@ -280,10 +298,10 @@ void TitleScene::UpdateCutscene()
     break;
    case CutsceneState::ZoomIn:
     {
-        // カメラをフィールドの中心にズームイン
-	   Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 5.0f, -10.0f);
+	   // カメラをプレイヤーにズームイン
+   		Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 3.0f, -10.0f);
         camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.05f)); // カメラの位置を調整
-        camera->SetRotate(Lerp(camera->GetRotate(), { 0.3f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
+        camera->SetRotate(Lerp(camera->GetRotate(), { 0.2f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
         if (cutsceneTime_ >= cutsceneDuration_ * 4.0f) {
             cutsceneTime_ = 0.0f;
             cutsceneState_ = CutsceneState::Reset;
@@ -327,7 +345,7 @@ void TitleScene::UpdateCutscene()
 void TitleScene::ResetCutscene()
 {
     cutsceneTime_ = 0.0f;
-    cutsceneState_ = CutsceneState::PlayerRunningIn;
+    cutsceneState_ = CutsceneState::ZoomInOnPlayer;
     playerVelocity_ = initialPlayerVelocity_; // 初速度を設定
     enemyVelocity_ = { 0.0f, 0.0f, 0.0f };
     playerTransform_.translate_ = { -10.0f, 1.0f, 0.0f };
