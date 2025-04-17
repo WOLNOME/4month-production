@@ -13,6 +13,8 @@ void Skydome::Initialize() {
 }
 
 void Skydome::Update() {
+	//ワールドトランスフォームの更新
+	wtSkydome_.UpdateMatrix();
 }
 
 void Skydome::Draw(const BaseCamera& camera) {

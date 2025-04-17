@@ -31,6 +31,9 @@ public:
 	const WorldTransform* parent_ = nullptr;
 
 	WorldTransform() = default;
+	WorldTransform(WorldTransform&&) = default; // ムーブコンストラクタ
+	WorldTransform& operator=(WorldTransform&&) = default; // ムーブ代入演算子
+
 	~WorldTransform() = default;
 
 	/// <summary>

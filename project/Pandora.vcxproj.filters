@@ -130,6 +130,7 @@
     <ClCompile Include="engine\scene\GamePlayScene3.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene4.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene5.cpp" />
+    <ClCompile Include="application\farce\FarceTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -262,6 +263,7 @@
     <ClInclude Include="engine\scene\GamePlayScene3.h" />
     <ClInclude Include="engine\scene\GamePlayScene4.h" />
     <ClInclude Include="engine\scene\GamePlayScene5.h" />
+    <ClInclude Include="application\farce\FarceTitle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
