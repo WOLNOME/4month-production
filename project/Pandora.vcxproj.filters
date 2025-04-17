@@ -250,10 +250,12 @@
     <ClInclude Include="application\objects\Field\StageSelectObject.h" />
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
-    <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="application\MathUtils.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
     <ClInclude Include="engine\base\D2DRender.h" />
+    <ClInclude Include="application\objects\Gimmick\IceFloor.h">
+      <Filter>gimmick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
