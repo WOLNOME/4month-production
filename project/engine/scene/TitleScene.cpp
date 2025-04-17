@@ -284,7 +284,7 @@ void TitleScene::UpdateCutscene()
 	   Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 5.0f, -10.0f);
         camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.05f)); // カメラの位置を調整
         camera->SetRotate(Lerp(camera->GetRotate(), { 0.3f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
-        if (cutsceneTime_ >= cutsceneDuration_ * 2.0f) {
+        if (cutsceneTime_ >= cutsceneDuration_ * 4.0f) {
             cutsceneTime_ = 0.0f;
             cutsceneState_ = CutsceneState::Reset;
         }
@@ -305,7 +305,7 @@ void TitleScene::UpdateCutscene()
         // カメラを元の位置にズームアウト
         camera->SetTranslate(Lerp(camera->GetTranslate(), { 0.0f, 10.0f, -40.0f }, 0.05f)); // カメラの位置を調整
         camera->SetRotate(Lerp(camera->GetRotate(), { 0.2f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
-        if (cutsceneTime_ >= cutsceneDuration_ * 2.0f) {
+        if (cutsceneTime_ >= cutsceneDuration_) {
             cutsceneTime_ = 0.0f;
             cutsceneState_ = CutsceneState::ShowTitle;
             waitTime_ = 0.0f; // 待機時間をリセット
