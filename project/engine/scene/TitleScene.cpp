@@ -21,10 +21,6 @@ void TitleScene::Initialize() {
 	//パーティクルマネージャーにカメラをセット
 	ParticleManager::GetInstance()->SetCamera(camera.get());
 
-	//茶番クラスの生成と初期化
-	farceTitle_ = std::make_unique<FarceTitle>();
-	farceTitle_->Initialize(camera.get(), sceneLight_.get());
-
 	//タイトルUIの生成と初期化
 	title_ = std::make_unique<TextWrite>();
 	title_->Initialize("TITLE");
@@ -43,9 +39,6 @@ void TitleScene::Update() {
 
 	//カメラの更新
 	camera->Update();
-
-	//茶番の更新
-	farceTitle_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -69,9 +62,6 @@ void TitleScene::Draw() {
 	///------------------------------///
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
-
-	//茶番クラスのオブジェクト描画
-	farceTitle_->DrawObject();
 
 
 	///------------------------------///
@@ -114,9 +104,7 @@ void TitleScene::TextDraw() {
 
 	//タイトルテキスト
 	title_->WriteText(L"ふえるぶつかり屋");
-	//茶番クラスのテキスト描画
-	farceTitle_->TextDraw();
-
+	
 
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑

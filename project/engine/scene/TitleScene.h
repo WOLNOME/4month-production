@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseScene.h"
 #include "DevelopCamera.h"
-#include "application/farce/FarceTitle.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -32,9 +31,6 @@ private://メンバ変数
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
 	
-	//茶番
-	std::unique_ptr<FarceTitle> farceTitle_ = nullptr;
-
 	//タイトルスプライト
 	uint32_t textureHandleUI_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_ = nullptr;
