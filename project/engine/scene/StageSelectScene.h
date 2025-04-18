@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/StageSelectObject.h"
 
 class StageSelectScene : public BaseScene {
@@ -46,12 +47,14 @@ private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;
 
-	std::unique_ptr<BaseCamera> camera_ = nullptr;
+	std::unique_ptr<DevelopCamera> camera_ = nullptr;
 
-	Vector3 cameraTranslate = { 0.0f,6.0f,-15.0f };
+	Vector3 cameraTranslate = { 0.0f,4.0f,-10.0f };
 	Vector3 cameraRotate = { 0.4f,0.0f,0.0f };
 
-	// モデル情報
+	// 天球
+	std::unique_ptr<Skydome> skydome_ = nullptr;
+	// オブジェクトまとめ
 	std::vector<std::unique_ptr<StageSelectObject>> selectObjects_{};
 
 	const uint32_t stageNum_ = 5;

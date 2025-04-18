@@ -8,15 +8,14 @@
 #include "SceneManager.h"
 #include <numbers>
 
-void StageSelectScene::Initialize()
-{
+void StageSelectScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
-	camera_ = std::make_unique<BaseCamera>();
+	camera_ = std::make_unique<DevelopCamera>();
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
@@ -43,8 +42,7 @@ void StageSelectScene::Initialize()
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum3.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum4.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum5.png"));
-	for (uint32_t i = 0; i < 5; i++)
-	{
+	for (uint32_t i = 0; i < 5; i++) {
 		auto num = std::make_unique<Sprite>();
 
 		num->SetPosition(spritePos_);
@@ -53,13 +51,16 @@ void StageSelectScene::Initialize()
 		spriteSelectNum_.push_back(std::move(num));
 	}
 
-	// フィールドモデル
-	for (uint32_t i = 0; i < stageNum_; i++)
-	{
-		auto field0 = std::make_unique<StageSelectObject>();
-		field0->Initialize("cube", "grid.png");
+	//天球
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
 
-        selectObjects_.push_back(std::move(field0));
+	// フィールドモデル
+	for (uint32_t i = 0; i < stageNum_; i++) {
+		auto field0 = std::make_unique<StageSelectObject>();
+		field0->Initialize("cube", "grid.png", i);
+
+		selectObjects_.push_back(std::move(field0));
 	}
 
 	selectObjects_[0]->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -74,56 +75,45 @@ void StageSelectScene::Initialize()
 	particle_ = std::make_unique<Particle>();
 	particle_->Initialize("RainbowSnow", "RainbowSnow");
 	particle_->emitter_.transform.translate = cameraTranslate;
-	particle_->emitter_.transform.translate.z += 10.0f;
-	particle_->emitter_.transform.translate.y += -8.0f;
-	particle_->emitter_.transform.scale = { 30.0f,30.0f,20.0f };
+	particle_->emitter_.transform.translate.z += 30.0f;
+	particle_->emitter_.transform.translate.y += -12.0f;
+	particle_->emitter_.transform.scale = { 12.0f,12.0f,6.0f };
 
 }
 
-void StageSelectScene::Finalize()
-{
-	for (uint32_t i = 0; i < stageNum_; i++)
-	{
+void StageSelectScene::Finalize() {
+	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Finalize();
 	}
 }
 
-void StageSelectScene::Update()
-{
+void StageSelectScene::Update() {
 	// カメラの更新
-	camera_->UpdateMatrix();
-	camera_->SetRotate({ cameraRotate });
-	camera_->SetTranslate(cameraTranslate);
+	camera_->Update();
 
 	// ステージ選択
 	StageSelect();
 
-	for (uint32_t i = 0; i < stageNum_; i++)
-	{
+	skydome_->Update();
+	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Update();
 		selectObjects_[i]->SetStage(selectStage_);
 	}
 
-	if (input_->TriggerKey(DIK_SPACE))
-	{
-		if (selectStage_ == 0)
-		{
+	if (input_->TriggerKey(DIK_SPACE)) {
+		if (selectStage_ == 0) {
 			sceneManager_->SetNextScene("GAMEPLAY");
-		} 
-		else if (selectStage_ == 1)
-		{
+		}
+		else if (selectStage_ == 1) {
 			sceneManager_->SetNextScene("GAMEPLAY2");
 		}
-		else if (selectStage_ == 2)
-		{
+		else if (selectStage_ == 2) {
 			sceneManager_->SetNextScene("GAMEPLAY3");
 		}
-		else if (selectStage_ == 3)
-		{
+		else if (selectStage_ == 3) {
 			sceneManager_->SetNextScene("GAMEPLAY4");
-		} 
-		else if (selectStage_ == 4)
-		{
+		}
+		else if (selectStage_ == 4) {
 			sceneManager_->SetNextScene("GAMEPLAY5");
 		}
 
@@ -133,8 +123,7 @@ void StageSelectScene::Update()
 	spriteUI_A_->Update();
 	spriteUI_D_->Update();
 
-	for (auto& sprite : spriteSelectNum_)
-	{
+	for (auto& sprite : spriteSelectNum_) {
 		sprite->Update();
 		sprite->SetPosition(spritePos_);
 	}
@@ -154,16 +143,16 @@ void StageSelectScene::Update()
 
 	ImGui::End();
 
-	for (uint32_t i = 0; i < stageNum_; i++)
-	{
+	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->ImGuiDraw();
 	}
+
+	camera_->DebugWithImGui();
 
 #endif // _DEBUG
 }
 
-void StageSelectScene::Draw()
-{
+void StageSelectScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -171,8 +160,8 @@ void StageSelectScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	for (uint32_t i = 0; i < stageNum_; i++)
-	{
+	skydome_->Draw(*camera_);
+	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Draw(*camera_);
 	}
 
@@ -202,12 +191,10 @@ void StageSelectScene::Draw()
 
 	spriteSelect_->Draw();
 
-	if (selectStage_ != 0)
-	{
+	if (selectStage_ != 0) {
 		spriteUI_A_->Draw();
 	}
-	if (selectStage_ != 4)
-	{
+	if (selectStage_ != 4) {
 		spriteUI_D_->Draw();
 	}
 
@@ -218,8 +205,7 @@ void StageSelectScene::Draw()
 	///------------------------------///
 }
 
-void StageSelectScene::TextDraw()
-{
+void StageSelectScene::TextDraw() {
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
@@ -231,22 +217,16 @@ void StageSelectScene::TextDraw()
 	///------------------------------///
 }
 
-void StageSelectScene::StageSelect()
-{
-	if (!selectObjects_[0]->IsMove())
-	{
-		if (input_->TriggerKey(DIK_D))
-		{
-			if (selectStage_ < stageNum_ - 1)
-			{
+void StageSelectScene::StageSelect() {
+	if (!selectObjects_[0]->IsMove()) {
+		if (input_->TriggerKey(DIK_D)) {
+			if (selectStage_ < stageNum_ - 1) {
 				selectStage_++;
 			}
 		}
 
-		if (input_->TriggerKey(DIK_A))
-		{
-			if (selectStage_ > 0)
-			{
+		if (input_->TriggerKey(DIK_A)) {
+			if (selectStage_ > 0) {
 				selectStage_--;
 			}
 		}

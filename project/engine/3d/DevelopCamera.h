@@ -13,9 +13,6 @@ public:
 	//更新
 	void Update();
 
-	//ImGui操作
-	void DebugWithImGui();
-
 private:
 	Input* input_ = nullptr;
 

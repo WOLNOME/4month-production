@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <numbers>
 
-void DevelopCamera::Initialize()
-{
+void DevelopCamera::Initialize() {
 	//基盤の初期化
 	BaseCamera::Initialize();
 	//インプット
@@ -13,8 +12,9 @@ void DevelopCamera::Initialize()
 
 }
 
-void DevelopCamera::Update()
-{
+void DevelopCamera::Update() {
+#ifdef _DEBUG
+
 	////開発用カメラのマウス操作処理
 	//スクロールで前進後退
 	standardPosition += GetForwardDirection() * (input_->GetMouseScrollCount() * 1.3f);
@@ -49,33 +49,9 @@ void DevelopCamera::Update()
 	const float maxPitch = (std::numbers::pi_v<float> / 2.0f) - 0.01f;
 	transform.rotate.x = std::clamp(transform.rotate.x, -maxPitch, maxPitch);
 
+#endif // _DEBUG
 
 	//行列の更新
 	BaseCamera::UpdateMatrix();
 
-}
-
-void DevelopCamera::DebugWithImGui() {
-#ifdef _DEBUG
-
-	ImGui::Begin("DevelopCamera");
-	ImGui::DragFloat3("Translate", &standardPosition.x, 0.01f);
-	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
-	ImGui::End();
-
-	ImGui::Begin("mouse");
-	if (input_->PushMouseButton(MouseButton::LeftButton)) {
-		ImGui::Text("LEFT");
-	}
-	if (input_->PushMouseButton(MouseButton::MiddleButton)) {
-		ImGui::Text("MIDDLE");
-	}
-	if (input_->PushMouseButton(MouseButton::RightButton)) {
-		ImGui::Text("RIGHT");
-	}
-	ImGui::Text("ScrollValue : %f", input_->GetMouseScrollCount());
-	ImGui::Text("Delta : { %f,%f }", input_->GetMouseDelta().x, input_->GetMouseDelta().y);
-	ImGui::End();
-
-#endif // _DEBUG
 }

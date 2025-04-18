@@ -1,6 +1,7 @@
 #include "BaseCamera.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
+#include "ImGuiManager.h"
 #include <vector>
 #include <random>
 
@@ -45,6 +46,17 @@ void BaseCamera::UpdateMatrix() {
 	viewProjectionData_->matProjection = projectionMatrix;
 
 	cameraPositionData_->worldPosition = { worldMatrix.m[3][0], worldMatrix.m[3][1], worldMatrix.m[3][2] };
+}
+
+void BaseCamera::DebugWithImGui() {
+#ifdef _DEBUG
+
+	ImGui::Begin("Camera");
+	ImGui::DragFloat3("Translate", &standardPosition.x, 0.01f);
+	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
+	ImGui::End();
+
+#endif // _DEBUG
 }
 
 const Vector3 BaseCamera::GetForwardDirection() {

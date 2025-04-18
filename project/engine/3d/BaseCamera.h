@@ -29,6 +29,9 @@ public:
 	// 更新（行列の計算）
 	virtual void UpdateMatrix();
 
+	//ImGui操作
+	void DebugWithImGui();
+
 	// ゲッター
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix; }

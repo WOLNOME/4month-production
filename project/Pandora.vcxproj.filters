@@ -126,6 +126,7 @@
     <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="engine\base\D2DRender.cpp" />
+    <ClCompile Include="application\objects\GameObject\FallingObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="application\objects\Gimmick\IceFloor.h">
       <Filter>gimmick</Filter>
     </ClInclude>
+    <ClInclude Include="application\objects\GameObject\FallingObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
