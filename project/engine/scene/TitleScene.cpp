@@ -62,6 +62,9 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Finalize() {
+
+    field_->Finalize();
+
 }
 
 void TitleScene::Update() {
