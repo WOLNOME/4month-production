@@ -22,6 +22,7 @@
 #include "../../application/objects/Gimmick/Obstacle.h"
 #include "../../application/objects/Gimmick/Bumper.h"
 #include "../../application/objects/Gimmick/IceFloor.h"
+#include "../../application/PauseSystem.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -111,6 +112,9 @@ private://メンバ変数
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
+
+	//ポーズシステム
+	std::unique_ptr<PauseSystem> pauseSystem_ = nullptr;
 
 	// プレイヤースポーン位置の数(固定)
 	const uint32_t playerSpawnNum_ = 3;

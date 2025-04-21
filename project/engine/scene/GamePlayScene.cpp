@@ -343,6 +343,10 @@ void GamePlayScene::Initialize()
 	
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
+
+	//ポーズシステム
+	pauseSystem_ = std::make_unique<PauseSystem>();
+	pauseSystem_->Initialize();
 }
 
 void GamePlayScene::Finalize()
@@ -372,6 +376,11 @@ void GamePlayScene::Finalize()
 
 void GamePlayScene::Update()
 {
+	//ポーズシステムの更新
+	pauseSystem_->Update();
+	if (pauseSystem_->GetIsPause()) {
+		return;
+	}
 	// スプライト
 	spriteUI_PLAY_->Update();
 
@@ -435,11 +444,6 @@ void GamePlayScene::Update()
 
 	// 当たり判定
 	appCollisionManager_->CheckAllCollision();
-
-	//タイトルシーンに戻る
-	if (input_->TriggerKey(DIK_ESCAPE)) {
-		sceneManager_->SetNextScene("TITLE");
-	}
 
 	//最も近い敵やプレイヤーの位置を計算
 	CalculateNearestPosition();
@@ -548,6 +552,8 @@ void GamePlayScene::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
+	//ポーズシステムの描画
+	pauseSystem_->DrawSprite();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -559,6 +565,8 @@ void GamePlayScene::TextDraw() {
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
+	// ポーズシステムのテキスト描画
+	pauseSystem_->TextDraw();
 
 
 	///------------------------------///
@@ -663,6 +671,9 @@ void GamePlayScene::ImGuiDraw()
 	{
 		playerSpawn->ImGuiDraw();
 	}
+
+	//ポーズシステム
+	pauseSystem_->DebugWithImGui();
 
 #endif // _DEBUG
 
