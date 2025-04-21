@@ -1,4 +1,5 @@
 #include "FallingObject.h"
+#include "RandomStringUtil.h"
 #include <random>
 
 void FallingObject::Initialize() {
@@ -24,7 +25,6 @@ void FallingObject::Draw(const BaseCamera& _camera) {
 	for (auto& object : objects_) {
 		object.second.first->Draw(object.first, _camera);
 	}
-
 }
 
 void FallingObject::CreateObject() {
@@ -52,31 +52,51 @@ void FallingObject::CreateObject() {
 	if (winningNum == 0) return;
 	//当選個数分だけオブジェクトを生成
 	for (int i = 0; i < winningNum; i++) {
+		//オブジェクト
+		Object object;
 		//ワールドトランスフォームの初期化
 		WorldTransform objectTransform;
 		objectTransform.Initialize();
 		objectTransform.translate_ = { 0.0f, 10.0f, 0.0f };
 		objectTransform.scale_ = { 1.0f, 1.0f, 1.0f };
 		objectTransform.rotate_ = { 0.0f, 0.0f, 0.0f };
-		//モデルの初期化
-		std::random_device seed_gen;
-		std::mt19937 engine(seed_gen());
-		const char* objectName[] = { "player", "enemy", "Fan", "Freeze" };
-
-
+		//モデルの生成
+		const char* objectName[4] = { "player", "enemy", "Fan", "Freeze" };
+		std::uniform_int_distribution<int> rand(0, 3);
+		int randomNum = rand(engine);
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
-		object->InitializeModel("cube");
-		//パーティクルの初期化
+		object->InitializeModel(objectName[randomNum]);
+		//パーティクルの生成
+		const char* particleName;
+		if (randomNum == 0) particleName = "deadPlayer";
+		else particleName = "deadEnemy";
 		std::unique_ptr<Particle> particle = std::make_unique<Particle>();
-		particle->Initialize("RainbowSnow", "RainbowSnow");
-		particle->emitter_.transform.translate = objectTransform.translate_;
-		particle->emitter_.transform.scale = { 1.5f,1.5f,1.5f };
+		particle->Initialize("fallObject" + RandomStringUtil::GenerateRandomString(3), particleName);
+		//速度の設定
+		Vector3 velocity = { 0.0f, 0.0f, 0.0f };
+		//パーティクルのタイマーの設定
+		float particleTimer = 0.0f;
 		//登録
-		std::pair<std::unique_ptr<Object3d>, std::unique_ptr<Particle>> objectPair(std::move(object), std::move(particle));
-		std::pair<WorldTransform, decltype(objectPair)> objectPair2(std::move(objectTransform), std::move(objectPair));
-		objects_.push_back(std::move(objectPair2));
+		
+
 	}
+}
 
-
-
+void FallingObject::FallObject() {
+	//全てのオブジェクトの更新
+	for (auto& object : objects_) {
+		//オブジェクトの移動
+		object.first.translate_.y -= 0.1f;
+		//パーティクルの移動
+		object.second.second->Update();
+	}
+	//画面外に出たオブジェクトを削除
+	for (auto it = objects_.begin(); it != objects_.end();) {
+		if (it->first.translate_.y < -10.0f) {
+			it = objects_.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
 }

@@ -7,6 +7,16 @@
 #include <list>
 
 class FallingObject {
+private:
+	//オブジェクトの型
+	struct Object {
+		WorldTransform worldTransform;
+		std::unique_ptr<Object3d> object3d;
+		std::unique_ptr<Particle> particle;
+		Vector3 velocity;
+		float particleTimer;
+	};
+
 public:
 	void Initialize();
 	void Finalize();
@@ -21,8 +31,9 @@ private:
 
 private:
 	//落下させるオブジェクトのコンテナ
-	std::list<std::pair<WorldTransform, std::pair<std::unique_ptr<Object3d>, std::unique_ptr<Particle>>>> objects_;
+	std::list<Object> objects_;
 
+	float particleHeight = 0.0f;	//パーティクルの発生する高さ
 
 };
 
