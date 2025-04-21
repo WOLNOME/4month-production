@@ -120,7 +120,7 @@ void BaseCamera::UpdateShake() {
 	//全てのリストを更新
 	for (auto it = shakeList_.begin(); it != shakeList_.end();) {
 		//揺れの大きさを線形補完で決める
-		it->power = MyMath::Lerp(it->maxPower, 0.0f, 1.0 - (it->time / it->maxTime));
+		it->power = MyMath::Lerp(it->maxPower, 0.0f, 1.0f - (it->time / it->maxTime));
 		//時間を減らす
 		it->time -= kDeltaTime;
 		//時間が0未満になったら削除
