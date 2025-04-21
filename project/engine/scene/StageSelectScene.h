@@ -14,6 +14,7 @@
 
 #include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/StageSelectObject.h"
+#include "../../application/objects/GameObject/FallingObject.h"
 
 class StageSelectScene : public BaseScene {
 public:
@@ -56,6 +57,7 @@ private://メンバ変数
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 	// オブジェクトまとめ
 	std::vector<std::unique_ptr<StageSelectObject>> selectObjects_{};
+	std::unique_ptr<FallingObject> fallingObject_ = nullptr;
 
 	const uint32_t stageNum_ = 5;
 	uint32_t selectStage_ = 0;

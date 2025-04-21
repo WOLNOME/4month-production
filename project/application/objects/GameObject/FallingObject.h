@@ -9,10 +9,11 @@
 class FallingObject {
 private:
 	//オブジェクトの型
-	struct Object {
+	struct ObjectParam {
 		WorldTransform worldTransform;
 		std::unique_ptr<Object3d> object3d;
-		std::unique_ptr<Particle> particle;
+		std::unique_ptr<Particle> deadParticle;
+		std::unique_ptr<Particle> sprayParticle;
 		Vector3 velocity;
 		float particleTimer;
 	};
@@ -23,6 +24,8 @@ public:
 	void Update();
 	void Draw(const BaseCamera& _camera);
 
+	void DebugWithImGui();
+
 private:
 	//生成アルゴリズム
 	void CreateObject();
@@ -31,9 +34,11 @@ private:
 
 private:
 	//落下させるオブジェクトのコンテナ
-	std::list<Object> objects_;
+	std::list<ObjectParam> objects_;
 
-	float particleHeight = 0.0f;	//パーティクルの発生する高さ
+	float kGravity = -9.8f;	//重力加速度
+	float particleHeight = -75.0f;	//パーティクルの発生する高さ
+
 
 };
 

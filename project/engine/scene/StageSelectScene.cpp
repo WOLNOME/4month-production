@@ -68,6 +68,9 @@ void StageSelectScene::Initialize() {
 	selectObjects_[2]->SetPosition({ 20.0f, 0.0f, 0.0f });
 	selectObjects_[3]->SetPosition({ 30.0f, 0.0f, 0.0f });
 	selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
+	//落下オブジェクト
+	fallingObject_ = std::make_unique<FallingObject>();
+	fallingObject_->Initialize();
 
 	selectStage_ = 0;
 
@@ -99,6 +102,7 @@ void StageSelectScene::Update() {
 		selectObjects_[i]->Update();
 		selectObjects_[i]->SetStage(selectStage_);
 	}
+	fallingObject_->Update();
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 		if (selectStage_ == 0) {
@@ -149,6 +153,8 @@ void StageSelectScene::Update() {
 
 	camera_->DebugWithImGui();
 
+	fallingObject_->DebugWithImGui();
+
 #endif // _DEBUG
 }
 
@@ -164,6 +170,7 @@ void StageSelectScene::Draw() {
 	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Draw(*camera_);
 	}
+	fallingObject_->Draw(*camera_);
 
 	///------------------------------///
 	///↑↑↑↑モデル描画終了↑↑↑↑
