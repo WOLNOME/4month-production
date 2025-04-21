@@ -65,6 +65,11 @@ void TitleScene::Finalize() {
 
     field_->Finalize();
 
+    hitEffect_->emitter_.isPlay = false;
+    hitEffect_.reset();
+    backgroundEffect_->emitter_.isPlay = false;
+	backgroundEffect_.reset();
+
 }
 
 void TitleScene::Update() {
