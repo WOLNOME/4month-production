@@ -150,6 +150,10 @@ void TitleScene::Update() {
     title_->SetColor(titleColor);
     title_->SetEdgeColor(titleOutlineColor);
 
+	if (input_->TriggerKey(DIK_SPACE)) {
+		sceneManager_->SetNextScene("STAGESELECT");
+	}
+
 }
 
 void TitleScene::Draw() {
