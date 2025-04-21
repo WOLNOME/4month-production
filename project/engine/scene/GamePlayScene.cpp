@@ -816,18 +816,22 @@ void GamePlayScene::UpdateZoomIn()
 		//敵の現在の向き
 		if (nearestEnemyType_ == "TackleEnemy")
 		{
+			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
 			rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
+			enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
 		}
 		else if (nearestEnemyType_ == "FanEnemy")
 		{
+			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
 			rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
+			enemyManager_->GetFanEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
 		}
 		else if (nearestEnemyType_ == "FreezeEnemy")
 		{
+			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
 			rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
+			enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
 		}
-		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-		enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
 	}
 
 	// プレイヤーの向きを補間
