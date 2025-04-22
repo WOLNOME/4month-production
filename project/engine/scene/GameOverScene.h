@@ -37,5 +37,8 @@ private://メンバ変数
 
 	uint32_t textureHandleUI_SPACE_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_SPACE_ = nullptr;
+
+	//bgm
+	std::unique_ptr<Audio> bgm_ = nullptr;
 };
 

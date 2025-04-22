@@ -15,6 +15,9 @@ void Skydome::Initialize() {
 void Skydome::Update() {
 	//ワールドトランスフォームの更新
 	wtSkydome_.UpdateMatrix();
+
+	wtSkydome_.rotate_.x += 0.001f;
+	wtSkydome_.rotate_.y += 0.001f;
 }
 
 void Skydome::Draw(const BaseCamera& camera) {

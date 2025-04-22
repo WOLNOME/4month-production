@@ -59,6 +59,14 @@ void TitleScene::Initialize() {
 	backgroundEffect_->emitter_.isPlay = true;
 	backgroundEffect_->emitter_.transform.translate = { 0.0f, 0.0f, 26.0f };
 	backgroundEffect_->emitter_.transform.scale = { 24.0f, 1.0f, 1.0f };
+
+    //bgm
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("title/bgm.wav");
+    bgm_->Play(true,0.5f);
+	//タップしたときの効果音
+	tapSE_ = std::make_unique<Audio>();
+	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
 void TitleScene::Finalize() {
@@ -70,6 +78,11 @@ void TitleScene::Finalize() {
     backgroundEffect_->emitter_.isPlay = false;
 	backgroundEffect_.reset();
 
+	bgm_->Stop();
+	bgm_.reset();
+
+	tapSE_->Stop();
+	tapSE_.reset();
 }
 
 void TitleScene::Update() {
@@ -161,6 +174,7 @@ void TitleScene::Update() {
     //次のシーンへ
 	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("STAGESELECT");
+		tapSE_->Play(false, 0.5f);
 	}
 
 }

@@ -23,6 +23,17 @@ void GamePlayScene::Initialize()
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
 	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
 
+	textureHandleUI_Charge_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
+	spriteUI_Charge_ = std::make_unique<Sprite>();
+	spriteUI_Charge_->SetPosition({ 1085.0f, 600.0f });
+	spriteUI_Charge_->Initialize(textureHandleUI_Charge_);
+
+	spriteUI_ChargeGage_ = std::make_unique<Sprite>();
+	spriteUI_ChargeGage_->Initialize(textureHandleUI_Charge_);
+	spriteUI_ChargeGage_->SetPosition({ 1085.0f, 600.0f });
+	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
+	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+
 	switch (stageNum_)
 	{
 	case 1: case 2:
@@ -344,6 +355,11 @@ void GamePlayScene::Initialize()
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
 
+	//bgm
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("game/bgm.wav");
+	bgm_->Play(true, 0.15f);
+
 	//ポーズシステム
 	pauseSystem_ = std::make_unique<PauseSystem>();
 	pauseSystem_->Initialize();
@@ -372,6 +388,9 @@ void GamePlayScene::Finalize()
 	{
 		iceFloor->Finalize();
 	}
+
+	bgm_->Stop();
+	bgm_.reset();
 }
 
 void GamePlayScene::Update()
@@ -383,6 +402,26 @@ void GamePlayScene::Update()
 	}
 	// スプライト
 	spriteUI_PLAY_->Update();
+	spriteUI_Charge_->Update();
+	spriteUI_ChargeGage_->Update();
+
+	// チャージの大きさに応じてスプライトのサイズを変更
+	if (charge_ == 0.0f)
+	{
+		// チャージが0のとき、テクスチャのXサイズを120に設定
+		spriteUI_Charge_->SetSize({ 180.0f, 50.0f });
+	}
+	else
+	{
+		// チャージの割合を計算
+		float chargeScale = charge_ / chargeMax_;
+		chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
+
+		// チャージの割合に応じてテクスチャのXサイズを変更
+		float newWidth = 180.0f * chargeScale; // 0から120まで拡大
+		spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
+	}
+
 
 	// カメラの更新
 	UpdateCamera();
@@ -552,6 +591,8 @@ void GamePlayScene::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
+	spriteUI_ChargeGage_->Draw();
+	spriteUI_Charge_->Draw();
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
 
@@ -744,12 +785,6 @@ void GamePlayScene::playerTackleCharge()
 		}
 
 	}
-	// 位置ローテを0に戻す
-	playerSpawnIndex_++;
-	if (playerSpawnIndex_ > playerSpawnNum_ - 1)
-	{
-		playerSpawnIndex_ = 0;
-	}
 }
 
 void GamePlayScene::CheckShake() {
@@ -819,38 +854,38 @@ void GamePlayScene::UpdateZoomIn()
 	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
 
-	// 敵の向きを補間
-	if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0)
-	{
-		Vector3 rotation = { 0.0f, 0.0f, 0.0f };
-		//敵の現在の向き
-		if (nearestEnemyType_ == "TackleEnemy")
-		{
-			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-			rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
-			enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-		}
-		else if (nearestEnemyType_ == "FanEnemy")
-		{
-			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-			rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
-			enemyManager_->GetFanEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-		}
-		else if (nearestEnemyType_ == "FreezeEnemy")
-		{
-			Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-			rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
-			enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-		}
-	}
+	//// 敵の向きを補間
+	//if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0)
+	//{
+	//	Vector3 rotation = { 0.0f, 0.0f, 0.0f };
+	//	//敵の現在の向き
+	//	if (nearestEnemyType_ == "TackleEnemy")
+	//	{
+	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
+	//		rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
+	//		enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
+	//	}
+	//	else if (nearestEnemyType_ == "FanEnemy")
+	//	{
+	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
+	//		rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
+	//		enemyManager_->GetFanEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
+	//	}
+	//	else if (nearestEnemyType_ == "FreezeEnemy")
+	//	{
+	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
+	//		rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
+	//		enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
+	//	}
+	//}
 
-	// プレイヤーの向きを補間
-	if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty())
-	{
-		Vector3 rotation = players_[nearestPlayerNum_]->GetRotation();
-		Vector3 newPlayerRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(cameraEndPosition, nearestPlayerPos_) * easeT;
-		players_[nearestPlayerNum_]->SetRotation(newPlayerRotate);
-	}
+	//// プレイヤーの向きを補間
+	//if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty())
+	//{
+	//	Vector3 rotation = players_[nearestPlayerNum_]->GetRotation();
+	//	Vector3 newPlayerRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(cameraEndPosition, nearestPlayerPos_) * easeT;
+	//	players_[nearestPlayerNum_]->SetRotation(newPlayerRotate);
+	//}
 
 	// カメラに新しい位置と回転を設定
 	camera_->SetTranslate(newPosition);

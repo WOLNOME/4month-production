@@ -81,6 +81,9 @@ private://メンバ変数
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
 
+	uint32_t textureHandleUI_Charge_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
+	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
 
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
@@ -112,6 +115,9 @@ private://メンバ変数
 
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
+
+	//bgm
+	std::unique_ptr<Audio> bgm_ = nullptr;
 
 	//ポーズシステム
 	std::unique_ptr<PauseSystem> pauseSystem_ = nullptr;

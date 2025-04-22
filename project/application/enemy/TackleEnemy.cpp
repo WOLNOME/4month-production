@@ -320,6 +320,13 @@ void TackleEnemy::Move() {
 	Vector3 friction = -tackleVelocity_ * tackleFriction_ * deltaTime;
 	tackleVelocity_ += friction;
 
+	// 進行方向に基づいて回転を計算
+	if (tackleVelocity_.Length() > 0.01f && !isAftertaste_)
+	{
+		float targetRotationY = atan2f(tackleVelocity_.x, tackleVelocity_.z);
+		transform_.rotate_.y = MyMath::Lerp(transform_.rotate_.y, targetRotationY, 0.1f); // 0.1fは補間係数
+	}
+
 	// 速度が非常に小さくなったら停止する
 	if (tackleVelocity_.Length() < 0.01f or isStop_ == true) {
 		isAttack_ = false;
