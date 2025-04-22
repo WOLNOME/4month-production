@@ -144,6 +144,10 @@ void GamePlayScene5::Initialize()
 
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
+
+	//ポーズシステム
+	pauseSystem_ = std::make_unique<PauseSystem>();
+	pauseSystem_->Initialize();
 }
 
 void GamePlayScene5::Finalize()
@@ -170,6 +174,11 @@ void GamePlayScene5::Finalize()
 
 void GamePlayScene5::Update()
 {
+	//ポーズシステムの更新
+	pauseSystem_->Update();
+	if (pauseSystem_->GetIsPause()) {
+		return;
+	}
 	// スプライト
 	spriteUI_PLAY_->Update();
 
@@ -334,6 +343,9 @@ void GamePlayScene5::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
+	//ポーズシステムの描画
+	pauseSystem_->DrawSprite();
+
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -346,7 +358,8 @@ void GamePlayScene5::TextDraw()
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
-
+	// ポーズシステムのテキスト描画
+	pauseSystem_->TextDraw();
 
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑

@@ -25,6 +25,10 @@ void PauseSystem::Initialize() {
 		spriteMenu_[i]->SetPosition({ WinApp::kClientWidth / 2.0f, 300.0f + (i * 130) });
 	}
 
+	textureHandleWhiteCurtain_ = TextureManager::GetInstance()->LoadTexture("white.png");
+	spriteWhiteCurtain_ = std::make_unique<Sprite>();
+	spriteWhiteCurtain_->Initialize(textureHandleWhiteCurtain_);
+
 	//テキスト
 	textPause_ = std::make_unique<TextWrite>();
 	textPause_->Initialize("Pause");
@@ -41,6 +45,10 @@ void PauseSystem::Initialize() {
 			textMenu_[i]->SetPosition({ textMenu_[i]->GetPosition().x - 30.0f,textMenu_[i]->GetPosition().y });
 		}
 	}
+
+	textHowToPlay_ = std::make_unique<TextWrite>();
+	textHowToPlay_->Initialize("HowToPlay");
+	textHowToPlay_->SetParam({ 0,0 }, Font::Meiryo, 50.0f, { 0,0,0,1 });
 
 }
 
@@ -75,13 +83,21 @@ void PauseSystem::Update() {
 	}
 	//ポーズ中なら
 	if (isPause_) {
-		//メニュー操作
-		MenuAlgorithm();
+		if (!isHowToPlay_) {
+			//メニュー操作
+			MenuAlgorithm();
+		}
+		else {
+			//遊び方操作
+			HowToPlayAlgorithm();
+		}
+
 		//スプライトの更新
 		spriteCurtain->Update();
 		for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
 			spriteMenu_[i]->Update();
 		}
+		spriteWhiteCurtain_->Update();
 	}
 
 }
@@ -89,11 +105,17 @@ void PauseSystem::Update() {
 void PauseSystem::DrawSprite() {
 	//ポーズ中なら
 	if (isPause_) {
-		//薄暗いスプライトを描画
-		spriteCurtain->Draw();
-		//メニューのスプライトを描画
-		for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
-			spriteMenu_[i]->Draw();
+		if (!isHowToPlay_) {
+			//薄暗いスプライトを描画
+			spriteCurtain->Draw();
+			//メニューのスプライトを描画
+			for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
+				spriteMenu_[i]->Draw();
+			}
+		}
+		else {
+			//遊び方テキスト用ホワイトカーテン
+			spriteWhiteCurtain_->Draw();
 		}
 	}
 }
@@ -101,12 +123,18 @@ void PauseSystem::DrawSprite() {
 void PauseSystem::TextDraw() {
 	//ポーズ中なら
 	if (isPause_) {
-		//一時停止中
-		textPause_->WriteText(L"一時停止中");
-		//メニューのテキストを描画
-		textMenu_[0]->WriteText(L"続行");
-		textMenu_[1]->WriteText(L"遊び方");
-		textMenu_[2]->WriteText(L"終了");
+		if (isHowToPlay_) {
+			//遊び方テキスト
+			textHowToPlay_->WriteText(L"遊び方\n[W][A][S][D]で移動！\n[SPACE]でタックル！\n\nタックルを使って敵を全員場外に落とせ！\nプレイヤーは時間で増えるが上限があるので気を付けよう！\n\n\t\t\t\t   [SPACE]で閉じる");
+		}
+		else {
+			//一時停止中
+			textPause_->WriteText(L"一時停止中");
+			//メニューのテキストを描画
+			textMenu_[0]->WriteText(L"続行");
+			textMenu_[1]->WriteText(L"遊び方");
+			textMenu_[2]->WriteText(L"終了");
+		}
 	}
 }
 
@@ -173,7 +201,8 @@ void PauseSystem::MenuAlgorithm() {
 			textMenu_[2]->SetPosition({ textMenu_[2]->GetPosition().x - 15.0f,textMenu_[2]->GetPosition().y - 5.0f });
 		}
 		else if (input_->TriggerKey(DIK_SPACE)) {
-
+			//遊び方を表示
+			isHowToPlay_ = true;
 		}
 		break;
 	case PauseSystem::MenuState::Quit:
@@ -202,5 +231,13 @@ void PauseSystem::MenuAlgorithm() {
 		break;
 	default:
 		break;
+	}
+}
+
+void PauseSystem::HowToPlayAlgorithm() {
+	//操作
+	if (input_->TriggerKey(DIK_SPACE)) {
+		//遊び方を終了
+		isHowToPlay_ = false;
 	}
 }
