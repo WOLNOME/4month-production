@@ -23,6 +23,17 @@ void GamePlayScene::Initialize()
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
 	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
 
+	textureHandleUI_Charge_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
+	spriteUI_Charge_ = std::make_unique<Sprite>();
+	spriteUI_Charge_->SetPosition({ 1085.0f, 600.0f });
+	spriteUI_Charge_->Initialize(textureHandleUI_Charge_);
+
+	spriteUI_ChargeGage_ = std::make_unique<Sprite>();
+	spriteUI_ChargeGage_->Initialize(textureHandleUI_Charge_);
+	spriteUI_ChargeGage_->SetPosition({ 1085.0f, 600.0f });
+	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
+	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+
 	switch (stageNum_)
 	{
 	case 1: case 2:
@@ -374,6 +385,26 @@ void GamePlayScene::Update()
 {
 	// スプライト
 	spriteUI_PLAY_->Update();
+	spriteUI_Charge_->Update();
+	spriteUI_ChargeGage_->Update();
+
+	// チャージの大きさに応じてスプライトのサイズを変更
+	if (charge_ == 0.0f)
+	{
+		// チャージが0のとき、テクスチャのXサイズを120に設定
+		spriteUI_Charge_->SetSize({ 180.0f, 50.0f });
+	}
+	else
+	{
+		// チャージの割合を計算
+		float chargeScale = charge_ / chargeMax_;
+		chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
+
+		// チャージの割合に応じてテクスチャのXサイズを変更
+		float newWidth = 180.0f * chargeScale; // 0から120まで拡大
+		spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
+	}
+
 
 	// カメラの更新
 	UpdateCamera();
@@ -548,6 +579,8 @@ void GamePlayScene::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
+	spriteUI_ChargeGage_->Draw();
+	spriteUI_Charge_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -733,12 +766,6 @@ void GamePlayScene::playerTackleCharge()
 			charge_ = 0.0f;
 		}
 
-	}
-	// 位置ローテを0に戻す
-	playerSpawnIndex_++;
-	if (playerSpawnIndex_ > playerSpawnNum_ - 1)
-	{
-		playerSpawnIndex_ = 0;
 	}
 }
 

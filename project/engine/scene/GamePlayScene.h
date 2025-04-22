@@ -80,6 +80,9 @@ private://メンバ変数
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
 
+	uint32_t textureHandleUI_Charge_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
+	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
 
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
