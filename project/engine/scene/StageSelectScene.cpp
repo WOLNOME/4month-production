@@ -82,12 +82,20 @@ void StageSelectScene::Initialize() {
 	particle_->emitter_.transform.translate.y += -12.0f;
 	particle_->emitter_.transform.scale = { 12.0f,12.0f,6.0f };
 
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("select/bgm.wav");
+	bgm_->Play(true, 0.5f);
+
 }
 
 void StageSelectScene::Finalize() {
 	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Finalize();
 	}
+
+	bgm_->Stop();
+	bgm_.reset();
+
 }
 
 void StageSelectScene::Update() {

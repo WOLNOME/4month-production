@@ -343,6 +343,11 @@ void GamePlayScene::Initialize()
 	
 		playerSpawn_.push_back(std::move(playerSpawn));
 	}
+
+	//bgm
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("game/bgm.wav");
+	bgm_->Play(true, 0.15f);
 }
 
 void GamePlayScene::Finalize()
@@ -368,6 +373,9 @@ void GamePlayScene::Finalize()
 	{
 		iceFloor->Finalize();
 	}
+
+	bgm_->Stop();
+	bgm_.reset();
 }
 
 void GamePlayScene::Update()

@@ -64,6 +64,9 @@ void TitleScene::Initialize() {
 	bgm_ = std::make_unique<Audio>();
 	bgm_->Initialize("title/bgm.wav");
     bgm_->Play(true,0.5f);
+	//タップしたときの効果音
+	tapSE_ = std::make_unique<Audio>();
+	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
 void TitleScene::Finalize() {
@@ -77,6 +80,9 @@ void TitleScene::Finalize() {
 
 	bgm_->Stop();
 	bgm_.reset();
+
+	tapSE_->Stop();
+	tapSE_.reset();
 }
 
 void TitleScene::Update() {
@@ -168,6 +174,7 @@ void TitleScene::Update() {
     //次のシーンへ
 	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->SetNextScene("STAGESELECT");
+		tapSE_->Play(false, 0.5f);
 	}
 
 }
