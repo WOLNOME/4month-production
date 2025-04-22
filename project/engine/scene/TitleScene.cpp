@@ -59,6 +59,11 @@ void TitleScene::Initialize() {
 	backgroundEffect_->emitter_.isPlay = true;
 	backgroundEffect_->emitter_.transform.translate = { 0.0f, 0.0f, 26.0f };
 	backgroundEffect_->emitter_.transform.scale = { 24.0f, 1.0f, 1.0f };
+
+    //bgm
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("title/bgm.wav");
+    bgm_->Play(true,0.5f);
 }
 
 void TitleScene::Finalize() {
@@ -70,6 +75,8 @@ void TitleScene::Finalize() {
     backgroundEffect_->emitter_.isPlay = false;
 	backgroundEffect_.reset();
 
+	bgm_->Stop();
+	bgm_.reset();
 }
 
 void TitleScene::Update() {
