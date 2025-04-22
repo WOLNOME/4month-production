@@ -86,6 +86,9 @@ void StageSelectScene::Initialize() {
 	bgm_->Initialize("select/bgm.wav");
 	bgm_->Play(true, 0.5f);
 
+	selectSE_ = std::make_unique<Audio>();
+	selectSE_->Initialize("soundeffect/select.wav");
+
 }
 
 void StageSelectScene::Finalize() {
@@ -95,7 +98,8 @@ void StageSelectScene::Finalize() {
 
 	bgm_->Stop();
 	bgm_.reset();
-
+	selectSE_->Stop();
+	selectSE_.reset();
 }
 
 void StageSelectScene::Update() {
@@ -238,12 +242,14 @@ void StageSelectScene::StageSelect() {
 			if (selectStage_ < stageNum_ - 1) {
 				selectStage_++;
 			}
+			selectSE_->Play(false, 0.8f);
 		}
 
 		if (input_->TriggerKey(DIK_A)) {
 			if (selectStage_ > 0) {
 				selectStage_--;
 			}
+			selectSE_->Play(false, 0.8f);
 		}
 	}
 }

@@ -81,5 +81,7 @@ private://メンバ変数
 	std::unique_ptr<Particle> particle_ = nullptr;
 	//bgm
 	std::unique_ptr<Audio> bgm_ = nullptr;
+	//効果音
+	std::unique_ptr<Audio> selectSE_ = nullptr;
 };
 
