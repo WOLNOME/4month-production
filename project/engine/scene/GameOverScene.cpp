@@ -17,10 +17,15 @@ void GameOverScene::Initialize()
 	spriteUI_SPACE_ = std::make_unique<Sprite>();
 	spriteUI_SPACE_->Initialize(textureHandleUI_SPACE_);
 
+	bgm_ = std::make_unique<Audio>();
+	bgm_->Initialize("gameover/bgm.wav");
+	bgm_->Play(true, 0.5f);
 }
 
 void GameOverScene::Finalize()
 {
+	bgm_->Stop();
+	bgm_.reset();
 }
 
 void GameOverScene::Update()

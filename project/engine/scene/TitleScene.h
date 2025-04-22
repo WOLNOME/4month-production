@@ -90,5 +90,9 @@ private://メンバ変数
 	std::unique_ptr<Particle> hitEffect_;
 	//背景のエフェクト
 	std::unique_ptr<Particle> backgroundEffect_;
+	//BGM
+	std::unique_ptr<Audio> bgm_ = nullptr;
+	//タップしたときの効果音
+	std::unique_ptr<Audio> tapSE_ = nullptr;
 };
 

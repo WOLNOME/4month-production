@@ -115,6 +115,9 @@ private://メンバ変数
 	// プレイヤースポーン位置
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
 
+	//bgm
+	std::unique_ptr<Audio> bgm_ = nullptr;
+
 	// プレイヤースポーン位置の数(固定)
 	const uint32_t playerSpawnNum_ = 3;
 	// プレイヤースポーン(ローテーション用)
