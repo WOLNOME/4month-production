@@ -1,5 +1,5 @@
 #include "FreezeEnemy.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 
 #include <chrono>
 
@@ -43,8 +43,9 @@ void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
+	auto particleManager = ParticleManager::GetInstance();
 	deadEffect_ = std::make_unique<Particle>();
-	deadEffect_->Initialize("deadFreezeEnemy" + RandomStringUtil::GenerateRandomString(3), "deadEnemy");
+	deadEffect_->Initialize(particleManager->GenerateName("deadFreezeEnemy"), "deadEnemy");
 	deadEffect_->emitter_.isGravity = true;
 	deadEffect_->emitter_.gravity = -150.0f;
 	deadEffect_->emitter_.isPlay = false;

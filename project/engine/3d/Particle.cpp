@@ -7,7 +7,7 @@
 
 Particle::~Particle() {
 	//確保したSRVデスクリプタヒープの解放
-	SrvManager::GetInstance()->Free(particleResource_.srvIndex);
+	//SrvManager::GetInstance()->Free(particleResource_.srvIndex);
 	//マネージャーから削除
 	ParticleManager::GetInstance()->DeleteParticle(name_);
 }
@@ -82,5 +82,7 @@ void Particle::SettingSRV() {
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	srvDesc.Buffer.NumElements = kNumMaxInstance;
 	srvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, SrvManager::GetInstance()->GetCPUDescriptorHandle(particleResource_.srvIndex));
+	particleResource_.srvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(particleResource_.srvIndex);
+	particleResource_.srvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(particleResource_.srvIndex);
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, particleResource_.srvHandleCPU);
 }

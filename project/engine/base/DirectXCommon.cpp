@@ -78,7 +78,6 @@ void DirectXCommon::GenerateDevice()
 		debugContoroller->SetEnableGPUBasedValidation(TRUE);
 	}
 #endif // _DEBUG
-
 	//HRESULTはWindows系のエラーコードであり、
 	//関数が成功したかどうかをSUCCEEDEDマクロで判定できる
 	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));

@@ -3,7 +3,7 @@
 #include "../../appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 
 void Player::Initialize() {
 	input_ = Input::GetInstance();
@@ -30,8 +30,10 @@ void Player::Initialize() {
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
+	auto particleManager = ParticleManager::GetInstance();
+
 	hitEffect_ = std::make_unique<Particle>();
-	hitEffect_->Initialize("hitPlayer" + RandomStringUtil::GenerateRandomString(3), "star");
+	hitEffect_->Initialize(particleManager->GenerateName("star"), "star");
 	hitEffect_->emitter_.isGravity = true;
 	hitEffect_->emitter_.gravity = -150.0f;
 	hitEffect_->emitter_.isBound = true;
@@ -41,17 +43,17 @@ void Player::Initialize() {
 	countHitEffect_ = 0;
 
 	deadEffect_ = std::make_unique<Particle>();
-	deadEffect_->Initialize("deadPlayer" + RandomStringUtil::GenerateRandomString(3), "deadPlayer");
+	deadEffect_->Initialize(particleManager->GenerateName("deadPlayer"), "deadPlayer");
 	deadEffect_->emitter_.isGravity = true;
 	deadEffect_->emitter_.gravity = -150.0f;
 	deadEffect_->emitter_.isPlay = false;
 	countDeadEffect_ = 0;
 
 	walkEffect_ = std::make_unique<Particle>();
-	walkEffect_->Initialize("walkPlayer" + RandomStringUtil::GenerateRandomString(3), "walkPlayer");
+	walkEffect_->Initialize(particleManager->GenerateName("walkPlayer"), "walkPlayer");
 
 	tackleEffect_ = std::make_unique<Particle>();
-	tackleEffect_->Initialize("tacklePlayer" + RandomStringUtil::GenerateRandomString(3), "tackle");
+	tackleEffect_->Initialize(particleManager->GenerateName("tackleEnemy"), "tackle");
 	tackleEffect_->emitter_.isGravity = true;
 	tackleEffect_->emitter_.gravity = 0.3f;
 	tackleEffect_->emitter_.isPlay = false;

@@ -3,6 +3,7 @@
 #include "MainRender.h"
 #include "SrvManager.h"
 #include "TextureManager.h"
+#include "RandomStringUtil.h"
 #include "Logger.h"
 #include <random>
 #undef min
@@ -130,7 +131,7 @@ void ParticleManager::Draw() {
 		//各パーティクルのブレンドモード情報からパイプラインステートを選択
 		MainRender::GetInstance()->GetCommandList()->SetPipelineState(graphicsPipelineState[particle.second->GetParam()["BlendMode"]].Get());
 		//各パーティクルのインスタンシングデータをVSに送信
-		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particle.second->particleResource_.srvIndex));
+		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, particle.second->particleResource_.srvHandleGPU);
 		//各パーティクルモデルの描画
 		std::string textureName = particle.second->GetParam()["Texture"];
 		int textureHandle = TextureManager::GetInstance()->LoadTexture(textureName);
@@ -158,6 +159,27 @@ void ParticleManager::DeleteParticle(const std::string& name) {
 	if (it != particles.end()) {
 		particles.erase(it);  // コンテナから削除
 	}
+}
+
+std::string ParticleManager::GenerateName(const std::string& name) {
+	// 出力する名前
+	std::string outputName = name + "_" + RandomStringUtil::GenerateRandomString(4);
+
+	// 重複チェック用のラムダ式
+	std::function<void(const std::string&)> checkDuplicate = [&](const std::string& name) {
+		// 重複しているかチェック
+		if (particles.find(name) != particles.end()) {
+			// 重複しているので名前を変更
+			outputName = name + "_" + RandomStringUtil::GenerateRandomString(4);
+			checkDuplicate(outputName);
+		}
+		};
+
+	// 重複チェック
+	checkDuplicate(outputName);
+
+	// 最終的に出力
+	return outputName;
 }
 
 void ParticleManager::GenerateGraphicsPipeline() {

@@ -8,8 +8,7 @@
 //DirectXTex
 #include "DirectXTex.h"
 
-class TextureManager
-{
+class TextureManager {
 private://コンストラクタ等の隠蔽
 	static TextureManager* instance;
 
@@ -27,6 +26,7 @@ public://公開メンバ関数
 
 	//テクスチャファイル読み込み
 	uint32_t LoadTexture(const std::string& filePath);
+
 private://非公開メンバ関数
 	//テクスチャデータの転送
 	void UploadTextureData(const Microsoft::WRL::ComPtr<ID3D12Resource>& texture, const DirectX::ScratchImage& mipImages);
@@ -39,8 +39,7 @@ public://ゲッター
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(uint32_t textureHandle);
 private:
 	//テクスチャデータ
-	struct TextureData
-	{
+	struct TextureData {
 		DirectX::TexMetadata metadata;
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		uint32_t srvIndex;

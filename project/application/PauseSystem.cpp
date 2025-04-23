@@ -1,7 +1,7 @@
 #include "PauseSystem.h"
 #include "WinApp.h"
 #include "TextureManager.h"
-#include "RandomStringUtil.h"
+#include "TextWriteManager.h"
 
 void PauseSystem::Initialize() {
 	//入力
@@ -37,7 +37,7 @@ void PauseSystem::Initialize() {
 
 	for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
 		textMenu_[i] = std::make_unique<TextWrite>();
-		textMenu_[i]->Initialize("Menu" + RandomStringUtil::GenerateRandomString(3));
+		textMenu_[i]->Initialize(TextWriteManager::GetInstance()->GenerateName("Menu"));
 		textMenu_[i]->SetParam({ WinApp::kClientWidth / 2.0f - 60.0f, 260.0f + (i * 130) }, Font::Meiryo, 60.0f, { 1,1,1,1 });
 		textMenu_[i]->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0.004f,-0.004f }, true);
 		//遊び方テキスト蚤の処理

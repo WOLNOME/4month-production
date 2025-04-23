@@ -1,5 +1,5 @@
 #include "FanEnemy.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 
 #include <chrono>
 
@@ -41,8 +41,9 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
+	auto particleManager = ParticleManager::GetInstance();
 	deadEffect_ = std::make_unique<Particle>();
-	deadEffect_->Initialize("deadFanEnemy" + RandomStringUtil::GenerateRandomString(3), "deadEnemy");
+	deadEffect_->Initialize(particleManager->GenerateName("deadFanEnemy"), "deadEnemy");
 	deadEffect_->emitter_.isGravity = true;
 	deadEffect_->emitter_.gravity = -150.0f;
 	deadEffect_->emitter_.isPlay = false;

@@ -1,6 +1,6 @@
 {
     "BlendMode": 2,
-    "EmitRate": 200,
+    "EmitRate": 75,
     "EndColor": {
         "Max": {
             "w": 0.0,
@@ -16,14 +16,14 @@
         }
     },
     "EndSize": {
-        "Max": 0.3,
-        "Min": 0.2
+        "Max": 0.7,
+        "Min": 0.3
     },
     "LifeTime": {
         "Max": 1.5,
-        "Min": 0.5
+        "Min": 1.0
     },
-    "MaxEffects": 300,
+    "MaxEffects": 115,
     "StartColor": {
         "Max": {
             "w": 1.0,
@@ -39,8 +39,8 @@
         }
     },
     "StartSize": {
-        "Max": 1.5,
-        "Min": 1.4
+        "Max": 2.8,
+        "Min": 2.4
     },
     "Texture": "circle.png",
     "Velocity": {

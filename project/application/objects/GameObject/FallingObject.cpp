@@ -1,6 +1,6 @@
 #include "FallingObject.h"
 #include "ImGuiManager.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 #include <random>
 
 void FallingObject::Initialize() {
@@ -77,17 +77,18 @@ void FallingObject::CreateObject() {
 		objectParam.object3d = std::make_unique<Object3d>();
 		objectParam.object3d->InitializeModel(objectName[randomNum]);
 		//死亡パーティクルの生成
+		auto particleManager = ParticleManager::GetInstance();
 		const char* particleName;
 		if (randomNum == 0) particleName = "deadPlayer";
 		else particleName = "deadEnemy";
 		objectParam.deadParticle = std::make_unique<Particle>();
-		objectParam.deadParticle->Initialize("fallObject" + RandomStringUtil::GenerateRandomString(3), particleName);
+		objectParam.deadParticle->Initialize(particleManager->GenerateName("dead"), particleName);
 		objectParam.deadParticle->emitter_.isPlay = false;
 		objectParam.deadParticle->emitter_.isGravity = true;
 		objectParam.deadParticle->emitter_.gravity = -280.0f;
 		//散布パーティクルの生成
 		objectParam.sprayParticle = std::make_unique<Particle>();
-		objectParam.sprayParticle->Initialize("fallObject" + RandomStringUtil::GenerateRandomString(4), "walkPlayer");
+		objectParam.sprayParticle->Initialize(particleManager->GenerateName("fall"), "walkPlayer");
 		objectParam.sprayParticle->emitter_.transform.scale = { 0.5f, 0.5f, 0.5f };
 		//速度の設定
 		objectParam.velocity = { 0.0f, 0.0f, 0.0f };

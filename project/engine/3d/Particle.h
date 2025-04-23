@@ -23,6 +23,8 @@ public:
 	struct ParticleResource {
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;
 		ParticleForGPU* instancingData;
+		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 		uint32_t srvIndex;
 	};
 	//エフェクト構造体

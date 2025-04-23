@@ -1,7 +1,7 @@
 #include "IceFloor.h"
 
 #include "../../appCollider/AppCollisionManager.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 
 void IceFloor::Initialize() {
 
@@ -21,8 +21,10 @@ void IceFloor::Initialize() {
 	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
+	//パーティクル
+	auto particleManager = ParticleManager::GetInstance();
 	particle_ = std::make_unique<Particle>();
-	particle_->Initialize("iceFloor" + RandomStringUtil::GenerateRandomString(3), "cold");
+	particle_->Initialize(particleManager->GenerateName("iceFloor"), "cold");
 	particle_->emitter_.isGravity = true;
 	particle_->emitter_.gravity = 2.0f;
 	particle_->emitter_.transform.scale.y = 0.1f;

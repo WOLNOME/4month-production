@@ -1,5 +1,5 @@
 #include "TackleEnemy.h"
-#include "RandomStringUtil.h"
+#include "ParticleManager.h"
 
 #include <chrono>
 
@@ -38,8 +38,9 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath) {
 	appCollisionManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
+	auto particleManager = ParticleManager::GetInstance();
 	deadEffect_ = std::make_unique<Particle>();
-	deadEffect_->Initialize("deadTackleEnemy" + RandomStringUtil::GenerateRandomString(3), "deadEnemy");
+	deadEffect_->Initialize(particleManager->GenerateName("deadTackleEnemy"), "deadEnemy");
 	deadEffect_->emitter_.isGravity = true;
 	deadEffect_->emitter_.gravity = -150.0f;
 	deadEffect_->emitter_.isPlay = false;
