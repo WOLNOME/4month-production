@@ -3,7 +3,7 @@
 #include <cassert>
 
 SrvManager* SrvManager::instance = nullptr;
-const uint32_t SrvManager::kMaxSRVCount = 512;
+const uint32_t SrvManager::kMaxSRVCount = 1024;
 
 SrvManager* SrvManager::GetInstance() {
 	if (instance == nullptr) {
