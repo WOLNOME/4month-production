@@ -63,14 +63,14 @@ private://メンバ変数
 	uint32_t selectStage_ = 0;
 
 	// ステージ選択スプライト
-	uint32_t textureHandleSelect_ = 0u;
-	std::unique_ptr<Sprite> spriteSelect_ = nullptr;
-
 	uint32_t textureHandleUI_A_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_A_ = nullptr;
 
 	uint32_t textureHandleUI_D_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_D_ = nullptr;
+
+	//スペースUIテキスト
+	std::unique_ptr<TextWrite> spaceText_ = nullptr;
 
 	std::vector<uint32_t>textureHandleSelectNum_;
 	std::vector<std::unique_ptr<Sprite>> spriteSelectNum_;

@@ -9,11 +9,6 @@ void TitleScene::Initialize() {
 
     input_ = Input::GetInstance();
 
-    //生成と初期化
-    textureHandleUI_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
-    spriteUI_ = std::make_unique<Sprite>();
-    spriteUI_->Initialize(textureHandleUI_);
-
     //カメラの生成と初期化
     camera = std::make_unique<DevelopCamera>();
     camera->Initialize();
@@ -40,10 +35,20 @@ void TitleScene::Initialize() {
     enemyTransform_.Initialize();
     enemyTransform_.translate_ = { 0.0f, 1.0f, 0.0f };
 
+	//スカイドーム
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
+
     //フィールド
     field_ = std::make_unique<Field>();
     field_->Initialize();
     field_->SetScale({ 23.0f, 1.0f,26.0f });
+
+	//spaceテキスト
+	spaceText_ = std::make_unique<TextWrite>();
+	spaceText_->Initialize("SPACE");
+	spaceText_->SetParam({ 500.0f, 475.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
+	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
 
     //当たり判定
     appCollisionManager_ = AppCollisionManager::GetInstance();
@@ -53,7 +58,7 @@ void TitleScene::Initialize() {
 	hitEffect_ = std::make_unique<Particle>();
 
 	backgroundEffect_ = std::make_unique<Particle>();
-	backgroundEffect_->Initialize("background", "basic");
+	backgroundEffect_->Initialize("background", "Basic");
 	backgroundEffect_->emitter_.isGravity = true;
 	backgroundEffect_->emitter_.gravity = 5.0f;
 	backgroundEffect_->emitter_.isPlay = true;
@@ -137,14 +142,18 @@ void TitleScene::Update() {
     ImGui::End();
     //タイトルテキスト用のImGui
     title_->DebugWithImGui();
+	//スペースUIテキスト用のImGui
+	spaceText_->DebugWithImGui();
+
 
 #endif // _DEBUG
 
-    spriteUI_->Update();
     //プレイヤーの更新
     playerTransform_.UpdateMatrix();
     //敵の更新
     enemyTransform_.UpdateMatrix();
+    //スカイドームの更新
+	skydome_->Update();
     //フィールドの更新
     field_->Update();
     //当たり判定
@@ -189,6 +198,7 @@ void TitleScene::Draw() {
 
     player_->Draw(playerTransform_, *camera.get());
     enemy_->Draw(enemyTransform_, *camera.get());
+	skydome_->Draw(*camera.get());
     field_->Draw(*camera.get());
 
     ///------------------------------///
@@ -216,7 +226,6 @@ void TitleScene::Draw() {
     ///↓↓↓↓スプライト描画開始↓↓↓↓///
     ///------------------------------///
 
-    spriteUI_->Draw();
 
     ///------------------------------///
     ///↑↑↑↑スプライト描画終了↑↑↑↑///
@@ -231,6 +240,8 @@ void TitleScene::TextDraw() {
 
     //タイトルテキスト
     title_->WriteText(L"ふえるぶつかり屋");
+	//スペースUIテキスト
+	spaceText_->WriteText(L"SPACE");
 
     ///------------------------------///
     ///↑↑↑↑テキスト描画終了↑↑↑↑///

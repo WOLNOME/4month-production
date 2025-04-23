@@ -24,10 +24,6 @@ void StageSelectScene::Initialize() {
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
 	// ステージ選択スプライト
-	textureHandleSelect_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE.png");
-	spriteSelect_ = std::make_unique<Sprite>();
-	spriteSelect_->Initialize(textureHandleSelect_);
-
 	textureHandleUI_A_ = TextureManager::GetInstance()->LoadTexture("UI_A.png");
 	spriteUI_A_ = std::make_unique<Sprite>();
 	spriteUI_A_->Initialize(textureHandleUI_A_);
@@ -50,6 +46,11 @@ void StageSelectScene::Initialize() {
 
 		spriteSelectNum_.push_back(std::move(num));
 	}
+	//スペースUIテキスト
+	spaceText_ = std::make_unique<TextWrite>();
+	spaceText_->Initialize("SPACE");
+	spaceText_->SetParam({ 500.0f, 575.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
+	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
 
 	//天球
 	skydome_ = std::make_unique<Skydome>();
@@ -135,7 +136,6 @@ void StageSelectScene::Update() {
 
 	}
 
-	spriteSelect_->Update();
 	spriteUI_A_->Update();
 	spriteUI_D_->Update();
 
@@ -166,6 +166,9 @@ void StageSelectScene::Update() {
 	camera_->DebugWithImGui();
 
 	fallingObject_->DebugWithImGui();
+
+	//UIテキスト用のImGui
+	spaceText_->DebugWithImGui();
 
 #endif // _DEBUG
 }
@@ -208,8 +211,6 @@ void StageSelectScene::Draw() {
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	spriteSelect_->Draw();
-
 	if (selectStage_ != 0) {
 		spriteUI_A_->Draw();
 	}
@@ -229,6 +230,8 @@ void StageSelectScene::TextDraw() {
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
+	//スペースUIテキスト
+	spaceText_->WriteText(L"SPACE");
 
 
 	///------------------------------///

@@ -12,9 +12,12 @@ void ClearScene::Initialize()
 	spriteClear_ = std::make_unique<Sprite>();
 	spriteClear_->Initialize(textureHandleClear_);
 
-	textureHandleUI_SPACE_ = TextureManager::GetInstance()->LoadTexture("UI_SPACE2.png");
-	spriteUI_SPACE_ = std::make_unique<Sprite>();
-	spriteUI_SPACE_->Initialize(textureHandleUI_SPACE_);
+	//スペースUIテキスト
+	spriteUI_SPACE_ = std::make_unique<TextWrite>();
+	spriteUI_SPACE_->Initialize("SPACE");
+	spriteUI_SPACE_->SetParam({ 500.0f, 475.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
+	spriteUI_SPACE_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
+
 
 	bgm_ = std::make_unique<Audio>();
 	bgm_->Initialize("gameclear/bgm.wav");
@@ -34,7 +37,6 @@ void ClearScene::Update()
 	}
 
 	spriteClear_->Update();
-	spriteUI_SPACE_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -82,7 +84,6 @@ void ClearScene::Draw()
 	///------------------------------///
 
 	spriteClear_->Draw();
-	spriteUI_SPACE_->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -94,6 +95,8 @@ void ClearScene::TextDraw() {
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
 
+	//スペースUIテキスト
+	spriteUI_SPACE_->WriteText(L"SPACE");
 	
 
 	///------------------------------///

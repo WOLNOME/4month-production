@@ -82,7 +82,7 @@ void StageSelectObject::Initialize(const std::string& modelFilePath, const std::
 
 		break;
 	case StageNum::Stage3:
-		//タックルエネミー2体を配置
+		//タックルエネミーとフリーズエネミーを1体ずつ配置
 		for (int i = 0; i < 2; i++) {
 			//ワールドトランスフォームの初期化
 			WorldTransform enemyTransform;
@@ -92,7 +92,9 @@ void StageSelectObject::Initialize(const std::string& modelFilePath, const std::
 			enemyTransform.parent_ = &wtField_;
 			//モデルの初期化
 			std::unique_ptr<Object3d> enemy = std::make_unique<Object3d>();
-			enemy->InitializeModel("enemy");
+			std::string name = "enemy";
+			if (i == 1) name = "Freeze";
+			enemy->InitializeModel(name);
 			//速度の初期化
 			Vector3 velocity = { 0.0f,0.0f,0.0f };
 			//登録

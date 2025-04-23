@@ -3,6 +3,7 @@
 #include "DevelopCamera.h"
 #include "application/objects/Field/Field.h"
 #include "application/objects/Player/Player.h"
+#include "application/objects/Skydome/Skydome.h"
 
 class TitleScene : public BaseScene {
 public:
@@ -34,9 +35,6 @@ private: //メンバ関数
 
 private://メンバ変数
 	Input* input_ = nullptr;
-	//タイトルスプライト
-	uint32_t textureHandleUI_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_ = nullptr;
 	//開発用カメラ
 	std::unique_ptr<DevelopCamera> camera;
 	//タイトル
@@ -47,8 +45,13 @@ private://メンバ変数
 	//演出に使うエネミー
 	std::unique_ptr<Object3d> enemy_ = nullptr;
 	WorldTransform enemyTransform_;
+	//スカイドーム
+	std::unique_ptr<Skydome> skydome_ = nullptr;
 	//フィールド
 	std::unique_ptr<Field> field_ = nullptr;
+	//スペースUIテキスト
+	std::unique_ptr<TextWrite> spaceText_ = nullptr;
+
 	//当たり判定
 	AppCollisionManager* appCollisionManager_ = nullptr;
 	// 演出用の変数
