@@ -1,4 +1,5 @@
 #include "IceMist.h"
+#include "TextureManager.h"
 #include <random>
 
 IceMist::~IceMist()
@@ -14,9 +15,12 @@ void IceMist::Initialize(const std::string& filePath, const Vector3& position, c
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->InitializeModel(filePath);
 	transform_.Initialize();
-    transform_.scale_ = { 1.0f, 0.5f,1.0f };
+    transform_.scale_ = { 0.7f, 0.4f,0.7f };
 	transform_.translate_ = position;
 	transform_.rotate_ = { 0.0f,0.0f,0.0f };
+	// テクスチャの読み込み
+	textureHandle_ = TextureManager::GetInstance()->LoadTexture("iceMist.png");
+
 	// 速度ベクトル
 	velocity_ = velocity;
 	// スタート地点
@@ -48,7 +52,7 @@ void IceMist::Update()
 
 void IceMist::Draw(BaseCamera camera)
 {
-	object3d_->Draw(transform_, camera);
+    object3d_->Draw(transform_, camera, nullptr, textureHandle_);
 }
 
 void IceMist::OnCollision(const AppCollider* other)
