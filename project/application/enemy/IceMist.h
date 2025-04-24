@@ -27,6 +27,9 @@ private:
 private:
 	//オブジェクト
 	std::unique_ptr<Object3d> object3d_ = nullptr;
+	// テクスチャ
+	uint32_t texture_ = 0u;
+
     //速度ベクトル
     Vector3 velocity_;
     //摩擦係数
