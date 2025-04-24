@@ -27,6 +27,7 @@ void TitleScene::Initialize() {
     player_->InitializeModel("player");
     playerTransform_.Initialize();
     playerTransform_.translate_ = { -10.0f, 1.0f, 0.0f };
+	playerTransform_.rotate_ = { 0.0f, 1.57f, 0.0f };
     playerVelocity_ = initialPlayerVelocity_;
 
     //演出に使う敵
@@ -34,6 +35,7 @@ void TitleScene::Initialize() {
     enemy_->InitializeModel("enemy");
     enemyTransform_.Initialize();
     enemyTransform_.translate_ = { 0.0f, 1.0f, 0.0f };
+	enemyTransform_.rotate_ = { 0.0f, -1.57f, 0.0f };
 
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
@@ -259,8 +261,8 @@ void TitleScene::UpdateCutscene()
 		// カメラをプレイヤーにズームイン
 		Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 10.0f, -30.0f);
 		camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.1f)); // カメラの位置を調整
-		camera->SetRotate(Lerp(camera->GetRotate(), { 0.3f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
-		if (cutsceneTime_ >= cutsceneDuration_ * 0.5) {
+		camera->SetRotate(Lerp(camera->GetRotate(), { 0.3f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整        
+        if (cutsceneTime_ >= cutsceneDuration_ * 0.5) {
 			cutsceneTime_ = 0.0f;
 			cutsceneState_ = CutsceneState::PlayerRunningIn;
 		}
@@ -335,6 +337,10 @@ void TitleScene::UpdateCutscene()
    		Vector3 targetCameraPos = playerTransform_.translate_ + Vector3(0.0f, 3.0f, -10.0f);
         camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.05f)); // カメラの位置を調整
         camera->SetRotate(Lerp(camera->GetRotate(), { 0.2f, 0.0f, 0.0f }, 0.05f)); // カメラの回転を調整
+
+        // プレイヤーのY軸回転を徐々に3.14に変更
+        playerTransform_.rotate_.y = Lerp(playerTransform_.rotate_.y, 3.14f, 0.05f); // 0.05fは補間係数
+
         if (cutsceneTime_ >= cutsceneDuration_ * 4.0f) {
             cutsceneTime_ = 0.0f;
             cutsceneState_ = CutsceneState::Reset;
@@ -345,6 +351,7 @@ void TitleScene::UpdateCutscene()
     {
         // プレイヤーとエネミーの位置をリセット
         playerTransform_.translate_ = { -10.0f, 1.0f, 0.0f };
+        playerTransform_.rotate_ = { 0.0f, 1.57f, 0.0f };
         enemyTransform_.translate_ = { 0.0f, 1.0f, 0.0f };
         playerVelocity_ = initialPlayerVelocity_; // 初速度を設定
         enemyVelocity_ = { 0.0f, 0.0f, 0.0f };
