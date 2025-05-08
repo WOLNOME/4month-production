@@ -58,6 +58,10 @@ public://メンバ関数
 	/// <param name="name">インスタンスの名前</param>
 	/// <param name="fileName">使用するパーティクルの名前(.jsonは省略)</param>
 	void Initialize(const std::string& name,const std::string& fileName);
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize();
 private://メンバ関数(非公開)
 	//パーティクルリソース作成関数
 	ParticleResource MakeParticleResource();
@@ -84,5 +88,7 @@ private: //メンバ変数
 	std::string name_;
 	//各エフェクトのパラメーター
 	json param_;
+	//SRV割り当てチェック
+	bool isSRVCheck_ = false;
 
 };
