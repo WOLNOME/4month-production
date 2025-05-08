@@ -61,6 +61,8 @@ private://メンバ変数
 
 	const uint32_t stageNum_ = 5;
 	uint32_t selectStage_ = 0;
+	// ステージ選択番号描画用変数
+	uint32_t drawSelectNum_ = selectStage_;
 
 	// ステージ選択スプライト
 	uint32_t textureHandleUI_A_ = 0u;

@@ -33,11 +33,11 @@ void StageSelectScene::Initialize() {
 	spriteUI_D_->Initialize(textureHandleUI_D_);
 
 	spritePos_ = { 0.0f,0.0f };
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum1.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum2.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum3.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum4.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("stageNum5.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num1.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num2.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num3.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num4.png"));
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num5.png"));
 	for (uint32_t i = 0; i < 5; i++) {
 		auto num = std::make_unique<Sprite>();
 
@@ -139,6 +139,11 @@ void StageSelectScene::Update() {
 	spriteUI_A_->Update();
 	spriteUI_D_->Update();
 
+	if (!selectObjects_[selectStage_]->IsMove()){
+
+		drawSelectNum_ = selectStage_;
+	}
+
 	for (auto& sprite : spriteSelectNum_) {
 		sprite->Update();
 		sprite->SetPosition(spritePos_);
@@ -218,7 +223,7 @@ void StageSelectScene::Draw() {
 		spriteUI_D_->Draw();
 	}
 
-	spriteSelectNum_[selectStage_]->Draw();
+	spriteSelectNum_[drawSelectNum_]->Draw();
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑

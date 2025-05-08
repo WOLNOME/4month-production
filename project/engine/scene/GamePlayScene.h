@@ -72,18 +72,31 @@ public:
 	//シェイクのチェック
 	void CheckShake();
 
+	// 残り出現数UI
+	void remainingSpawnNum();
+
 private://メンバ変数
 
 	Input* input_ = nullptr;
 	
 
 	// プライト
+	// プレイ画面UI
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
-
+	
+	// チャージUI
 	uint32_t textureHandleUI_Charge_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
 	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
+	
+	
+	// 残り出現数
+	uint32_t remainingBoogie_ = 0;
+	// 残りの出現数テキスト
+	std::unique_ptr<TextWrite> remainingSpawnNumText_ = nullptr;
+	std::unique_ptr<TextWrite> numText_ = nullptr;
+	std::unique_ptr<TextWrite> valueText_ = nullptr;
 
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
@@ -124,7 +137,7 @@ private://メンバ変数
 
 	// プレイヤースポーン位置の数(固定)
 	const uint32_t playerSpawnNum_ = 3;
-	// プレイヤースポーン(ローテーション用)
+	// プレイヤースポーン(ローテーション用。どのポイントから出現させるか)
 	uint32_t playerSpawnIndex_ = 0;
 	// プレイヤースポーン位置
 	std::vector<Vector3> playerSpawnPositions_{};
@@ -132,6 +145,8 @@ private://メンバ変数
 	const float rotation_ = 240.0f;
 	// ローテーション用タイマー
 	float rotationTimer_ = rotation_;
+	// 出現数上限
+	const uint32_t kMaxSpawnNum = 15;
 	// 何体出たか
 	uint32_t howManyBoogie_ = 0;
 

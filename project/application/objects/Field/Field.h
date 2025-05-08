@@ -23,6 +23,10 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+public: // セッター
+
+	void SetTextureHandle(std::string _textureHandle);
+
 private: // 衝突判定
 
 	void OnCollision(const AppCollider* _other);

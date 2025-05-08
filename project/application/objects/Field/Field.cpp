@@ -49,6 +49,7 @@ void Field::Update() {
 	wtField_.UpdateMatrix();
 
 	wtField_.scale_ = scale_;
+	wtField_.rotate_ = rotation_;
 
 	// 当たり判定関係
 	aabb_.min = wtField_.translate_ - wtField_.scale_;
@@ -72,6 +73,11 @@ void Field::ImGuiDraw() {
 
 
 	ImGui::End();
+}
+
+void Field::SetTextureHandle(std::string _textureHandle)
+{
+	textureHandleField_ = TextureManager::GetInstance()->LoadTexture(_textureHandle);
 }
 
 void Field::OnCollision(const AppCollider* _other) {

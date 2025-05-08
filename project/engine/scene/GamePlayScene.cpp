@@ -19,10 +19,12 @@ void GamePlayScene::Initialize()
 	input_ = Input::GetInstance();
 
 	// スプライト
+	// プレイ画面UI
 	textureHandleUI_PLAY_ = TextureManager::GetInstance()->LoadTexture("UI_PLAY.png");
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
 	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
-
+	
+	// チャージUI
 	textureHandleUI_Charge_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
 	spriteUI_Charge_ = std::make_unique<Sprite>();
 	spriteUI_Charge_->SetPosition({ 1085.0f, 600.0f });
@@ -33,6 +35,23 @@ void GamePlayScene::Initialize()
 	spriteUI_ChargeGage_->SetPosition({ 1085.0f, 600.0f });
 	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
 	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+
+	// 残り出現数UIテキスト
+	remainingSpawnNumText_ = std::make_unique<TextWrite>();
+	remainingSpawnNumText_->Initialize("REMAINING");
+	remainingSpawnNumText_->SetParam({ 10.0f, 100.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	remainingSpawnNumText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
+	// 残りの出現数テキスト
+	numText_ = std::make_unique<TextWrite>();
+	numText_->Initialize("NUM");
+	numText_->SetParam({ 50.0f, 150.0f }, Font::UDDegitalNK_R, 70.0f, { 0.9f, 0.85f, 0.13f, 1 });
+	numText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
+	// 値のテキスト
+	valueText_ = std::make_unique<TextWrite>();
+	valueText_->Initialize("value");
+	valueText_->SetParam({ 160.0f, 185.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
+
 
 	switch (stageNum_)
 	{
@@ -404,6 +423,7 @@ void GamePlayScene::Update()
 	spriteUI_PLAY_->Update();
 	spriteUI_Charge_->Update();
 	spriteUI_ChargeGage_->Update();
+	remainingSpawnNum();
 
 	// チャージの大きさに応じてスプライトのサイズを変更
 	if (charge_ == 0.0f)
@@ -518,6 +538,10 @@ void GamePlayScene::Update()
 	// ImGui
 	ImGuiDraw();
 
+	//UIテキスト用のImGui
+	//remainingSpawnNumText_->DebugWithImGui();
+	//numText_->DebugWithImGui();
+	//valueText_->DebugWithImGui();
 }
 
 void GamePlayScene::Draw()
@@ -608,6 +632,13 @@ void GamePlayScene::TextDraw() {
 
 	// ポーズシステムのテキスト描画
 	pauseSystem_->TextDraw();
+
+	//スペースUIテキスト
+	remainingSpawnNumText_->WriteText(L"残り出現数");
+	// 残りの出現数テキスト
+	numText_->WriteText(std::to_wstring(remainingBoogie_));
+	// 値のテキスト
+	valueText_->WriteText(L"体");
 
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
@@ -725,7 +756,7 @@ void GamePlayScene::playerSpawnRotation()
 	rotationTimer_ -= 1.0f;
 
 	// タイマーが120になったら準備
-	if (rotationTimer_ == 120.0f && howManyBoogie_ < 15)
+	if (rotationTimer_ == 120.0f && howManyBoogie_ < kMaxSpawnNum)
 	{
 		// プレイヤースポーン位置の演出
 		playerSpawn_[playerSpawnIndex_]->ParticleStart();
@@ -736,7 +767,7 @@ void GamePlayScene::playerSpawnRotation()
 	{
 		playerSpawn_[playerSpawnIndex_]->ParticleStop();
 
-		if (howManyBoogie_ < 15)
+		if (howManyBoogie_ < kMaxSpawnNum)
 		{
 			rotationTimer_ = rotation_;
 
@@ -809,6 +840,15 @@ void GamePlayScene::CheckShake() {
 			camera_->RegistShake(0.4f, 0.5f);
 			enemy->isDeadShake_ = false;
 		}
+	}
+}
+
+void GamePlayScene::remainingSpawnNum()
+{
+	// 残り出現数を計算
+	remainingBoogie_ = kMaxSpawnNum - howManyBoogie_;
+	if (remainingBoogie_ < 0) {
+		remainingBoogie_ = 0; // 負の値にならないように制限
 	}
 }
 

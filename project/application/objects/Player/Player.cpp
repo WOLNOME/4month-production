@@ -237,6 +237,14 @@ void Player::Attack() {
 	}
 
 	if (isAttack_) {
+
+		// 速度がゼロの場合、プレイヤーの向きに応じて初期速度を設定
+		if (moveVel_.x == 0.0f && moveVel_.y == 0.0f && moveVel_.z == 0.0f) {
+			// プレイヤーの向きを基に攻撃方向を設定
+			moveVel_.x = sinf(rotation_.y) * 0.18f; // X方向の速度
+			moveVel_.z = cosf(rotation_.y) * 0.18f; // Z方向の速度
+		}
+
 		moveVel_ *= 1.5f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
