@@ -69,6 +69,9 @@ private://メンバ変数
 	uint32_t textureHandleUI_D_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_D_ = nullptr;
 
+	uint32_t textureHandleUI_SELECT = 0u;
+	std::unique_ptr<Sprite> spriteUI_SELECT_;
+
 	//スペースUIテキスト
 	std::unique_ptr<TextWrite> spaceText_ = nullptr;
 
