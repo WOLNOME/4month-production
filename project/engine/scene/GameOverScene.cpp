@@ -47,6 +47,9 @@ void GameOverScene::Initialize()
 	bgm_ = std::make_unique<Audio>();
 	bgm_->Initialize("gameover/bgm.wav");
 	bgm_->Play(true, 0.5f);
+
+	tapSE_ = std::make_unique<Audio>();
+	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
 void GameOverScene::Finalize()
@@ -56,6 +59,8 @@ void GameOverScene::Finalize()
 
 	bgm_->Stop();
 	bgm_.reset();
+	tapSE_->Stop();
+	tapSE_.reset();
 }
 
 void GameOverScene::Update()
@@ -78,6 +83,7 @@ void GameOverScene::Update()
 
 	if (input_->TriggerKey(DIK_SPACE))
 	{
+		tapSE_->Play(false, 0.5f);
 		sceneManager_->SetNextScene("TITLE");
 	}
 

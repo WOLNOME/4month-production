@@ -22,17 +22,22 @@ void ClearScene::Initialize()
 	bgm_ = std::make_unique<Audio>();
 	bgm_->Initialize("gameclear/bgm.wav");
 	bgm_->Play(true, 0.5f);
+	tapSE_ = std::make_unique<Audio>();
+	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
 void ClearScene::Finalize()
 {
 	bgm_->Stop();
-	bgm_.reset();	
+	bgm_.reset();
+	tapSE_->Stop();
+	tapSE_.reset();
 }
 
 void ClearScene::Update()
 {
 	if (input_->TriggerKey(DIK_SPACE)) {
+		tapSE_->Play(false, 0.5f);
 		sceneManager_->SetNextScene("TITLE");
 	}
 

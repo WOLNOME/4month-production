@@ -90,6 +90,8 @@ void StageSelectScene::Initialize() {
 	selectSE_ = std::make_unique<Audio>();
 	selectSE_->Initialize("soundeffect/select.wav");
 
+	tapSE_ = std::make_unique<Audio>();
+	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
 void StageSelectScene::Finalize() {
@@ -101,6 +103,8 @@ void StageSelectScene::Finalize() {
 	bgm_.reset();
 	selectSE_->Stop();
 	selectSE_.reset();
+	tapSE_->Stop();
+	tapSE_.reset();
 }
 
 void StageSelectScene::Update() {
@@ -118,6 +122,7 @@ void StageSelectScene::Update() {
 	fallingObject_->Update();
 
 	if (input_->TriggerKey(DIK_SPACE)) {
+		tapSE_->Play(false, 0.5f);
 		if (selectStage_ == 0) {
 			sceneManager_->SetNextScene("GAMEPLAY");
 		}

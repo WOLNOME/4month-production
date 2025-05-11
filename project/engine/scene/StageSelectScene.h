@@ -85,5 +85,6 @@ private://メンバ変数
 	std::unique_ptr<Audio> bgm_ = nullptr;
 	//効果音
 	std::unique_ptr<Audio> selectSE_ = nullptr;
+	std::unique_ptr<Audio> tapSE_ = nullptr;
 };
 

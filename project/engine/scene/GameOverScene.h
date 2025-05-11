@@ -57,6 +57,8 @@ private://メンバ変数
 
 	//bgm
 	std::unique_ptr<Audio> bgm_ = nullptr;
+	//タップしたときの効果音
+	std::unique_ptr<Audio> tapSE_ = nullptr;
 
 	float spriteFall1Y_ = -720.0f; // spriteFall1_ の Y 座標
 	float spriteFall2Y_ = 720.0f; // spriteFall2_ の Y 座標（初期位置は画面下）

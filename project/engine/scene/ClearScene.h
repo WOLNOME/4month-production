@@ -34,5 +34,6 @@ private://メンバ変数
 	std::unique_ptr<TextWrite> spriteUI_SPACE_ = nullptr;
 
 	std::unique_ptr<Audio> bgm_ = nullptr;
+	std::unique_ptr<Audio> tapSE_ = nullptr;
 };
 
