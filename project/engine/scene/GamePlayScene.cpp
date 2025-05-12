@@ -889,50 +889,17 @@ void GamePlayScene::UpdateZoomIn()
 	Vector3 cameraStartPosition = cameraStartPosition_;
 	Vector3 cameraEndPosition = cameraEndPosition_;
 	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 10.0f;
+	cameraEndPosition.z -= 13.0f;
 	// カメラの補間
 	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
-
-	//// 敵の向きを補間
-	//if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0)
-	//{
-	//	Vector3 rotation = { 0.0f, 0.0f, 0.0f };
-	//	//敵の現在の向き
-	//	if (nearestEnemyType_ == "TackleEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//	else if (nearestEnemyType_ == "FanEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetFanEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//	else if (nearestEnemyType_ == "FreezeEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//}
-
-	//// プレイヤーの向きを補間
-	//if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty())
-	//{
-	//	Vector3 rotation = players_[nearestPlayerNum_]->GetRotation();
-	//	Vector3 newPlayerRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(cameraEndPosition, nearestPlayerPos_) * easeT;
-	//	players_[nearestPlayerNum_]->SetRotation(newPlayerRotate);
-	//}
 
 	// カメラに新しい位置と回転を設定
 	camera_->SetTranslate(newPosition);
 	camera_->SetRotate(newRotation);
 
 	//補間が終わったら
-	if (t >= 1.0f)
+	if (cameraEaseTime_ >= 2.5f)
 	{
 		isZoomIn_ = false;
 		cameraEaseTime_ = 0.0f;
@@ -952,7 +919,7 @@ void GamePlayScene::UpdateZoomOut()
 	float easeT = EaseInOutQuad(t);
 	Vector3 cameraEndPosition = cameraEndPosition_;
 	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 10.0;
+	cameraEndPosition.z -= 13.0;
 	// カメラの補間
 	Vector3 newPosition = cameraEndPosition * (1.0f - easeT) + cameraStartPosition_ * easeT;
 	Vector3 newRotation = CalculateLookAtRotation(newPosition, cameraEndPosition_) * (1.0f - easeT) + cameraRotate * easeT;
