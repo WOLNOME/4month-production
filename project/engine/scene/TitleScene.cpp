@@ -62,6 +62,7 @@ void TitleScene::Initialize() {
     hitEffect_->Initialize("hitOnTitleScene", "star");
     hitEffect_->emitter_.isGravity = true;
     hitEffect_->emitter_.gravity = -150.0f;
+    hitEffect_->emitter_.isPlay = false;
     hitEffect_->emitter_.isBound = true;
     hitEffect_->emitter_.repulsion = 0.8f;
     hitEffect_->emitter_.floorHeight = 0.0f;
