@@ -37,6 +37,8 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	// モデルの更新
+	void UpdateModel();
 
 private: // 衝突判定
 
@@ -73,6 +75,12 @@ public: //セッター
 
 	// 攻撃チャージフラグをセット
 	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
+
+	// 落下フラグをセット(クリアシーンで常にONにしてたい)
+	void SetIsGround(bool _flag) { isGround_ = _flag; }
+
+	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)
+	void SetIsMoveable(bool _flag) { isMoveable_ = _flag; }
 
 private:
 
@@ -152,5 +160,7 @@ private:
 	//氷の上にいるときの最高速度
 	float MaxSpeedOnIce_ = 0.2f;
 
+	// 動かせるかフラグ(クリアシーンで動かないようにさせたい)
+	bool isMoveable_ = true;
 };
 
