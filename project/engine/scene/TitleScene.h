@@ -59,7 +59,7 @@ private://メンバ変数
 	const float cutsceneDuration_ = 1.0f; // カットシーンの長さ（秒）
 	bool isCutscenePlaying_ = true;
 	float waitTime_ = 0.0f; // 待機時間
-	const float waitDuration_ = 3.0f; // 待機時間の長さ（秒）
+	const float waitDuration_ = 2.0f; // 待機時間の長さ（秒）
 	// 初速度
 	const Vector3 initialPlayerVelocity_ = { 20.0f, 0.0f, 0.0f };
 	const Vector3 initialEnemyVelocity_ = { 38.0f, 0.0f, 0.0f };
