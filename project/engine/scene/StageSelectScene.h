@@ -41,7 +41,7 @@ public:
 	void TextDraw() override;
 
 	// ステージ選択
-	void StageSelect();
+	void SelectStageOperator();
 
 private://メンバ変数
 
@@ -59,10 +59,10 @@ private://メンバ変数
 	std::vector<std::unique_ptr<StageSelectObject>> selectObjects_{};
 	std::unique_ptr<FallingObject> fallingObject_ = nullptr;
 
-	const uint32_t stageNum_ = 5;
-	uint32_t selectStage_ = 0;
+	const uint32_t stageNum_ = 6;
+	uint32_t setStage_ = 0;
 	// ステージ選択番号描画用変数
-	uint32_t drawSelectNum_ = selectStage_;
+	uint32_t drawSelectNum_ = setStage_;
 
 	// ステージ選択スプライト
 	uint32_t textureHandleUI_A_ = 0u;

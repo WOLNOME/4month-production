@@ -5,6 +5,7 @@
 
 // 追加
 #include "StageSelectScene.h"
+#include "TutorialScene.h"
 #include "GamePlayScene.h"
 #include "GameOverScene.h"
 // パーティクルクリエイター
@@ -27,6 +28,9 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	// 追加
 	else if (sceneName == "STAGESELECT"){
 		newScene = new StageSelectScene();
+	}
+	else if (sceneName == "TUTORIAL") {
+		newScene = new TutorialScene();
 	}
 	else if (sceneName == "GAMEPLAY") {
 		newScene = new GamePlayScene();

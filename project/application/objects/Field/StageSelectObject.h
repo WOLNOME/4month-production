@@ -10,6 +10,7 @@
 #include <Particle.h>
 
 enum class StageNum {
+	Tutorial,
 	Stage1,
 	Stage2,
 	Stage3,

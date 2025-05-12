@@ -37,12 +37,13 @@ void StageSelectScene::Initialize() {
 	spriteUI_SELECT_->Initialize(textureHandleUI_SELECT);
 
 	spritePos_ = { 0.0f,0.0f };
+	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("tutorial.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num1.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num2.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num3.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num4.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num5.png"));
-	for (uint32_t i = 0; i < 5; i++) {
+	for (uint32_t i = 0; i < 6; i++) {
 		auto num = std::make_unique<Sprite>();
 
 		num->SetPosition(spritePos_);
@@ -73,11 +74,12 @@ void StageSelectScene::Initialize() {
 	selectObjects_[2]->SetPosition({ 20.0f, 0.0f, 0.0f });
 	selectObjects_[3]->SetPosition({ 30.0f, 0.0f, 0.0f });
 	selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
+	selectObjects_[5]->SetPosition({ 50.0f, 0.0f, 0.0f });
 	//落下オブジェクト
 	fallingObject_ = std::make_unique<FallingObject>();
 	fallingObject_->Initialize();
 
-	selectStage_ = 0;
+	setStage_ = 0;
 
 	//パーティクル
 	particle_ = std::make_unique<Particle>();
@@ -116,33 +118,35 @@ void StageSelectScene::Update() {
 	camera_->Update();
 
 	// ステージ選択
-	StageSelect();
+	SelectStageOperator();
 
 	skydome_->Update();
 	for (uint32_t i = 0; i < stageNum_; i++) {
 		selectObjects_[i]->Update();
-		selectObjects_[i]->SetStage(selectStage_);
+		selectObjects_[i]->SetStage(setStage_);
 	}
 	fallingObject_->Update();
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 		tapSE_->Play(false, 0.5f);
-		if (selectStage_ == 0) {
+		if (setStage_ == 0) {
+			sceneManager_->SetNextScene("TUTORIAL");
+		}
+		else if (setStage_ == 1) {
 			sceneManager_->SetNextScene("GAMEPLAY");
 		}
-		else if (selectStage_ == 1) {
+		else if (setStage_ == 2) {
 			sceneManager_->SetNextScene("GAMEPLAY2");
 		}
-		else if (selectStage_ == 2) {
+		else if (setStage_ == 3) {
 			sceneManager_->SetNextScene("GAMEPLAY3");
 		}
-		else if (selectStage_ == 3) {
+		else if (setStage_ == 4) {
 			sceneManager_->SetNextScene("GAMEPLAY4");
 		}
-		else if (selectStage_ == 4) {
+		else if (setStage_ == 5) {
 			sceneManager_->SetNextScene("GAMEPLAY5");
 		}
-
 	}
 
 	//タイトル画面へ戻る
@@ -154,9 +158,9 @@ void StageSelectScene::Update() {
 	spriteUI_D_->Update();
 	spriteUI_SELECT_->Update();
 
-	if (!selectObjects_[selectStage_]->IsMove()){
+	if (!selectObjects_[setStage_]->IsMove()){
 
-		drawSelectNum_ = selectStage_;
+		drawSelectNum_ = setStage_;
 	}
 
 	for (auto& sprite : spriteSelectNum_) {
@@ -171,7 +175,7 @@ void StageSelectScene::Update() {
 	ImGui::SliderFloat3("cameraTranslate", &cameraTranslate.x, -50.0f, 50.0f);
 	ImGui::SliderFloat3("cameraRotate", &cameraRotate.x, -5.0f, 5.0f);
 
-	ImGui::Text("selectStage : %d", selectStage_);
+	ImGui::Text("selectStage : %d", setStage_);
 	bool isMove = selectObjects_[0]->IsMove();
 	ImGui::Text("selectObjects_[0]->IsMove() : %s", isMove ? "true" : "false");
 
@@ -231,10 +235,10 @@ void StageSelectScene::Draw() {
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	if (selectStage_ != 0) {
+	if (setStage_ != 0) {
 		spriteUI_A_->Draw();
 	}
-	if (selectStage_ != 4) {
+	if (setStage_ != 5) {
 		spriteUI_D_->Draw();
 	}
 	spriteUI_SELECT_->Draw();
@@ -260,18 +264,18 @@ void StageSelectScene::TextDraw() {
 	///------------------------------///
 }
 
-void StageSelectScene::StageSelect() {
+void StageSelectScene::SelectStageOperator() {
 	if (!selectObjects_[0]->IsMove()) {
 		if (input_->TriggerKey(DIK_D)) {
-			if (selectStage_ < stageNum_ - 1) {
-				selectStage_++;
+			if (setStage_ < stageNum_ - 1) {
+				setStage_++;
 			}
 			selectSE_->Play(false, 0.8f);
 		}
 
 		if (input_->TriggerKey(DIK_A)) {
-			if (selectStage_ > 0) {
-				selectStage_--;
+			if (setStage_ > 0) {
+				setStage_--;
 			}
 			selectSE_->Play(false, 0.8f);
 		}

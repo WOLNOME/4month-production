@@ -128,6 +128,8 @@
     <ClCompile Include="engine\base\D2DRender.cpp" />
     <ClCompile Include="application\objects\GameObject\FallingObject.cpp" />
     <ClCompile Include="application\PauseSystem.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
+    <ClCompile Include="TutorialSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -260,6 +262,8 @@
     </ClInclude>
     <ClInclude Include="application\objects\GameObject\FallingObject.h" />
     <ClInclude Include="application\PauseSystem.h" />
+    <ClInclude Include="TutorialScene.h" />
+    <ClInclude Include="TutorialSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
