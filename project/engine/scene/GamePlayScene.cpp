@@ -893,6 +893,7 @@ void GamePlayScene::UpdateZoomIn()
 	// カメラの補間
 	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
+	newRotation -= 0.2f;
 
 	// カメラに新しい位置と回転を設定
 	camera_->SetTranslate(newPosition);
