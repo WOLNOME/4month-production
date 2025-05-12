@@ -888,8 +888,8 @@ void GamePlayScene::UpdateZoomIn()
 	//カメラのスタート地点とエンド地点を設定
 	Vector3 cameraStartPosition = cameraStartPosition_;
 	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 13.0f;
+	cameraEndPosition.y = 2.0f;
+	cameraEndPosition.z -= 14.0f;
 	// カメラの補間
 	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
@@ -899,7 +899,7 @@ void GamePlayScene::UpdateZoomIn()
 	camera_->SetRotate(newRotation);
 
 	//補間が終わったら
-	if (cameraEaseTime_ >= 2.5f)
+	if (cameraEaseTime_ >= 3.0f)
 	{
 		isZoomIn_ = false;
 		cameraEaseTime_ = 0.0f;
@@ -918,8 +918,8 @@ void GamePlayScene::UpdateZoomOut()
 	// 補完のイージング
 	float easeT = EaseInOutQuad(t);
 	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 13.0;
+	cameraEndPosition.y = 2.0f;
+	cameraEndPosition.z -= 14.0;
 	// カメラの補間
 	Vector3 newPosition = cameraEndPosition * (1.0f - easeT) + cameraStartPosition_ * easeT;
 	Vector3 newRotation = CalculateLookAtRotation(newPosition, cameraEndPosition_) * (1.0f - easeT) + cameraRotate * easeT;
