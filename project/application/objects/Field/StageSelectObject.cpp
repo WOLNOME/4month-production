@@ -25,6 +25,26 @@ void StageSelectObject::Initialize(const std::string& modelFilePath, const std::
 	stageNum_ = (StageNum)stageNum;
 	//このインスタンスで使われるエネミーを番号ごとに初期化分けする
 	switch (stageNum_) {
+	case StageNum::Tutorial:
+		//タックルエネミーを2体配置
+		for (int i = 0; i < 2; i++) {
+			//ワールドトランスフォームの初期化
+			WorldTransform enemyTransform;
+			enemyTransform.Initialize();
+			enemyTransform.translate_ = { i * 1.0f - 0.5f,2.0f,i * 1.0f - 0.5f };
+			enemyTransform.scale_ = { 0.2f,4.0f,0.2f };
+			enemyTransform.parent_ = &wtField_;
+			//モデルの初期化
+			std::unique_ptr<Object3d> enemy = std::make_unique<Object3d>();
+			enemy->InitializeModel("enemy");
+			//速度の初期化
+			Vector3 velocity = { 0.0f,0.0f,0.0f };
+			//登録
+			enemies_.emplace_back(std::move(enemyTransform), std::move(enemy));
+			enemyVelocity_.push_back(velocity);
+		}
+
+		break;
 	case StageNum::Stage1:
 		//タックルエネミーを2体配置
 		for (int i = 0; i < 2; i++) {
@@ -261,7 +281,7 @@ void StageSelectObject::ImGuiDraw() {
 
 void StageSelectObject::StageSelect() {
 	if (!isMove_) {
-		if (input_->TriggerKey(DIK_D) && nowStage_ < 4) {
+		if (input_->TriggerKey(DIK_D) && nowStage_ < 5) {
 			isMoveLeft_ = true;
 			isMove_ = true;
 		}

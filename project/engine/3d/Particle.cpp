@@ -50,11 +50,11 @@ void Particle::Initialize(const std::string& name, const std::string& fileName) 
 
 void Particle::Finalize() {
 	//マネージャーから削除
+	ParticleManager::GetInstance()->DeleteParticle(name_);
 	if (isSRVCheck_) {
-		ParticleManager::GetInstance()->DeleteParticle(name_);
+		//確保したSRVデスクリプタヒープの解放
+		SrvManager::GetInstance()->Free(particleResource_.srvIndex);
 	}
-	//確保したSRVデスクリプタヒープの解放
-	SrvManager::GetInstance()->Free(particleResource_.srvIndex);
 }
 
 Particle::ParticleResource Particle::MakeParticleResource() {
@@ -77,8 +77,7 @@ Particle::ParticleResource Particle::MakeParticleResource() {
 void Particle::SettingSRV() {
 	//SRVマネージャーからデスクリプタヒープの空き番号を取得
 	particleResource_.srvIndex = SrvManager::GetInstance()->Allocate();
-	isSRVCheck_ = true;
-	
+
 	//srv設定
 	uint32_t kNumMaxInstance = param_["MaxEffects"];
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -92,4 +91,7 @@ void Particle::SettingSRV() {
 	particleResource_.srvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(particleResource_.srvIndex);
 	particleResource_.srvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(particleResource_.srvIndex);
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleResource_.instancingResource.Get(), &srvDesc, particleResource_.srvHandleCPU);
+
+
+	isSRVCheck_ = true;
 }

@@ -189,6 +189,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="application\PauseSystem.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
+    <ClCompile Include="TutorialSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -280,6 +282,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\ParticleManager.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
     <ClInclude Include="application\PauseSystem.h" />
+    <ClInclude Include="TutorialScene.h" />
+    <ClInclude Include="TutorialSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
