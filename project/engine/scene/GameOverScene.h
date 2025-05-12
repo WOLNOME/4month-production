@@ -29,7 +29,7 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
-	void EyeClose();
+	void Close();
 
 private://メンバ変数
 
@@ -43,8 +43,8 @@ private://メンバ変数
 	//スプライト
 	uint32_t textureHandleFall1_ = 0u;
 	std::unique_ptr<Sprite> spriteFall1_ = nullptr;
-	uint32_t textureHandleFall2_ = 0u;
-	std::unique_ptr<Sprite> spriteFall2_ = nullptr;
+	//uint32_t textureHandleFall2_ = 0u;
+	//std::unique_ptr<Sprite> spriteFall2_ = nullptr;
 
 	//スペースUIテキスト
 	std::unique_ptr<TextWrite> spriteUI_SPACE_ = nullptr;
@@ -54,18 +54,26 @@ private://メンバ変数
 
 	//フィールド
 	std::unique_ptr<Field> field_ = nullptr;
+	Vector3 fieldScale_ = { 26.0f, 1.0f, 26.0f };
 
 	//bgm
 	std::unique_ptr<Audio> bgm_ = nullptr;
 	//タップしたときの効果音
 	std::unique_ptr<Audio> tapSE_ = nullptr;
 
-	float spriteFall1Y_ = -720.0f; // spriteFall1_ の Y 座標
-	float spriteFall2Y_ = 720.0f; // spriteFall2_ の Y 座標（初期位置は画面下）
-	float fallSpeed_ = 20.0f; // 瞳を閉じる速度（初期は速い）
-	int closeState_ = 0; // 0: 初期状態, 1: 速く閉じる, 2: 開く, 3: ゆっくり閉じる
-	bool isAnimationComplete_ = false; // 演出が完了したかどうか
-	bool isAnimationStert_ = false; // 演出が開始したかどうか
+	// スプライトの初期位置（画面外の上）
+	float spriteFallY_ = -720.0f;
+	// 降りてくる速度
+	float fallSpeed_ = 30.0f;
+	float bounceSpeed_ = -15.0f;
+	float gravity_ = 1.0f;
+	// 演出フラグ
+	bool isAnimationComplete_ = false; 
+	bool isAnimationStart_ = false;
+	bool isBounce_ = false;
+	int bounceCount_ = 0; // バウンド回数をカウント
+	const int maxBounceCount_ = 3; // 最大バウンド回数
+
 
 };
 
