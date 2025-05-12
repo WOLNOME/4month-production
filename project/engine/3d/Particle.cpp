@@ -6,10 +6,7 @@
 #include "JsonUtil.h"
 
 Particle::~Particle() {
-	//確保したSRVデスクリプタヒープの解放
-	//SrvManager::GetInstance()->Free(particleResource_.srvIndex);
-	//マネージャーから削除
-	ParticleManager::GetInstance()->DeleteParticle(name_);
+	Finalize();
 }
 
 void Particle::Initialize(const std::string& name, const std::string& fileName) {
@@ -51,6 +48,15 @@ void Particle::Initialize(const std::string& name, const std::string& fileName) 
 	ParticleManager::GetInstance()->RegisterParticle(name_, this);
 }
 
+void Particle::Finalize() {
+	//マネージャーから削除
+	if (isSRVCheck_) {
+		ParticleManager::GetInstance()->DeleteParticle(name_);
+	}
+	//確保したSRVデスクリプタヒープの解放
+	SrvManager::GetInstance()->Free(particleResource_.srvIndex);
+}
+
 Particle::ParticleResource Particle::MakeParticleResource() {
 	//Particleリソース
 	ParticleResource particleResource;
@@ -71,7 +77,8 @@ Particle::ParticleResource Particle::MakeParticleResource() {
 void Particle::SettingSRV() {
 	//SRVマネージャーからデスクリプタヒープの空き番号を取得
 	particleResource_.srvIndex = SrvManager::GetInstance()->Allocate();
-
+	isSRVCheck_ = true;
+	
 	//srv設定
 	uint32_t kNumMaxInstance = param_["MaxEffects"];
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};

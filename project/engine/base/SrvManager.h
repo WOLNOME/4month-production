@@ -2,8 +2,8 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <list>
 #include <cstdint>
-#include <queue>
 
 class SrvManager
 {
@@ -22,6 +22,9 @@ public:
 	void Initialize();
 	// 終了
 	void Finalize();
+
+	// Debug用
+	void DebugWithImGui();
 
 	// 描画前設定
 	void PreDraw(ID3D12GraphicsCommandList* pCommandList);
@@ -53,5 +56,5 @@ private:
 	uint32_t useIndex = 0;
 
 	// 空きインデックスを管理するキュー(Free関数によって割り当てられる)
-	std::queue<uint32_t> freeIndices;
+	std::list<uint32_t> freeIndices;
 };
