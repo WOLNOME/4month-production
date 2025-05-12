@@ -58,6 +58,13 @@ void TitleScene::Initialize() {
 
     //パーティクルの初期化
 	hitEffect_ = std::make_unique<Particle>();
+    //パーティクルの生成
+    hitEffect_->Initialize("hitOnTitleScene", "star");
+    hitEffect_->emitter_.isGravity = true;
+    hitEffect_->emitter_.gravity = -150.0f;
+    hitEffect_->emitter_.isBound = true;
+    hitEffect_->emitter_.repulsion = 0.8f;
+    hitEffect_->emitter_.floorHeight = 0.0f;
 
 	backgroundEffect_ = std::make_unique<Particle>();
 	backgroundEffect_->Initialize("background", "Basic");
@@ -295,14 +302,8 @@ void TitleScene::UpdateCutscene()
     case CutsceneState::Hit:
     {
         //パーティクルの生成
-        hitEffect_->Initialize("hitOnTitleScene", "star");
         hitEffect_->emitter_.isPlay = true;
 		hitEffect_->emitter_.transform.translate = enemyTransform_.translate_;
-        hitEffect_->emitter_.isGravity = true;
-        hitEffect_->emitter_.gravity = -150.0f;
-        hitEffect_->emitter_.isBound = true;
-        hitEffect_->emitter_.repulsion = 0.8f;
-        hitEffect_->emitter_.floorHeight = 0.0f;
         // 画面フラッシュやカメラぶれを実装
         Vector3 targetCameraPos = enemyTransform_.translate_ + Vector3(0.0f, 10.0f, -30.0f);
         camera->SetTranslate(Lerp(camera->GetTranslate(), targetCameraPos, 0.04f)); // カメラの位置を調整
