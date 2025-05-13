@@ -12,22 +12,28 @@ void TutorialSystem::Initialize() {
 
 	//現在のメニュー
 	currentMenu_ = Menu::Start;
+	//タイムストップ
+	isTimeStop_ = false;
+	//残機表示
+	isZankiDisplay = false;
 
 	///=============================///
 	/// スタート説明メンバ変数初期化
 	///=============================///
-	
+
 	//バックスプライト
 	thStartBack_ = textureManager->LoadTexture("TUTORIAL/Tutorial_back.png");
 	startBack_ = std::make_unique<Sprite>();
 	startBack_->Initialize(thStartBack_);
-	startBack_->SetPosition({ 0,0 });
+	
 	//テキスト
 	startText_ = std::make_unique<TextWrite>();
 	startText_->Initialize("startText");
 	startText_->SetParam({ 0,0 }, Font::UDDegitalNK_B, 32.0f, { 1,1,1,1 });
 	startText_->SetEdgeParam({ 0,0,0,1 }, 5.0f, { 0,0 }, true);
 
+	//タイマー
+	int startTimer_ = 0;
 
 
 	///=============================///
@@ -65,9 +71,6 @@ void TutorialSystem::Initialize() {
 	///=============================///
 
 
-
-
-
 }
 
 void TutorialSystem::Update() {
@@ -101,7 +104,8 @@ void TutorialSystem::Update() {
 	}
 
 #ifdef _DEBUG
-
+	//テキストのImGuiデバッグ
+	startText_->DebugWithImGui();
 
 
 #endif // _DEBUG
@@ -109,13 +113,65 @@ void TutorialSystem::Update() {
 }
 
 void TutorialSystem::DrawSprite() {
+	switch (currentMenu_) {
+	case Menu::Start:
+		startBack_->Draw();
+		break;
+	case Menu::Rule:
+		break;
+	case Menu::Move:
+		break;
+	case Menu::Zanki:
+		break;
+	case Menu::Attack:
+		break;
+	case Menu::Gauge:
+		break;
+	case Menu::Battle:
+		break;
+	case Menu::ReturnStart:
+		break;
+	case Menu::kNumMenu:
+		break;
+	default:
+		break;
+	}
 }
 
 void TutorialSystem::WriteText() {
+	switch (currentMenu_) {
+	case Menu::Start:
+		startText_->WriteText(L"チュートリアルへようこそ。");
+		break;
+	case Menu::Rule:
+		break;
+	case Menu::Move:
+		break;
+	case Menu::Zanki:
+		break;
+	case Menu::Attack:
+		break;
+	case Menu::Gauge:
+		break;
+	case Menu::Battle:
+		break;
+	case Menu::ReturnStart:
+		break;
+	case Menu::kNumMenu:
+		break;
+	default:
+		break;
+	}
 }
 
 void TutorialSystem::Start() {
-
+	//5f後にタイムストップ
+	startTimer_++;
+	if (startTimer_ > 5) {
+		isTimeStop_ = true;
+	}
+	//スプライトの更新
+	startBack_->Update();
 }
 
 void TutorialSystem::Rule() {

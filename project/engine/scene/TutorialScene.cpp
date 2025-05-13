@@ -9,6 +9,7 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
+
 uint32_t TutorialScene::stageNum_ = 0;
 
 void TutorialScene::Initialize() {
@@ -373,6 +374,10 @@ void TutorialScene::Initialize() {
 	//ポーズシステム
 	pauseSystem_ = std::make_unique<PauseSystem>();
 	pauseSystem_->Initialize();
+
+	//チュートリアルシステム
+	tutorialSystem_ = std::make_unique<TutorialSystem>();
+	tutorialSystem_->Initialize();
 }
 
 void TutorialScene::Finalize() {
@@ -404,6 +409,12 @@ void TutorialScene::Update() {
 	if (pauseSystem_->GetIsPause()) {
 		return;
 	}
+	//チュートリアルシステムの更新
+	tutorialSystem_->Update();
+	if (tutorialSystem_->GetIsTimeStop()) {
+		return;
+	}
+
 	// スプライト
 	spriteUI_PLAY_->Update();
 	spriteUI_Charge_->Update();
@@ -581,8 +592,11 @@ void TutorialScene::Draw() {
 	spriteUI_PLAY_->Draw();
 	spriteUI_ChargeGage_->Draw();
 	spriteUI_Charge_->Draw();
+	//チュートリアルシステムの描画
+	tutorialSystem_->DrawSprite();
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
+
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -598,12 +612,16 @@ void TutorialScene::TextDraw() {
 	pauseSystem_->TextDraw();
 
 	if (!pauseSystem_->GetIsPause()) {
-		//スペースUIテキスト
-		remainingSpawnNumText_->WriteText(L"残り出現数");
-		// 残りの出現数テキスト
-		numText_->WriteText(std::to_wstring(remainingBoogie_));
-		// 値のテキスト
-		valueText_->WriteText(L"体");
+		if (tutorialSystem_->GetIsZankiDisplay()) {
+			//スペースUIテキスト
+			remainingSpawnNumText_->WriteText(L"残り出現数");
+			// 残りの出現数テキスト
+			numText_->WriteText(std::to_wstring(remainingBoogie_));
+			// 値のテキスト
+			valueText_->WriteText(L"体");
+		}
+		//チュートリアルシステムのテキスト
+		tutorialSystem_->WriteText();
 	}
 
 	///------------------------------///
