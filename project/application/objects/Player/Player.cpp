@@ -326,6 +326,8 @@ void Player::OnCollision(const AppCollider* _other) {
 		knockBackTime_ = 30.0f;
 
 		isAttack_ = false;
+		// 攻撃エフェクトオフ
+		tackleEffect_->emitter_.isPlay = false;
 	}
 	else if (_other->GetColliderID() == "IceFloor") {
 		onIce_ = true;

@@ -32,6 +32,10 @@ void StageSelectScene::Initialize() {
 	spriteUI_D_ = std::make_unique<Sprite>();
 	spriteUI_D_->Initialize(textureHandleUI_D_);
 
+	textureHandleUI_SELECT = TextureManager::GetInstance()->LoadTexture("UI_SELECT.png");
+	spriteUI_SELECT_ = std::make_unique<Sprite>();
+	spriteUI_SELECT_->Initialize(textureHandleUI_SELECT);
+
 	spritePos_ = { 0.0f,0.0f };
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num1.png"));
 	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num2.png"));
@@ -141,8 +145,14 @@ void StageSelectScene::Update() {
 
 	}
 
+	//タイトル画面へ戻る
+	if (input_->TriggerKey(DIK_ESCAPE)) {
+		sceneManager_->SetNextScene("TITLE");
+	}
+
 	spriteUI_A_->Update();
 	spriteUI_D_->Update();
+	spriteUI_SELECT_->Update();
 
 	if (!selectObjects_[selectStage_]->IsMove()){
 
@@ -227,6 +237,7 @@ void StageSelectScene::Draw() {
 	if (selectStage_ != 4) {
 		spriteUI_D_->Draw();
 	}
+	spriteUI_SELECT_->Draw();
 
 	spriteSelectNum_[drawSelectNum_]->Draw();
 

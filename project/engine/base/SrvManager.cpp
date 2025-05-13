@@ -1,9 +1,10 @@
 #include "SrvManager.h"
 #include "DirectXCommon.h"
+#include "ImGuiManager.h"
 #include <cassert>
 
 SrvManager* SrvManager::instance = nullptr;
-const uint32_t SrvManager::kMaxSRVCount = 4096;
+const uint32_t SrvManager::kMaxSRVCount = 512;
 
 SrvManager* SrvManager::GetInstance() {
 	if (instance == nullptr) {
@@ -22,6 +23,27 @@ void SrvManager::Finalize() {
 	instance = nullptr;
 }
 
+void SrvManager::DebugWithImGui() {
+#ifdef _DEBUG
+	ImGui::Begin("SRVManager");
+	ImGui::Text("空きの最新インデックス");
+	ImGui::Text("%d", useIndex);
+	ImGui::Text("キューにある空きインデックス");
+	int count = 0;
+	for (uint32_t i : freeIndices) {
+		ImGui::Text("%d", i);
+		count++;
+
+		// 10個ごとに改行、それ以外は横に並べる
+		if (count % 10 != 0) {
+			ImGui::SameLine();
+		}
+	}
+	ImGui::End();
+#endif // _DEBUG
+
+}
+
 void SrvManager::PreDraw(ID3D12GraphicsCommandList* pCommandList) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptorHeap.Get() };
 	pCommandList->SetDescriptorHeaps(1, descriptorHeaps);
@@ -31,13 +53,13 @@ uint32_t SrvManager::Allocate() {
 	// 空きインデックスがあれば再利用
 	if (!freeIndices.empty()) {
 		uint32_t index = freeIndices.front();
-		freeIndices.pop();
+		freeIndices.pop_front();
 		return index;
 	}
 
 	// 上限に達していないかチェック
 	if (useIndex >= kMaxSRVCount) {
-		assert(0 && "SRV allocation limit reached");
+		assert(0 && "SRVデスクリプタヒープがいっぱいです！");
 		return UINT32_MAX; // エラーの場合
 	}
 
@@ -48,7 +70,7 @@ uint32_t SrvManager::Allocate() {
 void SrvManager::Free(uint32_t srvIndex) {
 	// インデックスが範囲内であることを確認
 	if (srvIndex < kMaxSRVCount) {
-		freeIndices.push(srvIndex);
+		freeIndices.push_back(srvIndex);
 	}
 }
 
