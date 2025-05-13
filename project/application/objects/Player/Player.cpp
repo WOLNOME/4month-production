@@ -234,14 +234,10 @@ void Player::Attack() {
 			moveVel_.z = cosf(rotation_.y) * 0.18f; // Z方向の速度
 		}
 
-		moveVel_ *= 1.5f * attackFriction_;
+		moveVel_ *= 2.0f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
 
-		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
-		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_ * slowRate_;
-		position_ = wtPlayer_.translate_;
 
 		// 攻撃エフェクト
 		tackleEffect_->emitter_.isPlay = true;
