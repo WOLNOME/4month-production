@@ -23,6 +23,7 @@
 #include "../../application/objects/Gimmick/Bumper.h"
 #include "../../application/objects/Gimmick/IceFloor.h"
 #include "../../application/PauseSystem.h"
+#include "../../application/TutorialSystem.h"
 
 
 
@@ -135,6 +136,9 @@ private://メンバ変数
 
 	//ポーズシステム
 	std::unique_ptr<PauseSystem> pauseSystem_ = nullptr;
+
+	//チュートリアルシステム
+	std::unique_ptr<TutorialSystem> tutorialSystem_ = nullptr;
 
 	// プレイヤースポーン位置の数(固定)
 	const uint32_t playerSpawnNum_ = 1;
