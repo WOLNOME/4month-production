@@ -188,7 +188,7 @@ void Player::MovePosition() {
 	if (moveVel_.Length() < 0.01f) {
 		return;
 	}
-	if (moveVel_.Length() < 1.5f) {
+	if (moveVel_.Length() < 0.025f) {
 		isAftertaste_ = false;
 	}
 
