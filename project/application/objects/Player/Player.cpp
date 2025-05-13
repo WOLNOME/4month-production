@@ -234,7 +234,7 @@ void Player::Attack() {
 			moveVel_.z = cosf(rotation_.y) * 0.18f; // Z方向の速度
 		}
 
-		moveVel_ *= 2.0f * attackFriction_;
+		moveVel_ *= 2.1f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
 
