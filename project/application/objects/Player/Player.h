@@ -127,7 +127,7 @@ private:
 	float fallSpeed_ = 0.3f;
 	// 摩擦係数（減速率）
 	float attackFriction_ = 2.0f;
-	float friction_ = 0.01f;
+	float friction_ = 29.0f / 30.0f;
 
 	// 攻撃時間
 	const float attackTime_ = 12;
