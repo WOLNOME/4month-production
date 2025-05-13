@@ -26,7 +26,12 @@ void SpawnPos::Update()
 {
 	wtSpawn_.UpdateMatrix();
 
-	wtSpawn_.translate_ = position_;
+	Shake();
+
+	if (!isShaking_)
+	{
+		wtSpawn_.translate_ = position_;
+	}
 	wtSpawn_.scale_ = scale_;
 	wtSpawn_.rotate_ = rotation_;
 
@@ -61,4 +66,20 @@ void SpawnPos::ParticleStop()
 	{
 		particle_.reset();
 	}
+}
+void SpawnPos::Shake()
+{
+	if (!isShaking_) {
+		return; // 揺れ中でない場合は何もしない
+	}
+
+	// ランダムな揺れを生成
+	float offsetX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f * shakePower_;
+	float offsetY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f * shakePower_;
+	float offsetZ = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f * shakePower_;
+
+	// 揺れをスポーン位置に適用
+	wtSpawn_.translate_.x += offsetX;
+	wtSpawn_.translate_.y += offsetY;
+	wtSpawn_.translate_.z += offsetZ;
 }

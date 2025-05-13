@@ -125,6 +125,7 @@ void GamePlayScene::Initialize()
 		auto player = std::make_unique<Player>();
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
+		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 
 		players_.push_back(std::move(player));
@@ -391,6 +392,8 @@ void GamePlayScene::Finalize()
 		player->Finalize();
 	}
 	
+	preSpawnedPlayer_->Finalize();
+
 	enemyManager_->Finalize();
 
 	field_->Finalize();
@@ -458,13 +461,18 @@ void GamePlayScene::Update()
 			}
 			return false;
 		}), players_.end());
-	// プレイヤー
+	// 通常プレイヤーの更新
 	for (auto& player : players_)
 	{
 		player->Update();
 	}
 	// プレイヤー攻撃チャージ
 	playerTackleCharge();
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Update();
+	}
 
 
 	//エネミーマネージャーの更新
@@ -553,7 +561,12 @@ void GamePlayScene::Draw()
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	// プレイヤー
+	 // 準備中プレイヤーの描画
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Draw(*camera_.get());
+	}
+
+	// 通常プレイヤーの描画
 	for (auto& player : players_)
 	{
         player->Draw(*camera_.get());
@@ -752,37 +765,56 @@ void GamePlayScene::ImGuiDraw()
 
 void GamePlayScene::playerSpawnRotation()
 {
-	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
 
-	// タイマーが120になったら準備
+	// スポーン準備：タイマーが120のとき
 	if (rotationTimer_ == 120.0f && howManyBoogie_ < kMaxSpawnNum)
 	{
-		// プレイヤースポーン位置の演出
 		playerSpawn_[playerSpawnIndex_]->ParticleStart();
+		playerSpawn_[playerSpawnIndex_]->IsShaking(true);
+
+		// 小さい状態で非アクティブなプレイヤー生成
+		auto prePlayer = std::make_unique<Player>();
+		prePlayer->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
+		prePlayer->SetScale({ 0.1f, 0.1f, 0.1f });
+		prePlayer->Initialize();
+
+		prePlayer->SetIsMoveable(false);
+
+		preSpawnedPlayer_ = std::move(prePlayer);
+
+		preSpawnedPlayer_->Update();
 	}
 
-	// タイマーが0になったら追加
+	// 拡大処理（Lerp）
+	if (preSpawnedPlayer_)
+	{
+		float t = (120.0f - rotationTimer_) / 120.0f;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// Lerpでスケール補間
+		float lerpedScale = std::lerp(0.1f, 1.0f, t);
+		Vector3 scale = { lerpedScale, lerpedScale, lerpedScale };
+		preSpawnedPlayer_->SetScale(scale);
+	}
+
+	// タイマーが0以下になったらプレイヤーを有効にする
 	if (rotationTimer_ <= 0.0f)
 	{
 		playerSpawn_[playerSpawnIndex_]->ParticleStop();
+		playerSpawn_[playerSpawnIndex_]->IsShaking(false);
 
-		if (howManyBoogie_ < kMaxSpawnNum)
+		if (howManyBoogie_ < kMaxSpawnNum && preSpawnedPlayer_)
 		{
 			rotationTimer_ = rotation_;
 
-			// プレイヤーを追加
-			auto player = std::make_unique<Player>();
+			preSpawnedPlayer_->SetScale({ 1.0f, 1.0f, 1.0f });
+			preSpawnedPlayer_->SetIsMoveable(true);
+
+			players_.push_back(std::move(preSpawnedPlayer_));
 			howManyBoogie_++;
-
-			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
-			player->Initialize();
-
-			players_.push_back(std::move(player));
-
 			playerNum_++;
 
-			// 位置ローテを0に戻す
 			playerSpawnIndex_++;
 			if (playerSpawnIndex_ > playerSpawnNum_ - 1)
 			{
