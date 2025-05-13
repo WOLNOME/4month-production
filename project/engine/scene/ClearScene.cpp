@@ -24,6 +24,10 @@ void ClearScene::Initialize()
 	spriteClear_ = std::make_unique<Sprite>();
 	spriteClear_->Initialize(textureHandleClear_);
 
+	// スプライトのアンカーポイントを中心に設定
+	spriteClear_->SetAnchorPoint({ 0.5f, 0.5f });
+	spriteClear_->SetPosition({ 640.0f, 360.0f });
+
 	//スペースUIテキスト
 	spriteUI_SPACE_ = std::make_unique<TextWrite>();
 	spriteUI_SPACE_->Initialize("SPACE");
@@ -43,7 +47,7 @@ void ClearScene::Initialize()
 	// プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->SetPosition({ 0.0f, 1.3f, 0.0f });
+	player_->SetPosition({ 0.0f, 1.0f, 0.0f });
 	player_->SetRotation({ 0.0f, 3.14f, 0.0f });
 	player_->SetIsMoveable(false);
 
@@ -97,6 +101,8 @@ void ClearScene::Update()
 	if (!isCameraAnimating_) {
 		PlayerMotion();
 	}
+
+	ClearTextureUpdate();
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -188,7 +194,9 @@ void ClearScene::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	//spriteClear_->Draw();
+	if (isSpriteAnimating_ or isSpriteAnimationCompleted_) {
+		spriteClear_->Draw();
+	}
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -265,11 +273,20 @@ void ClearScene::PlayerMotion()
 			playerJumpProgress_ = 1.0f;
 			isPlayerJumpingUp_ = false; // 上昇が終わったら下降に切り替え
 		}
+
+		if (!isReturning_) {
+
+			player_->SetRotation({ 0.0f,3.14f,0.0f });
+		}
 	} else {
 		playerJumpProgress_ -= playerJumpSpeed_;
 		if (playerJumpProgress_ <= 0.0f) {
 			playerJumpProgress_ = 0.0f;
 			isPlayerJumpingUp_ = true; // 下降が終わったら上昇に切り替え
+
+			// ジャンプ終了時にスプライトアニメーションを開始
+			isSpriteAnimating_ = true;
+			spriteAnimationProgress_ = 0.0f;
 		}
 	}
 
@@ -297,19 +314,55 @@ void ClearScene::PlayerMotion()
 			if (progress_ >= 1.0f) {
 				
 				progress_ = 0.0f;
+				isReturning_ = false; // 元に戻す処理が終わったらフラグをリセット
+				isPlayerJumpingUp_ = false;
+			} else {
+				// 元に戻す処理
+				playerRot.x = MyMath::Lerp(-0.49f, 0.0f, progress_);
 			}
 
 			progress_ += 0.05f;
-
-			// 元に戻す処理
-			playerRot.x = MyMath::Lerp(-0.49f, 0.0f, progress_);
 		}
 	} else {
 		// 下降中は角度を固定
 		playerRot.x = 0.0f;
-		isReturning_ = false;
 	}
 
 	player_->SetRotation(playerRot);
 
+}
+
+void ClearScene::ClearTextureUpdate()
+{
+	// スプライトアニメーションの更新
+	if (isSpriteAnimating_ && !isSpriteAnimationCompleted_) {
+		spriteAnimationProgress_ += 0.05f; // アニメーション速度を調整
+
+		// スプライトのスケールを「ぽよよん」と変化させる
+		float baseWidth = 1280.0f;
+		float baseHeight = 720.0f;
+
+		// 余韻の回数に応じて拡大率を半減させる
+		static int remainingBounces = 3; // 余韻の回数
+		static float bounceFactor = 1.0f; // 拡大率の初期値
+		float scaleFactor = 1.0f + sinf(spriteAnimationProgress_ * 3.14159f) * 0.5f * bounceFactor;
+
+		spriteClear_->SetSize({ baseWidth * scaleFactor, baseHeight * scaleFactor });
+
+		// アニメーションが終了したら余韻を持たせる
+		if (spriteAnimationProgress_ >= 1.0f) {
+			spriteAnimationProgress_ = 0.0f;
+
+			if (remainingBounces > 0) {
+				remainingBounces--;
+				bounceFactor *= 0.5f; // 拡大率を半減
+			} else {
+				remainingBounces = 3; // 余韻の回数をリセット
+				bounceFactor = 1.0f; // 拡大率をリセット
+				spriteClear_->SetSize({ baseWidth, baseHeight }); // スケールを元に戻す
+				isSpriteAnimating_ = false; // アニメーションを停止
+				isSpriteAnimationCompleted_ = true; // 処理を完了状態に設定
+			}
+		}
+	}
 }

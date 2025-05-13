@@ -36,6 +36,9 @@ public:
 	// プレイヤーのモーション
 	void PlayerMotion();
 
+	// クリアテクスチャの描画
+	void ClearTextureUpdate();
+
 private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;
@@ -84,5 +87,13 @@ private://メンバ変数
 	bool isReturning_ = false;
 	// 元に戻す進行度 (0.0f ～ 1.0f)
 	float progress_ = 0.0f;
+
+	// スプライトアニメーション中かどうか
+	bool isSpriteAnimating_ = false; 
+	// スプライトアニメーションの進行度
+	float spriteAnimationProgress_ = 0.0f;
+	// スプライト処理が完了したかどうか
+	bool isSpriteAnimationCompleted_ = false;
+
 };
 
