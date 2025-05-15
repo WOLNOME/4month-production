@@ -77,7 +77,7 @@ void Player::Update() {
 	if (knockBackTime_ > 0.0f) {
 		knockBackTime_ -= 1.0f;
 	}
-	else if (!isAftertaste_) {
+	else if (!isAftertaste_ && isMoveable_) {
 		//氷の上にいるとき
 		if (onIce_) {
 			//移動
@@ -200,6 +200,15 @@ void Player::ImGuiDraw() {
 
 	ImGui::End();
 
+}
+
+void Player::UpdateModel()
+{
+	wtPlayer_.scale_ = scale_;
+	wtPlayer_.rotate_ = rotation_;
+	wtPlayer_.translate_ = position_;
+
+	wtPlayer_.UpdateMatrix();
 }
 
 void Player::OnCollision(const AppCollider* _other) {
