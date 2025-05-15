@@ -85,6 +85,15 @@ private:
 	//氷の上の移動更新
 	void MovePositionOnIce();
 
+	//移動関数の共通部
+	void MoveCommon(float moveSpeed);
+
+	//攻撃関数の共通部
+	void AttackCommon(float attackSpeed);
+
+	//移動更新関数の共通部
+	void MovePositionCommon(float friction);
+
 private:
 
 	// 入力
@@ -121,7 +130,7 @@ private:
 
 
 	// 移動速度
-	Vector3 moveSpeed_ = { 0.103f,0.0f,0.103f };
+	float moveSpeed_ = 0.103f;
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
 	// 落下速度
 	float fallSpeed_ = 0.3f;
