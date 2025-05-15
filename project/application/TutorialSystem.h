@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Sprite.h"
 #include "TextWrite.h"
+#include <array>
 #include <memory>
 
 //チュートリアルメニュー
@@ -45,7 +46,7 @@ public://getter
 	bool GetIsTimeStop() const { return isTimeStop_; }
 	//残機表示フラグ
 	bool GetIsZankiDisplay() const { return isZankiDisplay; }
-
+	
 private:
 	//スタート処理
 	void Start();
@@ -68,6 +69,18 @@ private:
 	Input* input_ = nullptr;
 
 private://全体共有のメンバ変数
+	//バックスプライト
+	int32_t thBack_ = EOF;
+	std::unique_ptr<Sprite> back_ = nullptr;
+	//説明テキスト
+	std::array<std::unique_ptr<TextWrite>, 3> text_;
+	//次のページへUI
+	std::wstring npText_;
+	std::unique_ptr<TextWrite> nextPageText_ = nullptr;
+	//メニューテキスト
+	std::unique_ptr<TextWrite> menuText_ = nullptr;
+
+
 	//現在のメニュー
 	Menu currentMenu_;
 	//タイムストップ
@@ -76,19 +89,34 @@ private://全体共有のメンバ変数
 	bool isZankiDisplay = false;
 
 private://スタート説明のメンバ変数
-	//バックスプライト
-	int32_t thStartBack_ = EOF;
-	std::unique_ptr<Sprite> startBack_ = nullptr;
-	//テキスト
-	std::unique_ptr<TextWrite> startText_ = nullptr;
+	
 	//タイマー
 	int startTimer_;
+	//ページ
+	int startPage_;
+	//最大ページ数
+	const int kNumMaxStartPage_ = 3;
 
 private://ルール説明のメンバ変数
 
+	//ページ
+	int rulePage_;
+	//最大ページ数
+	const int kNumMaxRulePage_ = 4;
+
 private://移動説明のメンバ変数
 
+	//ページ
+	int movePage_;
+	//最大ページ数
+	const int kNumMaxMovePage_ = 1;
+
 private://残機説明のメンバ変数
+
+	//ページ
+	int zankiPage_;
+	//最大ページ数
+	const int kNumMaxZankiPage_ = 2;
 
 private://攻撃説明のメンバ変数
 
