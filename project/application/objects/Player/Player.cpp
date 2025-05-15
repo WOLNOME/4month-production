@@ -230,8 +230,8 @@ void Player::Attack() {
 		// 速度がゼロの場合、プレイヤーの向きに応じて初期速度を設定
 		if (moveVel_.x == 0.0f && moveVel_.y == 0.0f && moveVel_.z == 0.0f) {
 			// プレイヤーの向きを基に攻撃方向を設定
-			moveVel_.x = sinf(rotation_.y) * 0.18f; // X方向の速度
-			moveVel_.z = cosf(rotation_.y) * 0.18f; // Z方向の速度
+			moveVel_.x = sinf(rotation_.y) * moveSpeed_.x; // X方向の速度
+			moveVel_.z = cosf(rotation_.y) * moveSpeed_.z; // Z方向の速度
 		}
 
 		moveVel_ *= 2.0f * attackFriction_;
@@ -465,7 +465,11 @@ void Player::MoveOnIce() {
 		float targetRotationY = atan2f(moveVel_.x, moveVel_.z);
 		rotation_.y = MyMath::Lerp(rotation_.y, targetRotationY, 0.1f); // 0.1fは補間係数
 	}
-
+	//速度を最高速度以下に抑える
+	if (moveVel_.Length() > MaxSpeedOnIce_) {
+		moveVel_.Normalize();
+		moveVel_ *= MaxSpeedOnIce_;
+	}
 }
 
 void Player::AttackOnIce()
@@ -481,14 +485,17 @@ void Player::AttackOnIce()
 	}
 
 	if (isAttack_) {
+
+		// 速度がゼロの場合、プレイヤーの向きに応じて初期速度を設定
+		if (moveVel_.x == 0.0f && moveVel_.y == 0.0f && moveVel_.z == 0.0f) {
+			// プレイヤーの向きを基に攻撃方向を設定
+			moveVel_.x = sinf(rotation_.y) * moveSpeed_.x; // X方向の速度
+			moveVel_.z = cosf(rotation_.y) * moveSpeed_.z; // Z方向の速度
+		}
+
 		moveVel_ *= 1.5f * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
-
-		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
-		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_;
-		position_ = wtPlayer_.translate_;
 
 		// 攻撃エフェクト
 		tackleEffect_->emitter_.isPlay = true;
@@ -511,13 +518,8 @@ void Player::MovePositionOnIce() {
 	// 摩擦による減速を適用
 	moveVel_ *= frictionOnIce_ * slowRate_;
 
-	//速度を最高速度以下に抑える
-	if (moveVel_.Length() > MaxSpeedOnIce_) {
-		moveVel_.Normalize();
-		moveVel_ *= MaxSpeedOnIce_;
-	}
 	// 速度が非常に小さくなったら停止する
-	else if (moveVel_.Length() < 0.001f) {
+	if (moveVel_.Length() < 0.001f) {
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
 	}
 	if (moveVel_.Length() < 0.04f) {
