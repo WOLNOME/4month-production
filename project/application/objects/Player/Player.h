@@ -121,7 +121,7 @@ private:
 
 
 	// 移動速度
-	Vector3 moveSpeed_ = { 0.1f,0.0f,0.1f };
+	Vector3 moveSpeed_ = { 0.103f,0.0f,0.103f };
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
 	// 落下速度
 	float fallSpeed_ = 0.3f;
