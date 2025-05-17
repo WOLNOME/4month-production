@@ -509,7 +509,7 @@ void TutorialScene::Update() {
 		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	// クリア
-	if (input_->TriggerKey(DIK_TAB) or (enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)) {
+	if ((enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)) {
 		sceneManager_->SetNextScene("CLEAR");
 	}
 

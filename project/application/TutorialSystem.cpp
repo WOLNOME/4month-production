@@ -61,37 +61,42 @@ void TutorialSystem::Initialize() {
 	//ページ
 	rulePage_ = 0;
 
-
-
 	///=============================///
 	/// 移動説明メンバ変数初期化
 	///=============================///
 
+	//ページ
+	movePage_ = 0;
 
 	///=============================///
 	/// 残機説明メンバ変数初期化
 	///=============================///
 
+	//ページ
+	zankiPage_ = 0;
 
 	///=============================///
 	/// 攻撃説明メンバ変数初期化
 	///=============================///
 
+	//ページ
+	attackPage_ = 0;
 
 	///=============================///
 	/// ゲージ説明メンバ変数初期化
 	///=============================///
 
+	//ページ
+	gaugePage_ = 0;
 
 	///=============================///
 	/// バトルフェーズメンバ変数初期化
 	///=============================///
 
-
-	///=============================///
-	/// もう一度聞くかメンバ変数初期化
-	///=============================///
-
+	//ページ
+	battlePage_ = 0;
+	//フラグ
+	isBattlePhase_ = false;
 
 }
 
@@ -118,9 +123,6 @@ void TutorialSystem::Update() {
 	case Menu::Battle:
 		Battle();
 		break;
-	case Menu::ReturnStart:
-		ReturnStart();
-		break;
 	default:
 		break;
 	}
@@ -129,7 +131,7 @@ void TutorialSystem::Update() {
 	back_->Update();
 
 #ifdef _DEBUG
-
+	nextPageText_->DebugWithImGui();
 #endif // _DEBUG
 
 }
@@ -144,11 +146,9 @@ void TutorialSystem::DrawSprite() {
 		else {
 			back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
 		}
-		back_->Draw();
 		break;
 	case Menu::Rule:
 		back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
-		back_->Draw();
 		break;
 	case Menu::Move:
 		//ページ[0]の時はWASDを注目させるテクスチャに切り替える
@@ -158,8 +158,6 @@ void TutorialSystem::DrawSprite() {
 		else {
 			back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
 		}
-
-		back_->Draw();
 
 		break;
 	case Menu::Zanki:
@@ -171,22 +169,31 @@ void TutorialSystem::DrawSprite() {
 			back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
 		}
 
-		back_->Draw();
-
 		break;
 	case Menu::Attack:
+		back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
 		break;
 	case Menu::Gauge:
+		//ページ[1]の時はゲージ表示を注目させるテクスチャに切り替える
+		if (gaugePage_ == 1) {
+			back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_gauge.png"));
+		}
+		else {
+			back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
+		}
 		break;
 	case Menu::Battle:
-		break;
-	case Menu::ReturnStart:
-		break;
-	case Menu::kNumMenu:
+		back_->SetTextureHandle(TextureManager::GetInstance()->LoadTexture("TUTORIAL/Tutorial_back.png"));
 		break;
 	default:
 		break;
 	}
+
+	//背景の描画
+	if (!isBattlePhase_) {
+		back_->Draw();
+	}
+
 }
 
 void TutorialSystem::WriteText() {
@@ -208,9 +215,6 @@ void TutorialSystem::WriteText() {
 		outputText[0].push_back(L"終了したい時は");
 		outputText[1].push_back(L"[ESCAPE]からいつでも");
 		outputText[2].push_back(L"終了できます。");
-
-		//メニューテキスト
-		menuText_->WriteText(menuText);
 
 		//説明テキスト
 		for (int i = 0; i < 3; i++) {
@@ -240,9 +244,6 @@ void TutorialSystem::WriteText() {
 		outputText[1].push_back(L"場外に落ちてしまったら");
 		outputText[2].push_back(L"ゲームオーバーです");
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
-
 		//説明テキスト
 		for (int i = 0; i < 3; i++) {
 			text_[i]->WriteText(outputText[i][rulePage_]);
@@ -259,9 +260,6 @@ void TutorialSystem::WriteText() {
 		outputText[0].push_back(L"移動方法は");
 		outputText[1].push_back(L"[W][A][S][D]キーで");
 		outputText[2].push_back(L"上下左右に移動できます。");
-
-		//メニューUI描画
-		menuText_->WriteText(menuText);
 
 		//説明テキスト
 		for (int i = 0; i < 3; i++) {
@@ -284,9 +282,6 @@ void TutorialSystem::WriteText() {
 		outputText[1].push_back(L"残機に気を付けて");
 		outputText[2].push_back(L"クリアを目指しましょう。");
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
-
 		//説明テキスト
 		for (int i = 0; i < 3; i++) {
 			text_[i]->WriteText(outputText[i][zankiPage_]);
@@ -300,37 +295,79 @@ void TutorialSystem::WriteText() {
 		//メニューのテキスト
 		menuText = L"~攻撃の仕方~";
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
+		//ページによって出力する文字列を変える
+		outputText[0].push_back(L"[SPACE]を押すと");
+		outputText[1].push_back(L"タックル攻撃ができます");
+		outputText[2].push_back(L"");
+
+		outputText[0].push_back(L"ただし、敵に吹っ飛ばされている");
+		outputText[1].push_back(L"状態だと、タックル攻撃が");
+		outputText[2].push_back(L"できないので注意してください");
+
+		//説明テキスト
+		for (int i = 0; i < 3; i++) {
+			text_[i]->WriteText(outputText[i][attackPage_]);
+		}
+
+		//次のページへ
+		nextPageText_->WriteText(npText_);
 
 		break;
 	case Menu::Gauge:
 		//メニューのテキスト
 		menuText = L"~ゲージについて~";
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
+		//ページによって出力する文字列を変える
+		outputText[0].push_back(L"タックルを一度使うと");
+		outputText[1].push_back(L"クールタイムが発生します");
+		outputText[2].push_back(L"");
+
+		outputText[0].push_back(L"ここで確認できます");
+		outputText[1].push_back(L"");
+		outputText[2].push_back(L"");
+
+		//説明テキスト
+		for (int i = 0; i < 3; i++) {
+			text_[i]->WriteText(outputText[i][gaugePage_]);
+		}
+
+		//次のページへ
+		nextPageText_->WriteText(npText_);
 
 		break;
 	case Menu::Battle:
 		//メニューのテキスト
 		menuText = L"";
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
+		//ページによって出力する文字列を変える
+		outputText[0].push_back(L"チュートリアルは以上です");
+		outputText[1].push_back(L"");
+		outputText[2].push_back(L"では実際に遊んでみましょう");
 
-		break;
-	case Menu::ReturnStart:
-		//メニューのテキスト
-		menuText = L"";
+		if (!isBattlePhase_) {
+			//説明テキスト
+			for (int i = 0; i < 3; i++) {
+				text_[i]->WriteText(outputText[i][battlePage_]);
+			}
 
-		//メニューUI描画
-		menuText_->WriteText(menuText);
+			nextPageText_->SetColor({ 0.8f, 0.2f, 0.2f, 1.0f });
+			nextPageText_->SetPosition({ 200,550 });
+			nextPageText_->SetEdgeStrokeWidth(10.0f);
+			nextPageText_->SetEdgeColor({ 1,1,1,1 });
+			npText_ = L"[TAB]でチュートリアルを終わる";
 
+			//次のページへ
+			nextPageText_->WriteText(npText_);
+
+		}
 		break;
 	default:
 		break;
 	}
+
+	//メニューのUI描画
+	menuText_->WriteText(menuText);
+
 }
 
 void TutorialSystem::Start() {
@@ -397,13 +434,39 @@ void TutorialSystem::Zanki() {
 }
 
 void TutorialSystem::Attack() {
+	//TABキーで次へ進む
+	if (input_->TriggerKey(DIK_TAB)) {
+		if (attackPage_ + 1 < kNumMaxAttackPage_) {
+			attackPage_++;
+		}
+		else {
+			currentMenu_ = Menu::Gauge;
+		}
+	}
 }
 
 void TutorialSystem::Gauge() {
+	//TABキーで次へ進む
+	if (input_->TriggerKey(DIK_TAB)) {
+		if (gaugePage_ + 1 < kNumMaxGaugePage_) {
+			gaugePage_++;
+		}
+		else {
+			currentMenu_ = Menu::Battle;
+		}
+	}
 }
 
 void TutorialSystem::Battle() {
-}
-
-void TutorialSystem::ReturnStart() {
+	//TABキーで次へ進む
+	if (input_->TriggerKey(DIK_TAB)) {
+		if (gaugePage_ + 1 < kNumMaxGaugePage_) {
+			gaugePage_++;
+		}
+		else {
+			isBattlePhase_ = true;
+			isTimeStop_ = false;
+			isZankiDisplay = true;
+		}
+	}
 }
