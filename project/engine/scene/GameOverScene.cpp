@@ -20,13 +20,13 @@ void GameOverScene::Initialize()
 	textureHandleFall1_ = TextureManager::GetInstance()->LoadTexture("fall1.png");
 	spriteFall1_ = std::make_unique<Sprite>();
 	spriteFall1_->Initialize(textureHandleFall1_);
-	spriteFall1_->SetPosition({ 0.0f, spriteFall1Y_ });
+	spriteFall1_->SetPosition({ 0.0f, spriteFallY_ });
 
 
-	textureHandleFall2_ = TextureManager::GetInstance()->LoadTexture("fall2.png");
+	/*textureHandleFall2_ = TextureManager::GetInstance()->LoadTexture("fall2.png");
 	spriteFall2_ = std::make_unique<Sprite>();
 	spriteFall2_->Initialize(textureHandleFall2_);
-	spriteFall2_->SetPosition({ 0.0f, spriteFall2Y_ });
+	spriteFall2_->SetPosition({ 0.0f, spriteFall2Y_ });*/
 
 	//スペースUIテキスト
 	spriteUI_SPACE_ = std::make_unique<TextWrite>();
@@ -71,7 +71,21 @@ void GameOverScene::Update()
 	camera->SetTranslate(cameraTranslate);
 
 	if (!isAnimationComplete_) {
-		cameraTranslate.z -= 1.0f;
+		cameraTranslate.z -= 1.5f;
+	} 
+	else if (fieldScale_.x > 0.0f && fieldScale_.z > 0.0f) {
+		fieldScale_.x -= 0.1f;
+		fieldScale_.z -= 0.1f;
+		if (fieldScale_.x < 0.0f) {
+			// 最小値を0に制限
+			fieldScale_.x = 0.0f; 
+		}
+		if (fieldScale_.z < 0.0f) {
+			// 最小値を0に制限
+			fieldScale_.z = 0.0f;
+		}
+
+		field_->SetScale(fieldScale_);
 	}
 
 
@@ -88,14 +102,17 @@ void GameOverScene::Update()
 	}
 
 	spriteFall1_->Update();
-	spriteFall2_->Update();
+	//spriteFall2_->Update();
 
-	if (cameraTranslate.z <= -300.0f)
-	{
-		isAnimationStert_ = true;
+	if (cameraTranslate.z <= -300.0f){
+
+		isAnimationStart_ = true;
 	}
 
-	EyeClose();
+	if (isAnimationStart_){
+
+		Close();
+	}
 
 #ifdef _DEBUG
 	ImGui::Begin("scene");
@@ -127,6 +144,10 @@ void GameOverScene::Update()
 	Vector3 fieldRotate = field_->GetRotation();
 	ImGui::DragFloat3("fieldRotate", &fieldRotate.x, 0.1f);
 	field_->SetRotation(fieldRotate);
+
+	/*======バウンド速度の表示======*/
+	ImGui::Text("Bounce Speed: %.3f", bounceSpeed_);
+
 
 	ImGui::End();
 #endif // _DEBUG
@@ -173,7 +194,7 @@ void GameOverScene::Draw()
 
 	 
 	spriteFall1_->Draw();
-	spriteFall2_->Draw();
+	//spriteFall2_->Draw();
 	
 
 	///------------------------------///
@@ -197,55 +218,41 @@ void GameOverScene::TextDraw()
 	///------------------------------///
 }
 
-void GameOverScene::EyeClose()
+void GameOverScene::Close()
 {
+	// 演出が完了している場合は何もしない
 	if (isAnimationComplete_) {
-		return; // 演出が完了している場合は何もしない
+		return;
 	}
 
-	if (isAnimationStert_)
-	{
-
-		switch (closeState_) {
-		case 0: // 初期状態
-			closeState_ = 1; // 速く閉じる状態に移行
-			break;
-
-		case 1: // 速く閉じる
-			spriteFall1Y_ += fallSpeed_;
-			spriteFall2Y_ -= fallSpeed_;
-			spriteFall1_->SetPosition({ 0.0f, spriteFall1Y_ });
-			spriteFall2_->SetPosition({ 0.0f, spriteFall2Y_ });
-
-			if (spriteFall1Y_ >= 0.0f && spriteFall2Y_ <= 360.0f) {
-				closeState_ = 2; // 開く状態に移行
-				fallSpeed_ = 30.0f; // 開く速度を設定
-			}
-			break;
-
-		case 2: // 開く
-			spriteFall1Y_ -= fallSpeed_;
-			spriteFall2Y_ += fallSpeed_;
-			spriteFall1_->SetPosition({ 0.0f, spriteFall1Y_ });
-			spriteFall2_->SetPosition({ 0.0f, spriteFall2Y_ });
-
-			if (spriteFall1Y_ <= -720.0f && spriteFall2Y_ >= 720.0f) {
-				closeState_ = 3; // ゆっくり閉じる状態に移行
-				fallSpeed_ = 5.0f; // ゆっくり閉じる速度を設定
-			}
-			break;
-
-		case 3: // ゆっくり閉じる
-			spriteFall1Y_ += fallSpeed_;
-			spriteFall2Y_ -= fallSpeed_;
-			spriteFall1_->SetPosition({ 0.0f, spriteFall1Y_ });
-			spriteFall2_->SetPosition({ 0.0f, spriteFall2Y_ });
-
-			if (spriteFall1Y_ >= 0.0f && spriteFall2Y_ <= 720.0f) {
-				isAnimationComplete_ = true; // 演出完了
-			}
-			break;
+	if (!isBounce_) {
+		// 降りてくる処理
+		spriteFallY_ += fallSpeed_;
+		if (spriteFallY_ >= 0.0f) {
+			// バウンド開始
+			spriteFallY_ = 0.0f;
+			isBounce_ = true;
 		}
+	} else {
+		// バウンド処理
+		spriteFallY_ += bounceSpeed_;
+		bounceSpeed_ += gravity_; // 重力で速度を減少
 
+		if (spriteFallY_ >= 0.0f) {
+			// バウンドが止まる条件
+			spriteFallY_ = 0.0f;
+			bounceSpeed_ *= -0.5f; // 反発係数で速度を反転＆減少
+			bounceCount_++; // バウンド回数をカウント
+
+			if (bounceCount_ >= maxBounceCount_) {
+				// 最大バウンド回数に達したら演出完了
+				isAnimationComplete_ = true;
+			}
+		}
 	}
+
+	// スプライトの位置を更新
+	spriteFall1_->SetPosition({ 0.0f, spriteFallY_ });
+
+
 }

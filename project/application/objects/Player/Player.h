@@ -37,6 +37,8 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	// モデルの更新
+	void UpdateModel();
 
 private: // 衝突判定
 
@@ -74,6 +76,12 @@ public: //セッター
 	// 攻撃チャージフラグをセット
 	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
 
+	// 落下フラグをセット(クリアシーンで常にONにしてたい)
+	void SetIsGround(bool _flag) { isGround_ = _flag; }
+
+	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)
+	void SetIsMoveable(bool _flag) { isMoveable_ = _flag; }
+
 private:
 
 	//氷の上の移動
@@ -84,6 +92,15 @@ private:
 
 	//氷の上の移動更新
 	void MovePositionOnIce();
+
+	//移動関数の共通部
+	void MoveCommon(float moveSpeed);
+
+	//攻撃関数の共通部
+	void AttackCommon(float attackSpeed);
+
+	//移動更新関数の共通部
+	void MovePositionCommon(float friction);
 
 private:
 
@@ -121,13 +138,13 @@ private:
 
 
 	// 移動速度
-	Vector3 moveSpeed_ = { 0.1f,0.0f,0.1f };
+	float moveSpeed_ = 0.103f;
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
 	// 落下速度
 	float fallSpeed_ = 0.3f;
 	// 摩擦係数（減速率）
 	float attackFriction_ = 2.0f;
-	float friction_ = 0.01f;
+	float friction_ = 29.0f / 30.0f;
 
 	// 攻撃時間
 	const float attackTime_ = 12;
@@ -152,5 +169,7 @@ private:
 	//氷の上にいるときの最高速度
 	float MaxSpeedOnIce_ = 0.2f;
 
+	// 動かせるかフラグ(クリアシーンで動かないようにさせたい)
+	bool isMoveable_ = true;
 };
 

@@ -72,12 +72,12 @@ void Player::Finalize() {
 
 void Player::Update() {
 
-
+	walkEffect_->emitter_.isPlay = false;
 	// ノックバック中は移動、攻撃できない
 	if (knockBackTime_ > 0.0f) {
 		knockBackTime_ -= 1.0f;
 	}
-	else if (!isAftertaste_) {
+	else if (!isAftertaste_ && isMoveable_) {
 		//氷の上にいるとき
 		if (onIce_) {
 			//移動
@@ -145,67 +145,16 @@ void Player::Draw(BaseCamera _camera) {
 }
 
 void Player::Move() {
-	// 摩擦による減速を適用
-	moveVel_ *= friction_;
 
-	// 地面にいるとき
-	if (isGround_ && !isStop_) {
-		// 移動
-		walkEffect_->emitter_.isPlay = false;
-		walkEffect_->emitter_.transform.translate = wtPlayer_.translate_;
-		if (input_->PushKey(DIK_W)) {
-			moveVel_.z += moveSpeed_.z * slowRate_;
-			walkEffect_->emitter_.isPlay = true;
-		}
-		if (input_->PushKey(DIK_S)) {
-			moveVel_.z -= moveSpeed_.z * slowRate_;
-			walkEffect_->emitter_.isPlay = true;
-		}
-		if (input_->PushKey(DIK_A)) {
-			moveVel_.x -= moveSpeed_.x * slowRate_;
-			walkEffect_->emitter_.isPlay = true;
-		}
-		if (input_->PushKey(DIK_D)) {
-			moveVel_.x += moveSpeed_.x * slowRate_;
-			walkEffect_->emitter_.isPlay = true;
-		}
-	}
+	moveVel_ = {0.0f, 0.0f, 0.0f};
 
-	// 速度が非常に小さくなったら停止する
-	if (moveVel_.Length() < 0.01f) {
-		moveVel_ = { 0.0f, 0.0f, 0.0f };
-	}
-	else
-	{
-		// 移動方向に向きを変更
-		float targetRotationY = atan2f(moveVel_.x, moveVel_.z);
-		rotation_.y = MyMath::Lerp(rotation_.y, targetRotationY, 0.1f); // 0.1fは補間係数
-	}
-
-	wtPlayer_.translate_ += moveVel_;
-	position_ = wtPlayer_.translate_;
+	MoveCommon(moveSpeed_);
 
 }
 
 void Player::MovePosition() {
-	// フレーム間の時間差（秒）
-	float deltaTime = 1.0f / 60.0f;
 
-	// 摩擦による減速を適用
-	Vector3 friction = -moveVel_ * attackFriction_ * deltaTime;
-	moveVel_ += friction;
-
-	// 速度が非常に小さくなったら停止する
-	if (moveVel_.Length() < 0.01f) {
-		return;
-	}
-	else if (moveVel_.Length() < 1.5f) {
-		isAftertaste_ = false;
-	}
-
-	// 位置を更新
-	wtPlayer_.translate_ += moveVel_ * deltaTime;
-	position_ = wtPlayer_.translate_;
+	MovePositionCommon(friction_);
 }
 
 void Player::OutOfField() {
@@ -227,47 +176,9 @@ void Player::OutOfField() {
 }
 
 void Player::Attack() {
-	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_) {
-		isAttack_ = true;
-		isChargeMax_ = false;
 
-		// 攻撃時間リセット
-		attackTimeCounter_ = attackTime_;
+	AttackCommon(2.0f);
 
-	}
-
-	if (isAttack_) {
-
-		// 速度がゼロの場合、プレイヤーの向きに応じて初期速度を設定
-		if (moveVel_.x == 0.0f && moveVel_.y == 0.0f && moveVel_.z == 0.0f) {
-			// プレイヤーの向きを基に攻撃方向を設定
-			moveVel_.x = sinf(rotation_.y) * 0.18f; // X方向の速度
-			moveVel_.z = cosf(rotation_.y) * 0.18f; // Z方向の速度
-		}
-
-		moveVel_ *= 1.5f * attackFriction_;
-
-		attackTimeCounter_ -= 1.0f;
-
-		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
-		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_ * slowRate_;
-		position_ = wtPlayer_.translate_;
-
-		// 攻撃エフェクト
-		tackleEffect_->emitter_.isPlay = true;
-		tackleEffect_->emitter_.transform.translate = wtPlayer_.translate_;
-		tackleEffect_->emitter_.transform.translate.y += 0.5f;
-		tackleEffect_->emitter_.transform.scale = { 0.5f,0.5f,0.5f };
-	}
-
-	if (attackTimeCounter_ <= 0.0f) {
-		isAttack_ = false;
-		isStop_ = false;
-
-		// 攻撃エフェクトオフ
-		tackleEffect_->emitter_.isPlay = false;
-	}
 }
 
 void Player::ImGuiDraw() {
@@ -289,6 +200,15 @@ void Player::ImGuiDraw() {
 
 	ImGui::End();
 
+}
+
+void Player::UpdateModel()
+{
+	wtPlayer_.scale_ = scale_;
+	wtPlayer_.rotate_ = rotation_;
+	wtPlayer_.translate_ = position_;
+
+	wtPlayer_.UpdateMatrix();
 }
 
 void Player::OnCollision(const AppCollider* _other) {
@@ -386,7 +306,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ *= 10.0f;
+			moveVel_ /= 6.0f;
 			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
@@ -452,28 +372,59 @@ Vector3 Player::ComputePenetration(const AppAABB& otherAABB) {
 
 void Player::MoveOnIce() {
 
-	// 地面にいるとき
-	if (isGround_ && !isStop_) {
-		// 移動
-		if (input_->PushKey(DIK_W)) {
-			moveVel_.z += moveSpeedOnIce_;
-		}
-		if (input_->PushKey(DIK_S)) {
-			moveVel_.z -= moveSpeedOnIce_;
-		}
-		if (input_->PushKey(DIK_A)) {
-			moveVel_.x -= moveSpeedOnIce_;
-		}
-		if (input_->PushKey(DIK_D)) {
-			moveVel_.x += moveSpeedOnIce_;
-		}
+	MoveCommon(moveSpeedOnIce_);
+
+	//速度を最高速度以下に抑える
+	if (moveVel_.Length() > MaxSpeedOnIce_) {
+		moveVel_.Normalize();
+		moveVel_ *= MaxSpeedOnIce_;
 	}
-
-
-
 }
 
 void Player::AttackOnIce()
+{
+	AttackCommon(1.5f);
+}
+
+void Player::MovePositionOnIce() {
+
+	MovePositionCommon(frictionOnIce_);
+
+}
+
+void Player::MoveCommon(float moveSpeed)
+{
+	// 地面にいるとき
+	if (isGround_ && !isStop_) {
+		// 移動
+		walkEffect_->emitter_.transform.translate = wtPlayer_.translate_;
+		if (input_->PushKey(DIK_W)) {
+			moveVel_.z += moveSpeed;
+			walkEffect_->emitter_.isPlay = true;
+		}
+		if (input_->PushKey(DIK_S)) {
+			moveVel_.z -= moveSpeed;
+			walkEffect_->emitter_.isPlay = true;
+		}
+		if (input_->PushKey(DIK_A)) {
+			moveVel_.x -= moveSpeed;
+			walkEffect_->emitter_.isPlay = true;
+		}
+		if (input_->PushKey(DIK_D)) {
+			moveVel_.x += moveSpeed;
+			walkEffect_->emitter_.isPlay = true;
+		}
+	}
+
+	if (moveVel_.Length() > 0.0f)
+	{
+		// 移動方向に向きを変更
+		float targetRotationY = atan2f(moveVel_.x, moveVel_.z);
+		rotation_.y = MyMath::Lerp(rotation_.y, targetRotationY, 0.1f); // 0.1fは補間係数
+	}
+}
+
+void Player::AttackCommon(float attackSpeed)
 {
 	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_)
 	{
@@ -486,14 +437,17 @@ void Player::AttackOnIce()
 	}
 
 	if (isAttack_) {
-		moveVel_ *= 1.5f * attackFriction_;
+
+		// 速度がゼロの場合、プレイヤーの向きに応じて初期速度を設定
+		if (moveVel_.x == 0.0f && moveVel_.y == 0.0f && moveVel_.z == 0.0f) {
+			// プレイヤーの向きを基に攻撃方向を設定
+			moveVel_.x = sinf(rotation_.y) * moveSpeed_; // X方向の速度
+			moveVel_.z = cosf(rotation_.y) * moveSpeed_; // Z方向の速度
+		}
+
+		moveVel_ *= attackSpeed * attackFriction_;
 
 		attackTimeCounter_ -= 1.0f;
-
-		Vector3 moveFriction_ = moveVel_ * attackFriction_ * (1.0f / 60.0f);
-		moveVel_ += moveFriction_;
-		wtPlayer_.translate_ += moveVel_;
-		position_ = wtPlayer_.translate_;
 
 		// 攻撃エフェクト
 		tackleEffect_->emitter_.isPlay = true;
@@ -511,21 +465,17 @@ void Player::AttackOnIce()
 	}
 }
 
-void Player::MovePositionOnIce() {
-
+void Player::MovePositionCommon(float friction)
+{
 	// 摩擦による減速を適用
-	moveVel_ *= frictionOnIce_ * slowRate_;
+	moveVel_ *= friction * slowRate_;
 
-	//速度を最高速度以下に抑える
-	if (moveVel_.Length() > MaxSpeedOnIce_) {
-		moveVel_.Normalize();
-		moveVel_ *= MaxSpeedOnIce_;
-	}
 	// 速度が非常に小さくなったら停止する
-	else if (moveVel_.Length() < 0.001f) {
+	if (moveVel_.Length() < 0.001f) {
 		moveVel_ = { 0.0f, 0.0f, 0.0f };
+		return;
 	}
-	if (moveVel_.Length() < 0.04f) {
+	if (moveVel_.Length() < 0.025f) {
 		isAftertaste_ = false;
 	}
 
