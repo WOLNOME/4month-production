@@ -14,7 +14,6 @@ enum class Menu {
 	Attack,		//攻撃方法についての説明
 	Gauge,			//攻撃ゲージについての説明
 	Battle,		//実際のバトルフェーズ
-	ReturnStart,	//もう一度聞くか
 
 	kNumMenu,		//メニューの数
 };
@@ -62,8 +61,6 @@ private:
 	void Gauge();
 	//バトルフェーズ処理
 	void Battle();
-	//もう一度聞くかの処理
-	void ReturnStart();
 private:
 	//インプット
 	Input* input_ = nullptr;
@@ -120,11 +117,25 @@ private://残機説明のメンバ変数
 
 private://攻撃説明のメンバ変数
 
+	//ページ
+	int attackPage_;
+	//最大ページ数
+	const int kNumMaxAttackPage_ = 2;
+
 private://ゲージ説明のメンバ変数
+
+	//ページ
+	int gaugePage_;
+	//最大ページ数
+	const int kNumMaxGaugePage_ = 2;
 
 private://バトルフェーズのメンバ変数
 
-private://もう一度聞くかのメンバ変数
-
+	//ページ
+	int battlePage_;
+	//最大ページ数
+	const int kNumMaxBattlePage_ = 1;
+	//バトルフェーズフラグ
+	bool isBattlePhase_;
 };
 
