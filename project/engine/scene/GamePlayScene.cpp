@@ -392,7 +392,10 @@ void GamePlayScene::Finalize()
 		player->Finalize();
 	}
 	
-	preSpawnedPlayer_->Finalize();
+
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Finalize();
+	}
 
 	enemyManager_->Finalize();
 
