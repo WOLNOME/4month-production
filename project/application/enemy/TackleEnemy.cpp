@@ -57,7 +57,7 @@ void TackleEnemy::EnemyUpdate() {
 	else {
 
 		// タックル中でない場合、待機タイマーを更新
-		if (!isTackling_ && isGround_ && isAftertaste_ == false) {
+		if (!isTackling_ && isGround_ && !isAftertaste_) {
 			tackleWaitTimer_ += 1.0f / 60.0f;
 			if (tackleWaitTimer_ >= nextTackleWaitTime_) {
 				// タックルを開始
