@@ -46,6 +46,9 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath) {
 	deadEffect_->emitter_.isPlay = false;
 	countDeadEffect_ = 0;
 
+	fallSE_ = std::make_unique<Audio>();
+	fallSE_->Initialize("soundeffect/fall.wav");
+
 }
 
 void TackleEnemy::EnemyUpdate() {
@@ -93,6 +96,12 @@ void TackleEnemy::EnemyUpdate() {
 
 	// 場外処理
 	OutOfField();
+
+	if (!isGround_ && isGrroundPre_)
+	{
+		//落下SE
+		fallSE_->Play(false, 0.5f);
+	}
 
 	//生存中か
 	if (transform_.translate_.y <= -10.0f && countDeadEffect_ == 0) {
@@ -153,15 +162,18 @@ void TackleEnemy::OutOfField() {
 	}
 
 	isGround_ = false;
+	isGrroundPre_ = false;
 
 	if (transform_.translate_.y < -30.0f) {
 		isGround_ = true;
+		isGrroundPre_ = true;
 	}
 }
 
 void TackleEnemy::OnCollision(const AppCollider* _other) {
 	if (_other->GetColliderID() == "Field") {
 		isGround_ = true;
+		isGrroundPre_ = true;
 	}
 	else if (_other->GetColliderID() == "Obstacle") {
 		transform_.translate_ += ComputePenetration(*_other->GetAABB());
@@ -192,15 +204,7 @@ void TackleEnemy::OnCollision(const AppCollider* _other) {
     else if (_other->GetColliderID() == "IceFloor")
     {
         onIce_ = true;
-    }
-    else
-    {
-		if (fallSE_)
-		{
-			fallSE_->Play(false);
-		}
-    }
-   
+    }   
 
 	if (_other->GetColliderID() == "Player") {
 		// どちらも攻撃してない状態かつノックバック中でないときプレイヤーに当たった場合

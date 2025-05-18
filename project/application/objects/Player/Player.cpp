@@ -59,6 +59,8 @@ void Player::Initialize() {
 	tackleEffect_->emitter_.gravity = 0.3f;
 	tackleEffect_->emitter_.isPlay = false;
 
+	fallSE = std::make_unique<Audio>();
+	fallSE->Initialize("soundeffect/fall.wav");
 }
 
 void Player::Finalize() {
@@ -172,6 +174,7 @@ void Player::OutOfField() {
 		deadEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		isGround_ = true;
 		isDeadShake_ = true;
+		fallSE->Play(false, 0.5f);
 	}
 
 	isGround_ = false;

@@ -13,7 +13,7 @@ void EnemyManager::Initialize(BaseCamera* camera, std::vector<std::unique_ptr<Pl
 	freezeEnemyPath_ = freezeEnemy;
 	players_ = players;
 	fallSE_ = std::make_unique<Audio>();
-	//fallSE_->Initialize("fall.wav");
+	fallSE_->Initialize("soundeffect/enemydead.wav");
 }
 
 void EnemyManager::Update()
@@ -63,12 +63,19 @@ void EnemyManager::Update()
 		if (!enemy->IsAlive())
 		{
 			enemy->Finalize();
+			fallSE_->Play(false);
 		}
 	}
 	//ファンエネミーの更新
 	for (auto& enemy : fanEnemies_)
 	{
 		enemy->EnemyUpdate();
+		//死んでいたら
+		if (!enemy->IsAlive())
+		{
+			enemy->Finalize();
+			fallSE_->Play(false);
+		}
 	}
 	//風の更新
 	for (auto& wind : winds_)
@@ -79,11 +86,21 @@ void EnemyManager::Update()
 	for (auto& enemy : freezeEnemies_)
 	{
 		enemy->EnemyUpdate();
+		if (!enemy->IsAlive())
+		{
+			enemy->Finalize();
+			fallSE_->Play(false);
+		}
 	}
 	//アイスミストの更新
 	for (auto& iceMist : iceMists_)
 	{
 		iceMist->Update();
+		//死んでいたら
+		if (!iceMist->IsAlive())
+		{
+			iceMist->Finalize();
+		}
 	}
 
 	//死んでいるエネミーをリストから削除
