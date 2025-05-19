@@ -769,7 +769,8 @@ void TutorialScene::playerTackleCharge() {
 		if (charge_ >= chargeMax_) {
 			for (auto& player : players_) {
 				// 攻撃できるようにする
-				player->SetIsChargeMax(true);
+				bool isChargeMax = true;
+				player->SetIsChargeMax(&isChargeMax);
 			}
 
 			charge_ = 0.0f;
