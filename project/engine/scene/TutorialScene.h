@@ -189,6 +189,7 @@ private://メンバ変数
 
 	// 攻撃チャージMax
 	const float chargeMax_ = 80.0f;
+	bool isChargeMax_ = false;
 	// 攻撃チャージ
 	float charge_ = 0.0f;
 

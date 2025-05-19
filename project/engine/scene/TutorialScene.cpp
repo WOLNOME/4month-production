@@ -126,6 +126,7 @@ void TutorialScene::Initialize() {
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
+		player->SetIsChargeMax(&isChargeMax_);
 
 		players_.push_back(std::move(player));
 		playerNum_++;
@@ -743,6 +744,7 @@ void TutorialScene::playerSpawnRotation() {
 
 			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
 			player->Initialize();
+			player->SetIsChargeMax(&isChargeMax_);
 
 			players_.push_back(std::move(player));
 
@@ -760,20 +762,50 @@ void TutorialScene::playerSpawnRotation() {
 void TutorialScene::playerTackleCharge() {
 	// プレイヤーが1体以上いるとき
 	if (playerNum_ > 0) {
-		// プレイヤーの攻撃フラグが立っているとき
-		if (!players_[0]->IsChargeMax()) {
+		//// プレイヤーの攻撃フラグが立っているとき
+		//if (!players_[0]->IsChargeMax()) {
+		//	charge_ += 1.0f;
+		//}
+
+		//// チャージが最大値に達したら
+		//if (charge_ >= chargeMax_) {
+		//	for (auto& player : players_) {
+		//		// 攻撃できるようにする
+		//		bool isChargeMax = true;
+		//		player->SetIsChargeMax(&isChargeMax);
+		//	}
+
+		//	charge_ = 0.0f;
+		//}
+
+			// チャージが最大でないとき
+		if (charge_ < chargeMax_)
+		{
 			charge_ += 1.0f;
 		}
-
 		// チャージが最大値に達したら
-		if (charge_ >= chargeMax_) {
-			for (auto& player : players_) {
-				// 攻撃できるようにする
-				bool isChargeMax = true;
-				player->SetIsChargeMax(&isChargeMax);
+		else
+		{
+			if (!isChargeMax_)
+			{
+				isChargeMax_ = true;
 			}
 
-			charge_ = 0.0f;
+			if (input_->TriggerKey(DIK_SPACE) && isChargeMax_) {
+
+				for (std::unique_ptr<Player>& player : players_)
+				{
+					if (!player->IsAttack())
+					{
+						continue;
+					}
+					isChargeMax_ = false;
+					charge_ = 0.0f;
+
+					return;
+				}
+
+			}
 		}
 
 	}
