@@ -308,11 +308,11 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 			enemyPosition_ = _other->GetOwner()->GetPosition();
 
 			attackToEnemy_ = wtPlayer_.translate_ - enemyPosition_;
-
+			attackToEnemy_.y = 0.0f;
+			attackToEnemy_.Normalize();
+			attackToEnemy_ *= 1.0f / 3.0f;
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ /= 6.0f;
-			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
 
