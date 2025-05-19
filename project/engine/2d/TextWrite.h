@@ -18,6 +18,9 @@ enum class Font {
 	UDDegitalNP_B,
 	UDDegitalNP_R,
 	OnionScript,
+	GenEiPOPle,
+	KyouryunoGuratan,
+	AllMembersGatheringPop,
 };
 //フォントスタイル
 enum class FontStyle {

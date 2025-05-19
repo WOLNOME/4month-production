@@ -32,13 +32,13 @@ void PauseSystem::Initialize() {
 	//テキスト
 	textPause_ = std::make_unique<TextWrite>();
 	textPause_->Initialize("Pause");
-	textPause_->SetParam({ 415.0f,80.0f }, Font::Meiryo, 90.0f, { 1,1,1,1 });
+	textPause_->SetParam({ 415.0f,80.0f }, Font::GenEiPOPle, 90.0f, { 1,1,1,1 });
 	textPause_->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0.004f,-0.004f }, true);
 
 	for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
 		textMenu_[i] = std::make_unique<TextWrite>();
 		textMenu_[i]->Initialize(TextWriteManager::GetInstance()->GenerateName("Menu"));
-		textMenu_[i]->SetParam({ WinApp::kClientWidth / 2.0f - 60.0f, 260.0f + (i * 130) }, Font::Meiryo, 60.0f, { 1,1,1,1 });
+		textMenu_[i]->SetParam({ WinApp::kClientWidth / 2.0f - 60.0f, 260.0f + (i * 130) }, Font::GenEiPOPle, 60.0f, { 1,1,1,1 });
 		textMenu_[i]->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0.004f,-0.004f }, true);
 		//遊び方テキスト蚤の処理
 		if (i == (int)MenuState::HowToPlay) {
@@ -48,7 +48,7 @@ void PauseSystem::Initialize() {
 
 	textHowToPlay_ = std::make_unique<TextWrite>();
 	textHowToPlay_->Initialize("HowToPlay");
-	textHowToPlay_->SetParam({ 0,0 }, Font::Meiryo, 50.0f, { 0,0,0,1 });
+	textHowToPlay_->SetParam({ 0,0 }, Font::GenEiPOPle, 50.0f, { 0,0,0,1 });
 
 }
 

@@ -54,8 +54,8 @@ void StageSelectScene::Initialize() {
 	//スペースUIテキスト
 	spaceText_ = std::make_unique<TextWrite>();
 	spaceText_->Initialize("SPACE");
-	spaceText_->SetParam({ 500.0f, 575.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
-	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
+	spaceText_->SetParam({ 500.0f, 575.0f }, Font::GenEiPOPle, 80.0f, { 1, 1, 1, 1 });
+	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { -0.01f,0.0f }, true);
 
 	//天球
 	skydome_ = std::make_unique<Skydome>();
@@ -158,7 +158,7 @@ void StageSelectScene::Update() {
 	spriteUI_D_->Update();
 	spriteUI_SELECT_->Update();
 
-	if (!selectObjects_[setStage_]->IsMove()){
+	if (!selectObjects_[setStage_]->IsMove()) {
 
 		drawSelectNum_ = setStage_;
 	}

@@ -2,8 +2,7 @@
 
 #include "SceneManager.h"
 
-void GameOverScene::Initialize()
-{
+void GameOverScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
@@ -31,8 +30,8 @@ void GameOverScene::Initialize()
 	//スペースUIテキスト
 	spriteUI_SPACE_ = std::make_unique<TextWrite>();
 	spriteUI_SPACE_->Initialize("SPACE");
-	spriteUI_SPACE_->SetParam({ 500.0f, 475.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
-	spriteUI_SPACE_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
+	spriteUI_SPACE_->SetParam({ 500.0f, 475.0f }, Font::GenEiPOPle, 80.0f, { 1, 1, 1, 1 });
+	spriteUI_SPACE_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { -0.01f,0.0f }, true);
 
 	// スカイドーム
 	skydome_ = std::make_unique<Skydome>();
@@ -52,8 +51,7 @@ void GameOverScene::Initialize()
 	tapSE_->Initialize("soundeffect/tap.wav");
 }
 
-void GameOverScene::Finalize()
-{
+void GameOverScene::Finalize() {
 	field_->Finalize();
 	field_.reset();
 
@@ -63,8 +61,7 @@ void GameOverScene::Finalize()
 	tapSE_.reset();
 }
 
-void GameOverScene::Update()
-{
+void GameOverScene::Update() {
 
 	//カメラの更新
 	camera->Update();
@@ -72,13 +69,13 @@ void GameOverScene::Update()
 
 	if (!isAnimationComplete_) {
 		cameraTranslate.z -= 1.5f;
-	} 
+	}
 	else if (fieldScale_.x > 0.0f && fieldScale_.z > 0.0f) {
 		fieldScale_.x -= 0.1f;
 		fieldScale_.z -= 0.1f;
 		if (fieldScale_.x < 0.0f) {
 			// 最小値を0に制限
-			fieldScale_.x = 0.0f; 
+			fieldScale_.x = 0.0f;
 		}
 		if (fieldScale_.z < 0.0f) {
 			// 最小値を0に制限
@@ -95,8 +92,7 @@ void GameOverScene::Update()
 	//フィールドの更新
 	field_->Update();
 
-	if (input_->TriggerKey(DIK_SPACE))
-	{
+	if (input_->TriggerKey(DIK_SPACE)) {
 		tapSE_->Play(false, 0.5f);
 		sceneManager_->SetNextScene("TITLE");
 	}
@@ -104,12 +100,12 @@ void GameOverScene::Update()
 	spriteFall1_->Update();
 	//spriteFall2_->Update();
 
-	if (cameraTranslate.z <= -300.0f){
+	if (cameraTranslate.z <= -300.0f) {
 
 		isAnimationStart_ = true;
 	}
 
-	if (isAnimationStart_){
+	if (isAnimationStart_) {
 
 		Close();
 	}
@@ -132,7 +128,7 @@ void GameOverScene::Update()
 
 
 	/*======フィールド======*/
-    //フィールドの位置
+	//フィールドの位置
 	Vector3 fieldPos = field_->GetPosition();
 	ImGui::DragFloat3("fieldTranslate", &fieldPos.x, 0.1f);
 	field_->SetPosition(fieldPos);
@@ -153,8 +149,7 @@ void GameOverScene::Update()
 #endif // _DEBUG
 }
 
-void GameOverScene::Draw()
-{
+void GameOverScene::Draw() {
 	//3Dモデルの共通描画設定
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -192,18 +187,17 @@ void GameOverScene::Draw()
 	///↓↓↓↓スプライト描画開始↓↓↓↓
 	///------------------------------///
 
-	 
+
 	spriteFall1_->Draw();
 	//spriteFall2_->Draw();
-	
+
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
 }
 
-void GameOverScene::TextDraw()
-{
+void GameOverScene::TextDraw() {
 	///------------------------------///
 	///↑↑↑↑テキスト描画終了↑↑↑↑
 	///------------------------------///
@@ -218,8 +212,7 @@ void GameOverScene::TextDraw()
 	///------------------------------///
 }
 
-void GameOverScene::Close()
-{
+void GameOverScene::Close() {
 	// 演出が完了している場合は何もしない
 	if (isAnimationComplete_) {
 		return;
@@ -233,7 +226,8 @@ void GameOverScene::Close()
 			spriteFallY_ = 0.0f;
 			isBounce_ = true;
 		}
-	} else {
+	}
+	else {
 		// バウンド処理
 		spriteFallY_ += bounceSpeed_;
 		bounceSpeed_ += gravity_; // 重力で速度を減少

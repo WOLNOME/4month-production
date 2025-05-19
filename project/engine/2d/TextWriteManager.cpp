@@ -328,6 +328,15 @@ void TextWriteManager::DrawOutline(const std::string& key) {
 	case Font::OnionScript:
 		position.y += textWriteMap[key]->GetSize() * (15.0f / 16.0f);
 		break;
+	case Font::GenEiPOPle:
+		position.y += textWriteMap[key]->GetSize() * (17.0f / 16.0f);
+		break;
+	case Font::KyouryunoGuratan:
+		position.y += textWriteMap[key]->GetSize() * (14.0f / 16.0f);
+		break;
+	case Font::AllMembersGatheringPop:
+		position.y += textWriteMap[key]->GetSize() * (17.0f / 16.0f);
+		break;
 	default:
 		assert(0 && "不明なフォントです。ポジションの計算をしてください。");
 		break;

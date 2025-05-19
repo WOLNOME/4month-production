@@ -31,8 +31,8 @@ void ClearScene::Initialize()
 	//スペースUIテキスト
 	spriteUI_SPACE_ = std::make_unique<TextWrite>();
 	spriteUI_SPACE_->Initialize("SPACE");
-	spriteUI_SPACE_->SetParam({ 500.0f, 475.0f }, Font::UDDegitalNK_R, 80.0f, { 1, 1, 1, 1 });
-	spriteUI_SPACE_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, 0.0f, true);
+	spriteUI_SPACE_->SetParam({ 500.0f, 475.0f }, Font::GenEiPOPle, 80.0f, { 1, 1, 1, 1 });
+	spriteUI_SPACE_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, {-0.01f,0.0f}, true);
 
 	// スカイドーム
 	skydome_ = std::make_unique<Skydome>();

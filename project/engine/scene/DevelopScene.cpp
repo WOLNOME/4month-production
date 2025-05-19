@@ -92,7 +92,7 @@ void DevelopScene::Initialize() {
 
 	text_ = std::make_unique<TextWrite>();
 	text_->Initialize("text");
-	text_->SetParam({ 0.0f,0.0f }, Font::UDDegitalN_R, 32.0f, { 1,1,0,1 });
+	text_->SetParam({ 0.0f,0.0f }, Font::GenEiPOPle, 32.0f, { 1,1,0,1 });
 	text_->SetEdgeParam({ 1,0,0,1 }, 10.0f, 0.0f, true);
 }
 
