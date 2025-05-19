@@ -126,6 +126,7 @@ void GamePlayScene::Initialize()
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
+		player->SetIsChargeMax(&isChargeMax_);
 
 		players_.push_back(std::move(player));
 		playerNum_++;
@@ -667,6 +668,7 @@ void GamePlayScene::ImGuiDraw()
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
+		player->SetIsChargeMax(&isChargeMax_);
 
 		players_.push_back(std::move(player));
 	}
@@ -777,6 +779,7 @@ void GamePlayScene::playerSpawnRotation()
 
 			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
 			player->Initialize();
+			player->SetIsChargeMax(&isChargeMax_);
 
 			players_.push_back(std::move(player));
 
@@ -797,22 +800,34 @@ void GamePlayScene::playerTackleCharge()
 	// プレイヤーが1体以上いるとき
 	if (playerNum_ > 0)
 	{
-		// プレイヤーの攻撃フラグが立っているとき
-		if (!players_[0]->IsChargeMax())
+		// チャージが最大でないとき
+		if (charge_ < chargeMax_)
 		{
 			charge_ += 1.0f;
 		}
-
 		// チャージが最大値に達したら
-		if (charge_ >= chargeMax_)
+		else
 		{
-			for (auto& player : players_)
+			if (!isChargeMax_) 
 			{
-				// 攻撃できるようにする
-				player->SetIsChargeMax(true);
+				isChargeMax_ = true;
 			}
 
-			charge_ = 0.0f;
+			if (input_->TriggerKey(DIK_SPACE) && isChargeMax_) {
+
+				for (std::unique_ptr<Player>& player : players_)
+				{
+					if (!player->IsAttack()) 
+					{
+						continue;
+					}
+					isChargeMax_ = false;
+					charge_ = 0.0f;
+
+					return;
+				}
+
+			}
 		}
 
 	}

@@ -63,7 +63,7 @@ public: // ゲッター
 	bool IsGround() const { return isGround_; }
 
 	// 攻撃チャージフラグを取得
-	bool IsChargeMax() const { return isChargeMax_; }
+	bool IsChargeMax() const { return *isChargeMax_; }
 
 public: //セッター
 
@@ -74,7 +74,7 @@ public: //セッター
 	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
 
 	// 攻撃チャージフラグをセット
-	void SetIsChargeMax(bool _flag) { isChargeMax_ = _flag; }
+	void SetIsChargeMax(bool* _flag) { isChargeMax_ = _flag; }
 
 	// 落下フラグをセット(クリアシーンで常にONにしてたい)
 	void SetIsGround(bool _flag) { isGround_ = _flag; }
@@ -150,7 +150,7 @@ private:
 	const float attackTime_ = 12;
 	float attackTimeCounter_ = attackTime_;
 	// 攻撃チャージがMaxかどうか
-	bool isChargeMax_ = true;
+	bool* isChargeMax_;
 
 	Vector3 attackToEnemy_{};
 

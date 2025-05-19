@@ -426,10 +426,9 @@ void Player::MoveCommon(float moveSpeed)
 
 void Player::AttackCommon(float attackSpeed)
 {
-	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && isChargeMax_)
+	if (input_->TriggerKey(DIK_SPACE) && !isAttack_ && *isChargeMax_)
 	{
 		isAttack_ = true;
-		isChargeMax_ = false;
 
 		// 攻撃時間リセット
 		attackTimeCounter_ = attackTime_;
