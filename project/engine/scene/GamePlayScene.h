@@ -108,6 +108,7 @@ private://メンバ変数
 
 	// プレイヤー
 	std::vector<std::unique_ptr<Player>> players_{};
+	std::unique_ptr<Player> preSpawnedPlayer_ = nullptr;
 
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;

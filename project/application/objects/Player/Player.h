@@ -136,6 +136,8 @@ private:
 	std::unique_ptr<Particle> walkEffect_ = nullptr;
 	std::unique_ptr<Particle> tackleEffect_ = nullptr;
 
+	//効果音
+	std::unique_ptr<Audio> fallSE = nullptr;
 
 	// 移動速度
 	float moveSpeed_ = 0.103f;

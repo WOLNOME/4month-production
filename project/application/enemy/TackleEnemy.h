@@ -104,4 +104,7 @@ private:
 
     //氷の上にいるときの摩擦係数
     float frictionOnIce_ = 0.995f;
+
+	std::unique_ptr<Audio> fallSE_ = nullptr;
+	bool isGrroundPre_ = false;
 };

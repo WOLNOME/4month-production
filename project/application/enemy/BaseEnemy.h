@@ -15,14 +15,11 @@ public:
 	virtual void EnemyInitialize(const std::string& filePath) = 0;
 	virtual void EnemyUpdate() = 0;
 	virtual void EnemyDraw(const BaseCamera& camera) = 0;
-	void SetFallSE(Audio* se) { fallSE_ = se; }
 protected:
 	//3Dオブジェクト
 	std::unique_ptr<Object3d> object3d_;
 	//トランスフォーム
 	WorldTransform transform_;
-	//落ちたときのSE
-	Audio* fallSE_ = nullptr;
 	//氷の上にいるかどうか
 	bool onIce_ = false;
 };

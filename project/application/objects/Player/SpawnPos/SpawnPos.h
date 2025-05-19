@@ -21,9 +21,19 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	// パーティクルの開始
 	void ParticleStart();
 
+	// パーティクルの停止
 	void ParticleStop();
+
+	// シェイク
+	void Shake();
+
+public: // セッター
+
+	// シェイク切り替え
+	void IsShaking(bool isShaking) { isShaking_ = isShaking; }
 
 private:
 
@@ -34,5 +44,11 @@ private:
 
 	// パーティクル
 	std::unique_ptr<Particle> particle_{};
+
+	// 揺れ中かどうかを管理するフラグ
+	bool isShaking_ = false; 
+	// 揺れの強さ
+	const float shakePower_ = 0.1f;   
+
 };
 
