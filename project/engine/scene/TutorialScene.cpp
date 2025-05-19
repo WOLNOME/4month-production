@@ -9,7 +9,6 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
-
 uint32_t TutorialScene::stageNum_ = 0;
 
 void TutorialScene::Initialize() {
@@ -54,7 +53,7 @@ void TutorialScene::Initialize() {
 
 
 	switch (stageNum_) {
-	case 0: case 1: case 2:
+	case 1: case 2:
 		cameraTranslate = { 0.0f,70.0f,-50.0f };
 
 		break;
@@ -83,8 +82,11 @@ void TutorialScene::Initialize() {
 	// スポーン位置
 	switch (stageNum_) {
 	case 0:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
+		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
+		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
 		break;
+
 	case 1:
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
 		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
@@ -125,6 +127,7 @@ void TutorialScene::Initialize() {
 		auto player = std::make_unique<Player>();
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
+		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 		player->SetIsChargeMax(&isChargeMax_);
 
@@ -140,6 +143,7 @@ void TutorialScene::Initialize() {
 	case 0:
 		enemyManager_->SpawnTackleEnemy(2);
 		break;
+
 	case 1:
 		enemyManager_->SpawnTackleEnemy(7);
 		break;
@@ -178,7 +182,7 @@ void TutorialScene::Initialize() {
 
 	//フィールドの大きさと敵のスポーン範囲を設定
 	switch (stageNum_) {
-	case 0: case 1: case 2:
+	case 0:case 1: case 2:
 		field_->SetScale({ 20.0f,1.0f,20.0f });
 		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
 
@@ -386,6 +390,11 @@ void TutorialScene::Finalize() {
 		player->Finalize();
 	}
 
+
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Finalize();
+	}
+
 	enemyManager_->Finalize();
 
 	field_->Finalize();
@@ -410,7 +419,7 @@ void TutorialScene::Update() {
 	if (pauseSystem_->GetIsPause()) {
 		return;
 	}
-	//チュートリアルシステムの更新
+	// チュートリアルシステムの更新
 	tutorialSystem_->Update();
 	if (tutorialSystem_->GetIsTimeStop()) {
 		return;
@@ -451,12 +460,17 @@ void TutorialScene::Update() {
 			}
 			return false;
 		}), players_.end());
-	// プレイヤー
+	// 通常プレイヤーの更新
 	for (auto& player : players_) {
 		player->Update();
 	}
 	// プレイヤー攻撃チャージ
 	playerTackleCharge();
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Update();
+	}
 
 
 	//エネミーマネージャーの更新
@@ -534,7 +548,12 @@ void TutorialScene::Draw() {
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	// プレイヤー
+	 // 準備中プレイヤーの描画
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Draw(*camera_.get());
+	}
+
+	// 通常プレイヤーの描画
 	for (auto& player : players_) {
 		player->Draw(*camera_.get());
 	}
@@ -593,11 +612,12 @@ void TutorialScene::Draw() {
 	spriteUI_PLAY_->Draw();
 	spriteUI_ChargeGage_->Draw();
 	spriteUI_Charge_->Draw();
-	//チュートリアルシステムの描画
-	tutorialSystem_->DrawSprite();
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
-
+	if (!pauseSystem_->GetIsPause()) {
+		// チュートリアルシステムの描画
+		tutorialSystem_->DrawSprite();
+	}
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -611,18 +631,17 @@ void TutorialScene::TextDraw() {
 
 	// ポーズシステムのテキスト描画
 	pauseSystem_->TextDraw();
-
 	if (!pauseSystem_->GetIsPause()) {
-		if (tutorialSystem_->GetIsZankiDisplay()) {
-			//スペースUIテキスト
-			remainingSpawnNumText_->WriteText(L"残り出現数");
-			// 残りの出現数テキスト
-			numText_->WriteText(std::to_wstring(remainingBoogie_));
-			// 値のテキスト
-			valueText_->WriteText(L"体");
-		}
-		//チュートリアルシステムのテキスト
+		// チュートリアルシステムのテキスト描画
 		tutorialSystem_->WriteText();
+	}
+	if (!pauseSystem_->GetIsPause() && tutorialSystem_->GetIsZankiDisplay()) {
+		//スペースUIテキスト
+		remainingSpawnNumText_->WriteText(L"残り出現数");
+		// 残りの出現数テキスト
+		numText_->WriteText(std::to_wstring(remainingBoogie_));
+		// 値のテキスト
+		valueText_->WriteText(L"体");
 	}
 
 	///------------------------------///
@@ -650,6 +669,7 @@ void TutorialScene::ImGuiDraw() {
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
+		player->SetIsChargeMax(&isChargeMax_);
 
 		players_.push_back(std::move(player));
 	}
@@ -722,35 +742,53 @@ void TutorialScene::ImGuiDraw() {
 }
 
 void TutorialScene::playerSpawnRotation() {
-	// プレイヤースポーン位置のローテーション
 	rotationTimer_ -= 1.0f;
 
-	// タイマーが120になったら準備
+	// スポーン準備：タイマーが120のとき
 	if (rotationTimer_ == 120.0f && howManyBoogie_ < kMaxSpawnNum) {
-		// プレイヤースポーン位置の演出
 		playerSpawn_[playerSpawnIndex_]->ParticleStart();
+		playerSpawn_[playerSpawnIndex_]->IsShaking(true);
+
+		// 小さい状態で非アクティブなプレイヤー生成
+		auto prePlayer = std::make_unique<Player>();
+		prePlayer->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
+		prePlayer->SetScale({ 0.1f, 0.1f, 0.1f });
+		prePlayer->Initialize();
+		prePlayer->SetIsChargeMax(&isChargeMax_);
+
+		prePlayer->SetIsMoveable(false);
+
+		preSpawnedPlayer_ = std::move(prePlayer);
+
+		preSpawnedPlayer_->Update();
 	}
 
-	// タイマーが0になったら追加
+	// 拡大処理（Lerp）
+	if (preSpawnedPlayer_) {
+		float t = (120.0f - rotationTimer_) / 120.0f;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// Lerpでスケール補間
+		float lerpedScale = std::lerp(0.1f, 1.0f, t);
+		Vector3 scale = { lerpedScale, lerpedScale, lerpedScale };
+		preSpawnedPlayer_->SetScale(scale);
+	}
+
+	// タイマーが0以下になったらプレイヤーを有効にする
 	if (rotationTimer_ <= 0.0f) {
 		playerSpawn_[playerSpawnIndex_]->ParticleStop();
+		playerSpawn_[playerSpawnIndex_]->IsShaking(false);
 
-		if (howManyBoogie_ < kMaxSpawnNum) {
+		if (howManyBoogie_ < kMaxSpawnNum && preSpawnedPlayer_) {
 			rotationTimer_ = rotation_;
 
-			// プレイヤーを追加
-			auto player = std::make_unique<Player>();
+			preSpawnedPlayer_->SetScale({ 1.0f, 1.0f, 1.0f });
+			preSpawnedPlayer_->SetIsMoveable(true);
+
+			players_.push_back(std::move(preSpawnedPlayer_));
 			howManyBoogie_++;
-
-			player->SetPlayerPos(playerSpawnPositions_[playerSpawnIndex_]);
-			player->Initialize();
-			player->SetIsChargeMax(&isChargeMax_);
-
-			players_.push_back(std::move(player));
-
 			playerNum_++;
 
-			// 位置ローテを0に戻す
 			playerSpawnIndex_++;
 			if (playerSpawnIndex_ > playerSpawnNum_ - 1) {
 				playerSpawnIndex_ = 0;
@@ -762,41 +800,20 @@ void TutorialScene::playerSpawnRotation() {
 void TutorialScene::playerTackleCharge() {
 	// プレイヤーが1体以上いるとき
 	if (playerNum_ > 0) {
-		//// プレイヤーの攻撃フラグが立っているとき
-		//if (!players_[0]->IsChargeMax()) {
-		//	charge_ += 1.0f;
-		//}
-
-		//// チャージが最大値に達したら
-		//if (charge_ >= chargeMax_) {
-		//	for (auto& player : players_) {
-		//		// 攻撃できるようにする
-		//		bool isChargeMax = true;
-		//		player->SetIsChargeMax(&isChargeMax);
-		//	}
-
-		//	charge_ = 0.0f;
-		//}
-
-			// チャージが最大でないとき
-		if (charge_ < chargeMax_)
-		{
+		// チャージが最大でないとき
+		if (charge_ < chargeMax_) {
 			charge_ += 1.0f;
 		}
 		// チャージが最大値に達したら
-		else
-		{
-			if (!isChargeMax_)
-			{
+		else {
+			if (!isChargeMax_) {
 				isChargeMax_ = true;
 			}
 
 			if (input_->TriggerKey(DIK_SPACE) && isChargeMax_) {
 
-				for (std::unique_ptr<Player>& player : players_)
-				{
-					if (!player->IsAttack())
-					{
+				for (std::unique_ptr<Player>& player : players_) {
+					if (!player->IsAttack()) {
 						continue;
 					}
 					isChargeMax_ = false;
@@ -874,51 +891,19 @@ void TutorialScene::UpdateZoomIn() {
 	//カメラのスタート地点とエンド地点を設定
 	Vector3 cameraStartPosition = cameraStartPosition_;
 	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 10.0f;
+	cameraEndPosition.y = 2.0f;
+	cameraEndPosition.z -= 14.0f;
 	// カメラの補間
 	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
 	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
-
-	//// 敵の向きを補間
-	//if (!nearestEnemyType_.empty() and enemyManager_->GetEnemyCount() != 0)
-	//{
-	//	Vector3 rotation = { 0.0f, 0.0f, 0.0f };
-	//	//敵の現在の向き
-	//	if (nearestEnemyType_ == "TackleEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetTackleEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetTackleEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//	else if (nearestEnemyType_ == "FanEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetFanEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetFanEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//	else if (nearestEnemyType_ == "FreezeEnemy")
-	//	{
-	//		Vector3 newEnemyRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(nearestEnemyPos_, cameraEndPosition_) * easeT;
-	//		rotation = enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->GetRotation();
-	//		enemyManager_->GetFreezeEnemy(nearestEnemyNum_)->SetRotation(newEnemyRotate);
-	//	}
-	//}
-
-	//// プレイヤーの向きを補間
-	//if (nearestPlayerNum_ != (std::numeric_limits<uint32_t>::max)() and !players_.empty())
-	//{
-	//	Vector3 rotation = players_[nearestPlayerNum_]->GetRotation();
-	//	Vector3 newPlayerRotate = rotation * (1.0f - easeT) + CalculateLookAtRotation(cameraEndPosition, nearestPlayerPos_) * easeT;
-	//	players_[nearestPlayerNum_]->SetRotation(newPlayerRotate);
-	//}
+	newRotation -= 0.2f;
 
 	// カメラに新しい位置と回転を設定
 	camera_->SetTranslate(newPosition);
 	camera_->SetRotate(newRotation);
 
 	//補間が終わったら
-	if (t >= 1.0f) {
+	if (cameraEaseTime_ >= 3.0f) {
 		isZoomIn_ = false;
 		cameraEaseTime_ = 0.0f;
 		waitTime_ = waitTimeDuration_;
@@ -935,8 +920,8 @@ void TutorialScene::UpdateZoomOut() {
 	// 補完のイージング
 	float easeT = EaseInOutQuad(t);
 	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 3.0f;
-	cameraEndPosition.z -= 10.0;
+	cameraEndPosition.y = 2.0f;
+	cameraEndPosition.z -= 14.0;
 	// カメラの補間
 	Vector3 newPosition = cameraEndPosition * (1.0f - easeT) + cameraStartPosition_ * easeT;
 	Vector3 newRotation = CalculateLookAtRotation(newPosition, cameraEndPosition_) * (1.0f - easeT) + cameraRotate * easeT;

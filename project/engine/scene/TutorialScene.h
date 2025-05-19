@@ -25,8 +25,6 @@
 #include "../../application/PauseSystem.h"
 #include "../../application/TutorialSystem.h"
 
-
-
 class TutorialScene : public BaseScene {
 public:
 	/// <summary>
@@ -82,7 +80,7 @@ private://メンバ変数
 	Input* input_ = nullptr;
 
 
-	// スプライト
+	// プライト
 	// プレイ画面UI
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
@@ -110,6 +108,7 @@ private://メンバ変数
 
 	// プレイヤー
 	std::vector<std::unique_ptr<Player>> players_{};
+	std::unique_ptr<Player> preSpawnedPlayer_ = nullptr;
 
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;
@@ -141,7 +140,7 @@ private://メンバ変数
 	std::unique_ptr<TutorialSystem> tutorialSystem_ = nullptr;
 
 	// プレイヤースポーン位置の数(固定)
-	const uint32_t playerSpawnNum_ = 1;
+	const uint32_t playerSpawnNum_ = 3;
 	// プレイヤースポーン(ローテーション用。どのポイントから出現させるか)
 	uint32_t playerSpawnIndex_ = 0;
 	// プレイヤースポーン位置
