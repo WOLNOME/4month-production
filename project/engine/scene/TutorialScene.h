@@ -24,9 +24,6 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
-	//ステージ番号
-	static uint32_t stageNum_;
-
 private://メンバ変数
 
 	//チュートリアルシステム

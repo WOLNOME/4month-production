@@ -9,8 +9,6 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
-uint32_t TutorialScene::stageNum_ = 0;
-
 void TutorialScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
