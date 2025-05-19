@@ -9,7 +9,6 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
-
 uint32_t TutorialScene::stageNum_ = 0;
 
 void TutorialScene::Initialize() {
@@ -54,7 +53,7 @@ void TutorialScene::Initialize() {
 
 
 	switch (stageNum_) {
-	case 0: case 1: case 2:
+	case 1: case 2:
 		cameraTranslate = { 0.0f,70.0f,-50.0f };
 
 		break;
@@ -83,8 +82,11 @@ void TutorialScene::Initialize() {
 	// スポーン位置
 	switch (stageNum_) {
 	case 0:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
+		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
+		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
 		break;
+
 	case 1:
 		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
 		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
@@ -125,6 +127,7 @@ void TutorialScene::Initialize() {
 		auto player = std::make_unique<Player>();
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
+		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 		player->SetIsChargeMax(&isChargeMax_);
 
@@ -140,6 +143,7 @@ void TutorialScene::Initialize() {
 	case 0:
 		enemyManager_->SpawnTackleEnemy(2);
 		break;
+
 	case 1:
 		enemyManager_->SpawnTackleEnemy(7);
 		break;
@@ -178,7 +182,7 @@ void TutorialScene::Initialize() {
 
 	//フィールドの大きさと敵のスポーン範囲を設定
 	switch (stageNum_) {
-	case 0: case 1: case 2:
+	case 0:case 1: case 2:
 		field_->SetScale({ 20.0f,1.0f,20.0f });
 		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
 
@@ -359,7 +363,7 @@ void TutorialScene::Initialize() {
 	}
 
 	// プレイヤースポーン位置モデル
-	for (uint32_t i = 0; i < playerSpawnPositions_.size(); ++i) {
+	for (uint32_t i = 0; i < playerSpawnNum_; ++i) {
 		auto playerSpawn = std::make_unique<SpawnPos>();
 		playerSpawn->SetPosition(playerSpawnPositions_[i]);
 		playerSpawn->Initialize();
@@ -387,7 +391,7 @@ void TutorialScene::Update() {
 	if (pauseSystem_->GetIsPause()) {
 		return;
 	}
-	//チュートリアルシステムの更新
+	// チュートリアルシステムの更新
 	tutorialSystem_->Update();
 	if (tutorialSystem_->GetIsTimeStop()) {
 		return;
@@ -428,12 +432,17 @@ void TutorialScene::Update() {
 			}
 			return false;
 		}), players_.end());
-	// プレイヤー
+	// 通常プレイヤーの更新
 	for (auto& player : players_) {
 		player->Update();
 	}
 	// プレイヤー攻撃チャージ
 	playerTackleCharge();
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Update();
+	}
 
 
 	//エネミーマネージャーの更新
@@ -511,7 +520,12 @@ void TutorialScene::Draw() {
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
 
-	// プレイヤー
+	 // 準備中プレイヤーの描画
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Draw(*camera_.get());
+	}
+
+	// 通常プレイヤーの描画
 	for (auto& player : players_) {
 		player->Draw(*camera_.get());
 	}
@@ -570,11 +584,12 @@ void TutorialScene::Draw() {
 	spriteUI_PLAY_->Draw();
 	spriteUI_ChargeGage_->Draw();
 	spriteUI_Charge_->Draw();
-	//チュートリアルシステムの描画
-	tutorialSystem_->DrawSprite();
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
-
+	if (!pauseSystem_->GetIsPause()) {
+		// チュートリアルシステムの描画
+		tutorialSystem_->DrawSprite();
+	}
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -588,18 +603,17 @@ void TutorialScene::TextDraw() {
 
 	// ポーズシステムのテキスト描画
 	pauseSystem_->TextDraw();
-
 	if (!pauseSystem_->GetIsPause()) {
-		if (tutorialSystem_->GetIsZankiDisplay()) {
-			//スペースUIテキスト
-			remainingSpawnNumText_->WriteText(L"残り出現数");
-			// 残りの出現数テキスト
-			numText_->WriteText(std::to_wstring(remainingBoogie_));
-			// 値のテキスト
-			valueText_->WriteText(L"体");
-		}
-		//チュートリアルシステムのテキスト
+		// チュートリアルシステムのテキスト描画
 		tutorialSystem_->WriteText();
+	}
+	if (!pauseSystem_->GetIsPause() && tutorialSystem_->GetIsZankiDisplay()) {
+		//スペースUIテキスト
+		remainingSpawnNumText_->WriteText(L"残り出現数");
+		// 残りの出現数テキスト
+		numText_->WriteText(std::to_wstring(remainingBoogie_));
+		// 値のテキスト
+		valueText_->WriteText(L"体");
 	}
 
 	///------------------------------///

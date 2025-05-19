@@ -236,7 +236,7 @@ void Player::OnCollision(const AppCollider* _other) {
 		penetration.Normalize();
 		// ノックバック
 		moveVel_ = penetration;
-		moveVel_ *= 20.0f;
+		moveVel_ /= 3.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
 		knockBackTime_ = 30.0f;
@@ -333,7 +333,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
 		moveVel_ += windDirection * 2.0f;
-		//moveVel_ *= 2.0f;
+		moveVel_ /= 60.0f;
 		moveVel_.y = 0.0f;
 		// ノックバックタイマー
 		knockBackTime_ = 25.0f;
