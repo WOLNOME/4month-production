@@ -38,17 +38,17 @@ void TutorialScene::Initialize() {
 	// 残り出現数UIテキスト
 	remainingSpawnNumText_ = std::make_unique<TextWrite>();
 	remainingSpawnNumText_->Initialize("REMAINING");
-	remainingSpawnNumText_->SetParam({ 10.0f, 100.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	remainingSpawnNumText_->SetParam({ 10.0f, 100.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
 	remainingSpawnNumText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 	// 残りの出現数テキスト
 	numText_ = std::make_unique<TextWrite>();
 	numText_->Initialize("NUM");
-	numText_->SetParam({ 50.0f, 150.0f }, Font::UDDegitalNK_R, 70.0f, { 0.9f, 0.85f, 0.13f, 1 });
+	numText_->SetParam({ 50.0f, 150.0f }, Font::GenEiPOPle, 70.0f, { 0.9f, 0.85f, 0.13f, 1 });
 	numText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 	// 値のテキスト
 	valueText_ = std::make_unique<TextWrite>();
 	valueText_->Initialize("value");
-	valueText_->SetParam({ 160.0f, 185.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	valueText_->SetParam({ 160.0f, 185.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
 	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 
 

@@ -54,7 +54,10 @@ void TextWrite::DebugWithImGui() {
 			"UDDegitalNK_R",
 			"UDDegitalNP_B",
 			"UDDegitalNP_R",
-			"OnionScript"
+			"OnionScript",
+			"GenEiPOPle",
+			"KyouryunoGuratan",
+			"AllMembersGatheringPop",
 		};
 		int fontIndex = static_cast<int>(currentFont);
 		if (ImGui::Combo("Font", &fontIndex, fontNames, IM_ARRAYSIZE(fontNames))) {
@@ -86,7 +89,7 @@ void TextWrite::DebugWithImGui() {
 		ImGui::SliderFloat("strokeWidth", &edgeStrokeWidth_, 1.0f, 30.0f);
 		SetEdgeStrokeWidth(edgeStrokeWidth_);
 		//アウトラインのスライド量
-		ImGui::SliderFloat2("slideRate", &edgeSlideRate_.x, -0.005f, 0.005f);
+		ImGui::SliderFloat2("slideRate", &edgeSlideRate_.x, -0.01f, 0.01f);
 		SetEdgeSlideRate(edgeSlideRate_);
 	}
 
@@ -152,6 +155,7 @@ void TextWrite::SetEdgeColor(const Vector4& color) {
 }
 
 const std::wstring& TextWrite::ReturnFontName(const Font& font) {
+	//ここの文字列はManagerのFontFaceMapから参照する。
 	static const std::wstring meiryo = L"Meiryo";
 	static const std::wstring yugothic = L"Yu Gothic";
 	static const std::wstring yumincho = L"Yu Mincho";
@@ -162,6 +166,10 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 	static const std::wstring udDegitalNP_B = L"UD Digi Kyokasho NP-B";
 	static const std::wstring udDegitalNP_R = L"UD Digi Kyokasho NP-R";
 	static const std::wstring onionScript = L"Tamanegi Kaisho Geki FreeVer 7";
+	static const std::wstring genEiPOPle = L"GenEi POPle";
+	static const std::wstring kyouryunoGuratan = L"KyouryunoGuratan";
+	static const std::wstring allMembersGatheringPop = L"AllMembersGatheringPop Ver3";
+
 
 	static const std::wstring empty = L"";
 
@@ -186,6 +194,12 @@ const std::wstring& TextWrite::ReturnFontName(const Font& font) {
 		return udDegitalNP_R;
 	case Font::OnionScript:
 		return onionScript;
+	case Font::GenEiPOPle:
+		return genEiPOPle;
+	case Font::KyouryunoGuratan:
+		return kyouryunoGuratan;
+	case Font::AllMembersGatheringPop:
+		return allMembersGatheringPop;
 	default:
 		return empty;
 	}
