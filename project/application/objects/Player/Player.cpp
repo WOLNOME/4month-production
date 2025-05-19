@@ -10,7 +10,8 @@ void Player::Initialize() {
 
 	// プレーヤーモデル
 	wtPlayer_.Initialize();
-	wtPlayer_.scale_ = { 1.0f,1.0f,1.0f };
+	wtPlayer_.scale_ = scale_;
+	wtPlayer_.translate_ = position_;
 	player_ = std::make_unique<Object3d>();
 	player_->InitializeModel("player");
 
@@ -58,6 +59,8 @@ void Player::Initialize() {
 	tackleEffect_->emitter_.gravity = 0.3f;
 	tackleEffect_->emitter_.isPlay = false;
 
+	fallSE = std::make_unique<Audio>();
+	fallSE->Initialize("soundeffect/fall.wav");
 }
 
 void Player::Finalize() {
@@ -129,6 +132,7 @@ void Player::Update() {
 
 	wtPlayer_.UpdateMatrix();
 	wtPlayer_.rotate_ = rotation_;
+	wtPlayer_.scale_ = scale_;
 
 	// 当たり判定関係
 	aabb_.min = wtPlayer_.translate_ - wtPlayer_.scale_;
@@ -170,6 +174,7 @@ void Player::OutOfField() {
 		deadEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		isGround_ = true;
 		isDeadShake_ = true;
+		fallSE->Play(false, 0.5f);
 	}
 
 	isGround_ = false;
@@ -245,7 +250,7 @@ void Player::OnCollision(const AppCollider* _other) {
 	}
 
 	// どちらも攻撃していなくてノックバック中でないとき
-	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_) {
+	if (_other->GetColliderID() == "TackleEnemy" && !_other->GetOwner()->IsAttack() && !isAttack_ && !isAftertaste_ && isMoveable_) {
 		// プレイヤーの速度を取得
 		Vector3 playerVelocity = moveVel_;
 
@@ -261,7 +266,7 @@ void Player::OnCollision(const AppCollider* _other) {
 	}
 
 	// プレイヤー同士の衝突
-	if (_other->GetColliderID() == "Player") {
+	if (_other->GetColliderID() == "Player" && isMoveable_) {
 		// プレイヤー同士の衝突処理
 		Vector3 playerPosition = wtPlayer_.translate_;
 		Vector3 otherPlayerPosition = _other->GetOwner()->GetPosition();
@@ -289,7 +294,7 @@ void Player::OnCollision(const AppCollider* _other) {
 }
 
 void Player::OnCollisionTrigger(const AppCollider* _other) {
-	if (_other->GetColliderID() == "TackleEnemy") {
+	if (_other->GetColliderID() == "TackleEnemy" && isMoveable_) {
 		// 攻撃が当たったとき攻撃を止める
 		if (isAttack_) {
 			isStop_ = true;
@@ -322,7 +327,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 	}
 
 	// 風に当たったらノックバック
-	if (_other->GetColliderID() == "Wind" && !isAttack_) {
+	if (_other->GetColliderID() == "Wind" && !isAttack_ && isMoveable_) {
 		isAftertaste_ = true;
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
@@ -335,7 +340,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 	}
 
 	// 障害物に当たったら効果音の再生
-	if (_other->GetColliderID() == "Obstacle")
+	if (_other->GetColliderID() == "Obstacle" && isMoveable_)
 	{
 		if (!obstacleSE_) { return; }
 		obstacleSE_->Play();
