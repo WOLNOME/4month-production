@@ -355,8 +355,15 @@ void TackleEnemy::MoveOnIce() {
 	// 摩擦による減速を適用
 	tackleVelocity_ *= frictionOnIce_;
 
+	// 進行方向に基づいて回転を計算
+	if (tackleVelocity_.Length() > 0.01f && !isAftertaste_)
+	{
+		float targetRotationY = atan2f(tackleVelocity_.x, tackleVelocity_.z);
+		transform_.rotate_.y = MyMath::Lerp(transform_.rotate_.y, targetRotationY, 0.1f); // 0.1fは補間係数
+	}
+
 	// 速度が非常に小さくなったら停止する
-	if (tackleVelocity_.Length() < 0.001f && isStop_) {
+	if (tackleVelocity_.Length() < 0.001f || isStop_) {
 		isAttack_ = false;
 		isStop_ = false;
 
