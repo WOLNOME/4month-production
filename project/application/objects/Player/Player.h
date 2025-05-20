@@ -114,6 +114,7 @@ private:
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};
 	std::unique_ptr<Object3d> player_ = nullptr;
+	uint32_t textureHandle_ = 0u;
 
 	// 当たり判定関係
 	AppCollisionManager* appCollisionManager_ = nullptr;
@@ -173,5 +174,7 @@ private:
 
 	// 動かせるかフラグ(クリアシーンで動かないようにさせたい)
 	bool isMoveable_ = true;
+	// コックバック時の点滅フラグ
+	bool isFlash_ = false;
 };
 

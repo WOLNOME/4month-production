@@ -19,7 +19,7 @@ public:
 	void Draw();
 	void SpawnTackleEnemy(uint32_t count);
 	void SpawnFanEnemy(uint32_t count);
-	void SpawnWind(const Vector3& position, const Vector3& direction);
+	void SpawnWind(const Vector3& position, const Vector3& direction, const Vector3& rotate);
 	void SpawnFreezeEnemy(uint32_t count);
 	void SpawnIceMist(const Vector3& position, const Vector3& velocity);
 	void TackleEnemyTargetUpdate();
