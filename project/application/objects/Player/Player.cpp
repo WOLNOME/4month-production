@@ -342,9 +342,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 	}
 
 	// 風に当たったらノックバック
-	if (_other->GetColliderID() == "Wind" && !isAttack_ && isMoveable_) {
-		isAftertaste_ = true;
-		textureHandle_ = TextureManager::GetInstance()->LoadTexture("player_knockBack.png");
+	if (_other->GetColliderID() == "Wind" && !isAttack_ && isMoveable_) {		
 
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
