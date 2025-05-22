@@ -205,10 +205,10 @@ void EnemyManager::SpawnFanEnemy(uint32_t count)
 	}
 }
 
-void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction)
+void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction, const Vector3& rotate)
 {
 	auto wind = std::make_unique<Wind>();
-	wind->Initialize("Cube", position, direction);
+	wind->Initialize("Wind", position, direction,rotate);
 	winds_.emplace_back(std::move(wind));					
 }
 
@@ -231,7 +231,7 @@ void EnemyManager::SpawnFreezeEnemy(uint32_t count)
 void EnemyManager::SpawnIceMist(const Vector3& position, const Vector3& velocity)
 {
 	auto iceMist = std::make_unique<IceMist>();
-	iceMist->Initialize("Cube", position, velocity);
+	iceMist->Initialize("IceMist", position, velocity);
 	iceMists_.emplace_back(std::move(iceMist));
 }
 

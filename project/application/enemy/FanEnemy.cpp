@@ -213,7 +213,9 @@ void FanEnemy::StartFan()
 	direction.Normalize();
 
     // 風を生成
-    enemyManager_->SpawnWind(transform_.translate_, direction);
+	transform_.translate_.y += 1.0f;
+	enemyManager_->SpawnWind(transform_.translate_, direction, { transform_.rotate_.x, transform_.rotate_.y + 1.57f, transform_.rotate_.z });
+	transform_.translate_.y -= 1.0f;
 }
 
 void FanEnemy::FanUpdate()
