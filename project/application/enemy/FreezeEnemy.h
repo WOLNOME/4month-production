@@ -26,6 +26,7 @@ public:
 	Vector3 GetRotate() const { return transform_.rotate_; }
 	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
 	void SetTargetPosition(const Vector3& targetPosition) { targetPosition_ = targetPosition; }
+	void UpdateTransform() { transform_.UpdateMatrix(); }
 
 	void Initialize() override {}
 	void Update() override {}

@@ -30,6 +30,7 @@ public:
 	void SetEnemyManager(EnemyManager* enemyManager) { enemyManager_ = enemyManager; }
 	bool IsAlive() const { return isAlive_; }
 	bool IsGround() const { return isGround_; }
+	void UpdateTransform() { transform_.UpdateMatrix(); }
 
 private:
 	void Move();

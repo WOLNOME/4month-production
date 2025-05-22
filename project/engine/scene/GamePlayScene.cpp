@@ -36,6 +36,27 @@ void GamePlayScene::Initialize()
 	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
 	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
+	// インターバルの数字
+	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("num1.png");
+	textureHandleIntervalNum2_ = TextureManager::GetInstance()->LoadTexture("num2.png");
+	textureHandleIntervalNum3_ = TextureManager::GetInstance()->LoadTexture("num3.png");
+	
+	spriteUI_Num1_ = std::make_unique<Sprite>();
+	spriteUI_Num1_->Initialize(textureHandleIntervalNum1_);
+	spriteUI_Num1_->SetAnchorPoint({ 0.5f, 0.5f });
+	spriteUI_Num1_->SetPosition({ 640.0f, 360.0f });
+	spriteUI_Num1_->SetSize({ 0.0f, 0.0f });
+	spriteUI_Num2_ = std::make_unique<Sprite>();
+	spriteUI_Num2_->Initialize(textureHandleIntervalNum2_);
+	spriteUI_Num2_->SetAnchorPoint({ 0.5f, 0.5f });
+	spriteUI_Num2_->SetPosition({ 640.0f, 360.0f });
+	spriteUI_Num2_->SetSize({ 0.0f, 0.0f });
+	spriteUI_Num3_ = std::make_unique<Sprite>();
+	spriteUI_Num3_->Initialize(textureHandleIntervalNum3_);
+	spriteUI_Num3_->SetAnchorPoint({ 0.5f, 0.5f });
+	spriteUI_Num3_->SetPosition({ 640.0f, 360.0f });
+	spriteUI_Num3_->SetSize({ 0.0f, 0.0f });
+
 	// 残り出現数UIテキスト
 	remainingSpawnNumText_ = std::make_unique<TextWrite>();
 	remainingSpawnNumText_->Initialize("REMAINING");
@@ -49,9 +70,9 @@ void GamePlayScene::Initialize()
 	// 値のテキスト
 	valueText_ = std::make_unique<TextWrite>();
 	valueText_->Initialize("value");
-	valueText_->SetParam({ 160.0f, 185.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	valueText_->SetParam({ 0.0f, 0.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
 	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-
+	
 
 	switch (stageNum_)
 	{
@@ -431,6 +452,45 @@ void GamePlayScene::Update()
 	spriteUI_Charge_->Update();
 	spriteUI_ChargeGage_->Update();
 	remainingSpawnNum();
+	spriteUI_Num1_->Update();
+	spriteUI_Num2_->Update();
+	spriteUI_Num3_->Update();
+
+	// ゲーム開始のインターバル
+	if (!isGameStart_) {
+		// 初期モデルだけ 1 回 Update しておく
+		if (!hasPreUpdated_) {
+			// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
+			UpdateTransform();
+
+			hasPreUpdated_ = true;
+		}
+
+		// 3秒カウント
+		gameStartDelayTimer_ -= 1.0f / 60.0f;
+		if (gameStartDelayTimer_ <= 0.0f) {
+			isGameStart_ = true;
+		}
+
+		// プレイヤーの行動不能フラグセット
+		for (auto& player : players_)
+		{
+			player->IsMoveable(false);
+		}
+
+		// エネミーの行動不能フラグセット
+		enemyManager_->IsMoveable(false);
+	} 
+	else
+	{
+		for (auto& player : players_)
+		{
+			player->IsMoveable(true);
+		}
+
+		enemyManager_->IsMoveable(true);
+	}
+
 
 	// チャージの大きさに応じてスプライトのサイズを変更
 	if (charge_ == 0.0f)
@@ -470,9 +530,11 @@ void GamePlayScene::Update()
 	{
 		player->Update();
 	}
-	// プレイヤー攻撃チャージ
-	playerTackleCharge();
-
+	if (isGameStart_)
+	{
+		// プレイヤー攻撃チャージ
+		playerTackleCharge();
+	}
 	// 準備中プレイヤーの更新
 	if (preSpawnedPlayer_) {
 		preSpawnedPlayer_->Update();
@@ -508,7 +570,7 @@ void GamePlayScene::Update()
 	{
 		playerSpawn->Update();
 	}
-	if (playerNum_ > 0)
+	if (playerNum_ > 0 && isGameStart_)
 	{
 		playerSpawnRotation();
 	}
@@ -551,9 +613,7 @@ void GamePlayScene::Update()
 	ImGuiDraw();
 
 	//UIテキスト用のImGui
-	//remainingSpawnNumText_->DebugWithImGui();
-	//numText_->DebugWithImGui();
-	//valueText_->DebugWithImGui();
+	//intervalNumText_->DebugWithImGui();
 }
 
 void GamePlayScene::Draw()
@@ -636,6 +696,11 @@ void GamePlayScene::Draw()
 	spriteUI_Charge_->Draw();
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
+
+	if (!isGameStart_)
+	{
+		UpdateIntervalNum();
+	}
 
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
@@ -787,7 +852,7 @@ void GamePlayScene::playerSpawnRotation()
 		prePlayer->Initialize();
 		prePlayer->SetIsChargeMax(&isChargeMax_);
 
-		prePlayer->SetIsMoveable(false);
+		prePlayer->IsMoveable(false);
 
 		preSpawnedPlayer_ = std::move(prePlayer);
 
@@ -817,7 +882,7 @@ void GamePlayScene::playerSpawnRotation()
 			rotationTimer_ = rotation_;
 
 			preSpawnedPlayer_->SetScale({ 1.0f, 1.0f, 1.0f });
-			preSpawnedPlayer_->SetIsMoveable(true);
+			preSpawnedPlayer_->IsMoveable(true);
 
 			players_.push_back(std::move(preSpawnedPlayer_));
 			howManyBoogie_++;
@@ -902,6 +967,65 @@ void GamePlayScene::remainingSpawnNum()
 	if (remainingBoogie_ < 0) {
 		remainingBoogie_ = 0; // 負の値にならないように制限
 	}
+}
+
+void GamePlayScene::UpdateTransform()
+{
+	// プレイヤーの位置を更新
+	for (auto& player : players_)
+	{
+		player->UpdateModel();
+	}
+	// エネミーマネージャーの位置を更新
+	enemyManager_->UpdateTransform();
+	// フィールドの位置を更新
+	field_->UpdateTransform();
+	// 障害物の位置を更新
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->UpdateTransform();
+	}
+	// 跳ね返る障害物の位置を更新
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->UpdateTransform();
+	}
+	// 氷の床の位置を更新
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->UpdateTransform();
+	}
+}
+
+void GamePlayScene::UpdateIntervalNum()
+{
+	if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f){
+		spriteUI_Num3_->Draw();
+	} 
+	else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f){
+		spriteUI_Num2_->Draw();
+	} 
+	else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f){
+		spriteUI_Num1_->Draw();
+	} 
+
+	// 数字のサイズを更新
+	spriteUI_Num1_->SetSize(numSize_);
+	spriteUI_Num2_->SetSize(numSize_);
+	spriteUI_Num3_->SetSize(numSize_);
+
+	numSizeTimer_++;
+	if (numSizeTimer_ > 60) {
+		numSizeTimer_ = 0; // リピート or 一度きりなら終了
+	}
+
+	// 0〜π までの範囲に変換（0→最大→0）
+	float t = static_cast<float>(numSizeTimer_) / 60.0f; // 0〜1
+	float scale = std::sinf(t * 3.14159265f); // sin(0→π) = 0→1→0
+
+	// 最大サイズに合わせてスケーリング
+	numSize_.x = 320.0f * scale;
+	numSize_.y = 480.0f * scale;
 }
 
 void GamePlayScene::UpdateCamera()

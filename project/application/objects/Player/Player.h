@@ -79,8 +79,8 @@ public: //セッター
 	// 落下フラグをセット(クリアシーンで常にONにしてたい)
 	void SetIsGround(bool _flag) { isGround_ = _flag; }
 
-	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)
-	void SetIsMoveable(bool _flag) { isMoveable_ = _flag; }
+	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)falseで動かない
+	void IsMoveable(bool _flag) { isMoveable_ = _flag; }
 
 private:
 

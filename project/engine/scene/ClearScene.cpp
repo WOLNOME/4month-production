@@ -49,7 +49,7 @@ void ClearScene::Initialize()
 	player_->Initialize();
 	player_->SetPosition({ 0.0f, 1.0f, 0.0f });
 	player_->SetRotation({ 0.0f, 3.14f, 0.0f });
-	player_->SetIsMoveable(false);
+	player_->IsMoveable(false);
 
 	//bgm
 	bgm_ = std::make_unique<Audio>();
