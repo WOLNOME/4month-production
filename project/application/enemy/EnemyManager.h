@@ -24,8 +24,10 @@ public:
 	void SpawnIceMist(const Vector3& position, const Vector3& velocity);
 	void TackleEnemyTargetUpdate();
 	void FreezeEnemyTargetUpdate();
+	void UpdateTransform();
 
 	void SetSpawnPosition(const Vector3& min, const Vector3& max) { spawnMinPosition_ = min; spawnMaxPosition_ = max; }
+	void IsMoveable(bool moveable);
 	Vector3 GetTargetPosition() const { return targetPosition_; }
 	// タックルエネミーの数を取得
 	uint32_t GetTackleEnemyCount() const { return static_cast<uint32_t>(tackleEnemies_.size()); }

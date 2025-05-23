@@ -66,8 +66,12 @@ void FanEnemy::EnemyUpdate()
 	ChageRotationSpeed();
 	// 回転
 	transform_.rotate_.y = fmod(transform_.rotate_.y + rotateSpeed_, 2.0f * 3.14159265359f);
-	// 風の更新
-	FanUpdate();
+	
+	if (isMoveable_) 
+	{
+		// 風の更新
+		FanUpdate();
+	}
 
 	//パーティクル
 	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {

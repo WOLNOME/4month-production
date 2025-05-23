@@ -60,7 +60,7 @@ void TackleEnemy::EnemyUpdate() {
 	else {
 
 		// タックル中でない場合、待機タイマーを更新
-		if (!isTackling_ && isGround_ && !isAftertaste_) {
+		if (!isTackling_ && isGround_ && !isAftertaste_ && isMoveable_) {
 			tackleWaitTimer_ += 1.0f / 60.0f;
 			if (tackleWaitTimer_ >= nextTackleWaitTime_) {
 				// タックルを開始
@@ -73,10 +73,10 @@ void TackleEnemy::EnemyUpdate() {
 	}
 
 	//氷の上にいるとき
-	if (onIce_) {
+	if (onIce_ && isMoveable_) {
 		MoveOnIce();
 	}
-	else {
+	else if(isMoveable_){
 		//移動
 		Move();
 	}

@@ -55,17 +55,21 @@ void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 void FreezeEnemy::EnemyUpdate()
 {
 	//氷の上にいるとき
-	if (onIce_)
+	if (onIce_ && isMoveable_)
 	{
 		MoveOnIce();
 	}
-	else
+	else if(isMoveable_)
 	{
 		// 移動
 		Move();
 	}
-	// 凍結攻撃
-	FreezeUpdate();
+
+	if (isMoveable_)
+	{
+		// 凍結攻撃
+		FreezeUpdate();
+	}
 
 	//パーティクル
 	if (deadEffect_->emitter_.isPlay || countDeadEffect_ != 0) {
