@@ -37,9 +37,9 @@ void GamePlayScene::Initialize()
 	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 	// インターバルの数字
-	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("num1.png");
-	textureHandleIntervalNum2_ = TextureManager::GetInstance()->LoadTexture("num2.png");
-	textureHandleIntervalNum3_ = TextureManager::GetInstance()->LoadTexture("num3.png");
+	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("count1.png");
+	textureHandleIntervalNum2_ = TextureManager::GetInstance()->LoadTexture("count2.png");
+	textureHandleIntervalNum3_ = TextureManager::GetInstance()->LoadTexture("count3.png");
 	
 	spriteUI_Num1_ = std::make_unique<Sprite>();
 	spriteUI_Num1_->Initialize(textureHandleIntervalNum1_);

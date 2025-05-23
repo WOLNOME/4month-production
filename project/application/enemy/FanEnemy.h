@@ -31,6 +31,7 @@ public:
 	bool IsAlive() const { return isAlive_; }
 	bool IsGround() const { return isGround_; }
 	void UpdateTransform() { transform_.UpdateMatrix(); }
+	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
 
 private:
 	void Move();
@@ -79,5 +80,8 @@ private:
 
 	//氷の上にいるときの摩擦係数
 	float frictionOnIce_ = 0.995f;
+
+	// 行動不能フラグ
+	bool isMoveable_ = true;
 };
 
