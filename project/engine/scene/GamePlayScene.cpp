@@ -70,7 +70,7 @@ void GamePlayScene::Initialize()
 	// 値のテキスト
 	valueText_ = std::make_unique<TextWrite>();
 	valueText_->Initialize("value");
-	valueText_->SetParam({ 0.0f, 0.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
+	valueText_->SetParam({ 150.0f, 175.0f }, Font::UDDegitalNK_R, 40.0f, { 1, 1, 1, 1 });
 	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 	
 
@@ -613,7 +613,7 @@ void GamePlayScene::Update()
 	ImGuiDraw();
 
 	//UIテキスト用のImGui
-	//intervalNumText_->DebugWithImGui();
+	valueText_->DebugWithImGui();
 }
 
 void GamePlayScene::Draw()
