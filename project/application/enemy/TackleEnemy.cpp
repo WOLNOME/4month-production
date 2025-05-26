@@ -366,6 +366,7 @@ void TackleEnemy::MoveOnIce() {
 	if (tackleVelocity_.Length() < 0.001f || isStop_) {
 		isAttack_ = false;
 		isStop_ = false;
+		isAftertaste_ = false;
 
 		tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
 	}
