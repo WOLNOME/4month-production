@@ -135,6 +135,7 @@ private:
 
 	//効果音
 	std::unique_ptr<Audio> fallSE = nullptr;
+	std::unique_ptr<Audio> cantMoveSE = nullptr;
 
 	// 移動速度
 	float moveSpeed_ = 0.103f;

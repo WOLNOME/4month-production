@@ -65,6 +65,8 @@ void Player::Initialize() {
 	fallSE->Initialize("soundeffect/fall.wav");
 	obstacleCollisionSE_ = std::make_unique<Audio>();
 	obstacleCollisionSE_->Initialize("soundeffect/obstacleCollision.wav");
+	cantMoveSE = std::make_unique<Audio>();
+	cantMoveSE->Initialize("soundeffect/tackle.wav");
 }
 
 void Player::Finalize() {
@@ -314,6 +316,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 		// 攻撃が当たったとき攻撃を止める
 		if (isAttack_) {
 			isStop_ = true;
+			
 		}
 
 		// エネミーの攻撃を食らったとき
@@ -339,6 +342,8 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 
 			//被弾時のシェイクを送る合図
 			isDamageShake_ = true;
+
+			cantMoveSE->Play(false, 0.4f);
 		}
 
 	}
