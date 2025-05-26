@@ -60,9 +60,9 @@ void TackleEnemy::EnemyUpdate() {
 	else {
 
 		// タックル中でない場合、待機タイマーを更新
-		if (!isTackling_ && isGround_ && !isAftertaste_ && isMoveable_) {
+		if (!isTackling_ && isGround_ && isMoveable_) {
 			tackleWaitTimer_ += 1.0f / 60.0f;
-			if (tackleWaitTimer_ >= nextTackleWaitTime_) {
+			if (tackleWaitTimer_ >= nextTackleWaitTime_ && !isAftertaste_) {
 				// タックルを開始
 				StartTackle();
 
@@ -326,26 +326,32 @@ void TackleEnemy::Move() {
 	tackleVelocity_ += friction;
 
 	// 進行方向に基づいて回転を計算
-	if (tackleVelocity_.Length() > 0.01f && !isAftertaste_)
+	if (tackleVelocity_.Length() > 0.25f && !isAftertaste_)
 	{
 		float targetRotationY = atan2f(tackleVelocity_.x, tackleVelocity_.z);
 		transform_.rotate_.y = MyMath::Lerp(transform_.rotate_.y, targetRotationY, 0.1f); // 0.1fは補間係数
 	}
 
-	// 速度が非常に小さくなったら停止する
-	if (tackleVelocity_.Length() < 0.01f or isStop_ == true) {
+	if (isStop_) {
 		isAttack_ = false;
 		isStop_ = false;
 
+	}
+	if (tackleVelocity_.Length() < 0.25f) {
 		isAftertaste_ = false;
+		
+	}
+	// 速度が非常に小さくなったら停止する
+	if (tackleVelocity_.Length() < 0.01f) {
+		isAttack_ = false;
+		isStop_ = false;
 
-		return;
+		tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
 	}
 
 	// 位置を更新
-	if (!isStop_) {
-		transform_.translate_ += tackleVelocity_ * deltaTime;
-	}
+	transform_.translate_ += tackleVelocity_ * deltaTime;
+	position_ = transform_.translate_;
 }
 
 void TackleEnemy::MoveOnIce() {
@@ -356,17 +362,25 @@ void TackleEnemy::MoveOnIce() {
 	tackleVelocity_ *= frictionOnIce_;
 
 	// 進行方向に基づいて回転を計算
-	if (tackleVelocity_.Length() > 0.01f && !isAftertaste_)
+	if (tackleVelocity_.Length() > 0.25f && !isAftertaste_)
 	{
 		float targetRotationY = atan2f(tackleVelocity_.x, tackleVelocity_.z);
 		transform_.rotate_.y = MyMath::Lerp(transform_.rotate_.y, targetRotationY, 0.1f); // 0.1fは補間係数
 	}
 
-	// 速度が非常に小さくなったら停止する
-	if (tackleVelocity_.Length() < 0.001f || isStop_) {
+	if (isStop_) {
 		isAttack_ = false;
 		isStop_ = false;
+
+	}
+	if (tackleVelocity_.Length() < 0.25f) {
 		isAftertaste_ = false;
+
+	}
+	// 速度が非常に小さくなったら停止する
+	if (tackleVelocity_.Length() < 0.001f) {
+		isAttack_ = false;
+		isStop_ = false;
 
 		tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
 	}
