@@ -30,6 +30,8 @@ public:
 	// シェイク
 	void Shake();
 
+	void UpdateTransform() { wtSpawn_.UpdateMatrix(); }
+
 public: // セッター
 
 	// シェイク切り替え

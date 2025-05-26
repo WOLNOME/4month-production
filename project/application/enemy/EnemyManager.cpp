@@ -286,6 +286,44 @@ void EnemyManager::FreezeEnemyTargetUpdate()
 	}
 }
 
+void EnemyManager::UpdateTransform()
+{
+	//タックルエネミーの更新
+	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+	//ファンエネミーの更新
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+}
+
+void EnemyManager::IsMoveable(bool moveable)
+{
+	//タックルエネミーの更新
+	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->SetMoveable(moveable);
+	}
+	//ファンエネミーの更新
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->SetMoveable(moveable);
+	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->SetMoveable(moveable);
+	}
+}
+
 void EnemyManager::Finalize()
 {
 	for (auto& enemy : tackleEnemies_)

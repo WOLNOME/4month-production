@@ -15,6 +15,7 @@ public:
 	void Update() override;
 	void Draw(BaseCamera _camera) override;
 	void OnCollision(const AppCollider* _other);
+	void UpdateTransform() { worldTransform_.UpdateMatrix(); }
 
 	// 移動方向と速度を設定するメソッドを追加
 	void SetMoveDirection(const Vector3& direction);

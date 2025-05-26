@@ -75,6 +75,12 @@ public:
 	// 残り出現数UI
 	void remainingSpawnNum();
 
+	// モデルの更新(インターバル中に位置だけでもおいておきたい)
+	void UpdateTransform();
+
+	// ステージ始まるインターバル数字
+	void UpdateIntervalNum();
+
 protected://メンバ変数
 
 	Input* input_ = nullptr;
@@ -90,6 +96,14 @@ protected://メンバ変数
 	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
 	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
 	
+	// インターバルの数字
+	uint32_t textureHandleIntervalNum1_ = 0u;
+	uint32_t textureHandleIntervalNum2_ = 0u;
+	uint32_t textureHandleIntervalNum3_ = 0u;
+	std::unique_ptr<Sprite> spriteUI_Num1_ = nullptr;
+	std::unique_ptr<Sprite> spriteUI_Num2_ = nullptr;
+	std::unique_ptr<Sprite> spriteUI_Num3_ = nullptr;
+
 	
 	// 残り出現数
 	uint32_t remainingBoogie_ = 0;
@@ -189,5 +203,12 @@ protected://メンバ変数
 	// 攻撃チャージ
 	float charge_ = 0.0f;
 
+	// ゲーム開始のインターバル
+	float gameStartDelayTimer_ = 3.0f;
+	bool isGameStart_ = false;
+	bool hasPreUpdated_ = false;
+
+	Vector2 numSize_ = { 320.0f, 480.0f };
+	uint32_t numSizeTimer_ = 0;
 };
 
