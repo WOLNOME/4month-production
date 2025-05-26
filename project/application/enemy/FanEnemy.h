@@ -32,6 +32,8 @@ public:
 	bool IsGround() const { return isGround_; }
 	void UpdateTransform() { transform_.UpdateMatrix(); }
 	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
+	bool IsPlayingDeadEffect() const { return deadEffect_->emitter_.isPlay; }
+	bool isDeadSEPlayed_ = false;
 
 private:
 	void Move();

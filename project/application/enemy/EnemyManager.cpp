@@ -55,15 +55,20 @@ void EnemyManager::Update()
 	//ターゲットの更新
 	TackleEnemyTargetUpdate();
 	FreezeEnemyTargetUpdate();
+	bool fall = false;
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
 	{
 		enemy->EnemyUpdate();
 		//死んでいたら
-		if (!enemy->IsAlive())
+		if(enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
+		if(!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//ファンエネミーの更新
@@ -71,10 +76,14 @@ void EnemyManager::Update()
 	{
 		enemy->EnemyUpdate();
 		//死んでいたら
+		if(enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
 		if (!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//風の更新
@@ -86,10 +95,14 @@ void EnemyManager::Update()
 	for (auto& enemy : freezeEnemies_)
 	{
 		enemy->EnemyUpdate();
+		if (enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
 		if (!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//アイスミストの更新

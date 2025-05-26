@@ -63,6 +63,8 @@ void Player::Initialize() {
 
 	fallSE = std::make_unique<Audio>();
 	fallSE->Initialize("soundeffect/fall.wav");
+	obstacleCollisionSE_ = std::make_unique<Audio>();
+	obstacleCollisionSE_->Initialize("soundeffect/obstacleCollision.wav");
 }
 
 void Player::Finalize() {
@@ -357,8 +359,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 	// 障害物に当たったら効果音の再生
 	if (_other->GetColliderID() == "Obstacle" && isMoveable_)
 	{
-		if (!obstacleSE_) { return; }
-		obstacleSE_->Play();
+		obstacleCollisionSE_->Play(false,0.4f);
 	}
 }
 
