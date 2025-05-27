@@ -402,20 +402,13 @@ void TutorialScene::Update() {
 	remainingSpawnNum();
 
 	// チャージの大きさに応じてスプライトのサイズを変更
-	if (charge_ == 0.0f) {
-		// チャージが0のとき、テクスチャのXサイズを120に設定
-		spriteUI_Charge_->SetSize({ 180.0f, 50.0f });
-	}
-	else {
-		// チャージの割合を計算
-		float chargeScale = charge_ / chargeMax_;
-		chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
+	// チャージの割合を計算
+	float chargeScale = charge_ / chargeMax_;
+	chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
 
-		// チャージの割合に応じてテクスチャのXサイズを変更
-		float newWidth = 180.0f * chargeScale; // 0から120まで拡大
-		spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
-	}
-
+	// チャージの割合に応じてテクスチャのXサイズを変更
+	float newWidth = 180.0f * chargeScale; // 0から120まで拡大
+	spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
 
 	// カメラの更新
 	UpdateCamera();
