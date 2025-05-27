@@ -23,6 +23,8 @@ public:
 	// ImGui
 	void ImGuiDraw();
 
+	void UpdateTransform() { wtField_.UpdateMatrix(); }
+
 public: // セッター
 
 	void SetTextureHandle(std::string _textureHandle);

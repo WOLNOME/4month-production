@@ -8,7 +8,7 @@ class Wind : public GameObject
 {
 public:
 	~Wind();
-	void Initialize(const std::string& filePath, const Vector3& position, const Vector3& direction);
+	void Initialize(const std::string& filePath, const Vector3& position, const Vector3& direction, const Vector3& rotate);
 	void Update()override;
 	void Draw(BaseCamera camera) override;
 	// 当たっている間ずっと呼ばれる

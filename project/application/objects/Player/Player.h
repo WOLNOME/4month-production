@@ -69,9 +69,6 @@ public: //セッター
 
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
-	// 効果音のセット
-	void SetObstacleSE(Audio* _obstacleSE) { obstacleSE_ = _obstacleSE; }
-	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
 
 	// 攻撃チャージフラグをセット
 	void SetIsChargeMax(bool* _flag) { isChargeMax_ = _flag; }
@@ -79,8 +76,8 @@ public: //セッター
 	// 落下フラグをセット(クリアシーンで常にONにしてたい)
 	void SetIsGround(bool _flag) { isGround_ = _flag; }
 
-	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)
-	void SetIsMoveable(bool _flag) { isMoveable_ = _flag; }
+	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)falseで動かない
+	void IsMoveable(bool _flag) { isMoveable_ = _flag; }
 
 private:
 
@@ -108,12 +105,12 @@ private:
 	Input* input_ = nullptr;
 
 	//効果音のポインタ
-	Audio* obstacleSE_ = nullptr;
-	Audio* freezeSE_ = nullptr;
+	std::unique_ptr<Audio> obstacleCollisionSE_ = nullptr;
 
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};
 	std::unique_ptr<Object3d> player_ = nullptr;
+	uint32_t textureHandle_ = 0u;
 
 	// 当たり判定関係
 	AppCollisionManager* appCollisionManager_ = nullptr;
@@ -138,6 +135,7 @@ private:
 
 	//効果音
 	std::unique_ptr<Audio> fallSE = nullptr;
+	std::unique_ptr<Audio> cantMoveSE = nullptr;
 
 	// 移動速度
 	float moveSpeed_ = 0.103f;
@@ -173,5 +171,7 @@ private:
 
 	// 動かせるかフラグ(クリアシーンで動かないようにさせたい)
 	bool isMoveable_ = true;
+	// コックバック時の点滅フラグ
+	bool isFlash_ = false;
 };
 

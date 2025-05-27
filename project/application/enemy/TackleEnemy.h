@@ -19,6 +19,10 @@ public:
     void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	Vector3 GetRotate() const { return transform_.rotate_; }
 	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
+	void UpdateTransform() { transform_.UpdateMatrix(); }
+	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
+	bool IsPlayingDeadEffect() const { return deadEffect_->emitter_.isPlay; }
+    bool isDeadSEPlayed_ = false;
 
 	/////////// GameObjectとの競合を無くすための関数 ///////////
 
@@ -107,4 +111,7 @@ private:
 
 	std::unique_ptr<Audio> fallSE_ = nullptr;
 	bool isGrroundPre_ = false;
+
+	// 行動不能フラグ
+	bool isMoveable_ = true;
 };

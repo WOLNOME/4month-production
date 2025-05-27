@@ -26,6 +26,10 @@ public:
 	Vector3 GetRotate() const { return transform_.rotate_; }
 	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
 	void SetTargetPosition(const Vector3& targetPosition) { targetPosition_ = targetPosition; }
+	void UpdateTransform() { transform_.UpdateMatrix(); }
+	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
+	bool IsPlayingDeadEffect() const { return deadEffect_->emitter_.isPlay; }
+	bool isDeadSEPlayed_ = false;
 
 	void Initialize() override {}
 	void Update() override {}
@@ -76,4 +80,7 @@ private:
 
 	//氷の上にいるときの摩擦係数
 	float frictionOnIce_ = 0.995f;
+
+	// 行動不能フラグ
+	bool isMoveable_ = true;
 };

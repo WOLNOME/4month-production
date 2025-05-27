@@ -60,7 +60,7 @@ void TackleEnemy::EnemyUpdate() {
 	else {
 
 		// タックル中でない場合、待機タイマーを更新
-		if (!isTackling_ && isGround_ && !isAftertaste_) {
+		if (!isTackling_ && isGround_ && !isAftertaste_ && isMoveable_) {
 			tackleWaitTimer_ += 1.0f / 60.0f;
 			if (tackleWaitTimer_ >= nextTackleWaitTime_) {
 				// タックルを開始
@@ -73,10 +73,10 @@ void TackleEnemy::EnemyUpdate() {
 	}
 
 	//氷の上にいるとき
-	if (onIce_) {
+	if (onIce_ && isMoveable_) {
 		MoveOnIce();
 	}
-	else {
+	else if(isMoveable_){
 		//移動
 		Move();
 	}
@@ -355,8 +355,15 @@ void TackleEnemy::MoveOnIce() {
 	// 摩擦による減速を適用
 	tackleVelocity_ *= frictionOnIce_;
 
+	// 進行方向に基づいて回転を計算
+	if (tackleVelocity_.Length() > 0.01f && !isAftertaste_)
+	{
+		float targetRotationY = atan2f(tackleVelocity_.x, tackleVelocity_.z);
+		transform_.rotate_.y = MyMath::Lerp(transform_.rotate_.y, targetRotationY, 0.1f); // 0.1fは補間係数
+	}
+
 	// 速度が非常に小さくなったら停止する
-	if (tackleVelocity_.Length() < 0.001f && isStop_) {
+	if (tackleVelocity_.Length() < 0.001f || isStop_) {
 		isAttack_ = false;
 		isStop_ = false;
 

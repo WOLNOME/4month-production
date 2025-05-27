@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "ParticleManager.h"
+#include "TextureManager.h"
 
 void Player::Initialize() {
 	input_ = Input::GetInstance();
@@ -15,6 +16,7 @@ void Player::Initialize() {
 	player_ = std::make_unique<Object3d>();
 	player_->InitializeModel("player");
 
+	textureHandle_ = TextureManager::GetInstance()->LoadTexture("player.png");
 
 	// 当たり判定関係
 	appCollisionManager_ = AppCollisionManager::GetInstance();
@@ -61,6 +63,10 @@ void Player::Initialize() {
 
 	fallSE = std::make_unique<Audio>();
 	fallSE->Initialize("soundeffect/fall.wav");
+	obstacleCollisionSE_ = std::make_unique<Audio>();
+	obstacleCollisionSE_->Initialize("soundeffect/obstacleCollision.wav");
+	cantMoveSE = std::make_unique<Audio>();
+	cantMoveSE->Initialize("soundeffect/tackle.wav");
 }
 
 void Player::Finalize() {
@@ -107,6 +113,18 @@ void Player::Update() {
 		MovePosition();
 	}
 
+	if (isAftertaste_) {
+		// 点滅処理
+		static float time = 0.0f;
+		static const float flashInterval = 15.0f; // 点滅間隔（フレーム数）
+
+		time += 1.0f;
+
+		if (time >= flashInterval) {
+			isFlash_ = !isFlash_;  // ON/OFFを切り替える
+			time = 0.0f;
+		}
+	}
 
 	// 場外処理
 	OutOfField();
@@ -143,8 +161,8 @@ void Player::Update() {
 }
 
 void Player::Draw(BaseCamera _camera) {
-	if (!isDead_ && !deadEffect_->emitter_.isPlay) {
-		player_->Draw(wtPlayer_, _camera);
+	if (!isDead_ && !deadEffect_->emitter_.isPlay && !isFlash_) {
+		player_->Draw(wtPlayer_, _camera,nullptr,textureHandle_);
 	}
 }
 
@@ -298,21 +316,23 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 		// 攻撃が当たったとき攻撃を止める
 		if (isAttack_) {
 			isStop_ = true;
+			
 		}
 
 		// エネミーの攻撃を食らったとき
 		if (_other->GetOwner()->IsAttack() && !isAttack_) {
 			isAftertaste_ = true;
+			textureHandle_ = TextureManager::GetInstance()->LoadTexture("player_knockBack.png");
 
 			// 当たったエネミーの位置を取得
 			enemyPosition_ = _other->GetOwner()->GetPosition();
 
 			attackToEnemy_ = wtPlayer_.translate_ - enemyPosition_;
-
+			attackToEnemy_.y = 0.0f;
+			attackToEnemy_.Normalize();
+			attackToEnemy_ *= 1.0f / 3.0f;
 			// ノックバック
 			moveVel_ = attackToEnemy_;
-			moveVel_ /= 6.0f;
-			moveVel_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 40.0f;
 
@@ -322,13 +342,15 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 
 			//被弾時のシェイクを送る合図
 			isDamageShake_ = true;
+
+			cantMoveSE->Play(false, 0.4f);
 		}
 
 	}
 
 	// 風に当たったらノックバック
-	if (_other->GetColliderID() == "Wind" && !isAttack_ && isMoveable_) {
-		isAftertaste_ = true;
+	if (_other->GetColliderID() == "Wind" && !isAttack_ && isMoveable_) {		
+
 		//当たった風の位置を取得
 		Vector3 windDirection = wtPlayer_.translate_ - _other->GetOwner()->GetPosition();
 		// ノックバック
@@ -342,8 +364,7 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 	// 障害物に当たったら効果音の再生
 	if (_other->GetColliderID() == "Obstacle" && isMoveable_)
 	{
-		if (!obstacleSE_) { return; }
-		obstacleSE_->Play();
+		obstacleCollisionSE_->Play(false,0.4f);
 	}
 }
 
@@ -481,6 +502,8 @@ void Player::MovePositionCommon(float friction)
 	}
 	if (moveVel_.Length() < 0.025f) {
 		isAftertaste_ = false;
+		isFlash_ = false;
+		textureHandle_ = TextureManager::GetInstance()->LoadTexture("player.png");
 	}
 
 	// 位置を更新

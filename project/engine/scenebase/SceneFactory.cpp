@@ -31,6 +31,7 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	}
 	else if (sceneName == "TUTORIAL") {
 		newScene = new TutorialScene();
+		TutorialScene::stageNum_ = 0;
 	}
 	else if (sceneName == "GAMEPLAY") {
 		newScene = new GamePlayScene();

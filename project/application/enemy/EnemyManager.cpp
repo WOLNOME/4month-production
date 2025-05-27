@@ -55,15 +55,20 @@ void EnemyManager::Update()
 	//ターゲットの更新
 	TackleEnemyTargetUpdate();
 	FreezeEnemyTargetUpdate();
+	bool fall = false;
 	//タックルエネミーの更新
 	for (auto& enemy : tackleEnemies_)
 	{
 		enemy->EnemyUpdate();
 		//死んでいたら
-		if (!enemy->IsAlive())
+		if(enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
+		if(!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//ファンエネミーの更新
@@ -71,10 +76,14 @@ void EnemyManager::Update()
 	{
 		enemy->EnemyUpdate();
 		//死んでいたら
+		if(enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
 		if (!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//風の更新
@@ -86,10 +95,14 @@ void EnemyManager::Update()
 	for (auto& enemy : freezeEnemies_)
 	{
 		enemy->EnemyUpdate();
+		if (enemy->IsPlayingDeadEffect() && !enemy->isDeadSEPlayed_)
+		{
+			fallSE_->Play(false);
+			enemy->isDeadSEPlayed_ = true;
+		}
 		if (!enemy->IsAlive())
 		{
 			enemy->Finalize();
-			fallSE_->Play(false);
 		}
 	}
 	//アイスミストの更新
@@ -205,10 +218,10 @@ void EnemyManager::SpawnFanEnemy(uint32_t count)
 	}
 }
 
-void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction)
+void EnemyManager::SpawnWind(const Vector3& position, const Vector3& direction, const Vector3& rotate)
 {
 	auto wind = std::make_unique<Wind>();
-	wind->Initialize("Cube", position, direction);
+	wind->Initialize("Wind", position, direction,rotate);
 	winds_.emplace_back(std::move(wind));					
 }
 
@@ -231,7 +244,7 @@ void EnemyManager::SpawnFreezeEnemy(uint32_t count)
 void EnemyManager::SpawnIceMist(const Vector3& position, const Vector3& velocity)
 {
 	auto iceMist = std::make_unique<IceMist>();
-	iceMist->Initialize("Cube", position, velocity);
+	iceMist->Initialize("IceMist", position, velocity);
 	iceMists_.emplace_back(std::move(iceMist));
 }
 
@@ -283,6 +296,44 @@ void EnemyManager::FreezeEnemyTargetUpdate()
 			}
 		}
 		enemy->SetTargetPosition(target);
+	}
+}
+
+void EnemyManager::UpdateTransform()
+{
+	//タックルエネミーの更新
+	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+	//ファンエネミーの更新
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->UpdateTransform();
+	}
+}
+
+void EnemyManager::IsMoveable(bool moveable)
+{
+	//タックルエネミーの更新
+	for (auto& enemy : tackleEnemies_)
+	{
+		enemy->SetMoveable(moveable);
+	}
+	//ファンエネミーの更新
+	for (auto& enemy : fanEnemies_)
+	{
+		enemy->SetMoveable(moveable);
+	}
+	//フリーズエネミーの更新
+	for (auto& enemy : freezeEnemies_)
+	{
+		enemy->SetMoveable(moveable);
 	}
 }
 

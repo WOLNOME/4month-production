@@ -19,13 +19,15 @@ public:
 	void Draw();
 	void SpawnTackleEnemy(uint32_t count);
 	void SpawnFanEnemy(uint32_t count);
-	void SpawnWind(const Vector3& position, const Vector3& direction);
+	void SpawnWind(const Vector3& position, const Vector3& direction, const Vector3& rotate);
 	void SpawnFreezeEnemy(uint32_t count);
 	void SpawnIceMist(const Vector3& position, const Vector3& velocity);
 	void TackleEnemyTargetUpdate();
 	void FreezeEnemyTargetUpdate();
+	void UpdateTransform();
 
 	void SetSpawnPosition(const Vector3& min, const Vector3& max) { spawnMinPosition_ = min; spawnMaxPosition_ = max; }
+	void IsMoveable(bool moveable);
 	Vector3 GetTargetPosition() const { return targetPosition_; }
 	// タックルエネミーの数を取得
 	uint32_t GetTackleEnemyCount() const { return static_cast<uint32_t>(tackleEnemies_.size()); }

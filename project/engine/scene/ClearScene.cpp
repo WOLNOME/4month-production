@@ -49,7 +49,7 @@ void ClearScene::Initialize()
 	player_->Initialize();
 	player_->SetPosition({ 0.0f, 1.0f, 0.0f });
 	player_->SetRotation({ 0.0f, 3.14f, 0.0f });
-	player_->SetIsMoveable(false);
+	player_->IsMoveable(false);
 
 	//bgm
 	bgm_ = std::make_unique<Audio>();
@@ -245,11 +245,11 @@ void ClearScene::CameraEffect()
 	// カメラの位置と回転を補間
 	if (cameraAnimationPhase_ == 0) {
 		// 側面から正面への移動
-		cameraTranslate = MyMath::Lerp(playerPosition_ + Vector3(-10.0f, 1.5f, -5.0f), playerPosition_ + Vector3(0.0f, 1.5f, -10.0f), cameraAnimationProgress_);
+		cameraTranslate = MyMath::Lerp(playerPosition_ + Vector3(-10.0f, 3.0f, -5.0f), playerPosition_ + Vector3(0.0f, 3.0f, -10.0f), cameraAnimationProgress_);
 		cameraRotate = MyMath::Lerp(Vector3(0.25f, 0.5f, 0.0f), Vector3(0.25f, 0.0f, 0.0f), cameraAnimationProgress_);
 	} else if (cameraAnimationPhase_ == 1) {
 		// 右側から正面への移動
-		cameraTranslate = MyMath::Lerp(playerPosition_ + Vector3(10.0f, 1.5f, -5.0f), playerPosition_ + Vector3(0.0f, 1.5f, -10.0f), cameraAnimationProgress_);
+		cameraTranslate = MyMath::Lerp(playerPosition_ + Vector3(10.0f, 3.0f, -5.0f), playerPosition_ + Vector3(0.0f, 3.0f, -10.0f), cameraAnimationProgress_);
 		cameraRotate = MyMath::Lerp(Vector3(0.25f, -0.5f, 0.0f), Vector3(0.25f, 0.0f, 0.0f), cameraAnimationProgress_);
 	} else if (cameraAnimationPhase_ == 2) {
 		// カメラを引く
