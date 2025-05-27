@@ -50,7 +50,7 @@ void TitleScene::Initialize() {
 	spaceText_ = std::make_unique<TextWrite>();
 	spaceText_->Initialize("SPACE");
 	spaceText_->SetParam({ 500.0f, 475.0f }, Font::GenEiPOPle, 80.0f, { 1, 1, 1, 1 });
-	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { -0.01,0.0f }, true);
+	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { -0.01f,0.0f }, true);
 
 	//当たり判定
 	appCollisionManager_ = AppCollisionManager::GetInstance();
