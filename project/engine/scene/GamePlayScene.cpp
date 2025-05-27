@@ -999,15 +999,17 @@ void GamePlayScene::UpdateTransform()
 
 void GamePlayScene::UpdateIntervalNum()
 {
-	if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f){
-		spriteUI_Num3_->Draw();
-	} 
-	else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f){
-		spriteUI_Num2_->Draw();
-	} 
-	else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f){
-		spriteUI_Num1_->Draw();
-	} 
+	if (!pauseSystem_->GetIsPause()) {
+		if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f) {
+			spriteUI_Num3_->Draw();
+		}
+		else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f) {
+			spriteUI_Num2_->Draw();
+		}
+		else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f) {
+			spriteUI_Num1_->Draw();
+		}
+	}
 
 	// 数字のサイズを更新
 	spriteUI_Num1_->SetSize(numSize_);

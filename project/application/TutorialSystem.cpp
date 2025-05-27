@@ -26,7 +26,7 @@ void TutorialSystem::Initialize() {
 	}
 
 	//次のページへUI
-	npText_ = L"[TAB]で次へ";
+	npText_ = L"[SPACE]で次へ";
 	nextPageText_ = std::make_unique<TextWrite>();
 	nextPageText_->Initialize("NPText");
 	nextPageText_->SetParam({ 465.0f,550.0f }, Font::UDDegitalNK_B, 60.0f, { 1,1,1,1 });
@@ -353,8 +353,8 @@ void TutorialSystem::WriteText() {
 			nextPageText_->SetColor({ 0.8f, 0.2f, 0.2f, 1.0f });
 			nextPageText_->SetPosition({ 300,550 });
 			nextPageText_->SetEdgeStrokeWidth(10.0f);
-			nextPageText_->SetEdgeColor({ 0.8f,0.8f,0.8f,1.0f });
-			npText_ = L"[TAB]:チュートリアル終了";
+			nextPageText_->SetEdgeColor({ 1,1,1,1 });
+			npText_ = L"[SPACE]:チュートリアル終了";
 
 			//次のページへ
 			nextPageText_->WriteText(npText_);
@@ -372,7 +372,7 @@ void TutorialSystem::WriteText() {
 
 void TutorialSystem::Start() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (startPage_ + 1 < kNumMaxStartPage_) {
 			startPage_++;
 		}
@@ -391,7 +391,7 @@ void TutorialSystem::Start() {
 
 void TutorialSystem::Rule() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (rulePage_ + 1 < kNumMaxRulePage_) {
 			rulePage_++;
 		}
@@ -403,7 +403,7 @@ void TutorialSystem::Rule() {
 
 void TutorialSystem::Move() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (movePage_ + 1 < kNumMaxMovePage_) {
 			movePage_++;
 		}
@@ -415,7 +415,7 @@ void TutorialSystem::Move() {
 
 void TutorialSystem::Zanki() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (zankiPage_ + 1 < kNumMaxZankiPage_) {
 			zankiPage_++;
 			//[1]ページで残機を表示させる
@@ -435,7 +435,7 @@ void TutorialSystem::Zanki() {
 
 void TutorialSystem::Attack() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (attackPage_ + 1 < kNumMaxAttackPage_) {
 			attackPage_++;
 		}
@@ -447,7 +447,7 @@ void TutorialSystem::Attack() {
 
 void TutorialSystem::Gauge() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (gaugePage_ + 1 < kNumMaxGaugePage_) {
 			gaugePage_++;
 		}
@@ -459,7 +459,7 @@ void TutorialSystem::Gauge() {
 
 void TutorialSystem::Battle() {
 	//TABキーで次へ進む
-	if (input_->TriggerKey(DIK_TAB)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		if (gaugePage_ + 1 < kNumMaxGaugePage_) {
 			gaugePage_++;
 		}
