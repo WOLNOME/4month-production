@@ -275,11 +275,12 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other) {
 
 			// プレイヤーの位置から逃げる
 			Vector3 runDirection = transform_.translate_ - playerPosition;
+			runDirection.y = 0.0f; // Y軸方向の移動はしない
+			runDirection.Normalize();
+			runDirection *= 35.0f; // 速度を設定
 
 			// ノックバック
 			tackleVelocity_ = runDirection;
-			tackleVelocity_ *= 20.0f;
-			tackleVelocity_.y = 0.0f;
 			// ノックバックタイマー
 			knockBackTime_ = 4.0f;
 
