@@ -21,6 +21,8 @@ public:
 	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
 	void UpdateTransform() { transform_.UpdateMatrix(); }
 	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
+	bool IsPlayingDeadEffect() const { return deadEffect_->emitter_.isPlay; }
+    bool isDeadSEPlayed_ = false;
 
 	/////////// GameObjectとの競合を無くすための関数 ///////////
 

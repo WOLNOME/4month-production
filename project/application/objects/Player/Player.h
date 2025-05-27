@@ -69,9 +69,6 @@ public: //セッター
 
 	// プレイヤーの位置をセット
 	void SetPlayerPos(const Vector3& _pos) { wtPlayer_.translate_ = _pos; }
-	// 効果音のセット
-	void SetObstacleSE(Audio* _obstacleSE) { obstacleSE_ = _obstacleSE; }
-	void SetFreezeSE(Audio* _freezeSE) { freezeSE_ = _freezeSE; }
 
 	// 攻撃チャージフラグをセット
 	void SetIsChargeMax(bool* _flag) { isChargeMax_ = _flag; }
@@ -108,8 +105,7 @@ private:
 	Input* input_ = nullptr;
 
 	//効果音のポインタ
-	Audio* obstacleSE_ = nullptr;
-	Audio* freezeSE_ = nullptr;
+	std::unique_ptr<Audio> obstacleCollisionSE_ = nullptr;
 
 	// プレーヤーモデル情報
 	WorldTransform wtPlayer_{};
@@ -139,6 +135,7 @@ private:
 
 	//効果音
 	std::unique_ptr<Audio> fallSE = nullptr;
+	std::unique_ptr<Audio> cantMoveSE = nullptr;
 
 	// 移動速度
 	float moveSpeed_ = 0.103f;
