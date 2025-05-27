@@ -46,7 +46,7 @@ void TutorialScene::Initialize() {
 	// 値のテキスト
 	valueText_ = std::make_unique<TextWrite>();
 	valueText_->Initialize("value");
-	valueText_->SetParam({ 160.0f, 185.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
+	valueText_->SetParam({ 150.0f, 175.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
 	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 
 
