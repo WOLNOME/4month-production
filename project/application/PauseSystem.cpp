@@ -32,15 +32,15 @@ void PauseSystem::Initialize() {
 	//テキスト
 	textPause_ = std::make_unique<TextWrite>();
 	textPause_->Initialize("Pause");
-	textPause_->SetParam({ 415.0f,80.0f }, Font::GenEiPOPle, 90.0f, { 1,1,1,1 });
+	textPause_->SetParam({ 415.0f,80.0f }, Font::UDDegitalNK_B, 90.0f, { 1,1,1,1 });
 	textPause_->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0.004f,-0.004f }, true);
 
 	for (int i = 0; i < (int)MenuState::kMaxNumMenuState; i++) {
 		textMenu_[i] = std::make_unique<TextWrite>();
 		textMenu_[i]->Initialize(TextWriteManager::GetInstance()->GenerateName("Menu"));
-		textMenu_[i]->SetParam({ WinApp::kClientWidth / 2.0f - 60.0f, 260.0f + (i * 130) }, Font::GenEiPOPle, 60.0f, { 1,1,1,1 });
+		textMenu_[i]->SetParam({ WinApp::kClientWidth / 2.0f - 60.0f, 300.0f + (i * 130) }, Font::UDDegitalNK_B, 60.0f, { 1,1,1,1 });
 		textMenu_[i]->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0.004f,-0.004f }, true);
-		//遊び方テキスト蚤の処理
+		//遊び方テキスト系の処理
 		if (i == (int)MenuState::HowToPlay) {
 			textMenu_[i]->SetPosition({ textMenu_[i]->GetPosition().x - 30.0f,textMenu_[i]->GetPosition().y });
 		}
@@ -48,7 +48,7 @@ void PauseSystem::Initialize() {
 
 	textHowToPlay_ = std::make_unique<TextWrite>();
 	textHowToPlay_->Initialize("HowToPlay");
-	textHowToPlay_->SetParam({ 0,0 }, Font::GenEiPOPle, 50.0f, { 0,0,0,1 });
+	textHowToPlay_->SetParam({ 0,0 }, Font::UDDegitalNK_B, 50.0f, { 0,0,0,1 });
 
 }
 
@@ -69,8 +69,8 @@ void PauseSystem::Update() {
 				spriteMenu_[i]->SetSize({ 400.0f, 80.0f });
 				spriteMenu_[i]->SetColor({ 0.8f,0.8f,0.8f,1.0f });
 				textMenu_[i]->SetSize(60.0f);
-				textMenu_[i]->SetPosition({ WinApp::kClientWidth / 2.0f - 60.0f, 260.0f + (i * 130) });
-				//遊び方テキスト蚤の処理
+				textMenu_[i]->SetPosition({ WinApp::kClientWidth / 2.0f - 60.0f, 270.0f + (i * 130) });
+				//遊び方テキスト系の処理
 				if (i == (int)MenuState::HowToPlay) {
 					textMenu_[i]->SetPosition({ textMenu_[i]->GetPosition().x - 30.0f,textMenu_[i]->GetPosition().y });
 				}

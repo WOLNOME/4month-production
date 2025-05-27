@@ -21,7 +21,7 @@ void TutorialSystem::Initialize() {
 	for (int i = 0; i < 3; i++) {
 		text_[i] = std::make_unique<TextWrite>();
 		text_[i]->Initialize("StartText" + RandomStringUtil::GenerateRandomString(4));
-		text_[i]->SetParam({ 200.0f,120.0f + (i * 90.0f) }, Font::GenEiPOPle, 80.0f, { 1,1,1,1 });
+		text_[i]->SetParam({ 200.0f,120.0f + (i * 90.0f) }, Font::UDDegitalNK_B, 80.0f, { 1,1,1,1 });
 		text_[i]->SetEdgeParam({ 0,0,0,1 }, 8.0f, { 0,0 }, true);
 	}
 
@@ -29,13 +29,13 @@ void TutorialSystem::Initialize() {
 	npText_ = L"[TAB]で次へ";
 	nextPageText_ = std::make_unique<TextWrite>();
 	nextPageText_->Initialize("NPText");
-	nextPageText_->SetParam({ 465.0f,550.0f }, Font::GenEiPOPle, 60.0f, { 1,1,1,1 });
+	nextPageText_->SetParam({ 465.0f,550.0f }, Font::UDDegitalNK_B, 60.0f, { 1,1,1,1 });
 	nextPageText_->SetEdgeParam({ 0,0,0,1 }, 5.0f, { 0,0 }, true);
 
 	//メニューテキストUI
 	menuText_ = std::make_unique<TextWrite>();
 	menuText_->Initialize("MenuText");
-	menuText_->SetParam({ 400.0f,25.0f }, Font::GenEiPOPle, 70.0f, { 1,1,1,1 });
+	menuText_->SetParam({ 400.0f,25.0f }, Font::UDDegitalNK_B, 70.0f, { 1,1,1,1 });
 	menuText_->SetEdgeParam({ 0,0,0,1 }, 6.0f, { 0,0 }, true);
 
 	//現在のメニュー
@@ -351,10 +351,10 @@ void TutorialSystem::WriteText() {
 			}
 
 			nextPageText_->SetColor({ 0.8f, 0.2f, 0.2f, 1.0f });
-			nextPageText_->SetPosition({ 200,550 });
+			nextPageText_->SetPosition({ 300,550 });
 			nextPageText_->SetEdgeStrokeWidth(10.0f);
-			nextPageText_->SetEdgeColor({ 1,1,1,1 });
-			npText_ = L"[TAB]でチュートリアルを終わる";
+			nextPageText_->SetEdgeColor({ 0.8f,0.8f,0.8f,1.0f });
+			npText_ = L"[TAB]:チュートリアル終了";
 
 			//次のページへ
 			nextPageText_->WriteText(npText_);

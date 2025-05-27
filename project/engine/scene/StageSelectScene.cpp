@@ -36,20 +36,16 @@ void StageSelectScene::Initialize() {
 	spriteUI_SELECT_ = std::make_unique<Sprite>();
 	spriteUI_SELECT_->Initialize(textureHandleUI_SELECT);
 
-	spritePos_ = { 0.0f,0.0f };
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("tutorial.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num1.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num2.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num3.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num4.png"));
-	textureHandleSelectNum_.push_back(TextureManager::GetInstance()->LoadTexture("num5.png"));
+	textPos_ = { 5.0f,5.0f };
 	for (uint32_t i = 0; i < 6; i++) {
-		auto num = std::make_unique<Sprite>();
+		auto num = std::make_unique<TextWrite>();
 
-		num->SetPosition(spritePos_);
-		num->Initialize(textureHandleSelectNum_[i]);
+		num->Initialize("num" + std::to_string(i));
+		num->SetParam(textPos_, Font::GenEiPOPle, 80.0f, { 1, 1, 1, 1 });
+		num->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { 0.0f,0.0f }, true);
 
-		spriteSelectNum_.push_back(std::move(num));
+		//プッシュバック
+		selectNumText_.push_back(std::move(num));
 	}
 	//スペースUIテキスト
 	spaceText_ = std::make_unique<TextWrite>();
@@ -163,9 +159,8 @@ void StageSelectScene::Update() {
 		drawSelectNum_ = setStage_;
 	}
 
-	for (auto& sprite : spriteSelectNum_) {
-		sprite->Update();
-		sprite->SetPosition(spritePos_);
+	for (auto& text : selectNumText_) {
+		text->SetPosition(textPos_);
 	}
 
 #ifdef _DEBUG
@@ -179,7 +174,7 @@ void StageSelectScene::Update() {
 	bool isMove = selectObjects_[0]->IsMove();
 	ImGui::Text("selectObjects_[0]->IsMove() : %s", isMove ? "true" : "false");
 
-	ImGui::SliderFloat2("spritePos", &spritePos_.x, 0, 100.0f);
+	ImGui::SliderFloat2("spritePos", &textPos_.x, 0, 100.0f);
 
 	ImGui::End();
 
@@ -243,8 +238,6 @@ void StageSelectScene::Draw() {
 	}
 	spriteUI_SELECT_->Draw();
 
-	spriteSelectNum_[drawSelectNum_]->Draw();
-
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
@@ -257,6 +250,17 @@ void StageSelectScene::TextDraw() {
 
 	//スペースUIテキスト
 	spaceText_->WriteText(L"SPACE");
+
+	//セレクト番号UIテキスト
+	const wchar_t* numText[] = {
+		L"チュートリアル",
+		L"ステージ1",
+		L"ステージ2",
+		L"ステージ3",
+		L"ステージ4",
+		L"ステージ5"
+	};
+	selectNumText_[drawSelectNum_]->WriteText(numText[drawSelectNum_]);
 
 
 	///------------------------------///

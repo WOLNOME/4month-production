@@ -74,13 +74,13 @@ private://メンバ変数
 	uint32_t textureHandleUI_SELECT = 0u;
 	std::unique_ptr<Sprite> spriteUI_SELECT_;
 
+	//ステージナンバーUIテキスト
+	std::vector<std::unique_ptr<TextWrite>> selectNumText_;
+	Vector2 textPos_{};
+
 	//スペースUIテキスト
 	std::unique_ptr<TextWrite> spaceText_ = nullptr;
 
-	std::vector<uint32_t>textureHandleSelectNum_;
-	std::vector<std::unique_ptr<Sprite>> spriteSelectNum_;
-
-	Vector2 spritePos_{};
 
 	//パーティクル情報
 	std::unique_ptr<Particle> particle_ = nullptr;
