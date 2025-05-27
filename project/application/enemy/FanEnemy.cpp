@@ -181,11 +181,12 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 
 		// プレイヤーの位置から逃げる
 		Vector3 runDirection = transform_.translate_ - playerPosition;
+		runDirection.y = 0.0f; // Y軸方向の移動はしない
+		runDirection.Normalize();
+		runDirection *= 35.0f; // 速度を設定
 
 		// ノックバック
 		velocity_ = runDirection;
-		velocity_ *= 20.0f;
-		velocity_.y = 0.0f;
 
 		//被弾時シェイク
 		isDamageShake_ = true;
