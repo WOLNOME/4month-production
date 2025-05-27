@@ -46,16 +46,22 @@ void GamePlayScene::Initialize()
 	spriteUI_Num1_->SetAnchorPoint({ 0.5f, 0.5f });
 	spriteUI_Num1_->SetPosition({ 640.0f, 360.0f });
 	spriteUI_Num1_->SetSize({ 0.0f, 0.0f });
+	spriteUI_Num1_-> SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+
 	spriteUI_Num2_ = std::make_unique<Sprite>();
 	spriteUI_Num2_->Initialize(textureHandleIntervalNum2_);
 	spriteUI_Num2_->SetAnchorPoint({ 0.5f, 0.5f });
 	spriteUI_Num2_->SetPosition({ 640.0f, 360.0f });
 	spriteUI_Num2_->SetSize({ 0.0f, 0.0f });
+	spriteUI_Num2_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	
 	spriteUI_Num3_ = std::make_unique<Sprite>();
 	spriteUI_Num3_->Initialize(textureHandleIntervalNum3_);
 	spriteUI_Num3_->SetAnchorPoint({ 0.5f, 0.5f });
 	spriteUI_Num3_->SetPosition({ 640.0f, 360.0f });
 	spriteUI_Num3_->SetSize({ 0.0f, 0.0f });
+	spriteUI_Num3_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+
 
 	// 残り出現数UIテキスト
 	remainingSpawnNumText_ = std::make_unique<TextWrite>();
