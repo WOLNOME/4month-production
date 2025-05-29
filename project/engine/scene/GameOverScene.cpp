@@ -94,7 +94,7 @@ void GameOverScene::Update() {
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 		tapSE_->Play(false, 0.5f);
-		sceneManager_->SetNextScene("TITLE");
+		sceneManager_->SetNextScene("STAGESELECT");
 	}
 
 	spriteFall1_->Update();
