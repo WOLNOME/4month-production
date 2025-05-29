@@ -8,6 +8,8 @@
 #include "SceneManager.h"
 #include <numbers>
 
+uint32_t StageSelectScene::setStage_ = 0;
+
 void StageSelectScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
@@ -61,21 +63,20 @@ void StageSelectScene::Initialize() {
 	for (uint32_t i = 0; i < stageNum_; i++) {
 		auto field0 = std::make_unique<StageSelectObject>();
 		field0->Initialize("cube", "grid.png", i);
+		field0->SetStagePosition(setStage_);
 
 		selectObjects_.push_back(std::move(field0));
 	}
 
-	selectObjects_[0]->SetPosition({ 0.0f, 0.0f, 0.0f });
-	selectObjects_[1]->SetPosition({ 10.0f, 0.0f, 0.0f });
-	selectObjects_[2]->SetPosition({ 20.0f, 0.0f, 0.0f });
-	selectObjects_[3]->SetPosition({ 30.0f, 0.0f, 0.0f });
-	selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
-	selectObjects_[5]->SetPosition({ 50.0f, 0.0f, 0.0f });
+	//selectObjects_[0]->SetPosition({ 0.0f, 0.0f, 0.0f });
+	//selectObjects_[1]->SetPosition({ 10.0f, 0.0f, 0.0f });
+	//selectObjects_[2]->SetPosition({ 20.0f, 0.0f, 0.0f });
+	//selectObjects_[3]->SetPosition({ 30.0f, 0.0f, 0.0f });
+	//selectObjects_[4]->SetPosition({ 40.0f, 0.0f, 0.0f });
+	//selectObjects_[5]->SetPosition({ 50.0f, 0.0f, 0.0f });
 	//落下オブジェクト
 	fallingObject_ = std::make_unique<FallingObject>();
 	fallingObject_->Initialize();
-
-	setStage_ = 0;
 
 	//パーティクル
 	particle_ = std::make_unique<Particle>();
@@ -107,6 +108,13 @@ void StageSelectScene::Finalize() {
 	selectSE_.reset();
 	tapSE_->Stop();
 	tapSE_.reset();
+
+	if (isTransitionTitle_)
+	{
+		setStage_ = 0;
+	}
+	
+
 }
 
 void StageSelectScene::Update() {
@@ -148,6 +156,7 @@ void StageSelectScene::Update() {
 	//タイトル画面へ戻る
 	if (input_->TriggerKey(DIK_ESCAPE)) {
 		sceneManager_->SetNextScene("TITLE");
+		isTransitionTitle_ = true;
 	}
 
 	spriteUI_A_->Update();
