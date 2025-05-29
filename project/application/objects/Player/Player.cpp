@@ -67,6 +67,8 @@ void Player::Initialize() {
 	obstacleCollisionSE_->Initialize("soundeffect/obstacleCollision.wav");
 	cantMoveSE = std::make_unique<Audio>();
 	cantMoveSE->Initialize("soundeffect/tackle.wav");
+	attackSE = std::make_unique<Audio>();
+	attackSE->Initialize("soundeffect/attack.wav");
 }
 
 void Player::Finalize() {
@@ -458,6 +460,9 @@ void Player::AttackCommon(float attackSpeed)
 
 		// 攻撃時間リセット
 		attackTimeCounter_ = attackTime_;
+
+		//　効果音再生
+		attackSE->Play(false,0.7f);
 
 	}
 
