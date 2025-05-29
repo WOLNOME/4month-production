@@ -60,9 +60,11 @@ private://メンバ変数
 	std::unique_ptr<FallingObject> fallingObject_ = nullptr;
 
 	const uint32_t stageNum_ = 6;
-	uint32_t setStage_ = 0;
+	static uint32_t setStage_;
 	// ステージ選択番号描画用変数
 	uint32_t drawSelectNum_ = setStage_;
+
+	bool isTransitionTitle_ = false; // タイトルシーンへの遷移フラグ
 
 	// ステージ選択スプライト
 	uint32_t textureHandleUI_A_ = 0u;

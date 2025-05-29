@@ -313,6 +313,11 @@ void StageSelectObject::StageSelect() {
 	}
 }
 
+void StageSelectObject::SetStagePosition(uint32_t setStage)
+{
+	wtField_.translate_.x += -10.0f * setStage + 10.0f * static_cast<uint32_t>(stageNum_);
+}
+
 void StageSelectObject::EnemyJump() {
 	//エネミーのY座標を上昇させる
 	float gravity = -100.0f;			//重力値

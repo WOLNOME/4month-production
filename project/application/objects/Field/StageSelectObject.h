@@ -31,6 +31,8 @@ public:
 
 	void StageSelect();
 
+	void SetStagePosition(uint32_t setStage);
+
 public: // ゲッター
 
 	bool IsMove() const { return isMove_; }
