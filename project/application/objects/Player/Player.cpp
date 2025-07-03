@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "ParticleManager.h"

@@ -1,13 +1,11 @@
 #include "SceneFactory.h"
 #include "DevelopScene.h"
-#include "TitleScene.h"
-#include "ClearScene.h"
-
-// 追加
-#include "StageSelectScene.h"
-#include "TutorialScene.h"
-#include "GamePlayScene.h"
-#include "GameOverScene.h"
+#include "application/scene/TitleScene.h"
+#include "application/scene/ClearScene.h"
+#include "application/scene/StageSelectScene.h"
+#include "application/scene/TutorialScene.h"
+#include "application/scene/GamePlayScene.h"
+#include "application/scene/GameOverScene.h"
 // パーティクルクリエイター
 #include "ParticleCreatorScene.h"
 
@@ -25,7 +23,6 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	else if (sceneName == "CLEAR") {
 		newScene = new ClearScene();
 	}
-	// 追加
 	else if (sceneName == "STAGESELECT"){
 		newScene = new StageSelectScene();
 	}

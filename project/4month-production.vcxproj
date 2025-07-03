@@ -63,7 +63,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\base;$(ProjectDir)engine\audio;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir);$(ProjectDir)engine\scenebase;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)engine\util</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\base;$(ProjectDir)engine\audio;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir);$(ProjectDir)engine\scenebase;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)engine\util;$(ProjectDir)engine\collision</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -89,7 +89,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\base;$(ProjectDir)engine\audio;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir);$(ProjectDir)engine\scenebase;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)engine\util</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\base;$(ProjectDir)engine\audio;$(ProjectDir)engine\input;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir);$(ProjectDir)engine\scenebase;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;$(ProjectDir)engine\util;$(ProjectDir)engine\collision</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
@@ -107,8 +107,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\appCollider\AppCollider.cpp" />
-    <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
+    <ClCompile Include="engine\collision\appCollider\AppCollider.cpp" />
+    <ClCompile Include="engine\collision\appCollider\AppCollisionManager.cpp" />
     <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
@@ -118,7 +118,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\enemy\BaseEnemy.cpp" />
     <ClCompile Include="application\enemy\EnemyManager.cpp" />
     <ClCompile Include="application\enemy\TackleEnemy.cpp" />
-    <ClCompile Include="engine\scene\ClearScene.cpp" />
+    <ClCompile Include="application\scene\ClearScene.cpp" />
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
     <ClCompile Include="engine\3d\DirectionalLight.cpp" />
@@ -145,12 +145,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\Framework.cpp" />
     <ClCompile Include="engine\3d\LineDrawer.cpp" />
     <ClCompile Include="engine\3d\LineDrawerCommon.cpp" />
-    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
     <ClCompile Include="application\enemy\FanEnemy.cpp" />
     <ClCompile Include="application\enemy\FreezeEnemy.cpp" />
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp" />
-    <ClCompile Include="engine\scene\GameOverScene.cpp" />
+    <ClCompile Include="application\scene\GameOverScene.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="application\objects\GameObject\FallingObject.cpp" />
     <ClCompile Include="main.cpp" />
@@ -169,7 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="engine\scenebase\SceneFactory.cpp" />
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
-    <ClCompile Include="engine\scene\TitleScene.cpp" />
+    <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\3d\Particle.cpp" />
     <ClCompile Include="engine\3d\WorldTransform.cpp" />
     <ClCompile Include="engine\3d\PointLight.cpp" />
@@ -183,18 +183,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\2d\TextWrite.cpp" />
     <ClCompile Include="engine\2d\TextWriteManager.cpp" />
     <ClCompile Include="application\objects\Skydome\Skydome.cpp" />
-    <ClCompile Include="engine\scene\StageSelectScene.cpp" />
+    <ClCompile Include="application\scene\StageSelectScene.cpp" />
     <ClCompile Include="application\objects\Field\StageSelectObject.cpp" />
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp" />
     <ClCompile Include="engine\3d\ParticleManager.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="application\PauseSystem.cpp" />
-    <ClCompile Include="engine\scene\TutorialScene.cpp" />
+    <ClCompile Include="application\scene\TutorialScene.cpp" />
     <ClCompile Include="application\TutorialSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\appCollider\AppCollider.h" />
-    <ClInclude Include="application\appCollider\AppCollisionManager.h" />
+    <ClInclude Include="engine\collision\appCollider\AppCollider.h" />
+    <ClInclude Include="engine\collision\appCollider\AppCollisionManager.h" />
     <ClInclude Include="application\enemy\BaseEnemy.h" />
     <ClInclude Include="application\enemy\EnemyManager.h" />
     <ClInclude Include="application\enemy\IceMist.h" />
@@ -203,7 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
     <ClInclude Include="engine\base\D2DRender.h" />
-    <ClInclude Include="engine\scene\ClearScene.h" />
+    <ClInclude Include="application\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
     <ClInclude Include="engine\collision\CollisionConfig.h" />
     <ClInclude Include="engine\collision\CollisionManager.h" />
@@ -250,17 +250,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\LineDrawerCommon.h" />
     <ClInclude Include="engine\base\MainRender.h" />
     <ClInclude Include="engine\3d\ModelFormat.h" />
-    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\scene\GamePlayScene.h" />
     <ClInclude Include="application\objects\GameObject\GameObject.h" />
     <ClInclude Include="application\enemy\FanEnemy.h" />
     <ClInclude Include="application\enemy\FreezeEnemy.h" />
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
-    <ClInclude Include="engine\scene\GameOverScene.h" />
+    <ClInclude Include="application\scene\GameOverScene.h" />
     <ClInclude Include="application\objects\GameObject\FallingObject.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
-    <ClInclude Include="engine\scene\TitleScene.h" />
+    <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\3d\Particle.h" />
     <ClInclude Include="engine\3d\WorldTransform.h" />
     <ClInclude Include="engine\3d\PointLight.h" />
@@ -268,7 +268,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\SceneLight.h" />
     <ClInclude Include="engine\3d\SpotLight.h" />
     <ClInclude Include="engine\3d\Shape.h" />
-    <ClInclude Include="application\appCollider\AppShape.h" />
+    <ClInclude Include="engine\collision\appCollider\AppShape.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
     <ClInclude Include="application\enemy\Wind.h" />
@@ -276,13 +276,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\2d\TextWrite.h" />
     <ClInclude Include="engine\2d\TextWriteManager.h" />
     <ClInclude Include="application\objects\Skydome\Skydome.h" />
-    <ClInclude Include="engine\scene\StageSelectScene.h" />
+    <ClInclude Include="application\scene\StageSelectScene.h" />
     <ClInclude Include="application\objects\Field\StageSelectObject.h" />
     <ClInclude Include="engine\scene\ParticleCreatorScene.h" />
     <ClInclude Include="engine\3d\ParticleManager.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
     <ClInclude Include="application\PauseSystem.h" />
-    <ClInclude Include="engine\scene\TutorialScene.h" />
+    <ClInclude Include="application\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
   </ItemGroup>
   <ItemGroup>

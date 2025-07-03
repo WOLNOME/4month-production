@@ -9,7 +9,7 @@
 #include <Object3d.h>
 #include <Particle.h>
 
-#include "../../appCollider/AppCollider.h"
+#include "appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
 class Audio;

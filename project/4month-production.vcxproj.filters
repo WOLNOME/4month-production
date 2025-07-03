@@ -47,7 +47,7 @@
     <ClCompile Include="engine\scene\BaseScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\ClearScene.cpp">
+    <ClCompile Include="application\scene\ClearScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\collision\Collider.cpp">
@@ -80,10 +80,10 @@
     <ClCompile Include="application\objects\Gimmick\IceFloor.cpp">
       <Filter>application\objects\Gimmick</Filter>
     </ClCompile>
-    <ClCompile Include="application\appCollider\AppCollider.cpp">
+    <ClCompile Include="engine\collision\appCollider\AppCollider.cpp">
       <Filter>application\appCollider</Filter>
     </ClCompile>
-    <ClCompile Include="application\appCollider\AppCollisionManager.cpp">
+    <ClCompile Include="engine\collision\appCollider\AppCollisionManager.cpp">
       <Filter>application\appCollider</Filter>
     </ClCompile>
     <ClCompile Include="application\enemy\BaseEnemy.cpp">
@@ -248,10 +248,10 @@
     <ClCompile Include="engine\math\Vector3.cpp">
       <Filter>engine\scene\math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\GameOverScene.cpp">
+    <ClCompile Include="application\scene\GameOverScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\GamePlayScene.cpp">
+    <ClCompile Include="application\scene\GamePlayScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\scenebase\SceneFactory.cpp">
@@ -275,13 +275,13 @@
     <ClCompile Include="engine\scene\ParticleCreatorScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\StageSelectScene.cpp">
+    <ClCompile Include="application\scene\StageSelectScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\TitleScene.cpp">
+    <ClCompile Include="application\scene\TitleScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\scene\TutorialScene.cpp">
+    <ClCompile Include="application\scene\TutorialScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -302,7 +302,7 @@
     <ClInclude Include="engine\scene\BaseScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\ClearScene.h">
+    <ClInclude Include="application\scene\ClearScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\collision\Collider.h">
@@ -341,13 +341,13 @@
     <ClInclude Include="application\objects\Gimmick\IceFloor.h">
       <Filter>application\objects\Gimmick</Filter>
     </ClInclude>
-    <ClInclude Include="application\appCollider\AppCollider.h">
+    <ClInclude Include="engine\collision\appCollider\AppCollider.h">
       <Filter>application\appCollider</Filter>
     </ClInclude>
-    <ClInclude Include="application\appCollider\AppCollisionManager.h">
+    <ClInclude Include="engine\collision\appCollider\AppCollisionManager.h">
       <Filter>application\appCollider</Filter>
     </ClInclude>
-    <ClInclude Include="application\appCollider\AppShape.h">
+    <ClInclude Include="engine\collision\appCollider\AppShape.h">
       <Filter>application\appCollider</Filter>
     </ClInclude>
     <ClInclude Include="application\enemy\BaseEnemy.h">
@@ -527,10 +527,10 @@
     <ClInclude Include="engine\math\Vector4.h">
       <Filter>engine\scene\math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\GameOverScene.h">
+    <ClInclude Include="application\scene\GameOverScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\GamePlayScene.h">
+    <ClInclude Include="application\scene\GamePlayScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scenebase\SceneFactory.h">
@@ -551,13 +551,13 @@
     <ClInclude Include="engine\scene\ParticleCreatorScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\StageSelectScene.h">
+    <ClInclude Include="application\scene\StageSelectScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\TitleScene.h">
+    <ClInclude Include="application\scene\TitleScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\scene\TutorialScene.h">
+    <ClInclude Include="application\scene\TutorialScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
   </ItemGroup>

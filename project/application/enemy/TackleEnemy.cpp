@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-#include "../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 
 void TackleEnemy::EnemyInitialize(const std::string& filePath) {
 	//オブジェクトの初期化

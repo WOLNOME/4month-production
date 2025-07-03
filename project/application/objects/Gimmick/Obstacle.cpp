@@ -1,6 +1,6 @@
 #include "Obstacle.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 
 void Obstacle::Initialize()
 {
