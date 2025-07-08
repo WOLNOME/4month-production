@@ -6,6 +6,8 @@
 #include "ParticleManager.h"
 #include "TextureManager.h"
 
+#include "GameCamera.h"
+
 void Player::Initialize() {
 	input_ = Input::GetInstance();
 
@@ -193,8 +195,10 @@ void Player::OutOfField() {
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 		isGround_ = true;
-		isDeadShake_ = true;
 		fallSE->Play(false, 0.5f);
+		//カメラシェイク
+		camera_->RegistShake(0.4f, 0.4f);
+
 	}
 
 	isGround_ = false;
@@ -342,9 +346,9 @@ void Player::OnCollisionTrigger(const AppCollider* _other) {
 			hitEffect_->emitter_.isPlay = true;
 			hitEffect_->emitter_.transform.translate = wtPlayer_.translate_;
 
-			//被弾時のシェイクを送る合図
-			isDamageShake_ = true;
-
+			//カメラシェイク
+ 			camera_->RegistShake(0.4f, 0.15f);
+			
 			cantMoveSE->Play(false, 0.4f);
 		}
 

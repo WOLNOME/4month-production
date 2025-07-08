@@ -109,7 +109,7 @@ void TackleEnemy::EnemyUpdate() {
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = transform_.translate_;
 		//死亡時シェイク
-		isDeadShake_ = true;
+		RegistShake(0.4f, 0.5f);
 	}
 
 	//行列の更新
@@ -285,7 +285,7 @@ void TackleEnemy::OnCollisionTrigger(const AppCollider* _other) {
 			knockBackTime_ = 4.0f;
 
 			//被弾時シェイク
-			isDamageShake_ = true;
+			RegistShake(0.4f, 0.25f);
 		}
 	}
 }

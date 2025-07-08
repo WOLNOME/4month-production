@@ -318,6 +318,21 @@ void EnemyManager::UpdateTransform()
 	}
 }
 
+void EnemyManager::SetGameCamera(GameCamera* camera) {
+	//タックルエネミー
+	for (auto& enemy : tackleEnemies_) {
+		enemy->SetGameCamera(camera);
+	}
+	//ファンエネミー
+	for (auto& enemy : fanEnemies_) {
+		enemy->SetGameCamera(camera);
+	}
+	//フリーズエネミー
+	for (auto& enemy : freezeEnemies_) {
+		enemy->SetGameCamera(camera);
+	}
+}
+
 void EnemyManager::IsMoveable(bool moveable)
 {
 	//タックルエネミーの更新

@@ -68,10 +68,7 @@ public:
 
 	//ステージ番号
 	static uint32_t stageNum_;
-
-	//シェイクのチェック
-	void CheckShake();
-
+	
 	// 残り出現数UI
 	void remainingSpawnNum();
 

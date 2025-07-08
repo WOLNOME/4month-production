@@ -95,7 +95,7 @@ void FanEnemy::EnemyUpdate()
 		deadEffect_->emitter_.isPlay = true;
 		deadEffect_->emitter_.transform.translate = transform_.translate_;
 		//死亡時シェイク
-		isDeadShake_ = true;
+		RegistShake(0.4f, 0.5f);
 	}
 
 	//行列の更新
@@ -189,7 +189,7 @@ void FanEnemy::OnCollisionTrigger(const AppCollider* other)
 		velocity_ = runDirection;
 
 		//被弾時シェイク
-		isDamageShake_ = true;
+		RegistShake(0.4f, 0.25f);
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "TackleEnemy.h"
 #include "Wind.h"
 
+class GameCamera;
 class Player;
 
 class EnemyManager
@@ -25,6 +26,8 @@ public:
 	void TackleEnemyTargetUpdate();
 	void FreezeEnemyTargetUpdate();
 	void UpdateTransform();
+
+	void SetGameCamera(GameCamera* camera);
 
 	void SetSpawnPosition(const Vector3& min, const Vector3& max) { spawnMinPosition_ = min; spawnMaxPosition_ = max; }
 	void IsMoveable(bool moveable);
