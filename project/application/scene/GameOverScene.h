@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "DevelopCamera.h"
+#include "GameCamera.h"
 #include "application/objects/Field/Field.h"
 #include "application/objects/Skydome/Skydome.h"
 
@@ -36,8 +36,8 @@ private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;
 
-	//開発用カメラ
-	std::unique_ptr<DevelopCamera> camera;
+	//カメラ
+	std::unique_ptr<GameCamera> camera;
 	Vector3 cameraTranslate = { 0.0f, 1.0f, -10.0f };
 
 	//スプライト

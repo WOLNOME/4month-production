@@ -284,6 +284,7 @@
     <ClCompile Include="application\scene\TutorialScene.cpp">
       <Filter>engine\scene</Filter>
     </ClCompile>
+    <ClCompile Include="GameCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyGame.h" />
@@ -560,6 +561,7 @@
     <ClInclude Include="application\scene\TutorialScene.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
+    <ClInclude Include="GameCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli">

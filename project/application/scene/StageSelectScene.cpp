@@ -17,7 +17,7 @@ void StageSelectScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
-	camera_ = std::make_unique<DevelopCamera>();
+	camera_ = std::make_unique<GameCamera>();
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);

@@ -235,14 +235,6 @@ void DevelopScene::Update() {
 	ImGui::End();
 	//テキスト用ImGui
 	text_->DebugWithImGui();
-	//シェイク用ImGui
-	ImGui::Begin("Shake");
-	ImGui::DragFloat("shakeTime", &shakeTime_, 0.01f);
-	ImGui::DragFloat("shakePower", &shakePower_, 0.01f);
-	if (ImGui::Button("RegistShake")) {
-		camera->RegistShake(shakeTime_, shakePower_);
-	}
-	ImGui::End();
 
 
 #endif // _DEBUG

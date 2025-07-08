@@ -9,7 +9,7 @@ void GameOverScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
-	camera = std::make_unique<DevelopCamera>();
+	camera = std::make_unique<GameCamera>();
 	camera->Initialize();
 	camera->SetTranslate(cameraTranslate); // カメラの位置を調整
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f }); // カメラの回転を調整

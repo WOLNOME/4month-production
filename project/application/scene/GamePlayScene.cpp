@@ -96,7 +96,7 @@ void GamePlayScene::Initialize()
 	}
 
 	//カメラの生成と初期化
-	camera_ = std::make_unique<BaseCamera>();
+	camera_ = std::make_unique<GameCamera>();
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);

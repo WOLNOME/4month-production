@@ -11,7 +11,7 @@ void ClearScene::Initialize()
 	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
-	camera = std::make_unique<DevelopCamera>();
+	camera = std::make_unique<GameCamera>();
 	camera->Initialize(); 
 	cameraTranslate = playerPosition_ + Vector3(-10.0f, 1.5f, -5.0f); // 左側
 	cameraRotate = { 0.25f, 0.5f, 0.0f }; // プレイヤーを向く回転

@@ -7,7 +7,7 @@
 #include "Vector2.h"
 #include "Input.h"
 #include "LineDrawer.h"
-#include "DevelopCamera.h"
+#include "GameCamera.h"
 #include "appCollider/AppCollisionManager.h"
 
 #include <cstdint>
@@ -112,7 +112,7 @@ protected://メンバ変数
 	std::unique_ptr<TextWrite> numText_ = nullptr;
 	std::unique_ptr<TextWrite> valueText_ = nullptr;
 
-	std::unique_ptr<BaseCamera> camera_ = nullptr;
+	std::unique_ptr<GameCamera> camera_ = nullptr;
 
 	Vector3 cameraTranslate = { 0.0f,70.0f,-50.0f };
 	Vector3 cameraRotate = { 0.95f,0.0f,0.0f };
