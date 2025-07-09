@@ -6,23 +6,13 @@
 #include "../appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"
 
-class TackleEnemy : public BaseEnemy, public GameObject
+class TackleEnemy : public BaseEnemy
 {
 public:
     void EnemyInitialize(const std::string& filePath) override;
     void EnemyUpdate() override;
     void EnemyDraw(const BaseCamera& camera) override;
     void StartTackle();
-    Vector3 GetTargetPosition() const { return target_; }
-    void SetTargetPosition(const Vector3& target) { target_ = target; }
-    Vector3 GetPosition() const { return transform_.translate_; }
-    void SetPosition(const Vector3& position) { transform_.translate_ = position; }
-	Vector3 GetRotate() const { return transform_.rotate_; }
-	void SetRotate(const Vector3& rotate) { transform_.rotate_ = rotate; }
-	void UpdateTransform() { transform_.UpdateMatrix(); }
-	void SetMoveable(bool moveable) { isMoveable_ = moveable; }
-	bool IsPlayingDeadEffect() const { return deadEffect_->emitter_.isPlay; }
-    bool isDeadSEPlayed_ = false;
 
 	/////////// GameObjectとの競合を無くすための関数 ///////////
 
@@ -31,15 +21,10 @@ public:
     void Draw(BaseCamera _camera) override {_camera; }
 
 	///////////////////////////////////////////////////////////
-    
 
-    void Finalize() override;
 
     // 場外処理
     void OutOfField();
-	//生存フラグ
-	bool IsAlive() const { return isAlive_; }
-	bool IsGround() const { return isGround_; }
 
 private: // 衝突判定
 
@@ -64,13 +49,7 @@ private:
     void MoveOnIce();
 
 private:
-    //パーティクル
-	std::unique_ptr<Particle> deadEffect_ = nullptr;
-	int countDeadEffect_;
-
-    //生存フラグ
-	bool isAlive_ = true;
-    // タックル中かどうか
+	// タックル中かどうか
     bool isTackling_ = false;
     // 初期速度
     float tackleSpeed_ = 20.0f;
@@ -80,8 +59,6 @@ private:
     Vector3 tackleVelocity_ = { 0.0f, 0.0f, 0.0f };
     // タックルの方向
     Vector3 tackleDirection_ = { 0.0f, 0.0f, 0.0f };
-    // 目標位置
-    Vector3 target_ = { 0.0f, 0.0f, 3.0f };
     // タックル待機タイマー
     float tackleWaitTimer_ = 0.0f;
     // 次のタックルまでの待機時間
@@ -92,13 +69,7 @@ private:
     // 落下速度
     float fallSpeed_ = 0.3f;
 
-    // 当たり判定
-    AppCollisionManager* appCollisionManager_ = nullptr;
-    std::unique_ptr<AppCollider> appCollider_ = nullptr;
-    AppAABB aabb_{};
     bool isHit_ = false;
-    bool isGround_ = false;
-
 	bool isStop_ = false;
     // ノックバックの余韻
 	bool isAftertaste_ = false;
@@ -109,9 +80,5 @@ private:
     //氷の上にいるときの摩擦係数
     float frictionOnIce_ = 0.995f;
 
-	std::unique_ptr<Audio> fallSE_ = nullptr;
 	bool isGrroundPre_ = false;
-
-	// 行動不能フラグ
-	bool isMoveable_ = true;
 };
