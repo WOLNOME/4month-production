@@ -1151,14 +1151,12 @@ void GamePlayScene::CalculateNearestPosition()
 			//地面にいないプレイヤーは無視
 			if (!players_[i]->IsGround()) { continue; }
 			Vector3 playerPos = players_[i]->GetPosition();
-			float distance;
+			
 			auto& enemies = enemyManager_->GetAllEnemies();
 			for (size_t j = 0; j < enemies.size(); j++)
 			{
-				//地面にいないエネミーは無視
-				if (!enemies[j]->IsGround()) { continue; }
 				Vector3 enemyPos = enemies[j]->GetPosition();
-				distance = (playerPos - enemyPos).Length();
+				float distance = (playerPos - enemyPos).Length();
 				if (distance < closestDistance_)
 				{
 					closestDistance_ = distance;
@@ -1173,7 +1171,6 @@ void GamePlayScene::CalculateNearestPosition()
 			nearestPlayerPos_ = { 0.0f, 1.0f, 0.0f };
 			nearestPlayerNum_ = (std::numeric_limits<uint32_t>::max)();
 		}
-
 	}
 
 }
