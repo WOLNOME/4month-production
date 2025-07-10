@@ -24,6 +24,29 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
+private:
+
+	// カメラのセットアップ
+	void SetupCamera() override;
+
+	//プレイヤーのスポーン位置のセットアップ
+	void SetupPlayerSpawnPositions() override;
+
+	//エネミーマネージャーのセットアップ
+	void SetupEnemyManager() override;
+
+	//フィールドのセットアップ
+	void SetupField() override;
+
+	//障害物の生成
+	void CreateObstacles() override;
+
+	//跳ね返る障害物の生成
+	void CreateBumpers() override;
+
+	//氷の床の生成
+	void CreateIceFloors() override;
+
 private://メンバ変数
 
 	//チュートリアルシステム

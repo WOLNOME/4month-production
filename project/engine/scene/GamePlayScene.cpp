@@ -80,20 +80,7 @@ void GamePlayScene::Initialize()
 	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
 	
 
-	switch (stageNum_)
-	{
-	case 1: case 2:
-		cameraTranslate = { 0.0f,70.0f,-50.0f };
-
-		break;
-
-	case 3: case 4: case 5:
-		cameraTranslate = { 0.0f,100.0f,-75.0f };
-
-		break;
-	default:
-		break;
-	}
+	SetupCamera();
 
 	//カメラの生成と初期化
 	camera_ = std::make_unique<BaseCamera>();
@@ -108,43 +95,7 @@ void GamePlayScene::Initialize()
 	appCollisionManager_ = AppCollisionManager::GetInstance();
 	appCollisionManager_->Initialize();
 
-	// スポーン位置
-	switch (stageNum_)
-	{
-	case 1:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-		break;
-
-	case 2:
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
-		break;
-
-	case 3:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
-
-	case 4:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,13.0f });
-		playerSpawnPositions_.push_back({ 8.0f,1.0f,-10.0f });
-		playerSpawnPositions_.push_back({ -10.0f,1.0f,-10.0f });
-		break;
-
-	case 5:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
-	
-	default:
-		break;
-	}
-	
+	SetupPlayerSpawnPositions();
 
 	// プレイヤー
 	for (uint32_t i = 0; i < 1; ++i)
@@ -164,36 +115,7 @@ void GamePlayScene::Initialize()
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy", "Fan","Freeze");
 
-	switch (stageNum_)
-	{
-	case 1:
-		enemyManager_->SpawnTackleEnemy(7);
-		break;
-
-	case 2:
-		enemyManager_->SpawnTackleEnemy(4);
-		enemyManager_->SpawnFanEnemy(3);
-		break;
-
-	case 3:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(4);
-		break;
-
-	case 4:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFanEnemy(5);
-		break;
-
-	case 5:
-		enemyManager_->SpawnFanEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(7);
-		break;
-
-	default:
-		break;
-	}
-	
+	SetupEnemyManager();
 	
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
@@ -202,196 +124,13 @@ void GamePlayScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
-	//フィールドの大きさと敵のスポーン範囲を設定
-	switch (stageNum_)
-	{
-	case 1: case 2:
-		field_->SetScale({ 20.0f,1.0f,20.0f });
-		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
+	SetupField();
 
-		break;
-	case 3: case 4: case 5:
-		field_->SetScale({ 30.0f, 1.0f, 30.0f });
-		enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
+	CreateObstacles();
 
-		break;
-	default:
-		break;
-	}
-	
+	CreateBumpers();
 
-	//障害物の生成
-	std::vector<Vector3> obstaclePositions;
-	std::vector<Vector3> obstacleScales;
-
-	switch (stageNum_)
-	{
-	case 2:
-		//障害物の生成
-		obstaclePositions = {
-			{ 0.0f, 1.0f, 7.0f },
-			{ -15.0f, 1.0f, 0.0f },
-			{ 10.0f, 1.0f, -15.0f }
-		};
-		obstacleScales = {
-			{ 5.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 5.0f },
-			{ 1.0f, 1.0f, 5.0f }
-		};
-		break;
-	default:
-		break;
-	}
-
-	for (size_t i = 0; i < obstaclePositions.size(); ++i)
-	{
-		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
-		obstacle = std::make_unique<Obstacle>();
-		obstacle->Initialize();
-		obstacle->SetPosition(obstaclePositions[i]);
-		obstacle->SetScale(obstacleScales[i]);
-	}
-
-	//跳ね返る障害物の生成
-	std::vector<Vector3> bumperPositions;
-	std::vector<Vector3> bumperScales;
-	std::vector<Vector3> bumperDirections;
-	std::vector<float> bumperSpeeds;
-	std::vector<float> bumperRanges;
-	switch (stageNum_)
-	{
-	case 4:
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
-
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		break;
-
-	case 5:
-
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		bumperDirections = {
-		  { 1.0f, 0.0f, 0.0f },
-		  { 0.0f, 0.0f, 1.0f },
-		  { -1.0f, 0.0f, 0.0f }
-		};
-		bumperSpeeds = {
-			0.1f,
-			0.1f,
-			0.1f
-		};
-		bumperRanges = {
-			10.0f,
-			10.0f,
-			10.0f
-		};
-		break;
-	default:
-		break;
-	}
-
-	switch (stageNum_)
-	{
-	case 5:
-		for (size_t i = 0; i < bumperPositions.size(); ++i)
-		{
-			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
-			bumper = std::make_unique<Bumper>();
-			bumper->Initialize();
-			bumper->SetPosition(bumperPositions[i]);
-			bumper->SetScale(bumperScales[i]);
-			bumper->SetMoveDirection(bumperDirections[i]);
-			bumper->SetMoveSpeed(bumperSpeeds[i]);
-			bumper->SetMoveRange(bumperRanges[i]);
-		}
-		break;
-	default:
-		for (size_t i = 0; i < bumperPositions.size(); ++i)
-		{
-			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
-			bumper = std::make_unique<Bumper>();
-			bumper->Initialize();
-			bumper->SetPosition(bumperPositions[i]);
-			bumper->SetScale(bumperScales[i]);
-		}
-		break;
-	}
-	
-
-	//氷の床の生成
-	std::vector<Vector3> iceFloorPositions;
-	std::vector<Vector3> iceFloorScales;
-	std::vector<Vector3> iceFloorRotations;
-
-	switch (stageNum_)
-	{
-	case 3:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
-
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
-
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
-
-	case 5:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
-
-	default:
-		break;
-	}
-
-	for (size_t i = 0; i < iceFloorPositions.size(); ++i)
-	{
-		std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
-		iceFloor = std::make_unique<IceFloor>();
-		iceFloor->Initialize();
-		iceFloor->SetPosition(iceFloorPositions[i]);
-		iceFloor->SetScale(iceFloorScales[i]);
-		iceFloor->SetRotation(iceFloorRotations[i]);
-	}
+	CreateIceFloors();
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -1025,6 +764,300 @@ void GamePlayScene::UpdateIntervalNum()
 	// 最大サイズに合わせてスケーリング
 	numSize_.x = 320.0f * scale;
 	numSize_.y = 480.0f * scale;
+}
+
+void GamePlayScene::SetupCamera()
+{
+	switch (stageNum_)
+	{
+	case 1: case 2:
+		cameraTranslate = { 0.0f,70.0f,-50.0f };
+
+		break;
+
+	case 3: case 4: case 5:
+		cameraTranslate = { 0.0f,100.0f,-75.0f };
+
+		break;
+	default:
+		break;
+	}
+
+}
+
+void GamePlayScene::SetupPlayerSpawnPositions()
+{
+	// スポーン位置
+	switch (stageNum_)
+	{
+	case 1:
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
+		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
+		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
+		break;
+
+	case 2:
+		playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
+		playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
+		break;
+
+	case 3:
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
+		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
+		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
+		break;
+
+	case 4:
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,13.0f });
+		playerSpawnPositions_.push_back({ 8.0f,1.0f,-10.0f });
+		playerSpawnPositions_.push_back({ -10.0f,1.0f,-10.0f });
+		break;
+
+	case 5:
+		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
+		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
+		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
+		break;
+
+	default:
+		break;
+	}
+}
+
+void GamePlayScene::SetupEnemyManager()
+{
+	switch (stageNum_)
+	{
+	case 1:
+		enemyManager_->SpawnTackleEnemy(7);
+		break;
+
+	case 2:
+		enemyManager_->SpawnTackleEnemy(4);
+		enemyManager_->SpawnFanEnemy(3);
+		break;
+
+	case 3:
+		enemyManager_->SpawnTackleEnemy(7);
+		enemyManager_->SpawnFreezeEnemy(4);
+		break;
+
+	case 4:
+		enemyManager_->SpawnTackleEnemy(7);
+		enemyManager_->SpawnFanEnemy(5);
+		break;
+
+	case 5:
+		enemyManager_->SpawnFanEnemy(7);
+		enemyManager_->SpawnFreezeEnemy(7);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void GamePlayScene::SetupField()
+{
+	//フィールドの大きさと敵のスポーン範囲を設定
+	switch (stageNum_)
+	{
+	case 1: case 2:
+		field_->SetScale({ 20.0f,1.0f,20.0f });
+		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
+
+		break;
+	case 3: case 4: case 5:
+		field_->SetScale({ 30.0f, 1.0f, 30.0f });
+		enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
+
+		break;
+	default:
+		break;
+	}
+}
+
+void GamePlayScene::CreateObstacles()
+{
+	//障害物の生成
+	std::vector<Vector3> obstaclePositions;
+	std::vector<Vector3> obstacleScales;
+
+	switch (stageNum_)
+	{
+	case 2:
+		//障害物の生成
+		obstaclePositions = {
+			{ 0.0f, 1.0f, 7.0f },
+			{ -15.0f, 1.0f, 0.0f },
+			{ 10.0f, 1.0f, -15.0f }
+		};
+		obstacleScales = {
+			{ 5.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 5.0f },
+			{ 1.0f, 1.0f, 5.0f }
+		};
+		break;
+	default:
+		break;
+	}
+
+	for (size_t i = 0; i < obstaclePositions.size(); ++i)
+	{
+		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+		obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->SetPosition(obstaclePositions[i]);
+		obstacle->SetScale(obstacleScales[i]);
+	}
+
+}
+
+void GamePlayScene::CreateBumpers()
+{
+	//跳ね返る障害物の生成
+	std::vector<Vector3> bumperPositions;
+	std::vector<Vector3> bumperScales;
+	std::vector<Vector3> bumperDirections;
+	std::vector<float> bumperSpeeds;
+	std::vector<float> bumperRanges;
+	switch (stageNum_)
+	{
+	case 4:
+		bumperPositions = {
+		{ 0.0f, 1.0f, 12.0f },
+		{ -20.0f, 1.0f, 0.0f },
+		{ 17.0f, 1.0f, -22.0f }
+		};
+
+		bumperScales = {
+			{ 3.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 3.0f },
+			{ 1.0f, 1.0f, 3.0f }
+		};
+		break;
+
+	case 5:
+
+		bumperPositions = {
+		{ 0.0f, 1.0f, 12.0f },
+		{ -20.0f, 1.0f, 0.0f },
+		{ 17.0f, 1.0f, -22.0f }
+		};
+		bumperScales = {
+			{ 3.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 3.0f },
+			{ 1.0f, 1.0f, 3.0f }
+		};
+		bumperDirections = {
+		  { 1.0f, 0.0f, 0.0f },
+		  { 0.0f, 0.0f, 1.0f },
+		  { -1.0f, 0.0f, 0.0f }
+		};
+		bumperSpeeds = {
+			0.1f,
+			0.1f,
+			0.1f
+		};
+		bumperRanges = {
+			10.0f,
+			10.0f,
+			10.0f
+		};
+		break;
+	default:
+		break;
+	}
+
+	switch (stageNum_)
+	{
+	case 5:
+		for (size_t i = 0; i < bumperPositions.size(); ++i)
+		{
+			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+			bumper = std::make_unique<Bumper>();
+			bumper->Initialize();
+			bumper->SetPosition(bumperPositions[i]);
+			bumper->SetScale(bumperScales[i]);
+			bumper->SetMoveDirection(bumperDirections[i]);
+			bumper->SetMoveSpeed(bumperSpeeds[i]);
+			bumper->SetMoveRange(bumperRanges[i]);
+		}
+		break;
+	default:
+		for (size_t i = 0; i < bumperPositions.size(); ++i)
+		{
+			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+			bumper = std::make_unique<Bumper>();
+			bumper->Initialize();
+			bumper->SetPosition(bumperPositions[i]);
+			bumper->SetScale(bumperScales[i]);
+		}
+		break;
+	}
+}
+
+void GamePlayScene::CreateIceFloors()
+{
+	//氷の床の生成
+	std::vector<Vector3> iceFloorPositions;
+	std::vector<Vector3> iceFloorScales;
+	std::vector<Vector3> iceFloorRotations;
+
+	switch (stageNum_)
+	{
+	case 3:
+		iceFloorPositions = {
+		{ -20.0f, 1.01f, 15.0f },
+		{ -5.0f, 1.01f, -15.0f },
+		{ 20.0f, 1.01f, 0.0f }
+		};
+
+		iceFloorScales = {
+			{ 5.0f, 1.0f, 5.0f },
+			{ 5.0f, 1.0f, 5.0f },
+			{ 5.0f, 1.0f, 5.0f }
+		};
+
+		iceFloorRotations = {
+			{ 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 45.0f, 0.0f },
+			{ 0.0f, 67.0f, 0.0f }
+		};
+		break;
+
+	case 5:
+		iceFloorPositions = {
+		{ -20.0f, 1.01f, 15.0f },
+		{ -5.0f, 1.01f, -15.0f },
+		{ 20.0f, 1.01f, 0.0f }
+		};
+		iceFloorScales = {
+			{ 5.0f, 1.0f, 5.0f },
+			{ 5.0f, 1.0f, 5.0f },
+			{ 5.0f, 1.0f, 5.0f }
+		};
+		iceFloorRotations = {
+			{ 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 45.0f, 0.0f },
+			{ 0.0f, 67.0f, 0.0f }
+		};
+		break;
+
+	default:
+		break;
+	}
+
+	for (size_t i = 0; i < iceFloorPositions.size(); ++i)
+	{
+		std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
+		iceFloor = std::make_unique<IceFloor>();
+		iceFloor->Initialize();
+		iceFloor->SetPosition(iceFloorPositions[i]);
+		iceFloor->SetScale(iceFloorScales[i]);
+		iceFloor->SetRotation(iceFloorRotations[i]);
+	}
 }
 
 void GamePlayScene::UpdateCamera()

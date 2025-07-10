@@ -81,6 +81,29 @@ public:
 	// ステージ始まるインターバル数字
 	void UpdateIntervalNum();
 
+protected: //メンバ関数
+
+	// カメラのセットアップ
+	virtual void SetupCamera();
+
+	//プレイヤーのスポーン位置のセットアップ
+	virtual void SetupPlayerSpawnPositions();
+
+	//エネミーマネージャーのセットアップ
+	virtual void SetupEnemyManager();
+
+	//フィールドのセットアップ
+	virtual void SetupField();
+
+	//障害物の生成
+	virtual void CreateObstacles();
+
+	//跳ね返る障害物の生成
+	virtual void CreateBumpers();
+
+	//氷の床の生成
+	virtual void CreateIceFloors();
+
 protected://メンバ変数
 
 	Input* input_ = nullptr;
