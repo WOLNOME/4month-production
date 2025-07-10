@@ -23,6 +23,7 @@
 #include "../../application/objects/Gimmick/Bumper.h"
 #include "../../application/objects/Gimmick/IceFloor.h"
 #include "../../application/PauseSystem.h"
+#include "../../application/UI/Charge.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -62,9 +63,6 @@ public:
 	void UpdateZoomOut();
 	// 最も近い敵やプレイヤーの位置を計算
 	void CalculateNearestPosition();
-
-	// Player攻撃チャージ
-	void playerTackleCharge();
 
 	//ステージ番号
 	static uint32_t stageNum_;
@@ -114,11 +112,8 @@ protected://メンバ変数
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
 	
-	// チャージUI
-	uint32_t textureHandleUI_Charge_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
-	
+	std::unique_ptr<Charge> charge_ = nullptr;
+
 	// インターバルの数字
 	uint32_t textureHandleIntervalNum1_ = 0u;
 	uint32_t textureHandleIntervalNum2_ = 0u;
@@ -219,12 +214,6 @@ protected://メンバ変数
 	float waitTime_ = 0.0f;
 	// 待機時間の長さ
 	float waitTimeDuration_ = 0.13f;
-
-	// 攻撃チャージMax
-	const float chargeMax_ = 80.0f;
-	bool isChargeMax_ = false;
-	// 攻撃チャージ
-	float charge_ = 0.0f;
 
 	// ゲーム開始のインターバル
 	float gameStartDelayTimer_ = 3.0f;

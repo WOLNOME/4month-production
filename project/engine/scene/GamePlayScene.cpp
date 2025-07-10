@@ -23,18 +23,9 @@ void GamePlayScene::Initialize()
 	textureHandleUI_PLAY_ = TextureManager::GetInstance()->LoadTexture("UI_PLAY.png");
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
 	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
-	
-	// チャージUI
-	textureHandleUI_Charge_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
-	spriteUI_Charge_ = std::make_unique<Sprite>();
-	spriteUI_Charge_->SetPosition({ 1085.0f, 600.0f });
-	spriteUI_Charge_->Initialize(textureHandleUI_Charge_);
 
-	spriteUI_ChargeGage_ = std::make_unique<Sprite>();
-	spriteUI_ChargeGage_->Initialize(textureHandleUI_Charge_);
-	spriteUI_ChargeGage_->SetPosition({ 1085.0f, 600.0f });
-	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
-	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	charge_ = std::make_unique<Charge>();
+	charge_->Initialize(TextureManager::GetInstance()->LoadTexture("spawn.png"));
 
 	// インターバルの数字
 	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("count1.png");
@@ -105,7 +96,7 @@ void GamePlayScene::Initialize()
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
-		player->SetIsChargeMax(&isChargeMax_);
+		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
 
 		players_.push_back(std::move(player));
 		playerNum_++;
@@ -194,8 +185,10 @@ void GamePlayScene::Update()
 	}
 	// スプライト
 	spriteUI_PLAY_->Update();
-	spriteUI_Charge_->Update();
-	spriteUI_ChargeGage_->Update();
+	
+	//チャージの更新
+	charge_->Update();
+
 	remainingSpawnNum();
 	spriteUI_Num1_->Update();
 	spriteUI_Num2_->Update();
@@ -236,16 +229,6 @@ void GamePlayScene::Update()
 		enemyManager_->IsMoveable(true);
 	}
 
-
-	// チャージの大きさに応じてスプライトのサイズを変更
-	// チャージの割合を計算
-	float chargeScale = charge_ / chargeMax_;
-	chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
-
-	// チャージの割合に応じてテクスチャのXサイズを変更
-	float newWidth = 180.0f * chargeScale; // 0から120まで拡大
-	spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
-
 	// カメラの更新
 	UpdateCamera();
 
@@ -269,7 +252,7 @@ void GamePlayScene::Update()
 	if (isGameStart_)
 	{
 		// プレイヤー攻撃チャージ
-		playerTackleCharge();
+		charge_->playerTackleCharge(playerNum_ > 0, players_);
 	}
 	// 準備中プレイヤーの更新
 	if (preSpawnedPlayer_) {
@@ -428,8 +411,10 @@ void GamePlayScene::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
-	spriteUI_ChargeGage_->Draw();
-	spriteUI_Charge_->Draw();
+	
+	//チャージの描画
+	charge_->Draw();
+
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
 
@@ -487,7 +472,7 @@ void GamePlayScene::ImGuiDraw()
 
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
-		player->SetIsChargeMax(&isChargeMax_);
+		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
 
 		players_.push_back(std::move(player));
 	}
@@ -537,7 +522,7 @@ void GamePlayScene::ImGuiDraw()
 
 	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
 
-	ImGui::Text("charge : % .0f", charge_);
+	ImGui::Text("charge : % .0f", charge_->GetChargeValue());
 
 	if (!players_.empty())
 	{
@@ -586,7 +571,7 @@ void GamePlayScene::playerSpawnRotation()
 		prePlayer->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
 		prePlayer->SetScale({ 0.1f, 0.1f, 0.1f });
 		prePlayer->Initialize();
-		prePlayer->SetIsChargeMax(&isChargeMax_);
+		prePlayer->SetIsChargeMax(charge_->IsChargeMaxPtr());
 
 		prePlayer->IsMoveable(false);
 
@@ -630,44 +615,6 @@ void GamePlayScene::playerSpawnRotation()
 				playerSpawnIndex_ = 0;
 			}
 		}
-	}
-}
-
-void GamePlayScene::playerTackleCharge()
-{
-	// プレイヤーが1体以上いるとき
-	if (playerNum_ > 0)
-	{
-		// チャージが最大でないとき
-		if (charge_ < chargeMax_)
-		{
-			charge_ += 1.0f;
-		}
-		// チャージが最大値に達したら
-		else
-		{
-			if (!isChargeMax_) 
-			{
-				isChargeMax_ = true;
-			}
-
-			if (input_->TriggerKey(DIK_SPACE) && isChargeMax_) {
-
-				for (std::unique_ptr<Player>& player : players_)
-				{
-					if (!player->IsAttack()) 
-					{
-						continue;
-					}
-					isChargeMax_ = false;
-					charge_ = 0.0f;
-
-					return;
-				}
-
-			}
-		}
-
 	}
 }
 
