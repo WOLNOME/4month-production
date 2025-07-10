@@ -9,9 +9,13 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
+#include "../../application/UI/RemainingSpawnNum.h"
+
 void TutorialScene::Initialize() {
 	//シーンの初期化
 	GamePlayScene::Initialize();
+
+	isGameStart_ = true; // ゲーム開始フラグをtrueに設定
 
 	//チュートリアルシステム
 	tutorialSystem_ = std::make_unique<TutorialSystem>();
@@ -54,12 +58,7 @@ void TutorialScene::TextDraw() {
 		tutorialSystem_->WriteText();
 	}
 	if (!pauseSystem_->GetIsPause() && tutorialSystem_->GetIsZankiDisplay()) {
-		//スペースUIテキスト
-		remainingSpawnNumText_->WriteText(L"残り出現数");
-		// 残りの出現数テキスト
-		numText_->WriteText(std::to_wstring(remainingBoogie_));
-		// 値のテキスト
-		valueText_->WriteText(L"体");
+		remainingSpawnNum_->TextDraw();
 	}
 
 	///------------------------------///
@@ -104,4 +103,16 @@ void TutorialScene::CreateBumpers()
 void TutorialScene::CreateIceFloors()
 {
 	//チュートリアルでは氷の床を設置しない
+}
+
+void TutorialScene::UpdateIntervalNum()
+{
+	// チュートリアルでは間隔の数字を更新しない
+	// ここは空の実装
+}
+
+void TutorialScene::StartInterVal()
+{
+	// チュートリアルでは間隔の数字を開始しない
+	// ここは空の実装
 }

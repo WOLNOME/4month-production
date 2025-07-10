@@ -24,6 +24,7 @@
 #include "../../application/objects/Gimmick/IceFloor.h"
 #include "../../application/PauseSystem.h"
 #include "../../application/UI/Charge.h"
+#include "../../application/UI/RemainingSpawnNum.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -70,14 +71,13 @@ public:
 	//シェイクのチェック
 	void CheckShake();
 
-	// 残り出現数UI
-	void remainingSpawnNum();
-
 	// モデルの更新(インターバル中に位置だけでもおいておきたい)
 	void UpdateTransform();
 
 	// ステージ始まるインターバル数字
-	void UpdateIntervalNum();
+	virtual void UpdateIntervalNum();
+
+	virtual void StartInterVal();
 
 protected: //メンバ関数
 
@@ -122,13 +122,7 @@ protected://メンバ変数
 	std::unique_ptr<Sprite> spriteUI_Num2_ = nullptr;
 	std::unique_ptr<Sprite> spriteUI_Num3_ = nullptr;
 
-	
-	// 残り出現数
-	uint32_t remainingBoogie_ = 0;
-	// 残りの出現数テキスト
-	std::unique_ptr<TextWrite> remainingSpawnNumText_ = nullptr;
-	std::unique_ptr<TextWrite> numText_ = nullptr;
-	std::unique_ptr<TextWrite> valueText_ = nullptr;
+	std::unique_ptr<RemainingSpawnNum> remainingSpawnNum_;
 
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 

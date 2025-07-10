@@ -133,6 +133,9 @@
     <ClCompile Include="application\UI\Charge.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="application\UI\RemainingSpawnNum.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -268,6 +271,9 @@
     <ClInclude Include="engine\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
     <ClInclude Include="application\UI\Charge.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\RemainingSpawnNum.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>

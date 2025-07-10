@@ -47,6 +47,10 @@ private:
 	//氷の床の生成
 	void CreateIceFloors() override;
 
+	void UpdateIntervalNum() override;
+
+	void StartInterVal() override;
+
 private://メンバ変数
 
 	//チュートリアルシステム

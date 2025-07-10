@@ -9,6 +9,8 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
+#include "../../application/UI/RemainingSpawnNum.h"
+
 uint32_t GamePlayScene::stageNum_ = 1;
 
 void GamePlayScene::Initialize()
@@ -53,23 +55,8 @@ void GamePlayScene::Initialize()
 	spriteUI_Num3_->SetSize({ 0.0f, 0.0f });
 	spriteUI_Num3_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
 
-
-	// 残り出現数UIテキスト
-	remainingSpawnNumText_ = std::make_unique<TextWrite>();
-	remainingSpawnNumText_->Initialize("REMAINING");
-	remainingSpawnNumText_->SetParam({ 10.0f, 100.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
-	remainingSpawnNumText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	// 残りの出現数テキスト
-	numText_ = std::make_unique<TextWrite>();
-	numText_->Initialize("NUM");
-	numText_->SetParam({ 50.0f, 150.0f }, Font::GenEiPOPle, 70.0f, { 0.9f, 0.85f, 0.13f, 1 });
-	numText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	// 値のテキスト
-	valueText_ = std::make_unique<TextWrite>();
-	valueText_->Initialize("value");
-	valueText_->SetParam({ 160.0f, 185.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
-	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	
+	remainingSpawnNum_ = std::make_unique<RemainingSpawnNum>();
+	remainingSpawnNum_->Initialize(kMaxSpawnNum);
 
 	SetupCamera();
 
@@ -189,45 +176,14 @@ void GamePlayScene::Update()
 	//チャージの更新
 	charge_->Update();
 
-	remainingSpawnNum();
+	// 残り出現数の更新
+	remainingSpawnNum_->Update(howManyBoogie_);
+
 	spriteUI_Num1_->Update();
 	spriteUI_Num2_->Update();
 	spriteUI_Num3_->Update();
 
-	// ゲーム開始のインターバル
-	if (!isGameStart_) {
-		// 初期モデルだけ 1 回 Update しておく
-		if (!hasPreUpdated_) {
-			// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
-			UpdateTransform();
-
-			hasPreUpdated_ = true;
-		}
-
-		// 3秒カウント
-		gameStartDelayTimer_ -= 1.0f / 60.0f;
-		if (gameStartDelayTimer_ <= 0.0f) {
-			isGameStart_ = true;
-		}
-
-		// プレイヤーの行動不能フラグセット
-		for (auto& player : players_)
-		{
-			player->IsMoveable(false);
-		}
-
-		// エネミーの行動不能フラグセット
-		enemyManager_->IsMoveable(false);
-	} 
-	else
-	{
-		for (auto& player : players_)
-		{
-			player->IsMoveable(true);
-		}
-
-		enemyManager_->IsMoveable(true);
-	}
+	StartInterVal();
 
 	// カメラの更新
 	UpdateCamera();
@@ -331,8 +287,7 @@ void GamePlayScene::Update()
 	// ImGui
 	ImGuiDraw();
 
-	//UIテキスト用のImGui
-	valueText_->DebugWithImGui();
+	remainingSpawnNum_->DebugWithImGui();
 }
 
 void GamePlayScene::Draw()
@@ -437,12 +392,7 @@ void GamePlayScene::TextDraw() {
 	pauseSystem_->TextDraw();
 
 	if (!pauseSystem_->GetIsPause()) {
-		//スペースUIテキスト
-		remainingSpawnNumText_->WriteText(L"残り出現数");
-		// 残りの出現数テキスト
-		numText_->WriteText(std::to_wstring(remainingBoogie_));
-		// 値のテキスト
-		valueText_->WriteText(L"体");
+		remainingSpawnNum_->TextDraw();
 	}
 
 	///------------------------------///
@@ -643,15 +593,6 @@ void GamePlayScene::CheckShake() {
 	}
 }
 
-void GamePlayScene::remainingSpawnNum()
-{
-	// 残り出現数を計算
-	remainingBoogie_ = kMaxSpawnNum - howManyBoogie_;
-	if (remainingBoogie_ < 0) {
-		remainingBoogie_ = 0; // 負の値にならないように制限
-	}
-}
-
 void GamePlayScene::UpdateTransform()
 {
 	// プレイヤーの位置を更新
@@ -711,6 +652,44 @@ void GamePlayScene::UpdateIntervalNum()
 	// 最大サイズに合わせてスケーリング
 	numSize_.x = 320.0f * scale;
 	numSize_.y = 480.0f * scale;
+}
+
+void GamePlayScene::StartInterVal()
+{
+	// ゲーム開始のインターバル
+	if (!isGameStart_) {
+		// 初期モデルだけ 1 回 Update しておく
+		if (!hasPreUpdated_) {
+			// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
+			UpdateTransform();
+
+			hasPreUpdated_ = true;
+		}
+
+		// 3秒カウント
+		gameStartDelayTimer_ -= 1.0f / 60.0f;
+		if (gameStartDelayTimer_ <= 0.0f) {
+			isGameStart_ = true;
+		}
+
+		// プレイヤーの行動不能フラグセット
+		for (auto& player : players_)
+		{
+			player->IsMoveable(false);
+		}
+
+		// エネミーの行動不能フラグセット
+		enemyManager_->IsMoveable(false);
+	}
+	else
+	{
+		for (auto& player : players_)
+		{
+			player->IsMoveable(true);
+		}
+
+		enemyManager_->IsMoveable(true);
+	}
 }
 
 void GamePlayScene::SetupCamera()
