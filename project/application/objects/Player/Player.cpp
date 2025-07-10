@@ -411,6 +411,7 @@ void Player::MoveOnIce() {
 
 void Player::AttackOnIce()
 {
+	//同じ値だと摩擦の違いで氷の上の方が攻撃が速くなるので、摩擦を考慮して少し遅くする
 	AttackCommon(1.5f);
 }
 
