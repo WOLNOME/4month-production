@@ -25,6 +25,7 @@
 #include "../../application/PauseSystem.h"
 #include "../../application/UI/Charge.h"
 #include "../../application/UI/RemainingSpawnNum.h"
+#include "../../application/CameraControl/CameraControl.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -58,12 +59,6 @@ public:
 
 	// カメラの更新
 	void UpdateCamera();
-	// カメラのズームイン
-	void UpdateZoomIn();
-	// カメラのズームアウト
-	void UpdateZoomOut();
-	// 最も近い敵やプレイヤーの位置を計算
-	void CalculateNearestPosition();
 
 	//ステージ番号
 	static uint32_t stageNum_;
@@ -182,32 +177,8 @@ protected://メンバ変数
 
 	//ゲーム終了フラグ
 	bool isGameEnd_ = false;
-	// カメラを引くフラグ
-	bool isZoomOut_ = false;
-	// カメラを寄せるフラグ
-	bool isZoomIn_ = false;
-	// カメラのイージング経過時間
-	float cameraEaseTime_ = 0.0f;
-	// カメラのイージング時間
-	const float cameraEaseDuration_ = 2.0f;
-	// カメラの開始位置
-	Vector3 cameraStartPosition_ = { 0.0f,70.0f,-50.0f };
-	// カメラの終了位置
-	Vector3 cameraEndPosition_ = { 0.0f, 50.0f, -30.0f };
-	// 最も近いプレイヤーの位置
-	Vector3 nearestPlayerPos_ = {};
-	//　最も近いプレイヤーの番号
-	uint32_t nearestPlayerNum_ = 0;
-	// 最も近い敵の位置
-	Vector3 nearestEnemyPos_ = {};
-	// 最も近い敵の番号
-	uint32_t nearestEnemyNum_ = 0;
-	// 最も近い敵の種類
-	std::string nearestEnemyType_ = "";
-	//　待機時間
-	float waitTime_ = 0.0f;
-	// 待機時間の長さ
-	float waitTimeDuration_ = 0.13f;
+
+	std::unique_ptr<CameraControl> cameraControl_ = nullptr;
 
 	// ゲーム開始のインターバル
 	float gameStartDelayTimer_ = 3.0f;

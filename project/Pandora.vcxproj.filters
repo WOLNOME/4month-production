@@ -136,6 +136,9 @@
     <ClCompile Include="application\UI\RemainingSpawnNum.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="application\CameraControl\CameraControl.cpp">
+      <Filter>cameraControl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -276,6 +279,9 @@
     <ClInclude Include="application\UI\RemainingSpawnNum.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="application\CameraControl\CameraControl.h">
+      <Filter>cameraControl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
@@ -323,6 +329,9 @@
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{f8524539-e4f9-4cec-a322-0f2bdc4d430d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cameraControl">
+      <UniqueIdentifier>{610e4cc8-0469-493c-86a7-e888d50f2f06}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
