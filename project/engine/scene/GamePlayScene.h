@@ -51,6 +51,11 @@ public:
 	/// </summary>
 	virtual void TextDraw() override;
 
+	//ステージ番号
+	static uint32_t stageNum_;
+
+private: //メンバ関数
+
 	// ImGui
 	void ImGuiDraw();
 
@@ -59,9 +64,6 @@ public:
 
 	// カメラの更新
 	void UpdateCamera();
-
-	//ステージ番号
-	static uint32_t stageNum_;
 
 	//シェイクのチェック
 	void CheckShake();
@@ -73,8 +75,6 @@ public:
 	virtual void UpdateIntervalNum();
 
 	virtual void StartInterVal();
-
-protected: //メンバ関数
 
 	// カメラのセットアップ
 	virtual void SetupCamera();
