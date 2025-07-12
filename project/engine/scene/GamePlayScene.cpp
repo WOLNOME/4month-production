@@ -81,15 +81,7 @@ void GamePlayScene::Initialize()
 	// プレイヤー
 	for (uint32_t i = 0; i < 1; ++i)
 	{
-		auto player = std::make_unique<Player>();
-
-		player->SetPlayerPos(playerSpawnPositions_[0]);
-		player->SetScale({ 1.0f, 1.0f, 1.0f });
-		player->Initialize();
-		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
-
-		players_.push_back(std::move(player));
-		playerNum_++;
+		AddPlayer(false);
 	}
 
 	//エネミーマネージャーの生成と初期化
@@ -412,13 +404,7 @@ void GamePlayScene::ImGuiDraw()
 	// プレイヤーを追加するボタン
 	if (ImGui::Button("Add Player"))
 	{
-		auto player = std::make_unique<Player>();
-
-		player->SetPlayerPos(playerSpawnPositions_[0]);
-		player->Initialize();
-		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
-
-		players_.push_back(std::move(player));
+		AddPlayer(false);
 	}
 
 	// 障害物の位置調整
@@ -511,17 +497,8 @@ void GamePlayScene::playerSpawnRotation()
 		playerSpawn_[playerSpawnIndex_]->IsShaking(true);
 
 		// 小さい状態で非アクティブなプレイヤー生成
-		auto prePlayer = std::make_unique<Player>();
-		prePlayer->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
-		prePlayer->SetScale({ 0.1f, 0.1f, 0.1f });
-		prePlayer->Initialize();
-		prePlayer->SetIsChargeMax(charge_->IsChargeMaxPtr());
+		AddPlayer(true);
 
-		prePlayer->IsMoveable(false);
-
-		preSpawnedPlayer_ = std::move(prePlayer);
-
-		preSpawnedPlayer_->Update();
 	}
 
 	// 拡大処理（Lerp）
@@ -978,6 +955,45 @@ void GamePlayScene::CreateIceFloors()
 		iceFloor->SetScale(iceFloorScales[i]);
 		iceFloor->SetRotation(iceFloorRotations[i]);
 	}
+}
+
+void GamePlayScene::AddPlayer(bool preSpawn)
+{
+	auto player = std::make_unique<Player>();
+
+	if (!preSpawn) 
+	{
+		player->SetPlayerPos(playerSpawnPositions_[0]);
+		// プレイヤーがスポーンする場合は通常のスケール
+		player->SetScale({ 1.0f, 1.0f, 1.0f });
+	} 
+	else 
+	{
+		player->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
+		// スポーン準備中のプレイヤーは小さいスケール
+		player->SetScale({ 0.1f, 0.1f, 0.1f });
+	}
+	player->Initialize();
+	player->SetIsChargeMax(charge_->IsChargeMaxPtr());
+
+	if (!preSpawn) 
+	{
+		players_.push_back(std::move(player));
+		playerNum_++;
+
+		return;
+	}
+	else 
+	{
+		player->IsMoveable(false);
+
+		preSpawnedPlayer_ = std::move(player);
+
+		preSpawnedPlayer_->Update();
+
+		return;
+	}
+	
 }
 
 void GamePlayScene::UpdateCamera()

@@ -97,6 +97,9 @@ private: //メンバ関数
 	//氷の床の生成
 	virtual void CreateIceFloors();
 
+	//プレイヤーの追加
+	void AddPlayer(bool preSpawn);
+
 protected://メンバ変数
 
 	Input* input_ = nullptr;
