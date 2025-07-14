@@ -66,43 +66,9 @@ void TutorialScene::TextDraw() {
 	///------------------------------///
 }
 
-void TutorialScene::SetupCamera()
+void TutorialScene::SetupCsvFilePath()
 {
-	cameraTranslate = { 0.0f,70.0f,-50.0f };
-
-}
-
-void TutorialScene::SetupPlayerSpawnPositions()
-{
-	playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-	playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-	playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-}
-
-void TutorialScene::SetupEnemyManager()
-{
-	enemyManager_->SpawnTackleEnemy(2);
-}
-
-void TutorialScene::SetupField()
-{
-	field_->SetScale({ 20.0f,1.0f,20.0f });
-	enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
-}
-
-void TutorialScene::CreateObstacles()
-{
-	//チュートリアルでは障害物を設置しない
-}
-
-void TutorialScene::CreateBumpers()
-{
-	//チュートリアルでは跳ねる障害物を設置しない
-}
-
-void TutorialScene::CreateIceFloors()
-{
-	//チュートリアルでは氷の床を設置しない
+	csvFilePath_ = "./Resources/stageData/tutorial/";
 }
 
 void TutorialScene::UpdateIntervalNum()

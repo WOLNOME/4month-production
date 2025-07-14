@@ -77,25 +77,38 @@ private: //メンバ関数
 	virtual void StartInterVal();
 
 	// カメラのセットアップ
-	virtual void SetupCamera();
+	void SetupCamera();
 
 	//プレイヤーのスポーン位置のセットアップ
-	virtual void SetupPlayerSpawnPositions();
+	void SetupPlayerSpawnPositions();
 
 	//エネミーマネージャーのセットアップ
-	virtual void SetupEnemyManager();
+	void SetupEnemyManager();
 
 	//フィールドのセットアップ
-	virtual void SetupField();
+	void SetupField();
 
 	//障害物の生成
-	virtual void CreateObstacles();
+	void CreateObstacles();
 
 	//跳ね返る障害物の生成
 	virtual void CreateBumpers();
 
 	//氷の床の生成
 	virtual void CreateIceFloors();
+
+	virtual void SetupCsvFilePath();
+
+	// CSVファイルの読み込み。　filenameに拡張子はつけないこと
+	std::stringstream LoadCsvFile(std::string fileName);
+
+	Vector3 LoadVector3(std::istringstream& lineStream);
+
+	int LoadInt(std::istringstream& lineStream);
+
+	float LoadFloat(std::istringstream& lineStream);
+
+	bool LoadBool(std::istringstream& lineStream);
 
 	//プレイヤーの追加
 	void AddPlayer(bool preSpawn);
@@ -190,5 +203,8 @@ protected://メンバ変数
 
 	Vector2 numSize_ = { 320.0f, 480.0f };
 	uint32_t numSizeTimer_ = 0;
+
+	std::string csvFilePath_;
+
 };
 

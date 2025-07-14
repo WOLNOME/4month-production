@@ -9,7 +9,10 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
+#include <fstream>
+
 #include "../../application/UI/RemainingSpawnNum.h"
+
 
 uint32_t GamePlayScene::stageNum_ = 1;
 
@@ -19,6 +22,8 @@ void GamePlayScene::Initialize()
 	BaseScene::Initialize();
 
 	input_ = Input::GetInstance();
+
+	SetupCsvFilePath();
 
 	// スプライト
 	// プレイ画面UI
@@ -665,114 +670,141 @@ void GamePlayScene::StartInterVal()
 
 void GamePlayScene::SetupCamera()
 {
-	switch (stageNum_)
-	{
-	case 1: case 2:
-		cameraTranslate = { 0.0f,70.0f,-50.0f };
 
-		break;
+	std::stringstream cameraDatas = LoadCsvFile("Camera");
 
-	case 3: case 4: case 5:
-		cameraTranslate = { 0.0f,100.0f,-75.0f };
+	std::string line;
 
-		break;
-	default:
-		break;
+	// カメラの設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{ 
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//translate
+		if (word.find("translate") == 0)
+		{
+			cameraTranslate = LoadVector3(lineStream);
+		}
 	}
 
 }
 
 void GamePlayScene::SetupPlayerSpawnPositions()
 {
-	// スポーン位置
-	switch (stageNum_)
+	std::stringstream cameraDatas = LoadCsvFile("PlayerSpawn");
+
+	std::string line;
+
+	// プレイヤーのスポーン位置を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 1:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-		break;
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
 
-	case 2:
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
-		break;
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
 
-	case 3:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
 
-	case 4:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,13.0f });
-		playerSpawnPositions_.push_back({ 8.0f,1.0f,-10.0f });
-		playerSpawnPositions_.push_back({ -10.0f,1.0f,-10.0f });
-		break;
-
-	case 5:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
-
-	default:
-		break;
+		//translate
+		if (word.find("translate") == 0)
+		{
+			playerSpawnPositions_.push_back(LoadVector3(lineStream));
+		}
 	}
 }
 
 void GamePlayScene::SetupEnemyManager()
 {
-	switch (stageNum_)
+	std::stringstream cameraDatas = LoadCsvFile("Enemy");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 1:
-		enemyManager_->SpawnTackleEnemy(7);
-		break;
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
 
-	case 2:
-		enemyManager_->SpawnTackleEnemy(4);
-		enemyManager_->SpawnFanEnemy(3);
-		break;
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
 
-	case 3:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(4);
-		break;
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
 
-	case 4:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFanEnemy(5);
-		break;
-
-	case 5:
-		enemyManager_->SpawnFanEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(7);
-		break;
-
-	default:
-		break;
+		//TackleEnemyのスポーン設定
+		if (word.find("Tackle") == 0)
+		{
+			enemyManager_->SpawnTackleEnemy(LoadInt(lineStream));
+		}
+		//FanEnemyのスポーン設定
+		else if (word.find("Fan") == 0)
+		{
+			enemyManager_->SpawnFanEnemy(LoadInt(lineStream));
+		}
+		//FreezeEnemyのスポーン設定
+		else if (word.find("Freeze") == 0)
+		{
+			enemyManager_->SpawnFreezeEnemy(LoadInt(lineStream));
+		}
 	}
+
 }
 
 void GamePlayScene::SetupField()
 {
-	//フィールドの大きさと敵のスポーン範囲を設定
-	switch (stageNum_)
+	std::stringstream cameraDatas = LoadCsvFile("Field");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 1: case 2:
-		field_->SetScale({ 20.0f,1.0f,20.0f });
-		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
 
-		break;
-	case 3: case 4: case 5:
-		field_->SetScale({ 30.0f, 1.0f, 30.0f });
-		enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
 
-		break;
-	default:
-		break;
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//Fieldのスケール設定
+		if (word.find("Scale") == 0)
+		{
+			Vector3 scale = LoadVector3(lineStream);
+			field_->SetScale(scale);
+			Vector3 spawnMin = { -scale.x, scale.y, -scale.z };
+			enemyManager_->SetSpawnPosition(spawnMin, scale);
+
+		}
+		
 	}
+	
 }
 
 void GamePlayScene::CreateObstacles()
@@ -781,23 +813,37 @@ void GamePlayScene::CreateObstacles()
 	std::vector<Vector3> obstaclePositions;
 	std::vector<Vector3> obstacleScales;
 
-	switch (stageNum_)
+	std::stringstream cameraDatas = LoadCsvFile("Obstacle");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 2:
-		//障害物の生成
-		obstaclePositions = {
-			{ 0.0f, 1.0f, 7.0f },
-			{ -15.0f, 1.0f, 0.0f },
-			{ 10.0f, 1.0f, -15.0f }
-		};
-		obstacleScales = {
-			{ 5.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 5.0f },
-			{ 1.0f, 1.0f, 5.0f }
-		};
-		break;
-	default:
-		break;
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//obstacleのposition設定
+		if (word.find("translate") == 0)
+		{
+			obstaclePositions.push_back(LoadVector3(lineStream));
+		}
+		//obstacleのscale設定
+		else if (word.find("scale") == 0)
+		{
+			obstacleScales.push_back(LoadVector3(lineStream));
+		}
+
 	}
 
 	for (size_t i = 0; i < obstaclePositions.size(); ++i)
@@ -819,57 +865,64 @@ void GamePlayScene::CreateBumpers()
 	std::vector<Vector3> bumperDirections;
 	std::vector<float> bumperSpeeds;
 	std::vector<float> bumperRanges;
-	switch (stageNum_)
+	bool isMove = false;
+
+	std::stringstream cameraDatas = LoadCsvFile("Bumper");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 4:
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
 
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		break;
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
 
-	case 5:
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
 
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		bumperDirections = {
-		  { 1.0f, 0.0f, 0.0f },
-		  { 0.0f, 0.0f, 1.0f },
-		  { -1.0f, 0.0f, 0.0f }
-		};
-		bumperSpeeds = {
-			0.1f,
-			0.1f,
-			0.1f
-		};
-		bumperRanges = {
-			10.0f,
-			10.0f,
-			10.0f
-		};
-		break;
-	default:
-		break;
+		//bumperが動くかどうかの設定
+		if (word.find("isMove") == 0)
+		{
+			isMove = LoadBool(lineStream);
+		}
+		//bumperのposition設定
+		else if (word.find("translate") == 0)
+		{
+			bumperPositions.push_back(LoadVector3(lineStream));
+		}
+		//bumperのscale設定
+		else if (word.find("scale") == 0)
+		{
+			bumperScales.push_back(LoadVector3(lineStream));
+		}
+		//bumperのmoveDirection設定
+		else if (word.find("moveDirection") == 0)
+		{
+			bumperDirections.push_back(LoadVector3(lineStream));
+		}
+		//bumperのmoveSpeed設定
+		else if (word.find("moveSpeed") == 0)
+		{
+			bumperSpeeds.push_back(LoadFloat(lineStream));
+		}
+		//bumperのmoveRange設定
+		else if (word.find("moveRange") == 0)
+		{
+			bumperRanges.push_back(LoadFloat(lineStream));
+		}
+
 	}
 
-	switch (stageNum_)
+	// 動くかどうかのフラグに応じて、Bumperを生成
+	if (isMove)
 	{
-	case 5:
 		for (size_t i = 0; i < bumperPositions.size(); ++i)
 		{
 			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
@@ -881,8 +934,10 @@ void GamePlayScene::CreateBumpers()
 			bumper->SetMoveSpeed(bumperSpeeds[i]);
 			bumper->SetMoveRange(bumperRanges[i]);
 		}
-		break;
-	default:
+	}
+	// 動かない場合は、通常のBumperを生成
+	else
+	{
 		for (size_t i = 0; i < bumperPositions.size(); ++i)
 		{
 			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
@@ -891,8 +946,8 @@ void GamePlayScene::CreateBumpers()
 			bumper->SetPosition(bumperPositions[i]);
 			bumper->SetScale(bumperScales[i]);
 		}
-		break;
 	}
+
 }
 
 void GamePlayScene::CreateIceFloors()
@@ -902,48 +957,43 @@ void GamePlayScene::CreateIceFloors()
 	std::vector<Vector3> iceFloorScales;
 	std::vector<Vector3> iceFloorRotations;
 
-	switch (stageNum_)
+	std::stringstream cameraDatas = LoadCsvFile("IceFloor");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
 	{
-	case 3:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
 
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
 
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
 
-	case 5:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
+		//icefloorのposition設定
+		if (word.find("translate") == 0)
+		{
+			iceFloorPositions.push_back(LoadVector3(lineStream));
+		}
+		//icefloorのscale設定
+		else if (word.find("scale") == 0)
+		{
+			iceFloorScales.push_back(LoadVector3(lineStream));
+		}
+		//icefloorのrotation設定
+		else if (word.find("rotate") == 0)
+		{
+			iceFloorRotations.push_back(LoadVector3(lineStream));
+		}
+		
 
-	default:
-		break;
 	}
 
 	for (size_t i = 0; i < iceFloorPositions.size(); ++i)
@@ -955,6 +1005,72 @@ void GamePlayScene::CreateIceFloors()
 		iceFloor->SetScale(iceFloorScales[i]);
 		iceFloor->SetRotation(iceFloorRotations[i]);
 	}
+}
+
+void GamePlayScene::SetupCsvFilePath()
+{
+	csvFilePath_ = "./Resources/stageData/stage" + std::to_string(stageNum_) + "/";
+}
+
+std::stringstream GamePlayScene::LoadCsvFile(std::string fileName)
+{
+	// CSVファイルのパスを設定
+	std::string filePath = csvFilePath_ + fileName + ".csv";
+
+	// ファイルを開く
+	std::ifstream file;
+	file.open(filePath);
+	assert(file.is_open());
+
+	std::stringstream csvStream;
+	csvStream << file.rdbuf(); // ファイルの内容をストリームに読み込む
+
+	//ファイルを閉じる
+	file.close();
+
+	return csvStream;
+}
+
+Vector3 GamePlayScene::LoadVector3(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	float x = std::stof(word);
+
+	getline(lineStream, word, ',');
+	float y = std::stof(word);
+
+	getline(lineStream, word, ',');
+	float z = std::stof(word);
+
+	return Vector3(x, y, z);
+}
+
+int GamePlayScene::LoadInt(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return std::stoi(word);
+
+}
+
+float GamePlayScene::LoadFloat(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return std::stof(word);
+}
+
+bool GamePlayScene::LoadBool(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return (word == "1" || word == "true" || word == "TRUE");
+
 }
 
 void GamePlayScene::AddPlayer(bool preSpawn)
