@@ -208,3 +208,9 @@ protected://メンバ変数
 
 };
 
+class GamePlayState
+{
+public:
+	virtual ~GamePlayState() = default;
+	virtual void Update(GamePlayScene* scene) = 0;
+};
