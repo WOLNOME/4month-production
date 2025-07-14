@@ -8,7 +8,7 @@
 FreezeEnemy::~FreezeEnemy()
 {
 	// 当たり判定関係
-	appCollisionManager_->DeleteCollider(appCollider_.get());
+	appColliderManager_->DeleteCollider(appCollider_.get());
 	appCollider_.reset();
 }
 
@@ -30,17 +30,17 @@ void FreezeEnemy::EnemyInitialize(const std::string& filePath)
 	transform_.translate_ = { 0.0f, 0.0f, 0.0f };
 	transform_.rotate_ = { 0.0f, 0.0f, 0.0f };
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 	objectName_ = "FreezeEnemy";
 	appCollider_ = std::make_unique<AppCollider>();
 	appCollider_->SetOwner(this);
 	appCollider_->SetColliderID(objectName_);
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
 	appCollider_->SetOnCollisionTrigger(std::bind(&FreezeEnemy::OnCollisionTrigger, this, std::placeholders::_1));
 	appCollider_->SetOnCollision(std::bind(&FreezeEnemy::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
 	auto particleManager = ParticleManager::GetInstance();

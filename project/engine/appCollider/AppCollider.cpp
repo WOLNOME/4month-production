@@ -1,6 +1,6 @@
 #include "AppCollider.h"
 
-#include "AppCollisionManager.h"
+#include "AppColliderManager.h"
 
 #include <sstream>
 

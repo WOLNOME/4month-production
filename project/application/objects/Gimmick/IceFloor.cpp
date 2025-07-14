@@ -1,6 +1,6 @@
 #include "IceFloor.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "../../engine/appCollider/AppColliderManager.h"
 #include "ParticleManager.h"
 
 void IceFloor::Initialize() {
@@ -10,7 +10,7 @@ void IceFloor::Initialize() {
 	object_->InitializeModel("iceFloor");
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 
 	objectName_ = "IceFloor";
 	appCollider_ = std::make_unique<AppCollider>();
@@ -18,8 +18,8 @@ void IceFloor::Initialize() {
 	appCollider_->SetColliderID(objectName_);
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
 	auto particleManager = ParticleManager::GetInstance();
@@ -35,7 +35,7 @@ void IceFloor::Initialize() {
 void IceFloor::Finalize() {
 	// 各解放処理
 	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 }

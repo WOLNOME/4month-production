@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "../../../engine/appCollider/AppColliderManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "ParticleManager.h"
@@ -19,7 +19,7 @@ void Player::Initialize() {
 	textureHandle_ = TextureManager::GetInstance()->LoadTexture("player.png");
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 
 	objectName_ = "Player";
 	appCollider_ = std::make_unique<AppCollider>();
@@ -27,10 +27,10 @@ void Player::Initialize() {
 	appCollider_->SetColliderID(objectName_);
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
 	appCollider_->SetOnCollisionTrigger(std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1));
 	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
 	auto particleManager = ParticleManager::GetInstance();
@@ -74,7 +74,7 @@ void Player::Initialize() {
 void Player::Finalize() {
 	// 各解放処理
 	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 

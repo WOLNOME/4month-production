@@ -17,7 +17,7 @@
 #include "../../application/objects/Player/SpawnPos/SpawnPos.h"
 #include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/Field.h"
-#include "../../application/appCollider/AppCollisionManager.h"
+#include "../appCollider/AppColliderManager.h"
 #include "../../application/enemy/EnemyManager.h"
 #include "../../application/objects/Gimmick/Obstacle.h"
 #include "../../application/objects/Gimmick/Bumper.h"
@@ -122,7 +122,7 @@ protected://メンバ変数
 	Vector3 cameraRotate = { 0.95f,0.0f,0.0f };
 
 	// 当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 
 	// プレイヤー
 	std::vector<std::unique_ptr<Player>> players_{};

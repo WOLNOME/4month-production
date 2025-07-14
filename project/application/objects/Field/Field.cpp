@@ -1,7 +1,7 @@
 #include "Field.h"
 #include "TextureManager.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "../../engine/appCollider/AppColliderManager.h"
 #include "ImGuiManager.h"
 
 void Field::Initialize() {
@@ -15,7 +15,7 @@ void Field::Initialize() {
 	field_->InitializeModel("cube");
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 
 	objectName_ = "Field";
 	appCollider_ = std::make_unique<AppCollider>();
@@ -23,9 +23,9 @@ void Field::Initialize() {
 	appCollider_->SetColliderID(objectName_);
 	appCollider_->SetShapeData(&aabb_);
 	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
 	appCollider_->SetOnCollision(std::bind(&Field::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
 	particle_ = std::make_unique<Particle>();
@@ -38,7 +38,7 @@ void Field::Initialize() {
 void Field::Finalize() {
 	// 各解放処理
 	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 

@@ -3,7 +3,7 @@
 #include <random>
 #include <Particle.h>
 
-#include "../appCollider/AppCollider.h"
+#include "../../../engine/appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"
 
 class TackleEnemy : public BaseEnemy, public GameObject
@@ -93,7 +93,7 @@ private:
     float fallSpeed_ = 0.3f;
 
     // 当たり判定
-    AppCollisionManager* appCollisionManager_ = nullptr;
+    AppColliderManager* appColliderManager_ = nullptr;
     std::unique_ptr<AppCollider> appCollider_ = nullptr;
     AppAABB aabb_{};
     bool isHit_ = false;

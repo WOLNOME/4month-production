@@ -64,8 +64,8 @@ void GamePlayScene::Initialize()
 	cameraControl_->Initialize(cameraRotate);
 
 	// 当たり判定
-	appCollisionManager_ = AppCollisionManager::GetInstance();
-	appCollisionManager_->Initialize();
+	appColliderManager_ = AppColliderManager::GetInstance();
+	appColliderManager_->Initialize();
 
 	SetupPlayerSpawnPositions();
 
@@ -246,7 +246,7 @@ void GamePlayScene::Update()
 	}
 
 	// 当たり判定
-	appCollisionManager_->CheckAllCollision();
+	appColliderManager_->CheckAllCollision();
 
 	//ゲーム終了判定
 	if ((playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0) and !isGameEnd_)

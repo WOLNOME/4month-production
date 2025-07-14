@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseEnemy.h"
-#include "../appCollider/AppCollisionManager.h"
+#include "../../engine/appCollider/AppColliderManager.h"
 #include "application/objects/GameObject/GameObject.h"
 #include <memory>
 
@@ -42,7 +42,7 @@ private:
     //生存フラグ
     bool isAlive_ = true;
     //当たり判定
-    AppCollisionManager* appCollisionManager_ = nullptr;
+    AppColliderManager* appColliderManager_ = nullptr;
     std::unique_ptr<AppCollider> appCollider_ = nullptr;
     AppAABB aabb_;
     //トランスフォーム
