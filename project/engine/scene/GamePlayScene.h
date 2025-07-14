@@ -110,12 +110,9 @@ protected://メンバ変数
 	std::unique_ptr<Charge> charge_ = nullptr;
 
 	// インターバルの数字
-	uint32_t textureHandleIntervalNum1_ = 0u;
-	uint32_t textureHandleIntervalNum2_ = 0u;
-	uint32_t textureHandleIntervalNum3_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_Num1_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num2_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num3_ = nullptr;
+	std::vector<uint32_t> textureHandlesIntervalNum_ = { 0u, 0u, 0u };
+	std::vector<std::unique_ptr<Sprite>> spriteUI_Num_ = {};
+	
 
 	std::unique_ptr<RemainingSpawnNum> remainingSpawnNum_;
 

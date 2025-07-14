@@ -30,30 +30,21 @@ void GamePlayScene::Initialize()
 	charge_->Initialize(TextureManager::GetInstance()->LoadTexture("spawn.png"));
 
 	// インターバルの数字
-	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("count1.png");
-	textureHandleIntervalNum2_ = TextureManager::GetInstance()->LoadTexture("count2.png");
-	textureHandleIntervalNum3_ = TextureManager::GetInstance()->LoadTexture("count3.png");
-	
-	spriteUI_Num1_ = std::make_unique<Sprite>();
-	spriteUI_Num1_->Initialize(textureHandleIntervalNum1_);
-	spriteUI_Num1_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num1_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num1_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num1_-> SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	textureHandlesIntervalNum_ = {
+		TextureManager::GetInstance()->LoadTexture("count1.png"),
+		TextureManager::GetInstance()->LoadTexture("count2.png"),
+		TextureManager::GetInstance()->LoadTexture("count3.png")
+	};
 
-	spriteUI_Num2_ = std::make_unique<Sprite>();
-	spriteUI_Num2_->Initialize(textureHandleIntervalNum2_);
-	spriteUI_Num2_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num2_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num2_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num2_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
-	
-	spriteUI_Num3_ = std::make_unique<Sprite>();
-	spriteUI_Num3_->Initialize(textureHandleIntervalNum3_);
-	spriteUI_Num3_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num3_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num3_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num3_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	spriteUI_Num_.resize(3);
+	for (size_t i = 0; i < spriteUI_Num_.size(); ++i) {
+		spriteUI_Num_[i] = std::make_unique<Sprite>();
+		spriteUI_Num_[i]->Initialize(textureHandlesIntervalNum_[i]);
+		spriteUI_Num_[i]->SetAnchorPoint({ 0.5f, 0.5f });
+		spriteUI_Num_[i]->SetPosition({ 640.0f, 360.0f });
+		spriteUI_Num_[i]->SetSize({ 0.0f, 0.0f });
+		spriteUI_Num_[i]->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	}
 
 	remainingSpawnNum_ = std::make_unique<RemainingSpawnNum>();
 	remainingSpawnNum_->Initialize(kMaxSpawnNum);
@@ -182,9 +173,10 @@ void GamePlayScene::Update()
 	// 残り出現数の更新
 	remainingSpawnNum_->Update(howManyBoogie_);
 
-	spriteUI_Num1_->Update();
-	spriteUI_Num2_->Update();
-	spriteUI_Num3_->Update();
+	// インターバルの数字の更新
+	for (size_t i = 0; i < spriteUI_Num_.size(); ++i) {
+		spriteUI_Num_[i]->Update();
+	}
 
 	StartInterVal();
 
@@ -619,20 +611,18 @@ void GamePlayScene::UpdateIntervalNum()
 {
 	if (!pauseSystem_->GetIsPause()) {
 		if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f) {
-			spriteUI_Num3_->Draw();
-		}
-		else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f) {
-			spriteUI_Num2_->Draw();
-		}
-		else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f) {
-			spriteUI_Num1_->Draw();
+			spriteUI_Num_[2]->Draw(); // 3
+		} else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f) {
+			spriteUI_Num_[1]->Draw(); // 2
+		} else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f) {
+			spriteUI_Num_[0]->Draw(); // 1
 		}
 	}
 
 	// 数字のサイズを更新
-	spriteUI_Num1_->SetSize(numSize_);
-	spriteUI_Num2_->SetSize(numSize_);
-	spriteUI_Num3_->SetSize(numSize_);
+	for (auto& sprite : spriteUI_Num_) {
+		sprite->SetSize(numSize_);
+	}
 
 	numSizeTimer_++;
 	if (numSizeTimer_ > 60) {
