@@ -26,6 +26,7 @@
 #include "../../application/UI/Charge.h"
 #include "../../application/UI/RemainingSpawnNum.h"
 #include "../../application/CameraControl/CameraControl.h"
+#include "GamePlayState.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -54,13 +55,46 @@ public:
 	//ステージ番号
 	static uint32_t stageNum_;
 
+	void ChangeState(std::unique_ptr<GamePlayState> newState);
+
+	// ステージ始まるインターバル数字
+	virtual void UpdateIntervalNum();
+
+	virtual void StartInterVal();
+
+	void ObjectsUpdate();
+
+	void TackleCharge();
+
+	// プレイヤースポーン処理
+	void playerSpawnRotation();
+
+	bool IsStartConditionMet();
+
+	//ゲーム終了判定
+	bool IsGameEnd();
+
+	//ゲーム終了時の処理
+	void GameEndProcess();
+
+	//ゲームクリア判定
+	bool IsGameClear();
+
+	//ゲームクリア時の処理
+	void GameClearProcess();
+
+	//ゲームオーバー判定
+	bool IsGameOver();
+
+	//ゲームオーバー時の処理
+	void GameOverProcess();
+
+	void ObjectsMoveable();
+
 private: //メンバ関数
 
 	// ImGui
 	void ImGuiDraw();
-
-	// プレイヤースポーン処理
-	void playerSpawnRotation();
 
 	// カメラの更新
 	void UpdateCamera();
@@ -70,11 +104,6 @@ private: //メンバ関数
 
 	// モデルの更新(インターバル中に位置だけでもおいておきたい)
 	void UpdateTransform();
-
-	// ステージ始まるインターバル数字
-	virtual void UpdateIntervalNum();
-
-	virtual void StartInterVal();
 
 	// カメラのセットアップ
 	void SetupCamera();
@@ -114,6 +143,8 @@ private: //メンバ関数
 	void AddPlayer(bool preSpawn);
 
 protected://メンバ変数
+
+	std::unique_ptr<GamePlayState> currentState_;
 
 	Input* input_ = nullptr;
 	
@@ -191,14 +222,10 @@ protected://メンバ変数
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
 
-	//ゲーム終了フラグ
-	bool isGameEnd_ = false;
-
 	std::unique_ptr<CameraControl> cameraControl_ = nullptr;
 
 	// ゲーム開始のインターバル
 	float gameStartDelayTimer_ = 3.0f;
-	bool isGameStart_ = false;
 	bool hasPreUpdated_ = false;
 
 	Vector2 numSize_ = { 320.0f, 480.0f };
@@ -206,11 +233,4 @@ protected://メンバ変数
 
 	std::string csvFilePath_;
 
-};
-
-class GamePlayState
-{
-public:
-	virtual ~GamePlayState() = default;
-	virtual void Update(GamePlayScene* scene) = 0;
 };

@@ -139,6 +139,7 @@
     <ClCompile Include="application\CameraControl\CameraControl.cpp">
       <Filter>cameraControl</Filter>
     </ClCompile>
+    <ClCompile Include="engine\scene\GamePlayState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -282,6 +283,7 @@
     <ClInclude Include="application\CameraControl\CameraControl.h">
       <Filter>cameraControl</Filter>
     </ClInclude>
+    <ClInclude Include="engine\scene\GamePlayState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

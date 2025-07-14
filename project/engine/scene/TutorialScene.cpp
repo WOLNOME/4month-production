@@ -15,7 +15,7 @@ void TutorialScene::Initialize() {
 	//シーンの初期化
 	GamePlayScene::Initialize();
 
-	isGameStart_ = true; // ゲーム開始フラグをtrueに設定
+	ChangeState(std::make_unique<PlayingState>());
 
 	//チュートリアルシステム
 	tutorialSystem_ = std::make_unique<TutorialSystem>();

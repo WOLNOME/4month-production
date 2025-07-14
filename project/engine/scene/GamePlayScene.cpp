@@ -21,6 +21,8 @@ void GamePlayScene::Initialize()
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
+	ChangeState(std::make_unique<StartState>());
+
 	input_ = Input::GetInstance();
 
 	SetupCsvFilePath();
@@ -183,95 +185,13 @@ void GamePlayScene::Update()
 	spriteUI_Num2_->Update();
 	spriteUI_Num3_->Update();
 
-	StartInterVal();
-
-	UpdateIntervalNum();
-
 	// カメラの更新
 	UpdateCamera();
 
-	// 死んだプレイヤーを削除
-	players_.erase(std::remove_if(players_.begin(), players_.end(),
-		[this](const std::unique_ptr<Player>& player)
-		{
-			if (player->IsDead())
-			{
-				player->Finalize();
-				playerNum_--;
-				return true;
-			}
-			return false;
-		}), players_.end());
-	// 通常プレイヤーの更新
-	for (auto& player : players_)
+	//状況に応じた更新
+	if (currentState_)
 	{
-		player->Update();
-	}
-	if (isGameStart_)
-	{
-		// プレイヤー攻撃チャージ
-		charge_->playerTackleCharge(playerNum_ > 0, players_);
-	}
-	// 準備中プレイヤーの更新
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Update();
-	}
-
-
-	//エネミーマネージャーの更新
-	enemyManager_->Update();
-
-	//スカイドーム
-	skydome_->Update();
-	// フィールド
-	field_->Update();
-
-	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
-	{
-		obstacle->Update();
-	}
-	//跳ね返る障害物
-	for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	{
-		bumper->Update();
-	}
-	//氷の床
-	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	{
-		iceFloor->Update();
-	}
-
-	// プレイヤースポーンのオブジェクト
-	for (auto& playerSpawn : playerSpawn_)
-	{
-		playerSpawn->Update();
-	}
-	if (playerNum_ > 0 && isGameStart_)
-	{
-		playerSpawnRotation();
-	}
-
-	// 当たり判定
-	appCollisionManager_->CheckAllCollision();
-
-	//ゲーム終了判定
-	if ((playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0) and !isGameEnd_)
-	{
-		isGameEnd_ = true;
-
-		cameraControl_->OnGameEnd(playerNum_, enemyManager_->GetEnemyCount());
-
-	}
-	// ゲームオーバーへ
-	if (playerNum_ <= 0 and isGameEnd_ and cameraControl_->IsGameEnd())
-	{
-		sceneManager_->SetNextScene("GAMEOVER");
-	}
-	// クリア
-	if (enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and cameraControl_->IsGameEnd())
-	{
-		sceneManager_->SetNextScene("CLEAR");
+		currentState_->Update(this);
 	}
 
 	//揺らす処理
@@ -606,6 +526,11 @@ void GamePlayScene::UpdateTransform()
 	}
 }
 
+void GamePlayScene::ChangeState(std::unique_ptr<GamePlayState> newState)
+{
+	currentState_ = std::move(newState);
+}
+
 void GamePlayScene::UpdateIntervalNum()
 {
 
@@ -631,39 +556,139 @@ void GamePlayScene::UpdateIntervalNum()
 void GamePlayScene::StartInterVal()
 {
 	// ゲーム開始のインターバル
-	if (!isGameStart_) {
-		// 初期モデルだけ 1 回 Update しておく
-		if (!hasPreUpdated_) {
-			// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
-			UpdateTransform();
+	
+	// 初期モデルだけ 1 回 Update しておく
+	if (!hasPreUpdated_) {
+		// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
+		UpdateTransform();
 
-			hasPreUpdated_ = true;
-		}
-
-		// 3秒カウント
-		gameStartDelayTimer_ -= 1.0f / 60.0f;
-		if (gameStartDelayTimer_ <= 0.0f) {
-			isGameStart_ = true;
-		}
-
-		// プレイヤーの行動不能フラグセット
-		for (auto& player : players_)
-		{
-			player->IsMoveable(false);
-		}
-
-		// エネミーの行動不能フラグセット
-		enemyManager_->IsMoveable(false);
+		hasPreUpdated_ = true;
 	}
-	else
+
+	// 3秒カウント
+	gameStartDelayTimer_ -= 1.0f / 60.0f;
+
+	// プレイヤーの行動不能フラグセット
+	for (auto& player : players_)
 	{
-		for (auto& player : players_)
-		{
-			player->IsMoveable(true);
-		}
-
-		enemyManager_->IsMoveable(true);
+		player->IsMoveable(false);
 	}
+
+	// エネミーの行動不能フラグセット
+	enemyManager_->IsMoveable(false);
+	
+
+}
+
+void GamePlayScene::ObjectsUpdate()
+{
+	// 死んだプレイヤーを削除
+	players_.erase(std::remove_if(players_.begin(), players_.end(),
+		[this](const std::unique_ptr<Player>& player)
+		{
+			if (player->IsDead())
+			{
+				player->Finalize();
+				playerNum_--;
+				return true;
+			}
+			return false;
+		}), players_.end());
+	// 通常プレイヤーの更新
+	for (auto& player : players_)
+	{
+		player->Update();
+	}
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Update();
+	}
+
+
+	//エネミーマネージャーの更新
+	enemyManager_->Update();
+
+	//スカイドーム
+	skydome_->Update();
+	// フィールド
+	field_->Update();
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Update();
+	}
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Update();
+	}
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Update();
+	}
+
+	// プレイヤースポーンのオブジェクト
+	for (auto& playerSpawn : playerSpawn_)
+	{
+		playerSpawn->Update();
+	}
+
+	// 当たり判定
+	appCollisionManager_->CheckAllCollision();
+}
+
+void GamePlayScene::TackleCharge()
+{
+	// プレイヤー攻撃チャージ
+	charge_->playerTackleCharge(playerNum_ > 0, players_);
+}
+
+bool GamePlayScene::IsStartConditionMet()
+{
+	return gameStartDelayTimer_ <= 0.0f;
+}
+
+bool GamePlayScene::IsGameEnd()
+{
+	return playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0;
+}
+
+bool GamePlayScene::IsGameClear()
+{
+	return enemyManager_->GetEnemyCount() == 0 and cameraControl_->IsGameEnd();
+}
+
+void GamePlayScene::GameClearProcess()
+{
+	sceneManager_->SetNextScene("CLEAR");
+}
+
+bool GamePlayScene::IsGameOver()
+{
+	return playerNum_ <= 0 and cameraControl_->IsGameEnd();
+}
+
+void GamePlayScene::GameEndProcess()
+{
+	cameraControl_->OnGameEnd(playerNum_, enemyManager_->GetEnemyCount());
+}
+
+void GamePlayScene::GameOverProcess()
+{
+	sceneManager_->SetNextScene("GAMEOVER");
+}
+
+void GamePlayScene::ObjectsMoveable()
+{
+	for (auto& player : players_)
+	{
+		player->IsMoveable(true);
+	}
+
+	enemyManager_->IsMoveable(true);
 }
 
 void GamePlayScene::SetupCamera()
