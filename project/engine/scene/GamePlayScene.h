@@ -123,7 +123,6 @@ protected://メンバ変数
 
 	// プレイヤー
 	std::unique_ptr<PlayerManager> playerManager_ = nullptr;
-	std::unique_ptr<Player> preSpawnedPlayer_ = nullptr;
 
 	// プレイヤースポーンマネージャー
 	std::unique_ptr<PlayerSpawnManager> playerSpawnManager_ = nullptr;

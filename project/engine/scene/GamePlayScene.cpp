@@ -125,11 +125,6 @@ void GamePlayScene::Initialize()
 void GamePlayScene::Finalize()
 {
 	playerManager_->Finalize();
-	
-
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Finalize();
-	}
 
 	playerSpawnManager_->Finalize();
 
@@ -187,10 +182,6 @@ void GamePlayScene::Update()
 	{
 		// プレイヤー攻撃チャージ
 		charge_->playerTackleCharge(playerNum_ > 0, playerManager_->GetPlayers());
-	}
-	// 準備中プレイヤーの更新
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Update();
 	}
 
 
@@ -269,11 +260,6 @@ void GamePlayScene::Draw()
 	///------------------------------///
 	///↓↓↓↓モデル描画開始↓↓↓↓
 	///------------------------------///
-
-	 // 準備中プレイヤーの描画
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Draw(*camera_.get());
-	}
 
 	// 通常プレイヤーの描画
 	playerManager_->Draw(*camera_.get());

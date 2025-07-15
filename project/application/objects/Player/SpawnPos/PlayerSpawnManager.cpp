@@ -26,6 +26,12 @@ void PlayerSpawnManager::Finalize()
 	}
 	playerSpawn_.clear();
 	playerSpawnPositions_.clear();
+
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Finalize();
+	}
+	preSpawnedPlayer_ = nullptr;
+
 }
 
 void PlayerSpawnManager::Update()
@@ -34,6 +40,13 @@ void PlayerSpawnManager::Update()
 	{
 		playerSpawn->Update();
 	}
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) 
+	{
+		preSpawnedPlayer_->Update();
+	}
+
 }
 
 void PlayerSpawnManager::Draw(BaseCamera _camera)
@@ -41,6 +54,11 @@ void PlayerSpawnManager::Draw(BaseCamera _camera)
 	for (auto& playerSpawn : playerSpawn_)
 	{
 		playerSpawn->Draw(_camera);
+	}
+
+	// 準備中プレイヤーの描画
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Draw(_camera);
 	}
 
 }
