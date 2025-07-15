@@ -20,6 +20,46 @@ public:
 	AppCollider();
 	~AppCollider();
 
+    // コライダー作成の構造体
+    struct AppColliderDesc
+    {
+        GameObject* owner = nullptr;
+        std::string colliderID;
+        AppShape shape = AppShape::AppAABB;
+        void* shapeData = nullptr;
+        uint32_t attribute = 0;
+        std::function<void(const AppCollider*)> onCollision = nullptr;
+        std::function<void(const AppCollider*)> onCollisionTrigger = nullptr;
+    };
+
+    // コライダー作成
+    // AABB
+    static AppColliderDesc MakeAABBDesc(
+        GameObject* owner,
+        const std::string& colliderID,
+        AppAABB* aabb,
+        AppColliderManager* mgr,
+        std::function<void(const AppCollider*)> onCollision = nullptr,
+        std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+
+	// OBB
+	static AppColliderDesc MakeOBBDesc(
+		GameObject* owner,
+		const std::string& colliderID,
+		AppOBB* obb,
+		AppColliderManager* mgr,
+		std::function<void(const AppCollider*)> onCollision = nullptr,
+		std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+
+	// Sphere
+	static AppColliderDesc MakeSphereDesc(
+		GameObject* owner,
+		const std::string& colliderID,
+		AppSphere* sphere,
+		AppColliderManager* mgr,
+		std::function<void(const AppCollider*)> onCollision = nullptr,
+		std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+
 public: // ゲッター
 
     inline const GameObject* GetOwner()const { return owner_; }
