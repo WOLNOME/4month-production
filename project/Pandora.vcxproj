@@ -194,6 +194,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\TutorialScene.cpp" />
     <ClCompile Include="application\TutorialSystem.cpp" />
     <ClCompile Include="application\UI\RemainingSpawnNum.cpp" />
+    <ClCompile Include="application\objects\Player\PlayerManager.cpp" />
+    <ClCompile Include="application\objects\Player\SpawnPos\PlayerSpawnManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\appCollider\AppCollider.h" />
@@ -290,6 +292,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
     <ClInclude Include="application\UI\RemainingSpawnNum.h" />
+    <ClInclude Include="application\objects\Player\PlayerManager.h" />
+    <ClInclude Include="application\objects\Player\SpawnPos\PlayerSpawnManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

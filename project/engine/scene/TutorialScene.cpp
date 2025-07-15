@@ -74,9 +74,15 @@ void TutorialScene::SetupCamera()
 
 void TutorialScene::SetupPlayerSpawnPositions()
 {
-	playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-	playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-	playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
+	/*stageSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
+	stageSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
+	stageSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });*/
+
+	playerManager_->SetSpawnPositions({ 0.0f,1.0f,5.0f });
+	playerManager_->SetSpawnPositions({ 5.0f,1.0f,-5.0f });
+	playerManager_->SetSpawnPositions({ -5.0f,1.0f,-5.0f });
+
+	/*playerManager_->SetSpawnPositions(stageSpawnPositions_);*/
 }
 
 void TutorialScene::SetupEnemyManager()

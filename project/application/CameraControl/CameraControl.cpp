@@ -3,14 +3,14 @@
 #include "MyMath.h"
 #include "BaseCamera.h"
 #include "../../application/enemy/EnemyManager.h"
-#include "../../application/objects/Player/Player.h"
+#include "../../application/objects/Player/PlayerManager.h"
 
 void CameraControl::Initialize(const Vector3& cameraRotate)
 {
 	cameraRotate_ = cameraRotate;
 }
 
-void CameraControl::Update(BaseCamera* camera, std::vector<std::unique_ptr<Player>>& players, EnemyManager* enemyManager)
+void CameraControl::Update(BaseCamera* camera, PlayerManager* players, EnemyManager* enemyManager)
 {
 	CalculateNearestPosition(players, enemyManager);
 
@@ -115,10 +115,10 @@ void CameraControl::UpdateZoomOut(BaseCamera* camera)
 	}
 }
 
-void CameraControl::CalculateNearestPosition(std::vector<std::unique_ptr<Player>>& players, EnemyManager* enemyManager)
+void CameraControl::CalculateNearestPosition(PlayerManager* players, EnemyManager* enemyManager)
 {
 	// プレイヤーが残り1人のとき
-	if (players.size() == 1)
+	if (players->GetPlayers().size() == 1)
 	{
 		//最も近い敵の座標を取得
 		float closestDistance_ = (std::numeric_limits<float>::max)();
@@ -130,7 +130,7 @@ void CameraControl::CalculateNearestPosition(std::vector<std::unique_ptr<Player>
 			//地面にいないエネミーは無視
 			if (!enemyManager->GetTackleEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager->GetTackleEnemyPosition(i);
-			float distance = (players[0]->GetPosition() - enemyPos).Length();
+			float distance = (players->GetPlayerPosition(0) - enemyPos).Length();
 			if (distance < closestDistance_)
 			{
 				closestDistance_ = distance;
@@ -145,7 +145,7 @@ void CameraControl::CalculateNearestPosition(std::vector<std::unique_ptr<Player>
 			//地面にいないエネミーは無視
 			if (!enemyManager->GetFanEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager->GetFanEnemyPosition(i);
-			float distance = (players[0]->GetPosition() - enemyPos).Length();
+			float distance = (players->GetPlayerPosition(0) - enemyPos).Length();
 			if (distance < closestDistance_)
 			{
 				closestDistance_ = distance;
@@ -159,7 +159,7 @@ void CameraControl::CalculateNearestPosition(std::vector<std::unique_ptr<Player>
 		{
 			if (!enemyManager->GetFreezeEnemy(i)->IsGround()) { continue; }
 			Vector3 enemyPos = enemyManager->GetFreezeEnemyPosition(i);
-			float distance = (players[0]->GetPosition() - enemyPos).Length();
+			float distance = (players->GetPlayerPosition(0) - enemyPos).Length();
 			if (distance < closestDistance_)
 			{
 				closestDistance_ = distance;
@@ -181,11 +181,11 @@ void CameraControl::CalculateNearestPosition(std::vector<std::unique_ptr<Player>
 		//最も近いプレイヤーの座標を取得
 		float closestDistance_ = (std::numeric_limits<float>::max)();
 		//最も近いプレイヤーの座標を取得
-		for (uint32_t i = 0; i < players.size(); i++)
+		for (uint32_t i = 0; i < players->GetPlayers().size(); i++)
 		{
 			//地面にいないプレイヤーは無視
-			if (!players[i]->IsGround()) { continue; }
-			Vector3 playerPos = players[i]->GetPosition();
+			if (!players->IsPlayerGrounded(i)) { continue; }
+			Vector3 playerPos = players->GetPlayerPosition(i);
 			float distance;
 			//タックルエネミー
 			for (uint32_t j = 0; j < enemyManager->GetTackleEnemyCount(); j++)

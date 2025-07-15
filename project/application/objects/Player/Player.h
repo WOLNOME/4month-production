@@ -12,7 +12,9 @@
 #include "../../../engine/appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
-class Audio;
+#include "Audio.h"
+
+//class Audio;
 
 class Player : public GameObject
 {

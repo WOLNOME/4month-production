@@ -4,7 +4,7 @@
 #include <memory>
 class BaseCamera;
 class EnemyManager;
-class Player;
+class PlayerManager;
 
 class CameraControl
 {
@@ -12,7 +12,7 @@ public:
 
 	void Initialize(const Vector3& cameraRotate);
 
-	void Update(BaseCamera* camera, std::vector<std::unique_ptr<Player>>& players, EnemyManager* enemyManager);
+	void Update(BaseCamera* camera, PlayerManager* players, EnemyManager* enemyManager);
 
 	void OnGameEnd(uint32_t playerNum, uint32_t EnemyNum);
 
@@ -25,7 +25,7 @@ private:
 
 	void UpdateZoomOut(BaseCamera* camera);
 
-	void CalculateNearestPosition(std::vector<std::unique_ptr<Player>>& players, EnemyManager* enemyManager);
+	void CalculateNearestPosition(PlayerManager* players, EnemyManager* enemyManager);
 
 	// カメラを引くフラグ
 	bool isZoomOut_ = false;
