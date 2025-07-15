@@ -27,6 +27,7 @@
 #include "../../application/UI/RemainingSpawnNum.h"
 #include "../../application/CameraControl/CameraControl.h"
 #include "GamePlayState.h"
+#include "../../application/UI/Interval.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -157,12 +158,10 @@ protected://メンバ変数
 	std::unique_ptr<Charge> charge_ = nullptr;
 
 	// インターバルの数字
-	uint32_t textureHandleIntervalNum1_ = 0u;
-	uint32_t textureHandleIntervalNum2_ = 0u;
-	uint32_t textureHandleIntervalNum3_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_Num1_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num2_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num3_ = nullptr;
+	std::vector<uint32_t> textureHandleIntervalNum_{};
+	
+	//インターバル
+	std::unique_ptr<Interval> interval_ = nullptr;
 
 	std::unique_ptr<RemainingSpawnNum> remainingSpawnNum_;
 
@@ -223,13 +222,6 @@ protected://メンバ変数
 	uint32_t playerNum_ = 0;
 
 	std::unique_ptr<CameraControl> cameraControl_ = nullptr;
-
-	// ゲーム開始のインターバル
-	float gameStartDelayTimer_ = 3.0f;
-	bool hasPreUpdated_ = false;
-
-	Vector2 numSize_ = { 320.0f, 480.0f };
-	uint32_t numSizeTimer_ = 0;
 
 	std::string csvFilePath_;
 

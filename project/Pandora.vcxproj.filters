@@ -140,6 +140,9 @@
       <Filter>cameraControl</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\GamePlayState.cpp" />
+    <ClCompile Include="application\UI\Interval.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -284,6 +287,9 @@
       <Filter>cameraControl</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\GamePlayState.h" />
+    <ClInclude Include="application\UI\Interval.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
