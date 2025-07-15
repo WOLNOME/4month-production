@@ -42,6 +42,7 @@ void PlayerSpawnManager::Draw(BaseCamera _camera)
 	{
 		playerSpawn->Draw(_camera);
 	}
+
 }
 
 void PlayerSpawnManager::ImGuiDraw()

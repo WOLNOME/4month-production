@@ -69,18 +69,18 @@ void GamePlayScene::Initialize()
 
 	// プレイヤー
 	playerManager_ = std::make_unique<PlayerManager>();
-	
+	// 出現位置設定
 	SetupPlayerSpawnPositions();
-	
+	// 処理変数セット
 	playerManager_->SetCharge(charge_.get());
-	playerManager_->Initialize();
 	playerManager_->SetOnPlayerAdded([this]() {
 		playerNum_++;
 		});
-
 	playerManager_->SetOnPlayerRemoved([this]() {
 		playerNum_--;
 		});
+	playerManager_->Initialize();
+	
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
@@ -227,6 +227,7 @@ void GamePlayScene::Update()
 	if (auto newPlayer = playerSpawnManager_->TryExportSpawnedPlayer()) 
 	{
 		playerManager_->AddPlayer(std::move(newPlayer));
+		playerNum_++;
 	}
 
 	// 当たり判定
@@ -586,7 +587,6 @@ void GamePlayScene::SetupPlayerSpawnPositions()
 		stageSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
 		stageSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
 		stageSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-		playerManager_->SetSpawnPositions(stageSpawnPositions_);
 		break;
 
 	case 2:
@@ -616,6 +616,8 @@ void GamePlayScene::SetupPlayerSpawnPositions()
 	default:
 		break;
 	}
+
+	playerManager_->SetSpawnPositions(stageSpawnPositions_);
 
 }
 
