@@ -88,6 +88,7 @@ void PlayerSpawnManager::PlayerSpawnRotation()
 		prePlayer->Initialize();
 		prePlayer->SetIsChargeMax(charge_->IsChargeMaxPtr());
 		prePlayer->IsMoveable(false);
+		prePlayer->SetGameCamera(camera_);
 
 		preSpawnedPlayer_ = std::move(prePlayer);
 		preSpawnedPlayer_->Update();

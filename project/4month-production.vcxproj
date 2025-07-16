@@ -155,9 +155,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\scene\GameOverScene.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="application\objects\GameObject\FallingObject.cpp" />
-    <ClCompile Include="engine\scene\GamePlayState.cpp" />
+    <ClCompile Include="application\scene\GamePlayState.cpp" />
     <ClCompile Include="application\UI\Interval.cpp" />
-    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="engine\3d\GameCamera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -267,9 +267,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="application\scene\GameOverScene.h" />
     <ClInclude Include="application\objects\GameObject\FallingObject.h" />
-    <ClInclude Include="engine\scene\GamePlayState.h" />
+    <ClInclude Include="application\scene\GamePlayState.h" />
     <ClInclude Include="application\UI\Interval.h" />
-    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="engine\3d\GameCamera.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />

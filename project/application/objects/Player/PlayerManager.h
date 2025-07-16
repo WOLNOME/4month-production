@@ -5,6 +5,7 @@
 #include <Vector3.h>
 
 class Charge;
+class GameCamera;
 
 class PlayerManager
 {
@@ -42,6 +43,7 @@ public: // セッター
 	void SetOnPlayerRemoved(const std::function<void()>& callback);
 
 	void SetCharge(Charge* charge) { charge_ = charge; }
+	void SetGameCamera(GameCamera* _camera) { camera_ = _camera; }
 
 public: // ゲッター
 
@@ -56,6 +58,8 @@ public: // ゲッター
 
 
 private:
+	//ゲームカメラ
+	GameCamera* camera_ = nullptr;
 
 	// プレイヤー
 	std::vector<std::unique_ptr<Player>> players_{};

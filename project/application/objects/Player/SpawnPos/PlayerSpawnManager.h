@@ -6,7 +6,7 @@
 #include "../../application/objects/Player/Player.h"
 
 class Charge;
-
+class GameCamera;
 class PlayerSpawnManager
 {
 public:
@@ -42,12 +42,15 @@ public:	// セッター
 
 	void SetCharge(Charge* charge) { charge_ = charge; }
 
+	void SetGameCamera(GameCamera* _camera) { camera_ = _camera; }
+
 public:	// ゲッター
 
 	// プレイヤーの残り出現数を取得
 	uint32_t GetHowManyBoogie() const { return howManyBoogie_; }
 
 private:
+	GameCamera* camera_ = nullptr;
 
 	// プレイヤースポーン
 	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};

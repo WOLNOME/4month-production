@@ -68,8 +68,10 @@ void GamePlayScene::Initialize()
 
 	// プレイヤー
 	playerManager_ = std::make_unique<PlayerManager>();
+	playerManager_->SetGameCamera(camera_.get());
 	// プレイヤースポーン位置
 	playerSpawnManager_ = std::make_unique<PlayerSpawnManager>();
+	playerSpawnManager_->SetGameCamera(camera_.get());
 	// 出現位置設定
 	SetupPlayerSpawnPositions();
 	// 処理変数セット
@@ -183,9 +185,6 @@ void GamePlayScene::Update()
 	{
 		currentState_->Update(this);
 	}
-
-	//揺らす処理
-	CheckShake();
 
 	// ImGui
 	ImGuiDraw();
@@ -370,31 +369,6 @@ void GamePlayScene::ImGuiDraw()
 
 #endif // _DEBUG
 
-}
-
-void GamePlayScene::CheckShake() {
-	//全てのプレイヤーのシェイク判定を処理
-	for (auto& player : playerManager_->GetPlayers()) {
-		if (player->isDamageShake_) {
-			camera_->RegistShake(0.4f, 0.15f);
-			player->isDamageShake_ = false;
-		}
-		if (player->isDeadShake_) {
-			camera_->RegistShake(0.4f, 0.4f);
-			player->isDeadShake_ = false;
-		}
-	}
-	//全てのエネミーのシェイク判定を処理
-	for (auto& enemy : enemyManager_->GetAllEnemies()) {
-		if (enemy->isDamageShake_) {
-			camera_->RegistShake(0.4f, 0.25f);
-			enemy->isDamageShake_ = false;
-		}
-		if (enemy->isDeadShake_) {
-			camera_->RegistShake(0.4f, 0.5f);
-			enemy->isDeadShake_ = false;
-		}
-	}
 }
 
 void GamePlayScene::UpdateTransform()
@@ -959,6 +933,6 @@ bool GamePlayScene::LoadBool(std::istringstream& lineStream)
 void GamePlayScene::UpdateCamera()
 {
 	cameraControl_->Update(camera_.get(), playerManager_.get(), enemyManager_.get());
-	// カメラの行列を更新
-	camera_->UpdateMatrix();
+	// カメラを更新
+	camera_->Update();
 }

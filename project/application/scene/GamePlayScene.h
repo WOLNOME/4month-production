@@ -8,7 +8,6 @@
 #include "Input.h"
 #include "LineDrawer.h"
 #include "GameCamera.h"
-#include "appCollider/AppCollisionManager.h"
 
 #include <cstdint>
 #include <memory>
@@ -101,18 +100,6 @@ private: //メンバ関数
 	// カメラの更新
 	void UpdateCamera();
 
-	// Player攻撃チャージ
-	void playerTackleCharge();
-
-	//ステージ番号
-	static uint32_t stageNum_;
-
-	//シェイクのチェック
-	void CheckShake();
-
-	// 残り出現数UI
-	void remainingSpawnNum();
-
 	// モデルの更新(インターバル中に位置だけでもおいておきたい)
 	void UpdateTransform();
 
@@ -157,7 +144,6 @@ protected://メンバ変数
 	Input* input_ = nullptr;
 	
 
-	// プライト
 	// プレイ画面UI
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;

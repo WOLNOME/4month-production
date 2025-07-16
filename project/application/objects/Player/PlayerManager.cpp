@@ -14,6 +14,7 @@ void PlayerManager::Initialize()
 		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
+		player->SetGameCamera(camera_);
 
 		players_.push_back(std::move(player));
 
