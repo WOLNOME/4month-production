@@ -24,6 +24,14 @@ public:
 	/// </summary>
 	void TextDraw() override;
 
+private:
+
+	void SetupCsvFilePath() override;
+
+	void UpdateIntervalNum() override;
+
+	void StartInterVal() override;
+
 private://メンバ変数
 
 	//チュートリアルシステム

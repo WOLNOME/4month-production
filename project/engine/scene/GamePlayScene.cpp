@@ -9,6 +9,11 @@
 #include <numbers>
 #include "application/MathUtils.h"
 
+#include <fstream>
+
+#include "../../application/UI/RemainingSpawnNum.h"
+
+
 uint32_t GamePlayScene::stageNum_ = 1;
 
 void GamePlayScene::Initialize()
@@ -16,84 +21,34 @@ void GamePlayScene::Initialize()
 	//シーン共通の初期化
 	BaseScene::Initialize();
 
+	ChangeState(std::make_unique<StartState>());
+
 	input_ = Input::GetInstance();
+
+	SetupCsvFilePath();
 
 	// スプライト
 	// プレイ画面UI
 	textureHandleUI_PLAY_ = TextureManager::GetInstance()->LoadTexture("UI_PLAY.png");
 	spriteUI_PLAY_ = std::make_unique<Sprite>();
 	spriteUI_PLAY_->Initialize(textureHandleUI_PLAY_);
-	
-	// チャージUI
-	textureHandleUI_Charge_ = TextureManager::GetInstance()->LoadTexture("spawn.png");
-	spriteUI_Charge_ = std::make_unique<Sprite>();
-	spriteUI_Charge_->SetPosition({ 1085.0f, 600.0f });
-	spriteUI_Charge_->Initialize(textureHandleUI_Charge_);
 
-	spriteUI_ChargeGage_ = std::make_unique<Sprite>();
-	spriteUI_ChargeGage_->Initialize(textureHandleUI_Charge_);
-	spriteUI_ChargeGage_->SetPosition({ 1085.0f, 600.0f });
-	spriteUI_ChargeGage_->SetSize({ 180.0f, 50.0f });
-	spriteUI_ChargeGage_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	charge_ = std::make_unique<Charge>();
+	charge_->Initialize(TextureManager::GetInstance()->LoadTexture("spawn.png"));
 
 	// インターバルの数字
-	textureHandleIntervalNum1_ = TextureManager::GetInstance()->LoadTexture("count1.png");
-	textureHandleIntervalNum2_ = TextureManager::GetInstance()->LoadTexture("count2.png");
-	textureHandleIntervalNum3_ = TextureManager::GetInstance()->LoadTexture("count3.png");
+	textureHandleIntervalNum_.resize(3);
+	textureHandleIntervalNum_[0] = TextureManager::GetInstance()->LoadTexture("count1.png");
+	textureHandleIntervalNum_[1] = TextureManager::GetInstance()->LoadTexture("count2.png");
+	textureHandleIntervalNum_[2] = TextureManager::GetInstance()->LoadTexture("count3.png");
 	
-	spriteUI_Num1_ = std::make_unique<Sprite>();
-	spriteUI_Num1_->Initialize(textureHandleIntervalNum1_);
-	spriteUI_Num1_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num1_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num1_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num1_-> SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	interval_ = std::make_unique<Interval>();
+	interval_->Initialize(textureHandleIntervalNum_);
 
-	spriteUI_Num2_ = std::make_unique<Sprite>();
-	spriteUI_Num2_->Initialize(textureHandleIntervalNum2_);
-	spriteUI_Num2_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num2_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num2_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num2_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
-	
-	spriteUI_Num3_ = std::make_unique<Sprite>();
-	spriteUI_Num3_->Initialize(textureHandleIntervalNum3_);
-	spriteUI_Num3_->SetAnchorPoint({ 0.5f, 0.5f });
-	spriteUI_Num3_->SetPosition({ 640.0f, 360.0f });
-	spriteUI_Num3_->SetSize({ 0.0f, 0.0f });
-	spriteUI_Num3_->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
+	remainingSpawnNum_ = std::make_unique<RemainingSpawnNum>();
+	remainingSpawnNum_->Initialize(kMaxSpawnNum);
 
-
-	// 残り出現数UIテキスト
-	remainingSpawnNumText_ = std::make_unique<TextWrite>();
-	remainingSpawnNumText_->Initialize("REMAINING");
-	remainingSpawnNumText_->SetParam({ 10.0f, 100.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
-	remainingSpawnNumText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	// 残りの出現数テキスト
-	numText_ = std::make_unique<TextWrite>();
-	numText_->Initialize("NUM");
-	numText_->SetParam({ 50.0f, 150.0f }, Font::GenEiPOPle, 70.0f, { 0.9f, 0.85f, 0.13f, 1 });
-	numText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	// 値のテキスト
-	valueText_ = std::make_unique<TextWrite>();
-	valueText_->Initialize("value");
-	valueText_->SetParam({ 160.0f, 185.0f }, Font::GenEiPOPle, 40.0f, { 1, 1, 1, 1 });
-	valueText_->SetEdgeParam({ 0, 0, 0, 1 }, 3.0f, 0.0f, true);
-	
-
-	switch (stageNum_)
-	{
-	case 1: case 2:
-		cameraTranslate = { 0.0f,70.0f,-50.0f };
-
-		break;
-
-	case 3: case 4: case 5:
-		cameraTranslate = { 0.0f,100.0f,-75.0f };
-
-		break;
-	default:
-		break;
-	}
+	SetupCamera();
 
 	//カメラの生成と初期化
 	camera_ = std::make_unique<BaseCamera>();
@@ -104,96 +59,26 @@ void GamePlayScene::Initialize()
 	//パーティクルマネージャーにカメラをセット
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
+	cameraControl_ = std::make_unique<CameraControl>();
+	cameraControl_->Initialize(cameraRotate);
+
 	// 当たり判定
 	appCollisionManager_ = AppCollisionManager::GetInstance();
 	appCollisionManager_->Initialize();
 
-	// スポーン位置
-	switch (stageNum_)
-	{
-	case 1:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,-5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,-5.0f });
-		break;
-
-	case 2:
-		playerSpawnPositions_.push_back({ 5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ -5.0f,1.0f,5.0f });
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,-5.0f });
-		break;
-
-	case 3:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
-
-	case 4:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,13.0f });
-		playerSpawnPositions_.push_back({ 8.0f,1.0f,-10.0f });
-		playerSpawnPositions_.push_back({ -10.0f,1.0f,-10.0f });
-		break;
-
-	case 5:
-		playerSpawnPositions_.push_back({ 0.0f,1.0f,0.0f });
-		playerSpawnPositions_.push_back({ 2.0f,1.0f,2.0f });
-		playerSpawnPositions_.push_back({ -2.0f,1.0f,-2.0f });
-		break;
-	
-	default:
-		break;
-	}
-	
+	SetupPlayerSpawnPositions();
 
 	// プレイヤー
 	for (uint32_t i = 0; i < 1; ++i)
 	{
-		auto player = std::make_unique<Player>();
-
-		player->SetPlayerPos(playerSpawnPositions_[0]);
-		player->SetScale({ 1.0f, 1.0f, 1.0f });
-		player->Initialize();
-		player->SetIsChargeMax(&isChargeMax_);
-
-		players_.push_back(std::move(player));
-		playerNum_++;
+		AddPlayer(false);
 	}
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Initialize(camera_.get(), &players_, "enemy", "Fan","Freeze");
 
-	switch (stageNum_)
-	{
-	case 1:
-		enemyManager_->SpawnTackleEnemy(7);
-		break;
-
-	case 2:
-		enemyManager_->SpawnTackleEnemy(4);
-		enemyManager_->SpawnFanEnemy(3);
-		break;
-
-	case 3:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(4);
-		break;
-
-	case 4:
-		enemyManager_->SpawnTackleEnemy(7);
-		enemyManager_->SpawnFanEnemy(5);
-		break;
-
-	case 5:
-		enemyManager_->SpawnFanEnemy(7);
-		enemyManager_->SpawnFreezeEnemy(7);
-		break;
-
-	default:
-		break;
-	}
-	
+	SetupEnemyManager();
 	
 	//スカイドーム
 	skydome_ = std::make_unique<Skydome>();
@@ -202,196 +87,13 @@ void GamePlayScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
-	//フィールドの大きさと敵のスポーン範囲を設定
-	switch (stageNum_)
-	{
-	case 1: case 2:
-		field_->SetScale({ 20.0f,1.0f,20.0f });
-		enemyManager_->SetSpawnPosition({ -20.0f,1.0f,-20.0f }, { 20.0f,1.0f,20.0f });
+	SetupField();
 
-		break;
-	case 3: case 4: case 5:
-		field_->SetScale({ 30.0f, 1.0f, 30.0f });
-		enemyManager_->SetSpawnPosition({ -30.0f,1.0f,-30.0f }, { 30.0f,1.0f,30.0f });
+	CreateObstacles();
 
-		break;
-	default:
-		break;
-	}
-	
+	CreateBumpers();
 
-	//障害物の生成
-	std::vector<Vector3> obstaclePositions;
-	std::vector<Vector3> obstacleScales;
-
-	switch (stageNum_)
-	{
-	case 2:
-		//障害物の生成
-		obstaclePositions = {
-			{ 0.0f, 1.0f, 7.0f },
-			{ -15.0f, 1.0f, 0.0f },
-			{ 10.0f, 1.0f, -15.0f }
-		};
-		obstacleScales = {
-			{ 5.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 5.0f },
-			{ 1.0f, 1.0f, 5.0f }
-		};
-		break;
-	default:
-		break;
-	}
-
-	for (size_t i = 0; i < obstaclePositions.size(); ++i)
-	{
-		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
-		obstacle = std::make_unique<Obstacle>();
-		obstacle->Initialize();
-		obstacle->SetPosition(obstaclePositions[i]);
-		obstacle->SetScale(obstacleScales[i]);
-	}
-
-	//跳ね返る障害物の生成
-	std::vector<Vector3> bumperPositions;
-	std::vector<Vector3> bumperScales;
-	std::vector<Vector3> bumperDirections;
-	std::vector<float> bumperSpeeds;
-	std::vector<float> bumperRanges;
-	switch (stageNum_)
-	{
-	case 4:
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
-
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		break;
-
-	case 5:
-
-		bumperPositions = {
-		{ 0.0f, 1.0f, 12.0f },
-		{ -20.0f, 1.0f, 0.0f },
-		{ 17.0f, 1.0f, -22.0f }
-		};
-		bumperScales = {
-			{ 3.0f, 1.0f, 1.0f },
-			{ 1.0f, 1.0f, 3.0f },
-			{ 1.0f, 1.0f, 3.0f }
-		};
-		bumperDirections = {
-		  { 1.0f, 0.0f, 0.0f },
-		  { 0.0f, 0.0f, 1.0f },
-		  { -1.0f, 0.0f, 0.0f }
-		};
-		bumperSpeeds = {
-			0.1f,
-			0.1f,
-			0.1f
-		};
-		bumperRanges = {
-			10.0f,
-			10.0f,
-			10.0f
-		};
-		break;
-	default:
-		break;
-	}
-
-	switch (stageNum_)
-	{
-	case 5:
-		for (size_t i = 0; i < bumperPositions.size(); ++i)
-		{
-			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
-			bumper = std::make_unique<Bumper>();
-			bumper->Initialize();
-			bumper->SetPosition(bumperPositions[i]);
-			bumper->SetScale(bumperScales[i]);
-			bumper->SetMoveDirection(bumperDirections[i]);
-			bumper->SetMoveSpeed(bumperSpeeds[i]);
-			bumper->SetMoveRange(bumperRanges[i]);
-		}
-		break;
-	default:
-		for (size_t i = 0; i < bumperPositions.size(); ++i)
-		{
-			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
-			bumper = std::make_unique<Bumper>();
-			bumper->Initialize();
-			bumper->SetPosition(bumperPositions[i]);
-			bumper->SetScale(bumperScales[i]);
-		}
-		break;
-	}
-	
-
-	//氷の床の生成
-	std::vector<Vector3> iceFloorPositions;
-	std::vector<Vector3> iceFloorScales;
-	std::vector<Vector3> iceFloorRotations;
-
-	switch (stageNum_)
-	{
-	case 3:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
-
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
-
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
-
-	case 5:
-		iceFloorPositions = {
-		{ -20.0f, 1.01f, 15.0f },
-		{ -5.0f, 1.01f, -15.0f },
-		{ 20.0f, 1.01f, 0.0f }
-		};
-		iceFloorScales = {
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f },
-			{ 5.0f, 1.0f, 5.0f }
-		};
-		iceFloorRotations = {
-			{ 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 45.0f, 0.0f },
-			{ 0.0f, 67.0f, 0.0f }
-		};
-		break;
-
-	default:
-		break;
-	}
-
-	for (size_t i = 0; i < iceFloorPositions.size(); ++i)
-	{
-		std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
-		iceFloor = std::make_unique<IceFloor>();
-		iceFloor->Initialize();
-		iceFloor->SetPosition(iceFloorPositions[i]);
-		iceFloor->SetScale(iceFloorScales[i]);
-		iceFloor->SetRotation(iceFloorRotations[i]);
-	}
+	CreateIceFloors();
 
 	// プレイヤースポーン位置モデル
 	for (uint32_t i = 0; i < playerSpawnNum_; ++i)
@@ -455,152 +157,22 @@ void GamePlayScene::Update()
 	}
 	// スプライト
 	spriteUI_PLAY_->Update();
-	spriteUI_Charge_->Update();
-	spriteUI_ChargeGage_->Update();
-	remainingSpawnNum();
-	spriteUI_Num1_->Update();
-	spriteUI_Num2_->Update();
-	spriteUI_Num3_->Update();
+	
+	//チャージの更新
+	charge_->Update();
 
-	// ゲーム開始のインターバル
-	if (!isGameStart_) {
-		// 初期モデルだけ 1 回 Update しておく
-		if (!hasPreUpdated_) {
-			// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
-			UpdateTransform();
+	// 残り出現数の更新
+	remainingSpawnNum_->Update(howManyBoogie_);
 
-			hasPreUpdated_ = true;
-		}
-
-		// 3秒カウント
-		gameStartDelayTimer_ -= 1.0f / 60.0f;
-		if (gameStartDelayTimer_ <= 0.0f) {
-			isGameStart_ = true;
-		}
-
-		// プレイヤーの行動不能フラグセット
-		for (auto& player : players_)
-		{
-			player->IsMoveable(false);
-		}
-
-		// エネミーの行動不能フラグセット
-		enemyManager_->IsMoveable(false);
-	} 
-	else
-	{
-		for (auto& player : players_)
-		{
-			player->IsMoveable(true);
-		}
-
-		enemyManager_->IsMoveable(true);
-	}
-
-
-	// チャージの大きさに応じてスプライトのサイズを変更
-	// チャージの割合を計算
-	float chargeScale = charge_ / chargeMax_;
-	chargeScale = std::clamp(chargeScale, 0.0f, 1.0f); // 0.0f～1.0fの範囲に制限
-
-	// チャージの割合に応じてテクスチャのXサイズを変更
-	float newWidth = 180.0f * chargeScale; // 0から120まで拡大
-	spriteUI_Charge_->SetSize({ newWidth, 50.0f }); // 横方向のサイズを変更
+	interval_->SpriteUpdate();
 
 	// カメラの更新
 	UpdateCamera();
 
-	// 死んだプレイヤーを削除
-	players_.erase(std::remove_if(players_.begin(), players_.end(),
-		[this](const std::unique_ptr<Player>& player)
-		{
-			if (player->IsDead())
-			{
-				player->Finalize();
-				playerNum_--;
-				return true;
-			}
-			return false;
-		}), players_.end());
-	// 通常プレイヤーの更新
-	for (auto& player : players_)
+	//状況に応じた更新
+	if (currentState_)
 	{
-		player->Update();
-	}
-	if (isGameStart_)
-	{
-		// プレイヤー攻撃チャージ
-		playerTackleCharge();
-	}
-	// 準備中プレイヤーの更新
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Update();
-	}
-
-
-	//エネミーマネージャーの更新
-	enemyManager_->Update();
-
-	//スカイドーム
-	skydome_->Update();
-	// フィールド
-	field_->Update();
-
-	//障害物
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
-	{
-		obstacle->Update();
-	}
-	//跳ね返る障害物
-	for (std::unique_ptr<Bumper>& bumper : bumpers_)
-	{
-		bumper->Update();
-	}
-	//氷の床
-	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
-	{
-		iceFloor->Update();
-	}
-
-	// プレイヤースポーンのオブジェクト
-	for (auto& playerSpawn : playerSpawn_)
-	{
-		playerSpawn->Update();
-	}
-	if (playerNum_ > 0 && isGameStart_)
-	{
-		playerSpawnRotation();
-	}
-
-	// 当たり判定
-	appCollisionManager_->CheckAllCollision();
-
-	//最も近い敵やプレイヤーの位置を計算
-	CalculateNearestPosition();
-
-	//ゲーム終了判定
-	if ((playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0) and !isGameEnd_)
-	{
-		isGameEnd_ = true;
-		isZoomIn_ = true;
-		if (playerNum_ <= 0)
-		{
-			cameraEndPosition_ = nearestEnemyPos_;
-		}
-		else if (enemyManager_->GetEnemyCount() == 0)
-		{
-			cameraEndPosition_ = nearestPlayerPos_;
-		}
-	}
-	// ゲームオーバーへ
-	if (playerNum_ <= 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)
-	{
-		sceneManager_->SetNextScene("GAMEOVER");
-	}
-	// クリア
-	if ((enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f))
-	{
-		sceneManager_->SetNextScene("CLEAR");
+		currentState_->Update(this);
 	}
 
 	//揺らす処理
@@ -609,8 +181,7 @@ void GamePlayScene::Update()
 	// ImGui
 	ImGuiDraw();
 
-	//UIテキスト用のImGui
-	valueText_->DebugWithImGui();
+	remainingSpawnNum_->DebugWithImGui();
 }
 
 void GamePlayScene::Draw()
@@ -689,16 +260,17 @@ void GamePlayScene::Draw()
 	///------------------------------///
 
 	spriteUI_PLAY_->Draw();
-	spriteUI_ChargeGage_->Draw();
-	spriteUI_Charge_->Draw();
+	
+	//チャージの描画
+	charge_->Draw();
+
 	//ポーズシステムの描画
 	pauseSystem_->DrawSprite();
 
-	if (!isGameStart_)
-	{
-		UpdateIntervalNum();
+	if (!pauseSystem_->GetIsPause()) {
+		interval_->Draw();
 	}
-
+	
 	///------------------------------///
 	///↑↑↑↑スプライト描画終了↑↑↑↑
 	///------------------------------///
@@ -713,12 +285,7 @@ void GamePlayScene::TextDraw() {
 	pauseSystem_->TextDraw();
 
 	if (!pauseSystem_->GetIsPause()) {
-		//スペースUIテキスト
-		remainingSpawnNumText_->WriteText(L"残り出現数");
-		// 残りの出現数テキスト
-		numText_->WriteText(std::to_wstring(remainingBoogie_));
-		// 値のテキスト
-		valueText_->WriteText(L"体");
+		remainingSpawnNum_->TextDraw();
 	}
 
 	///------------------------------///
@@ -744,13 +311,7 @@ void GamePlayScene::ImGuiDraw()
 	// プレイヤーを追加するボタン
 	if (ImGui::Button("Add Player"))
 	{
-		auto player = std::make_unique<Player>();
-
-		player->SetPlayerPos(playerSpawnPositions_[0]);
-		player->Initialize();
-		player->SetIsChargeMax(&isChargeMax_);
-
-		players_.push_back(std::move(player));
+		AddPlayer(false);
 	}
 
 	// 障害物の位置調整
@@ -798,7 +359,7 @@ void GamePlayScene::ImGuiDraw()
 
 	ImGui::Text("howManyBoogie : %d", howManyBoogie_);
 
-	ImGui::Text("charge : % .0f", charge_);
+	ImGui::Text("charge : % .0f", charge_->GetChargeValue());
 
 	if (!players_.empty())
 	{
@@ -843,17 +404,8 @@ void GamePlayScene::playerSpawnRotation()
 		playerSpawn_[playerSpawnIndex_]->IsShaking(true);
 
 		// 小さい状態で非アクティブなプレイヤー生成
-		auto prePlayer = std::make_unique<Player>();
-		prePlayer->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
-		prePlayer->SetScale({ 0.1f, 0.1f, 0.1f });
-		prePlayer->Initialize();
-		prePlayer->SetIsChargeMax(&isChargeMax_);
+		AddPlayer(true);
 
-		prePlayer->IsMoveable(false);
-
-		preSpawnedPlayer_ = std::move(prePlayer);
-
-		preSpawnedPlayer_->Update();
 	}
 
 	// 拡大処理（Lerp）
@@ -894,44 +446,6 @@ void GamePlayScene::playerSpawnRotation()
 	}
 }
 
-void GamePlayScene::playerTackleCharge()
-{
-	// プレイヤーが1体以上いるとき
-	if (playerNum_ > 0)
-	{
-		// チャージが最大でないとき
-		if (charge_ < chargeMax_)
-		{
-			charge_ += 1.0f;
-		}
-		// チャージが最大値に達したら
-		else
-		{
-			if (!isChargeMax_) 
-			{
-				isChargeMax_ = true;
-			}
-
-			if (input_->TriggerKey(DIK_SPACE) && isChargeMax_) {
-
-				for (std::unique_ptr<Player>& player : players_)
-				{
-					if (!player->IsAttack()) 
-					{
-						continue;
-					}
-					isChargeMax_ = false;
-					charge_ = 0.0f;
-
-					return;
-				}
-
-			}
-		}
-
-	}
-}
-
 void GamePlayScene::CheckShake() {
 	//全てのプレイヤーのシェイク判定を処理
 	for (auto& player : players_) {
@@ -954,15 +468,6 @@ void GamePlayScene::CheckShake() {
 			camera_->RegistShake(0.4f, 0.5f);
 			enemy->isDeadShake_ = false;
 		}
-	}
-}
-
-void GamePlayScene::remainingSpawnNum()
-{
-	// 残り出現数を計算
-	remainingBoogie_ = kMaxSpawnNum - howManyBoogie_;
-	if (remainingBoogie_ < 0) {
-		remainingBoogie_ = 0; // 負の値にならないように制限
 	}
 }
 
@@ -994,183 +499,598 @@ void GamePlayScene::UpdateTransform()
 	}
 }
 
+void GamePlayScene::ChangeState(std::unique_ptr<GamePlayState> newState)
+{
+	currentState_ = std::move(newState);
+}
+
 void GamePlayScene::UpdateIntervalNum()
 {
-	if (!pauseSystem_->GetIsPause()) {
-		if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f) {
-			spriteUI_Num3_->Draw();
+
+	interval_->UpdateIntervalNum();
+
+}
+
+void GamePlayScene::StartInterVal()
+{
+	// ゲーム開始のインターバル
+	
+	// 初期モデルだけ 1 回 Update しておく
+	if (!interval_->GetHasPreUpdated()) {
+		// ここで全プレイヤー・敵・エフェクトの Update を呼ぶ
+		UpdateTransform();
+
+		interval_->SetHasPreUpdated(true);
+	}
+
+	// プレイヤーの行動不能フラグセット
+	for (auto& player : players_)
+	{
+		player->IsMoveable(false);
+	}
+
+	// エネミーの行動不能フラグセット
+	enemyManager_->IsMoveable(false);
+	
+
+}
+
+void GamePlayScene::ObjectsUpdate()
+{
+	// 死んだプレイヤーを削除
+	players_.erase(std::remove_if(players_.begin(), players_.end(),
+		[this](const std::unique_ptr<Player>& player)
+		{
+			if (player->IsDead())
+			{
+				player->Finalize();
+				playerNum_--;
+				return true;
+			}
+			return false;
+		}), players_.end());
+	// 通常プレイヤーの更新
+	for (auto& player : players_)
+	{
+		player->Update();
+	}
+
+	// 準備中プレイヤーの更新
+	if (preSpawnedPlayer_) {
+		preSpawnedPlayer_->Update();
+	}
+
+
+	//エネミーマネージャーの更新
+	enemyManager_->Update();
+
+	//スカイドーム
+	skydome_->Update();
+	// フィールド
+	field_->Update();
+
+	//障害物
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_)
+	{
+		obstacle->Update();
+	}
+	//跳ね返る障害物
+	for (std::unique_ptr<Bumper>& bumper : bumpers_)
+	{
+		bumper->Update();
+	}
+	//氷の床
+	for (std::unique_ptr<IceFloor>& iceFloor : icefloors_)
+	{
+		iceFloor->Update();
+	}
+
+	// プレイヤースポーンのオブジェクト
+	for (auto& playerSpawn : playerSpawn_)
+	{
+		playerSpawn->Update();
+	}
+
+	// 当たり判定
+	appCollisionManager_->CheckAllCollision();
+}
+
+void GamePlayScene::TackleCharge()
+{
+	// プレイヤー攻撃チャージ
+	charge_->playerTackleCharge(playerNum_ > 0, players_);
+}
+
+bool GamePlayScene::IsStartConditionMet()
+{
+	return interval_->IsEndInterval();
+}
+
+bool GamePlayScene::IsGameEnd()
+{
+	return playerNum_ <= 0 or enemyManager_->GetEnemyCount() == 0;
+}
+
+bool GamePlayScene::IsGameClear()
+{
+	return enemyManager_->GetEnemyCount() == 0 and cameraControl_->IsGameEnd();
+}
+
+void GamePlayScene::GameClearProcess()
+{
+	sceneManager_->SetNextScene("CLEAR");
+}
+
+bool GamePlayScene::IsGameOver()
+{
+	return playerNum_ <= 0 and cameraControl_->IsGameEnd();
+}
+
+void GamePlayScene::GameEndProcess()
+{
+	cameraControl_->OnGameEnd(playerNum_, enemyManager_->GetEnemyCount());
+}
+
+void GamePlayScene::GameOverProcess()
+{
+	sceneManager_->SetNextScene("GAMEOVER");
+}
+
+void GamePlayScene::ObjectsMoveable()
+{
+	for (auto& player : players_)
+	{
+		player->IsMoveable(true);
+	}
+
+	enemyManager_->IsMoveable(true);
+}
+
+void GamePlayScene::SetupCamera()
+{
+
+	std::stringstream cameraDatas = LoadCsvFile("Camera");
+
+	std::string line;
+
+	// カメラの設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{ 
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
 		}
-		else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f) {
-			spriteUI_Num2_->Draw();
-		}
-		else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f) {
-			spriteUI_Num1_->Draw();
+
+		//translate
+		if (word.find("translate") == 0)
+		{
+			cameraTranslate = LoadVector3(lineStream);
 		}
 	}
 
-	// 数字のサイズを更新
-	spriteUI_Num1_->SetSize(numSize_);
-	spriteUI_Num2_->SetSize(numSize_);
-	spriteUI_Num3_->SetSize(numSize_);
+}
 
-	numSizeTimer_++;
-	if (numSizeTimer_ > 60) {
-		numSizeTimer_ = 0; // リピート or 一度きりなら終了
+void GamePlayScene::SetupPlayerSpawnPositions()
+{
+	std::stringstream cameraDatas = LoadCsvFile("PlayerSpawn");
+
+	std::string line;
+
+	// プレイヤーのスポーン位置を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//translate
+		if (word.find("translate") == 0)
+		{
+			playerSpawnPositions_.push_back(LoadVector3(lineStream));
+		}
+	}
+}
+
+void GamePlayScene::SetupEnemyManager()
+{
+	std::stringstream cameraDatas = LoadCsvFile("Enemy");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//TackleEnemyのスポーン設定
+		if (word.find("Tackle") == 0)
+		{
+			enemyManager_->SpawnTackleEnemy(LoadInt(lineStream));
+		}
+		//FanEnemyのスポーン設定
+		else if (word.find("Fan") == 0)
+		{
+			enemyManager_->SpawnFanEnemy(LoadInt(lineStream));
+		}
+		//FreezeEnemyのスポーン設定
+		else if (word.find("Freeze") == 0)
+		{
+			enemyManager_->SpawnFreezeEnemy(LoadInt(lineStream));
+		}
 	}
 
-	// 0〜π までの範囲に変換（0→最大→0）
-	float t = static_cast<float>(numSizeTimer_) / 60.0f; // 0〜1
-	float scale = std::sinf(t * 3.14159265f); // sin(0→π) = 0→1→0
+}
 
-	// 最大サイズに合わせてスケーリング
-	numSize_.x = 320.0f * scale;
-	numSize_.y = 480.0f * scale;
+void GamePlayScene::SetupField()
+{
+	std::stringstream cameraDatas = LoadCsvFile("Field");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//Fieldのスケール設定
+		if (word.find("Scale") == 0)
+		{
+			Vector3 scale = LoadVector3(lineStream);
+			field_->SetScale(scale);
+			Vector3 spawnMin = { -scale.x, scale.y, -scale.z };
+			enemyManager_->SetSpawnPosition(spawnMin, scale);
+		}
+		
+	}
+	
+}
+
+void GamePlayScene::CreateObstacles()
+{
+	//障害物の生成
+	std::vector<Vector3> obstaclePositions;
+	std::vector<Vector3> obstacleScales;
+
+	std::stringstream cameraDatas = LoadCsvFile("Obstacle");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//obstacleのposition設定
+		if (word.find("translate") == 0)
+		{
+			obstaclePositions.push_back(LoadVector3(lineStream));
+		}
+		//obstacleのscale設定
+		else if (word.find("scale") == 0)
+		{
+			obstacleScales.push_back(LoadVector3(lineStream));
+		}
+	}
+
+	for (size_t i = 0; i < obstaclePositions.size(); ++i)
+	{
+		std::unique_ptr<Obstacle>& obstacle = obstacles_.emplace_back();
+		obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->SetPosition(obstaclePositions[i]);
+		obstacle->SetScale(obstacleScales[i]);
+	}
+
+}
+
+void GamePlayScene::CreateBumpers()
+{
+	//跳ね返る障害物の生成
+	std::vector<Vector3> bumperPositions;
+	std::vector<Vector3> bumperScales;
+	std::vector<Vector3> bumperDirections;
+	std::vector<float> bumperSpeeds;
+	std::vector<float> bumperRanges;
+	bool isMove = false;
+
+	std::stringstream cameraDatas = LoadCsvFile("Bumper");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//bumperが動くかどうかの設定
+		if (word.find("isMove") == 0)
+		{
+			isMove = LoadBool(lineStream);
+		}
+		//bumperのposition設定
+		else if (word.find("translate") == 0)
+		{
+			bumperPositions.push_back(LoadVector3(lineStream));
+		}
+		//bumperのscale設定
+		else if (word.find("scale") == 0)
+		{
+			bumperScales.push_back(LoadVector3(lineStream));
+		}
+		//bumperのmoveDirection設定
+		else if (word.find("moveDirection") == 0)
+		{
+			bumperDirections.push_back(LoadVector3(lineStream));
+		}
+		//bumperのmoveSpeed設定
+		else if (word.find("moveSpeed") == 0)
+		{
+			bumperSpeeds.push_back(LoadFloat(lineStream));
+		}
+		//bumperのmoveRange設定
+		else if (word.find("moveRange") == 0)
+		{
+			bumperRanges.push_back(LoadFloat(lineStream));
+		}
+
+	}
+
+	// 動くかどうかのフラグに応じて、Bumperを生成
+	if (isMove)
+	{
+		for (size_t i = 0; i < bumperPositions.size(); ++i)
+		{
+			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+			bumper = std::make_unique<Bumper>();
+			bumper->Initialize();
+			bumper->SetPosition(bumperPositions[i]);
+			bumper->SetScale(bumperScales[i]);
+			bumper->SetMoveDirection(bumperDirections[i]);
+			bumper->SetMoveSpeed(bumperSpeeds[i]);
+			bumper->SetMoveRange(bumperRanges[i]);
+		}
+	}
+	// 動かない場合は、通常のBumperを生成
+	else
+	{
+		for (size_t i = 0; i < bumperPositions.size(); ++i)
+		{
+			std::unique_ptr<Bumper>& bumper = bumpers_.emplace_back();
+			bumper = std::make_unique<Bumper>();
+			bumper->Initialize();
+			bumper->SetPosition(bumperPositions[i]);
+			bumper->SetScale(bumperScales[i]);
+		}
+	}
+
+}
+
+void GamePlayScene::CreateIceFloors()
+{
+	//氷の床の生成
+	std::vector<Vector3> iceFloorPositions;
+	std::vector<Vector3> iceFloorScales;
+	std::vector<Vector3> iceFloorRotations;
+
+	std::stringstream cameraDatas = LoadCsvFile("IceFloor");
+
+	std::string line;
+
+	// エネミーのスポーン設定を読み込む
+	while (std::getline(cameraDatas, line))
+	{
+		//1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream lineStream(line);
+
+		std::string word;
+		//,区切りで行の先頭文字列を取得
+		getline(lineStream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			//コメント行を飛ばす
+			continue;
+		}
+
+		//icefloorのposition設定
+		if (word.find("translate") == 0)
+		{
+			iceFloorPositions.push_back(LoadVector3(lineStream));
+		}
+		//icefloorのscale設定
+		else if (word.find("scale") == 0)
+		{
+			iceFloorScales.push_back(LoadVector3(lineStream));
+		}
+		//icefloorのrotation設定
+		else if (word.find("rotate") == 0)
+		{
+			iceFloorRotations.push_back(LoadVector3(lineStream));
+		}
+		
+
+	}
+
+	for (size_t i = 0; i < iceFloorPositions.size(); ++i)
+	{
+		std::unique_ptr<IceFloor>& iceFloor = icefloors_.emplace_back();
+		iceFloor = std::make_unique<IceFloor>();
+		iceFloor->Initialize();
+		iceFloor->SetPosition(iceFloorPositions[i]);
+		iceFloor->SetScale(iceFloorScales[i]);
+		iceFloor->SetRotation(iceFloorRotations[i]);
+	}
+}
+
+void GamePlayScene::SetupCsvFilePath()
+{
+	csvFilePath_ = "./Resources/stageData/stage" + std::to_string(stageNum_) + "/";
+}
+
+std::stringstream GamePlayScene::LoadCsvFile(std::string fileName)
+{
+	// CSVファイルのパスを設定
+	std::string filePath = csvFilePath_ + fileName + ".csv";
+
+	// ファイルを開く
+	std::ifstream file;
+	file.open(filePath);
+	assert(file.is_open());
+
+	std::stringstream csvStream;
+	csvStream << file.rdbuf(); // ファイルの内容をストリームに読み込む
+
+	//ファイルを閉じる
+	file.close();
+
+	return csvStream;
+}
+
+Vector3 GamePlayScene::LoadVector3(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	float x = std::stof(word);
+
+	getline(lineStream, word, ',');
+	float y = std::stof(word);
+
+	getline(lineStream, word, ',');
+	float z = std::stof(word);
+
+	return Vector3(x, y, z);
+}
+
+int GamePlayScene::LoadInt(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return std::stoi(word);
+
+}
+
+float GamePlayScene::LoadFloat(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return std::stof(word);
+}
+
+bool GamePlayScene::LoadBool(std::istringstream& lineStream)
+{
+	std::string word;
+
+	getline(lineStream, word, ',');
+	return (word == "1" || word == "true" || word == "TRUE");
+
+}
+
+void GamePlayScene::AddPlayer(bool preSpawn)
+{
+	auto player = std::make_unique<Player>();
+
+	if (!preSpawn) 
+	{
+		player->SetPlayerPos(playerSpawnPositions_[0]);
+		// プレイヤーがスポーンする場合は通常のスケール
+		player->SetScale({ 1.0f, 1.0f, 1.0f });
+	} 
+	else 
+	{
+		player->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
+		// スポーン準備中のプレイヤーは小さいスケール
+		player->SetScale({ 0.1f, 0.1f, 0.1f });
+	}
+	player->Initialize();
+	player->SetIsChargeMax(charge_->IsChargeMaxPtr());
+
+	if (!preSpawn) 
+	{
+		players_.push_back(std::move(player));
+		playerNum_++;
+
+		return;
+	}
+	else 
+	{
+		player->IsMoveable(false);
+
+		preSpawnedPlayer_ = std::move(player);
+
+		preSpawnedPlayer_->Update();
+
+		return;
+	}
+	
 }
 
 void GamePlayScene::UpdateCamera()
 {
-	//　カメラの演出
-	if (isZoomIn_)
-	{
-		UpdateZoomIn();
-	}
-	else if (waitTime_ > 0.0f)
-	{
-		waitTime_ -= 1.0f / 60.0f;
-		if (waitTime_ <= 0.0f)
-		{
-			isZoomOut_ = true;
-		}
-	}
-	else if (isZoomOut_)
-	{
-		UpdateZoomOut();
-	}
+	cameraControl_->Update(camera_.get(), players_, enemyManager_.get());
 	// カメラの行列を更新
 	camera_->UpdateMatrix();
-}
-
-void GamePlayScene::UpdateZoomIn()
-{
-	// 時間を経過させる
-	cameraEaseTime_ += 1.0f / 60.0f;
-	float t = cameraEaseTime_ / cameraEaseDuration_;
-	// 補完が1.0fを超えないようにする
-	if (t > 1.0f) t = 1.0f;
-
-	// 補完のイージング
-	float easeT = EaseInOutQuad(t);
-	//カメラのスタート地点とエンド地点を設定
-	Vector3 cameraStartPosition = cameraStartPosition_;
-	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 2.0f;
-	cameraEndPosition.z -= 14.0f;
-	// カメラの補間
-	Vector3 newPosition = cameraStartPosition_ * (1.0f - easeT) + cameraEndPosition * easeT;
-	Vector3 newRotation = cameraRotate * (1.0f - easeT) + CalculateLookAtRotation(newPosition, cameraEndPosition_) * easeT; // カメラの向きを補間
-	newRotation -= 0.2f;
-
-	// カメラに新しい位置と回転を設定
-	camera_->SetTranslate(newPosition);
-	camera_->SetRotate(newRotation);
-
-	//補間が終わったら
-	if (cameraEaseTime_ >= 3.0f)
-	{
-		isZoomIn_ = false;
-		cameraEaseTime_ = 0.0f;
-		waitTime_ = waitTimeDuration_;
-	}
-}
-
-void GamePlayScene::UpdateZoomOut()
-{
-	// 時間を経過させる
-	cameraEaseTime_ += 1.0f / 60.0f;
-	float t = cameraEaseTime_ / cameraEaseDuration_;
-	// 補完が1.0fを超えないようにする
-	if (t > 1.0f) t = 1.0f;
-
-	// 補完のイージング
-	float easeT = EaseInOutQuad(t);
-	Vector3 cameraEndPosition = cameraEndPosition_;
-	cameraEndPosition.y = 2.0f;
-	cameraEndPosition.z -= 14.0;
-	// カメラの補間
-	Vector3 newPosition = cameraEndPosition * (1.0f - easeT) + cameraStartPosition_ * easeT;
-	Vector3 newRotation = CalculateLookAtRotation(newPosition, cameraEndPosition_) * (1.0f - easeT) + cameraRotate * easeT;
-	Vector3 cameraRotate = { 0.95f, 0.0f, 0.0f };
-	newRotation = newRotation * (1.0f - easeT) + cameraRotate * easeT;
-
-	// カメラに新しい位置と回転を設定
-	camera_->SetTranslate(newPosition);
-	camera_->SetRotate(newRotation);
-
-	//補間が終わったら
-	if (t >= 1.0f)
-	{
-		isZoomOut_ = false;
-		cameraEaseTime_ = 0.0f;
-	}
-}
-
-void GamePlayScene::CalculateNearestPosition()
-{
-	// プレイヤーが残り1人のとき
-	if (players_.size() == 1)
-	{
-		//最も近い敵の座標を取得
-		float closestDistance_ = (std::numeric_limits<float>::max)();
-
-		//最も近い敵の座標を取得
-		auto& enemies = enemyManager_->GetAllEnemies();
-		for (uint32_t i = 0; i < enemies.size(); i++)
-		{
-			//地面にいないエネミーは無視
-			if (!enemies[i]->IsGround()) { continue; }
-			Vector3 enemyPos = enemies[i]->GetPosition();
-			float distance = (players_[0]->GetPosition() - enemyPos).Length();
-			if (distance < closestDistance_)
-			{
-				closestDistance_ = distance;
-				nearestEnemyPos_ = enemyPos;
-				nearestEnemyType_ = enemies[i]->GetType();
-				nearestEnemyNum_ = i;
-			}
-		}
-	}
-
-	// エネミーが残り1体のとき
-	if (enemyManager_->GetEnemyCount() == 1)
-	{
-		//最も近いプレイヤーの座標を取得
-		float closestDistance_ = (std::numeric_limits<float>::max)();
-		//最も近いプレイヤーの座標を取得
-		for (uint32_t i = 0; i < playerNum_; i++)
-		{
-			//地面にいないプレイヤーは無視
-			if (!players_[i]->IsGround()) { continue; }
-			Vector3 playerPos = players_[i]->GetPosition();
-			
-			auto& enemies = enemyManager_->GetAllEnemies();
-			for (size_t j = 0; j < enemies.size(); j++)
-			{
-				Vector3 enemyPos = enemies[j]->GetPosition();
-				float distance = (playerPos - enemyPos).Length();
-				if (distance < closestDistance_)
-				{
-					closestDistance_ = distance;
-					nearestPlayerPos_ = playerPos;
-					nearestPlayerNum_ = i;
-				}
-			}
-		}
-		if (closestDistance_ == (std::numeric_limits<float>::max)())
-		{
-			//プレイヤーがみんな地面にいない時はフィールドの中心を向く
-			nearestPlayerPos_ = { 0.0f, 1.0f, 0.0f };
-			nearestPlayerNum_ = (std::numeric_limits<uint32_t>::max)();
-		}
-	}
-
 }

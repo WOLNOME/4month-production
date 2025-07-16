@@ -130,6 +130,19 @@
     <ClCompile Include="application\PauseSystem.cpp" />
     <ClCompile Include="engine\scene\TutorialScene.cpp" />
     <ClCompile Include="application\TutorialSystem.cpp" />
+    <ClCompile Include="application\UI\Charge.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\RemainingSpawnNum.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CameraControl\CameraControl.cpp">
+      <Filter>cameraControl</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\GamePlayState.cpp" />
+    <ClCompile Include="application\UI\Interval.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -264,6 +277,19 @@
     <ClInclude Include="application\PauseSystem.h" />
     <ClInclude Include="engine\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
+    <ClInclude Include="application\UI\Charge.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\UI\RemainingSpawnNum.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CameraControl\CameraControl.h">
+      <Filter>cameraControl</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\GamePlayState.h" />
+    <ClInclude Include="application\UI\Interval.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />
@@ -308,6 +334,12 @@
     </Filter>
     <Filter Include="gimmick">
       <UniqueIdentifier>{1e064a18-e749-4820-92d2-624a28a940a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{f8524539-e4f9-4cec-a322-0f2bdc4d430d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cameraControl">
+      <UniqueIdentifier>{610e4cc8-0469-493c-86a7-e888d50f2f06}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

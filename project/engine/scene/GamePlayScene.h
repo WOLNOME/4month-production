@@ -23,6 +23,11 @@
 #include "../../application/objects/Gimmick/Bumper.h"
 #include "../../application/objects/Gimmick/IceFloor.h"
 #include "../../application/PauseSystem.h"
+#include "../../application/UI/Charge.h"
+#include "../../application/UI/RemainingSpawnNum.h"
+#include "../../application/CameraControl/CameraControl.h"
+#include "GamePlayState.h"
+#include "../../application/UI/Interval.h"
 
 class GamePlayScene : public BaseScene
 {
@@ -48,40 +53,99 @@ public:
 	/// </summary>
 	virtual void TextDraw() override;
 
-	// ImGui
-	void ImGuiDraw();
+	//ステージ番号
+	static uint32_t stageNum_;
+
+	void ChangeState(std::unique_ptr<GamePlayState> newState);
+
+	// ステージ始まるインターバル数字
+	virtual void UpdateIntervalNum();
+
+	virtual void StartInterVal();
+
+	void ObjectsUpdate();
+
+	void TackleCharge();
 
 	// プレイヤースポーン処理
 	void playerSpawnRotation();
 
+	bool IsStartConditionMet();
+
+	//ゲーム終了判定
+	bool IsGameEnd();
+
+	//ゲーム終了時の処理
+	void GameEndProcess();
+
+	//ゲームクリア判定
+	bool IsGameClear();
+
+	//ゲームクリア時の処理
+	void GameClearProcess();
+
+	//ゲームオーバー判定
+	bool IsGameOver();
+
+	//ゲームオーバー時の処理
+	void GameOverProcess();
+
+	void ObjectsMoveable();
+
+private: //メンバ関数
+
+	// ImGui
+	void ImGuiDraw();
+
 	// カメラの更新
 	void UpdateCamera();
-	// カメラのズームイン
-	void UpdateZoomIn();
-	// カメラのズームアウト
-	void UpdateZoomOut();
-	// 最も近い敵やプレイヤーの位置を計算
-	void CalculateNearestPosition();
-
-	// Player攻撃チャージ
-	void playerTackleCharge();
-
-	//ステージ番号
-	static uint32_t stageNum_;
 
 	//シェイクのチェック
 	void CheckShake();
 
-	// 残り出現数UI
-	void remainingSpawnNum();
-
 	// モデルの更新(インターバル中に位置だけでもおいておきたい)
 	void UpdateTransform();
 
-	// ステージ始まるインターバル数字
-	void UpdateIntervalNum();
+	// カメラのセットアップ
+	void SetupCamera();
+
+	//プレイヤーのスポーン位置のセットアップ
+	void SetupPlayerSpawnPositions();
+
+	//エネミーマネージャーのセットアップ
+	void SetupEnemyManager();
+
+	//フィールドのセットアップ
+	void SetupField();
+
+	//障害物の生成
+	void CreateObstacles();
+
+	//跳ね返る障害物の生成
+	virtual void CreateBumpers();
+
+	//氷の床の生成
+	virtual void CreateIceFloors();
+
+	virtual void SetupCsvFilePath();
+
+	// CSVファイルの読み込み。　filenameに拡張子はつけないこと
+	std::stringstream LoadCsvFile(std::string fileName);
+
+	Vector3 LoadVector3(std::istringstream& lineStream);
+
+	int LoadInt(std::istringstream& lineStream);
+
+	float LoadFloat(std::istringstream& lineStream);
+
+	bool LoadBool(std::istringstream& lineStream);
+
+	//プレイヤーの追加
+	void AddPlayer(bool preSpawn);
 
 protected://メンバ変数
+
+	std::unique_ptr<GamePlayState> currentState_;
 
 	Input* input_ = nullptr;
 	
@@ -91,26 +155,15 @@ protected://メンバ変数
 	uint32_t textureHandleUI_PLAY_ = 0u;
 	std::unique_ptr<Sprite> spriteUI_PLAY_ = nullptr;
 	
-	// チャージUI
-	uint32_t textureHandleUI_Charge_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_Charge_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_ChargeGage_ = nullptr;
-	
-	// インターバルの数字
-	uint32_t textureHandleIntervalNum1_ = 0u;
-	uint32_t textureHandleIntervalNum2_ = 0u;
-	uint32_t textureHandleIntervalNum3_ = 0u;
-	std::unique_ptr<Sprite> spriteUI_Num1_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num2_ = nullptr;
-	std::unique_ptr<Sprite> spriteUI_Num3_ = nullptr;
+	std::unique_ptr<Charge> charge_ = nullptr;
 
+	// インターバルの数字
+	std::vector<uint32_t> textureHandleIntervalNum_{};
 	
-	// 残り出現数
-	uint32_t remainingBoogie_ = 0;
-	// 残りの出現数テキスト
-	std::unique_ptr<TextWrite> remainingSpawnNumText_ = nullptr;
-	std::unique_ptr<TextWrite> numText_ = nullptr;
-	std::unique_ptr<TextWrite> valueText_ = nullptr;
+	//インターバル
+	std::unique_ptr<Interval> interval_ = nullptr;
+
+	std::unique_ptr<RemainingSpawnNum> remainingSpawnNum_;
 
 	std::unique_ptr<BaseCamera> camera_ = nullptr;
 
@@ -168,47 +221,8 @@ protected://メンバ変数
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;
 
-	//ゲーム終了フラグ
-	bool isGameEnd_ = false;
-	// カメラを引くフラグ
-	bool isZoomOut_ = false;
-	// カメラを寄せるフラグ
-	bool isZoomIn_ = false;
-	// カメラのイージング経過時間
-	float cameraEaseTime_ = 0.0f;
-	// カメラのイージング時間
-	const float cameraEaseDuration_ = 2.0f;
-	// カメラの開始位置
-	Vector3 cameraStartPosition_ = { 0.0f,70.0f,-50.0f };
-	// カメラの終了位置
-	Vector3 cameraEndPosition_ = { 0.0f, 50.0f, -30.0f };
-	// 最も近いプレイヤーの位置
-	Vector3 nearestPlayerPos_ = {};
-	//　最も近いプレイヤーの番号
-	uint32_t nearestPlayerNum_ = 0;
-	// 最も近い敵の位置
-	Vector3 nearestEnemyPos_ = {};
-	// 最も近い敵の番号
-	uint32_t nearestEnemyNum_ = 0;
-	// 最も近い敵の種類
-	std::string nearestEnemyType_ = "";
-	//　待機時間
-	float waitTime_ = 0.0f;
-	// 待機時間の長さ
-	float waitTimeDuration_ = 0.13f;
+	std::unique_ptr<CameraControl> cameraControl_ = nullptr;
 
-	// 攻撃チャージMax
-	const float chargeMax_ = 80.0f;
-	bool isChargeMax_ = false;
-	// 攻撃チャージ
-	float charge_ = 0.0f;
+	std::string csvFilePath_;
 
-	// ゲーム開始のインターバル
-	float gameStartDelayTimer_ = 3.0f;
-	bool isGameStart_ = false;
-	bool hasPreUpdated_ = false;
-
-	Vector2 numSize_ = { 320.0f, 480.0f };
-	uint32_t numSizeTimer_ = 0;
 };
-

@@ -129,7 +129,7 @@ Index of this file:
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"   // [__GNUC__ >= 6] warning: this 'if' clause does not guard this statement      // GCC 6.0+ only. See #883 on GitHub.
 #endif
 
-// Play it nice with Windows users (Update: May 2018, Notepad now supports Unix-style carriage returns!)
+// Play it nice with Windows users (SpriteUpdate: May 2018, Notepad now supports Unix-style carriage returns!)
 #ifdef _WIN32
 #define IM_NEWLINE  "\r\n"
 #else
@@ -889,7 +889,7 @@ static void ShowDemoWindowWidgets()
             }
             if (node_clicked != -1)
             {
-                // Update selection state
+                // SpriteUpdate selection state
                 // (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
                 if (ImGui::GetIO().KeyCtrl)
                     selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
@@ -5330,7 +5330,7 @@ static void ShowDemoWindowTables()
             ImGui::TreePop();
         }
 
-        // Update item list if we changed the number of items
+        // SpriteUpdate item list if we changed the number of items
         static ImVector<MyItem> items;
         static ImVector<int> selection;
         static bool items_need_sort = false;
@@ -7951,7 +7951,7 @@ void ShowExampleAppDocuments(bool* p_open)
         }
     }
 
-    // Update closing queue
+    // SpriteUpdate closing queue
     static ImVector<MyDocument*> close_queue;
     if (close_queue.empty())
     {

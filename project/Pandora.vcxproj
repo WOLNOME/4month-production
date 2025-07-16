@@ -113,6 +113,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
     <ClCompile Include="application\objects\Gimmick\Bumper.cpp" />
+    <ClCompile Include="application\UI\Charge.cpp" />
+    <ClCompile Include="application\CameraControl\CameraControl.cpp" />
     <ClCompile Include="engine\base\D2DRender.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="application\enemy\BaseEnemy.cpp" />
@@ -153,6 +155,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\GameOverScene.cpp" />
     <ClCompile Include="engine\util\JsonUtil.cpp" />
     <ClCompile Include="application\objects\GameObject\FallingObject.cpp" />
+    <ClCompile Include="engine\scene\GamePlayState.cpp" />
+    <ClCompile Include="application\UI\Interval.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
@@ -191,6 +195,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\PauseSystem.cpp" />
     <ClCompile Include="engine\scene\TutorialScene.cpp" />
     <ClCompile Include="application\TutorialSystem.cpp" />
+    <ClCompile Include="application\UI\RemainingSpawnNum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\appCollider\AppCollider.h" />
@@ -202,6 +207,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\MathUtils.h" />
     <ClInclude Include="application\objects\Gimmick\Obstacle.h" />
     <ClInclude Include="application\objects\Gimmick\Bumper.h" />
+    <ClInclude Include="application\UI\Charge.h" />
+    <ClInclude Include="application\CameraControl\CameraControl.h" />
     <ClInclude Include="engine\base\D2DRender.h" />
     <ClInclude Include="engine\scene\ClearScene.h" />
     <ClInclude Include="engine\collision\Collider.h" />
@@ -257,6 +264,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\objects\Gimmick\IceFloor.h" />
     <ClInclude Include="engine\scene\GameOverScene.h" />
     <ClInclude Include="application\objects\GameObject\FallingObject.h" />
+    <ClInclude Include="engine\scene\GamePlayState.h" />
+    <ClInclude Include="application\UI\Interval.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
@@ -284,6 +293,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\PauseSystem.h" />
     <ClInclude Include="engine\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
+    <ClInclude Include="application\UI\RemainingSpawnNum.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
