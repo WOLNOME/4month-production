@@ -19,12 +19,16 @@ void Field::Initialize() {
 
 	objectName_ = "Field";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollision(std::bind(&Field::OnCollision, this, std::placeholders::_1));
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+	};
+	appCollider_->MakeAABBDesc(desc);
 	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
@@ -78,9 +82,4 @@ void Field::ImGuiDraw() {
 void Field::SetTextureHandle(std::string _textureHandle)
 {
 	textureHandleField_ = TextureManager::GetInstance()->LoadTexture(_textureHandle);
-}
-
-void Field::OnCollision(const AppCollider* _other) {
-	_other;
-	// 何もしない
 }

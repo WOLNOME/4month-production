@@ -12,43 +12,38 @@ AppCollider::~AppCollider()
 {
 }
 
-AppCollider::AppColliderDesc AppCollider::MakeAABBDesc(GameObject* owner, const std::string& colliderID, AppAABB* aabb, AppColliderManager* mgr, std::function<void(const AppCollider*)> onCollision, std::function<void(const AppCollider*)> onCollisionTrigger)
+void AppCollider::MakeAABBDesc(const AppColliderDesc& desc)
 {
-	AppColliderDesc desc;
-	desc.owner = owner;
-	desc.colliderID = colliderID;
-	desc.shape = AppShape::AppAABB;
-	desc.shapeData = aabb;
-	desc.attribute = mgr->GetNewAttribute(colliderID);
-	desc.onCollision = onCollision;
-	desc.onCollisionTrigger = onCollisionTrigger;
-	return desc;
+	SetOwner(desc.owner);
+	SetColliderID(desc.colliderID);
+	SetShape(AppShape::AppAABB);
+	SetShapeData(static_cast<AppAABB*>(desc.shapeData));
+	SetAttribute(desc.attribute);
+	if (desc.onCollision) SetOnCollision(desc.onCollision);
+	if (desc.onCollisionTrigger) SetOnCollisionTrigger(desc.onCollisionTrigger);
+
 }
 
-AppCollider::AppColliderDesc AppCollider::MakeOBBDesc(GameObject* owner, const std::string& colliderID, AppOBB* obb, AppColliderManager* mgr, std::function<void(const AppCollider*)> onCollision, std::function<void(const AppCollider*)> onCollisionTrigger)
+void AppCollider::MakeOBBDesc(const AppColliderDesc& desc)
 {
-	AppColliderDesc desc;
-	desc.owner = owner;
-	desc.colliderID = colliderID;
-	desc.shape = AppShape::AppOBB;
-	desc.shapeData = obb;
-	desc.attribute = mgr->GetNewAttribute(colliderID);
-	desc.onCollision = onCollision;
-	desc.onCollisionTrigger = onCollisionTrigger;
-	return desc;
+	SetOwner(desc.owner);
+	SetColliderID(desc.colliderID);
+	SetShape(AppShape::AppOBB);
+	SetShapeData(static_cast<AppOBB*>(desc.shapeData));
+	SetAttribute(desc.attribute);
+	if (desc.onCollision) SetOnCollision(desc.onCollision);
+	if (desc.onCollisionTrigger) SetOnCollisionTrigger(desc.onCollisionTrigger);
 }
 
-AppCollider::AppColliderDesc AppCollider::MakeSphereDesc(GameObject* owner, const std::string& colliderID, AppSphere* sphere, AppColliderManager* mgr, std::function<void(const AppCollider*)> onCollision, std::function<void(const AppCollider*)> onCollisionTrigger)
+void AppCollider::MakeSphereDesc(const AppColliderDesc& desc)
 {
-	AppColliderDesc desc;
-	desc.owner = owner;
-	desc.colliderID = colliderID;
-	desc.shape = AppShape::AppSphere;
-	desc.shapeData = sphere;
-	desc.attribute = mgr->GetNewAttribute(colliderID);
-	desc.onCollision = onCollision;
-	desc.onCollisionTrigger = onCollisionTrigger;
-	return desc;
+	SetOwner(desc.owner);
+	SetColliderID(desc.colliderID);
+	SetShape(AppShape::AppSphere);
+	SetShapeData(static_cast<AppSphere*>(desc.shapeData));
+	SetAttribute(desc.attribute);
+	if (desc.onCollision) SetOnCollision(desc.onCollision);
+	if (desc.onCollisionTrigger) SetOnCollisionTrigger(desc.onCollisionTrigger);
 }
 
 const bool AppCollider::IsRegisteredCollidingPtr(const AppCollider* _ptr) const

@@ -67,6 +67,7 @@ private:
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	//当たり判定の形状
 	AppAABB aabb_;
+	AppCollider::AppColliderDesc desc = {};
 	//生存フラグ
 	bool isAlive_ = true;
 	//ランダムエンジン

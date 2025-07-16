@@ -96,6 +96,7 @@ private:
     AppColliderManager* appColliderManager_ = nullptr;
     std::unique_ptr<AppCollider> appCollider_ = nullptr;
     AppAABB aabb_{};
+    AppCollider::AppColliderDesc desc = {};
     bool isHit_ = false;
     bool isGround_ = false;
 

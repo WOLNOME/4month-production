@@ -13,12 +13,17 @@ void IceFloor::Initialize() {
 	appColliderManager_ = AppColliderManager::GetInstance();
 
 	objectName_ = "IceFloor";
-	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
+	appCollider_ = std::make_unique<AppCollider>(); 
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+	};
+	appCollider_->MakeAABBDesc(desc);
 	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル

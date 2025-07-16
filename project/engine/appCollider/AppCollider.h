@@ -34,31 +34,13 @@ public:
 
     // コライダー作成
     // AABB
-    static AppColliderDesc MakeAABBDesc(
-        GameObject* owner,
-        const std::string& colliderID,
-        AppAABB* aabb,
-        AppColliderManager* mgr,
-        std::function<void(const AppCollider*)> onCollision = nullptr,
-        std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+    void MakeAABBDesc(const AppColliderDesc& desc);
 
 	// OBB
-	static AppColliderDesc MakeOBBDesc(
-		GameObject* owner,
-		const std::string& colliderID,
-		AppOBB* obb,
-		AppColliderManager* mgr,
-		std::function<void(const AppCollider*)> onCollision = nullptr,
-		std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+	void MakeOBBDesc(const AppColliderDesc& desc);
 
 	// Sphere
-	static AppColliderDesc MakeSphereDesc(
-		GameObject* owner,
-		const std::string& colliderID,
-		AppSphere* sphere,
-		AppColliderManager* mgr,
-		std::function<void(const AppCollider*)> onCollision = nullptr,
-		std::function<void(const AppCollider*)> onCollisionTrigger = nullptr);
+	void MakeSphereDesc(const AppColliderDesc& desc);
 
 public: // ゲッター
 

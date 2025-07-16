@@ -33,6 +33,7 @@ private:
 	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	// 風向き
     Vector3 direction_;

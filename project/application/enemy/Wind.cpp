@@ -23,13 +23,18 @@ void Wind::Initialize(const std::string& filePath, const Vector3& position, cons
 	appColliderManager_ = AppColliderManager::GetInstance();
 	objectName_ = "Wind";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollisionTrigger(std::bind(&Wind::OnCollisionTrigger, this, std::placeholders::_1));
-	appCollider_->SetOnCollision(std::bind(&Wind::OnCollision, this, std::placeholders::_1));
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&Wind::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&Wind::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc);
 	appColliderManager_->RegisterCollider(appCollider_.get());
 }
 

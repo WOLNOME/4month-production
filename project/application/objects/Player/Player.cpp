@@ -20,16 +20,20 @@ void Player::Initialize() {
 
 	// 当たり判定関係
 	appColliderManager_ = AppColliderManager::GetInstance();
-
 	objectName_ = "Player";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appColliderManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollisionTrigger(std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1));
-	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&Player::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc);
 	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
@@ -499,7 +503,7 @@ void Player::AttackCommon(float attackSpeed)
 void Player::MovePositionCommon(float friction)
 {
 	// 摩擦による減速を適用
-	moveVel_ *= friction * slowRate_;
+ 	moveVel_ *= friction * slowRate_;
 
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.001f) {

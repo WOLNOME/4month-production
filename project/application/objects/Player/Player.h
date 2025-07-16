@@ -118,6 +118,8 @@ private:
 	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
+
 	bool isGround_ = false;
 	bool isStop_ = false;
 	// エネミーの位置

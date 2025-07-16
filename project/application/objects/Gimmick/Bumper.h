@@ -34,6 +34,7 @@ private:
 	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	// 移動方向と速度のプロパティを追加
 	Vector3 moveDirection_ = { 0.0f, 0.0f, 0.0f };

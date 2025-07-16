@@ -27,6 +27,7 @@ private:
 	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	//パーティクル
 	std::unique_ptr<Particle> particle_;

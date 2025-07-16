@@ -29,10 +29,6 @@ public: // セッター
 
 	void SetTextureHandle(std::string _textureHandle);
 
-private: // 衝突判定
-
-	void OnCollision(const AppCollider* _other);
-
 private:
 
 	// モデル情報
@@ -44,6 +40,7 @@ private:
 	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	// パーティクル
 	std::unique_ptr<Particle> particle_ = nullptr;
