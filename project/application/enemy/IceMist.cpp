@@ -27,6 +27,7 @@ void IceMist::Initialize(const std::string& filePath, const Vector3& position, c
 	startPosition_ = position;
     // 当たり判定関係
     appColliderManager_ = AppColliderManager::GetInstance();
+	objectName_ = "IceMist";
     appCollider_ = std::make_unique<AppCollider>();
 	desc =
 	{
