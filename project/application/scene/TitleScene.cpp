@@ -1,7 +1,7 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 #include "application/MathUtils.h"
-#include "appCollider/AppCollisionManager.h"
+#include "../appCollider/AppColliderManager.h"
 
 void TitleScene::Initialize() {
 	//シーン共通の初期化
@@ -53,8 +53,8 @@ void TitleScene::Initialize() {
 	spaceText_->SetEdgeParam({ 0, 0, 0, 1 }, 9.0f, { -0.01f,0.0f }, true);
 
 	//当たり判定
-	appCollisionManager_ = AppCollisionManager::GetInstance();
-	appCollisionManager_->Initialize();
+	appColliderManager_ = AppColliderManager::GetInstance();
+	appColliderManager_->Initialize();
 
 	//パーティクルの初期化
 	hitEffect_ = std::make_unique<Particle>();
@@ -167,7 +167,7 @@ void TitleScene::Update() {
 	//フィールドの更新
 	field_->Update();
 	//当たり判定
-	appCollisionManager_->CheckAllCollision();
+	appColliderManager_->CheckAllCollision();
 
 	// ロゴのフェードイン・フェードアウト
 	if (isFadingIn_) {

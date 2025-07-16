@@ -8,7 +8,7 @@
 FanEnemy::~FanEnemy()
 {
 	// 当たり判定関係
-	appCollisionManager_->DeleteCollider(appCollider_.get());
+	appColliderManager_->DeleteCollider(appCollider_.get());
 	appCollider_.reset();
 }
 
@@ -28,17 +28,22 @@ void FanEnemy::EnemyInitialize(const std::string& filePath)
 	randomEngine_.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 	objectName_ = "FanEnemy";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollisionTrigger(std::bind(&FanEnemy::OnCollisionTrigger, this, std::placeholders::_1));
-	appCollider_->SetOnCollision(std::bind(&FanEnemy::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&FanEnemy::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&FanEnemy::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc);
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
 	auto particleManager = ParticleManager::GetInstance();

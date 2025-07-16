@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-#include "appCollider/AppCollisionManager.h"
+#include "../../engine/appCollider/AppColliderManager.h"
 
 void TackleEnemy::EnemyInitialize(const std::string& filePath) {
 	//オブジェクトの初期化
@@ -25,17 +25,22 @@ void TackleEnemy::EnemyInitialize(const std::string& filePath) {
 	tackleWaitTimer_ = 0.0f;
 
 	// 当たり判定
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 	objectName_ = "TackleEnemy";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollisionTrigger(std::bind(&TackleEnemy::OnCollisionTrigger, this, std::placeholders::_1));
-	appCollider_->SetOnCollision(std::bind(&TackleEnemy::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&TackleEnemy::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&TackleEnemy::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc); 
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	// パーティクル
 	auto particleManager = ParticleManager::GetInstance();
@@ -150,7 +155,7 @@ void TackleEnemy::StartTackle() {
 void TackleEnemy::Finalize() {
 	// 各解放処理
 	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 

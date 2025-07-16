@@ -9,9 +9,12 @@
 #include <Object3d.h>
 #include <Particle.h>
 
-#include "appCollider/AppCollider.h"
+#include "../../../engine/appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
+#include "Audio.h"
+
+//class Audio;
 class GameCamera;
 class Audio;
 
@@ -119,9 +122,11 @@ private:
 	uint32_t textureHandle_ = 0u;
 
 	// 当たり判定関係
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
+
 	bool isGround_ = false;
 	bool isStop_ = false;
 	// エネミーの位置

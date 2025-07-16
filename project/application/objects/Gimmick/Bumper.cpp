@@ -1,6 +1,6 @@
 #include "Bumper.h"
 
-#include "appCollider/AppCollisionManager.h"
+#include "../../../engine/appCollider/AppColliderManager.h"
 
 void Bumper::Initialize()
 {
@@ -10,17 +10,22 @@ void Bumper::Initialize()
 	object_->InitializeModel("bumper");
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
+	appColliderManager_ = AppColliderManager::GetInstance();
 
 	objectName_ = "Bumper";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollision(std::bind(&Bumper::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&Bumper::OnCollision, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc); 
+	appColliderManager_->RegisterCollider(appCollider_.get());
 }
 
 void Bumper::Finalize()
@@ -28,7 +33,7 @@ void Bumper::Finalize()
 	// 各解放処理
 	if (appCollider_)
 	{
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 }

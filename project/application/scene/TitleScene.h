@@ -53,7 +53,7 @@ private://メンバ変数
 	std::unique_ptr<TextWrite> spaceText_ = nullptr;
 
 	//当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	// 演出用の変数
 	float cutsceneTime_ = 0.0f;
 	const float cutsceneDuration_ = 1.0f; // カットシーンの長さ（秒）

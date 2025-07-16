@@ -98,7 +98,7 @@ void GameOverScene::Update() {
 	}
 
 	spriteFall1_->Update();
-	//spriteFall2_->Update();
+	//spriteFall2_->SpriteUpdate();
 
 	if (cameraTranslate.z <= -300.0f) {
 
