@@ -3,7 +3,7 @@
 #include <Particle.h>
 
 #include "../GameObject/GameObject.h"
-#include "../../appCollider/AppCollider.h"
+#include "appCollider/AppCollider.h"
 
 class IceFloor : public GameObject
 {

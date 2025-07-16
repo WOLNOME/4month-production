@@ -1,7 +1,7 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
 #include "application/MathUtils.h"
-#include "application/appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 
 void TitleScene::Initialize() {
 	//シーン共通の初期化
@@ -10,7 +10,7 @@ void TitleScene::Initialize() {
 	input_ = Input::GetInstance();
 
 	//カメラの生成と初期化
-	camera = std::make_unique<DevelopCamera>();
+	camera = std::make_unique<GameCamera>();
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f, 10.0f, -30.0f }); // カメラの位置を調整
 	camera->SetRotate({ 0.3f, 0.0f, 0.0f }); // カメラの回転を調整

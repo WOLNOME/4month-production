@@ -40,8 +40,5 @@ protected: // メンバー
 	bool isAttack_;
 	Vector3 moveVel_ = { 0.01f,0.01f,0.01f };
 
-    //追加項目
-public:
-	bool isDamageShake_ = false;
-    bool isDeadShake_ = false;
+
 };

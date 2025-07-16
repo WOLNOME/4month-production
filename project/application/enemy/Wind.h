@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Vector3.h"
 #include "WorldTransform.h"
-#include "application/appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 
 class Wind : public GameObject
 {

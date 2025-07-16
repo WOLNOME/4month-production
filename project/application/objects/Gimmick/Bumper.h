@@ -2,7 +2,7 @@
 #include <Object3d.h>
 
 #include "../GameObject/GameObject.h"
-#include "../../appCollider/AppCollider.h"
+#include "appCollider/AppCollider.h"
 
 class Bumper : public GameObject
 {

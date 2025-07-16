@@ -7,7 +7,7 @@
 #include "Vector2.h"
 #include "Input.h"
 #include "LineDrawer.h"
-#include "DevelopCamera.h"
+#include "GameCamera.h"
 
 #include <cstdint>
 #include <memory>
@@ -48,7 +48,7 @@ private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;
 
-	std::unique_ptr<DevelopCamera> camera_ = nullptr;
+	std::unique_ptr<GameCamera> camera_ = nullptr;
 
 	Vector3 cameraTranslate = { 0.0f,4.0f,-10.0f };
 	Vector3 cameraRotate = { 0.4f,0.0f,0.0f };

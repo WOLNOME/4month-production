@@ -65,7 +65,7 @@ void TutorialScene::Initialize() {
 	}
 
 	//カメラの生成と初期化
-	camera_ = std::make_unique<BaseCamera>();
+	camera_ = std::make_unique<GameCamera>();
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
@@ -490,10 +490,7 @@ void TutorialScene::Update() {
 	if ((enemyManager_->GetEnemyCount() == 0 and isGameEnd_ and !isZoomIn_ and cameraEaseTime_ >= cameraEaseDuration_ / 4.0f)) {
 		sceneManager_->SetNextScene("CLEAR");
 	}
-
-	//揺らす処理
-	CheckShake();
-
+	
 	// ImGui
 	ImGuiDraw();
 

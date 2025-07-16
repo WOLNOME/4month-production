@@ -1,6 +1,6 @@
 #include "IceFloor.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 #include "ParticleManager.h"
 
 void IceFloor::Initialize() {

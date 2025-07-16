@@ -1,7 +1,7 @@
 #include "Field.h"
 #include "TextureManager.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 #include "ImGuiManager.h"
 
 void Field::Initialize() {

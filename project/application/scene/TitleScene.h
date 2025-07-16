@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseScene.h"
-#include "DevelopCamera.h"
+#include "GameCamera.h"
 #include "application/objects/Field/Field.h"
 #include "application/objects/Player/Player.h"
 #include "application/objects/Skydome/Skydome.h"
@@ -36,7 +36,7 @@ private: //メンバ関数
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
-	std::unique_ptr<DevelopCamera> camera;
+	std::unique_ptr<GameCamera> camera;
 	//タイトル
 	std::unique_ptr<TextWrite> title_;
 	//演出に使うプレイヤー

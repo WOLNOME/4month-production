@@ -96,7 +96,7 @@ void GamePlayScene::Initialize()
 	}
 
 	//カメラの生成と初期化
-	camera_ = std::make_unique<BaseCamera>();
+	camera_ = std::make_unique<GameCamera>();
 	camera_->Initialize();
 	camera_->SetRotate({ cameraRotate });
 	camera_->SetTranslate(cameraTranslate);
@@ -155,6 +155,8 @@ void GamePlayScene::Initialize()
 		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 		player->SetIsChargeMax(&isChargeMax_);
+		//プレイヤーにゲームカメラを渡す
+		player->SetGameCamera(camera_.get());
 
 		players_.push_back(std::move(player));
 		playerNum_++;
@@ -411,6 +413,9 @@ void GamePlayScene::Initialize()
 	//ポーズシステム
 	pauseSystem_ = std::make_unique<PauseSystem>();
 	pauseSystem_->Initialize();
+
+	//エネミーにゲームカメラを渡す
+	enemyManager_->SetGameCamera(camera_.get());
 }
 
 void GamePlayScene::Finalize()
@@ -603,9 +608,6 @@ void GamePlayScene::Update()
 		sceneManager_->SetNextScene("CLEAR");
 	}
 
-	//揺らす処理
-	CheckShake();
-
 	// ImGui
 	ImGuiDraw();
 
@@ -749,6 +751,8 @@ void GamePlayScene::ImGuiDraw()
 		player->SetPlayerPos(playerSpawnPositions_[0]);
 		player->Initialize();
 		player->SetIsChargeMax(&isChargeMax_);
+		//プレイヤーにゲームカメラを渡す
+		player->SetGameCamera(camera_.get());
 
 		players_.push_back(std::move(player));
 	}
@@ -881,6 +885,9 @@ void GamePlayScene::playerSpawnRotation()
 			preSpawnedPlayer_->SetScale({ 1.0f, 1.0f, 1.0f });
 			preSpawnedPlayer_->IsMoveable(true);
 
+			//プレイヤーにゲームカメラを渡す
+			preSpawnedPlayer_->SetGameCamera(camera_.get());
+
 			players_.push_back(std::move(preSpawnedPlayer_));
 			howManyBoogie_++;
 			playerNum_++;
@@ -929,31 +936,6 @@ void GamePlayScene::playerTackleCharge()
 			}
 		}
 
-	}
-}
-
-void GamePlayScene::CheckShake() {
-	//全てのプレイヤーのシェイク判定を処理
-	for (auto& player : players_) {
-		if (player->isDamageShake_) {
-			camera_->RegistShake(0.4f, 0.15f);
-			player->isDamageShake_ = false;
-		}
-		if (player->isDeadShake_) {
-			camera_->RegistShake(0.4f, 0.4f);
-			player->isDeadShake_ = false;
-		}
-	}
-	//全てのエネミーのシェイク判定を処理
-	for (auto& enemy : enemyManager_->GetAllEnemies()) {
-		if (enemy->isDamageShake_) {
-			camera_->RegistShake(0.4f, 0.25f);
-			enemy->isDamageShake_ = false;
-		}
-		if (enemy->isDeadShake_) {
-			camera_->RegistShake(0.4f, 0.5f);
-			enemy->isDeadShake_ = false;
-		}
 	}
 }
 
@@ -1046,8 +1028,8 @@ void GamePlayScene::UpdateCamera()
 	{
 		UpdateZoomOut();
 	}
-	// カメラの行列を更新
-	camera_->UpdateMatrix();
+	// カメラを更新
+	camera_->Update();
 }
 
 void GamePlayScene::UpdateZoomIn()

@@ -3,7 +3,7 @@
 #include <random>
 #include <Particle.h>
 
-#include "../appCollider/AppCollider.h"
+#include "appCollider/AppCollider.h"
 #include "../objects/GameObject/GameObject.h"
 
 class TackleEnemy : public BaseEnemy, public GameObject

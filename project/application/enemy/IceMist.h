@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseEnemy.h"
-#include "../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 #include "application/objects/GameObject/GameObject.h"
 #include <memory>
 

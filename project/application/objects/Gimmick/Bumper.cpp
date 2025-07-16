@@ -1,6 +1,6 @@
 #include "Bumper.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "appCollider/AppCollisionManager.h"
 
 void Bumper::Initialize()
 {

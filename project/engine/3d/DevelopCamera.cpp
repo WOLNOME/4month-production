@@ -17,7 +17,7 @@ void DevelopCamera::Update() {
 
 	////開発用カメラのマウス操作処理
 	//スクロールで前進後退
-	standardPosition += GetForwardDirection() * (input_->GetMouseScrollCount() * 1.3f);
+	transform.translate += GetForwardDirection() * (input_->GetMouseScrollCount() * 1.3f);
 	//ドラッグアンドドロップでカメラの向きを変える
 	if (input_->PushMouseButton(MouseButton::RightButton)) {
 		//マウスの移動幅
@@ -31,16 +31,16 @@ void DevelopCamera::Update() {
 
 		//WASDでカメラ移動
 		if (input_->PushKey(DIK_W)) {
-			standardPosition += GetForwardDirection() * 0.1f;
+			transform.translate += GetForwardDirection() * 0.1f;
 		}
 		if (input_->PushKey(DIK_A)) {
-			standardPosition += GetLeftDirection() * 0.1f;
+			transform.translate += GetLeftDirection() * 0.1f;
 		}
 		if (input_->PushKey(DIK_S)) {
-			standardPosition += GetBackDirection() * 0.1f;
+			transform.translate += GetBackDirection() * 0.1f;
 		}
 		if (input_->PushKey(DIK_D)) {
-			standardPosition += GetRightDirection() * 0.1f;
+			transform.translate += GetRightDirection() * 0.1f;
 		}
 
 

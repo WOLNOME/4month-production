@@ -26,8 +26,9 @@ public:
 
 	// 初期化
 	virtual void Initialize();
+
 	// 更新（行列の計算）
-	virtual void UpdateMatrix();
+	void UpdateMatrix();
 
 	//ImGui操作
 	void DebugWithImGui();
@@ -38,7 +39,7 @@ public:
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
 	const Vector3& GetRotate() const { return transform.rotate; }
-	const Vector3& GetTranslate() const { return standardPosition; }
+	const Vector3& GetTranslate() const { return transform.translate; }
 	float GetFovY() { return fovY; }
 	float GetAspectRatio() { return aspectRatio; }
 	float GetNearClip() { return nearClip; }
@@ -52,18 +53,11 @@ public:
 
 	// セッター
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
-	void SetTranslate(const Vector3& translate) { standardPosition = translate; }
+	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
 	void SetFovY(float fovY) { this->fovY = fovY; }
 	void SetAspectRatio(float aspectRatio) { this->aspectRatio = aspectRatio; }
 	void SetNearClip(float nearClip) { this->nearClip = nearClip; }
 	void SetFarClip(float farClip) { this->farClip = farClip; }
-
-	//カメラ演出系の関数
-	void RegistShake(float time, float power = 0.5f);
-
-private:
-	//カメラの揺れの更新
-	void UpdateShake();
 
 protected:
 	// 定数バッファ(座標変換リソース)
@@ -87,19 +81,4 @@ protected:
 	float aspectRatio;        // アスペクト比
 	float nearClip;           // ニアクリップ距離
 	float farClip;            // ファークリップ距離
-
-	//カメラの(オフセットを考慮しない)座標
-	Vector3 standardPosition;   // カメラの位置
-
-private:
-	// カメラの揺れを管理する構造体
-	struct ShakeData {
-		float maxTime;		// 揺れの最大時間
-		float time;			// 揺れの時間
-		float maxPower;		// 揺れの最大強さ
-		float power;		// 揺れの強さ
-	};
-	// カメラの揺れを管理する変数
-	std::list<ShakeData> shakeList_;
-	Vector3 shakeOffset_;
 };

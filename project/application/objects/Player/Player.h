@@ -9,9 +9,10 @@
 #include <Object3d.h>
 #include <Particle.h>
 
-#include "../../appCollider/AppCollider.h"
+#include "appCollider/AppCollider.h"
 #include "../GameObject/GameObject.h"
 
+class GameCamera;
 class Audio;
 
 class Player : public GameObject
@@ -79,6 +80,9 @@ public: //セッター
 	// 動かせるかフラグをセット(クリアシーンで動かないようにさせたい)falseで動かない
 	void IsMoveable(bool _flag) { isMoveable_ = _flag; }
 
+	//ゲームカメラのセット
+	void SetGameCamera(GameCamera* _camera) { camera_ = _camera; }
+
 private:
 
 	//氷の上の移動
@@ -100,6 +104,8 @@ private:
 	void MovePositionCommon(float friction);
 
 private:
+	//ゲームカメラ
+	GameCamera* camera_ = nullptr;
 
 	// 入力
 	Input* input_ = nullptr;
