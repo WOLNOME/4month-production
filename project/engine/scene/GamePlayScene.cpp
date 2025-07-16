@@ -778,7 +778,6 @@ void GamePlayScene::SetupField()
 			field_->SetScale(scale);
 			Vector3 spawnMin = { -scale.x, scale.y, -scale.z };
 			enemyManager_->SetSpawnPosition(spawnMin, scale);
-
 		}
 		
 	}
@@ -821,7 +820,6 @@ void GamePlayScene::CreateObstacles()
 		{
 			obstacleScales.push_back(LoadVector3(lineStream));
 		}
-
 	}
 
 	for (size_t i = 0; i < obstaclePositions.size(); ++i)

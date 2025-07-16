@@ -22,8 +22,8 @@ public:
 	void SetPosition(const Vector3& position) { transform_.translate_ = position; }
 	bool IsAlive() const { return isAlive_; }
 private:
-	void Initialize() override {};
-	void Finalize() override {};
+	void Initialize() override {}
+	void Finalize() override {}
 
 private:
 	WorldTransform transform_;
