@@ -10,7 +10,7 @@ void PlayerManager::Initialize()
 	{
 		auto player = std::make_unique<Player>();
 
-		player->SetPlayerPos(playerSpawnPositions_[0]);
+		player->SetPlayerPos({0.0f,0.0f,0.0f});
 		player->SetScale({ 1.0f, 1.0f, 1.0f });
 		player->Initialize();
 		player->SetIsChargeMax(charge_->IsChargeMaxPtr());
@@ -97,6 +97,11 @@ void PlayerManager::IsMoveable(bool isMoveable)
 void PlayerManager::SetSpawnPositions(const std::vector<Vector3>& positions)
 {
 	playerSpawnPositions_ = positions;
+}
+
+void PlayerManager::SetSpawnPositions(const Vector3& position)
+{
+	playerSpawnPositions_.push_back(position);
 }
 
 void PlayerManager::SetOnPlayerAdded(const std::function<void()>& callback)

@@ -35,6 +35,7 @@ public:	// セッター
 
 	// プレイヤースポーン位置の取得
 	void SetPlayerSpawnPosition(const std::vector<Vector3>& _positions) { playerSpawnPositions_ = _positions; }
+	void SetPlayerSpawnPosition(const Vector3& _position) { playerSpawnPositions_.push_back(_position); }
 	
 	// 出現数の上限を設定
 	void SetMaxSpawnNum(uint32_t _maxSpawnNum) { maxSpawnNum_ = _maxSpawnNum; }

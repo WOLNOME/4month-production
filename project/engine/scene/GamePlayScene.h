@@ -140,9 +140,6 @@ private: //メンバ関数
 
 	bool LoadBool(std::istringstream& lineStream);
 
-	//プレイヤーの追加
-	void AddPlayer(bool preSpawn);
-
 protected://メンバ変数
 
 	std::unique_ptr<GamePlayState> currentState_;

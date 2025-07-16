@@ -37,21 +37,13 @@ void GamePlayScene::Initialize()
 	charge_->Initialize(TextureManager::GetInstance()->LoadTexture("spawn.png"));
 
 	// インターバルの数字
-	textureHandlesIntervalNum_ = {
-		TextureManager::GetInstance()->LoadTexture("count1.png"),
-		TextureManager::GetInstance()->LoadTexture("count2.png"),
-		TextureManager::GetInstance()->LoadTexture("count3.png")
-	};
+	textureHandleIntervalNum_.resize(3);
+	textureHandleIntervalNum_[0] = TextureManager::GetInstance()->LoadTexture("count1.png");
+	textureHandleIntervalNum_[1] = TextureManager::GetInstance()->LoadTexture("count2.png");
+	textureHandleIntervalNum_[2] = TextureManager::GetInstance()->LoadTexture("count3.png");
 
-	spriteUI_Num_.resize(3);
-	for (size_t i = 0; i < spriteUI_Num_.size(); ++i) {
-		spriteUI_Num_[i] = std::make_unique<Sprite>();
-		spriteUI_Num_[i]->Initialize(textureHandlesIntervalNum_[i]);
-		spriteUI_Num_[i]->SetAnchorPoint({ 0.5f, 0.5f });
-		spriteUI_Num_[i]->SetPosition({ 640.0f, 360.0f });
-		spriteUI_Num_[i]->SetSize({ 0.0f, 0.0f });
-		spriteUI_Num_[i]->SetColor({ 0.863f, 0.706f, 0.157f, 1.0f });
-	}
+	interval_ = std::make_unique<Interval>();
+	interval_->Initialize(textureHandleIntervalNum_);
 
 	remainingSpawnNum_ = std::make_unique<RemainingSpawnNum>();
 	remainingSpawnNum_->Initialize(kMaxSpawnNum);
@@ -76,9 +68,12 @@ void GamePlayScene::Initialize()
 
 	// プレイヤー
 	playerManager_ = std::make_unique<PlayerManager>();
+	// プレイヤースポーン位置
+	playerSpawnManager_ = std::make_unique<PlayerSpawnManager>();
 	// 出現位置設定
 	SetupPlayerSpawnPositions();
 	// 処理変数セット
+	// プレイヤーマネージャー
 	playerManager_->SetCharge(charge_.get());
 	playerManager_->SetOnPlayerAdded([this]() {
 		playerNum_++;
@@ -87,7 +82,11 @@ void GamePlayScene::Initialize()
 		playerNum_--;
 		});
 	playerManager_->Initialize();
-	
+	// プレイヤースポーンマネージャー
+	playerSpawnManager_->SetCharge(charge_.get());
+	playerSpawnManager_->SetMaxSpawnNum(kMaxSpawnNum);
+	playerSpawnManager_->Initialize();
+
 
 	//エネミーマネージャーの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
@@ -109,13 +108,6 @@ void GamePlayScene::Initialize()
 	CreateBumpers();
 
 	CreateIceFloors();
-
-	// プレイヤースポーン位置
-	playerSpawnManager_ = std::make_unique<PlayerSpawnManager>();
-	playerSpawnManager_->SetCharge(charge_.get());
-	playerSpawnManager_->SetPlayerSpawnPosition(stageSpawnPositions_);
-	playerSpawnManager_->SetMaxSpawnNum(kMaxSpawnNum);
-	playerSpawnManager_->Initialize();
 
 
 
@@ -172,10 +164,7 @@ void GamePlayScene::Update()
 	// 残り出現数の更新
 	remainingSpawnNum_->Update(playerSpawnManager_->GetHowManyBoogie());
 
-	// インターバルの数字の更新
-	for (size_t i = 0; i < spriteUI_Num_.size(); ++i) {
-		spriteUI_Num_[i]->Update();
-	}
+	interval_->SpriteUpdate();
 
 	// カメラの更新
 	UpdateCamera();
@@ -183,11 +172,9 @@ void GamePlayScene::Update()
 	// プレイヤーの更新
 	playerManager_->Update();
 
-	if (isGameStart_)
-	{
-		// プレイヤー攻撃チャージ
-		charge_->playerTackleCharge(playerNum_ > 0, playerManager_->GetPlayers());
-	}
+	// プレイヤースポーンマネージャーの更新
+	playerSpawnManager_->Update();
+
 	//状況に応じた更新
 	if (currentState_)
 	{
@@ -435,26 +422,12 @@ void GamePlayScene::UpdateTransform()
 void GamePlayScene::ChangeState(std::unique_ptr<GamePlayState> newState)
 {
 	currentState_ = std::move(newState);
+}
 	
 
 void GamePlayScene::UpdateIntervalNum()
 {
-	if (!pauseSystem_->GetIsPause()) {
-		if (gameStartDelayTimer_ <= 3.0f && gameStartDelayTimer_ > 2.0f) {
-			spriteUI_Num_[2]->Draw(); // 3
-		} else if (gameStartDelayTimer_ <= 2.0f && gameStartDelayTimer_ > 1.0f) {
-			spriteUI_Num_[1]->Draw(); // 2
-		} else if (gameStartDelayTimer_ <= 1.0f && gameStartDelayTimer_ > 0.0f) {
-			spriteUI_Num_[0]->Draw(); // 1
-		}
-	}
-	// 数字のサイズを更新
-	for (auto& sprite : spriteUI_Num_) {
-		sprite->SetSize(numSize_);
-	}
-
 	interval_->UpdateIntervalNum();
-
 }
 
 void GamePlayScene::StartInterVal()
@@ -469,14 +442,8 @@ void GamePlayScene::StartInterVal()
 		interval_->SetHasPreUpdated(true);
 	}
 
-		// 3秒カウント
-		gameStartDelayTimer_ -= 1.0f / 60.0f;
-		if (gameStartDelayTimer_ <= 0.0f) {
-			isGameStart_ = true;
-		}
-
-		// プレイヤーの行動不能フラグセット
-		playerManager_->IsMoveable(false);
+	// プレイヤーの行動不能フラグセット
+	playerManager_->IsMoveable(false);
 
 	// エネミーの行動不能フラグセット
 	enemyManager_->IsMoveable(false);
@@ -486,29 +453,8 @@ void GamePlayScene::StartInterVal()
 
 void GamePlayScene::ObjectsUpdate()
 {
-	// 死んだプレイヤーを削除
-	players_.erase(std::remove_if(players_.begin(), players_.end(),
-		[this](const std::unique_ptr<Player>& player)
-		{
-			if (player->IsDead())
-			{
-				player->Finalize();
-				playerNum_--;
-				return true;
-			}
-			return false;
-		}), players_.end());
-	// 通常プレイヤーの更新
-	for (auto& player : players_)
-	{
-		player->Update();
-	}
-
-	// 準備中プレイヤーの更新
-	if (preSpawnedPlayer_) {
-		preSpawnedPlayer_->Update();
-	}
-
+	// プレイヤーの更新
+	playerManager_->Update();
 
 	//エネミーマネージャーの更新
 	enemyManager_->Update();
@@ -535,19 +481,28 @@ void GamePlayScene::ObjectsUpdate()
 	}
 
 	// プレイヤースポーンのオブジェクト
-	for (auto& playerSpawn : playerSpawn_)
-	{
-		playerSpawn->Update();
-	}
+	playerSpawnManager_->Update();
 
 	// 当たり判定
-	appCollisionManager_->CheckAllCollision();
+	appColliderManager_->CheckAllCollision();
 }
 
 void GamePlayScene::TackleCharge()
 {
 	// プレイヤー攻撃チャージ
-	charge_->playerTackleCharge(playerNum_ > 0, players_);
+	charge_->playerTackleCharge(playerNum_ > 0, playerManager_->GetPlayers());
+}
+
+void GamePlayScene::playerSpawnRotation()
+{
+	// プレイヤーのスポーン位置での回転処理
+	playerSpawnManager_->PlayerSpawnRotation();
+	// スポーンしたプレイヤーを取得
+	if (auto newPlayer = playerSpawnManager_->TryExportSpawnedPlayer())
+	{
+		playerManager_->AddPlayer(std::move(newPlayer));
+		playerNum_++;
+	}
 }
 
 bool GamePlayScene::IsStartConditionMet()
@@ -587,10 +542,7 @@ void GamePlayScene::GameOverProcess()
 
 void GamePlayScene::ObjectsMoveable()
 {
-	for (auto& player : players_)
-	{
-		player->IsMoveable(true);
-	}
+	playerManager_->IsMoveable(true);
 
 	enemyManager_->IsMoveable(true);
 }
@@ -652,13 +604,10 @@ void GamePlayScene::SetupPlayerSpawnPositions()
 		//translate
 		if (word.find("translate") == 0)
 		{
-			playerSpawnPositions_.push_back(LoadVector3(lineStream));
+			playerSpawnManager_->SetPlayerSpawnPosition(LoadVector3(lineStream));
+			//playerManager_->SetSpawnPositions(LoadVector3(lineStream));
 		}
 	}
-
-
-	playerManager_->SetSpawnPositions(playerSpawnPositions_);
-
 }
 
 void GamePlayScene::SetupEnemyManager()
@@ -1002,45 +951,6 @@ bool GamePlayScene::LoadBool(std::istringstream& lineStream)
 	getline(lineStream, word, ',');
 	return (word == "1" || word == "true" || word == "TRUE");
 
-}
-
-void GamePlayScene::AddPlayer(bool preSpawn)
-{
-	auto player = std::make_unique<Player>();
-
-	if (!preSpawn) 
-	{
-		player->SetPlayerPos(playerSpawnPositions_[0]);
-		// プレイヤーがスポーンする場合は通常のスケール
-		player->SetScale({ 1.0f, 1.0f, 1.0f });
-	} 
-	else 
-	{
-		player->SetPosition(playerSpawnPositions_[playerSpawnIndex_]);
-		// スポーン準備中のプレイヤーは小さいスケール
-		player->SetScale({ 0.1f, 0.1f, 0.1f });
-	}
-	player->Initialize();
-	player->SetIsChargeMax(charge_->IsChargeMaxPtr());
-
-	if (!preSpawn) 
-	{
-		players_.push_back(std::move(player));
-		playerNum_++;
-
-		return;
-	}
-	else 
-	{
-		player->IsMoveable(false);
-
-		preSpawnedPlayer_ = std::move(player);
-
-		preSpawnedPlayer_->Update();
-
-		return;
-	}
-	
 }
 
 void GamePlayScene::UpdateCamera()

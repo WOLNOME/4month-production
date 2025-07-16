@@ -60,5 +60,5 @@ void Interval::Draw()
 			break;
 		}
 	}
-	
+
 }

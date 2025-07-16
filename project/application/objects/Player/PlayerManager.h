@@ -36,6 +36,7 @@ public: // セッター
 	void IsMoveable(bool isMoveable);
 
 	void SetSpawnPositions(const std::vector<Vector3>& positions);
+	void SetSpawnPositions(const Vector3& position);
 
 	void SetOnPlayerAdded(const std::function<void()>& callback);
 	void SetOnPlayerRemoved(const std::function<void()>& callback);
