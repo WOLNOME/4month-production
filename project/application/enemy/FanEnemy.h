@@ -3,7 +3,7 @@
 #include <Particle.h>
 
 #include "BaseEnemy.h"
-#include "../appCollider/AppCollisionManager.h"
+#include "../../../engine/appCollider/AppCollider.h"
 #include "application/objects/GameObject/GameObject.h"
 
 class EnemyManager;
@@ -75,9 +75,10 @@ private:
 	//エネミーマネージャーのポインタ
 	EnemyManager* enemyManager_ = nullptr;
 	//当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_;
+	AppCollider::AppColliderDesc desc = {};
 	bool isAlive_ = true;
 
 	//氷の上にいるときの摩擦係数

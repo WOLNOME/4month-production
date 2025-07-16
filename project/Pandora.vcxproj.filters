@@ -50,8 +50,8 @@
     <ClCompile Include="engine\3d\Shape.cpp" />
     <ClCompile Include="engine\collision\Collider.cpp" />
     <ClCompile Include="engine\collision\CollisionManager.cpp" />
-    <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
-    <ClCompile Include="application\appCollider\AppCollider.cpp" />
+    <ClCompile Include="engine\appCollider\AppColliderManager.cpp" />
+    <ClCompile Include="engine\appCollider\AppCollider.cpp" />
     <ClCompile Include="application\objects\GameObject\GameObject.cpp" />
     <ClCompile Include="engine\math\Vector3.cpp" />
     <ClCompile Include="application\objects\Player\Player.cpp" />
@@ -143,6 +143,8 @@
     <ClCompile Include="application\UI\Interval.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="application\objects\Player\PlayerManager.cpp" />
+    <ClCompile Include="application\objects\Player\SpawnPos\PlayerSpawnManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -241,9 +243,9 @@
     <ClInclude Include="engine\collision\CollisionConfig.h" />
     <ClInclude Include="engine\collision\CollisionManager.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
-    <ClInclude Include="application\appCollider\AppShape.h" />
-    <ClInclude Include="application\appCollider\AppCollisionManager.h" />
-    <ClInclude Include="application\appCollider\AppCollider.h" />
+    <ClInclude Include="engine\appCollider\AppShape.h" />
+    <ClInclude Include="engine\appCollider\AppColliderManager.h" />
+    <ClInclude Include="engine\appCollider\AppCollider.h" />
     <ClInclude Include="application\objects\GameObject\GameObject.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Field\Field.h" />
@@ -290,6 +292,8 @@
     <ClInclude Include="application\UI\Interval.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="application\objects\Player\PlayerManager.h" />
+    <ClInclude Include="application\objects\Player\SpawnPos\PlayerSpawnManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\LineDrawer.hlsli" />

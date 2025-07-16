@@ -1,14 +1,14 @@
-#include "AppCollisionManager.h"
+#include "AppColliderManager.h"
 
 #include <Matrix4x4.h>
 #include <cmath>
 #include <algorithm>
 
-void AppCollisionManager::Initialize()
+void AppColliderManager::Initialize()
 {
 }
 
-void AppCollisionManager::CheckAllCollision()
+void AppColliderManager::CheckAllCollision()
 {
     collisionNames_.clear();
     countCheckCollision_ = 0ui32;
@@ -26,17 +26,17 @@ void AppCollisionManager::CheckAllCollision()
     }
 }
 
-void AppCollisionManager::RegisterCollider(AppCollider* _collider)
+void AppColliderManager::RegisterCollider(AppCollider* _collider)
 {
     colliders_.push_back(_collider);
 }
 
-void AppCollisionManager::ClearColliderList()
+void AppColliderManager::ClearColliderList()
 {
     colliders_.clear();
 }
 
-void AppCollisionManager::DeleteCollider(AppCollider* _collider)
+void AppColliderManager::DeleteCollider(AppCollider* _collider)
 {
     for (int i = 0; i < colliders_.size(); i++)
     {
@@ -48,7 +48,7 @@ void AppCollisionManager::DeleteCollider(AppCollider* _collider)
     }
 }
 
-uint32_t AppCollisionManager::GetNewAttribute(std::string _id)
+uint32_t AppColliderManager::GetNewAttribute(std::string _id)
 {
     if (attributeList_.size() == 0)
     {
@@ -70,7 +70,7 @@ uint32_t AppCollisionManager::GetNewAttribute(std::string _id)
     return attributeList_.back().second;
 }
 
-void AppCollisionManager::CheckCollisionPair(AppCollider* _colA, AppCollider* _colB)
+void AppColliderManager::CheckCollisionPair(AppCollider* _colA, AppCollider* _colB)
 {
     // 衝突しているかどうか
     bool isCollide = true;
@@ -135,7 +135,7 @@ void AppCollisionManager::CheckCollisionPair(AppCollider* _colA, AppCollider* _c
     return;
 }
 
-void AppCollisionManager::ProjectShapeOnAxis(const std::vector<Vector3>* _v, const Vector3& _axis, float& _min, float& _max)
+void AppColliderManager::ProjectShapeOnAxis(const std::vector<Vector3>* _v, const Vector3& _axis, float& _min, float& _max)
 {
     _min = (*_v)[0].Projection(_axis);
     _max = _min;
@@ -149,7 +149,7 @@ void AppCollisionManager::ProjectShapeOnAxis(const std::vector<Vector3>* _v, con
     return;
 }
 
-bool AppCollisionManager::IsCollision(const AppAABB* _aabb1, const AppAABB* _aabb2)
+bool AppColliderManager::IsCollision(const AppAABB* _aabb1, const AppAABB* _aabb2)
 {
     if (_aabb1->max.x >= _aabb2->min.x && _aabb1->min.x <= _aabb2->max.x &&
         _aabb1->max.y >= _aabb2->min.y && _aabb1->min.y <= _aabb2->max.y &&
@@ -161,7 +161,7 @@ bool AppCollisionManager::IsCollision(const AppAABB* _aabb1, const AppAABB* _aab
     return false;
 }
 
-bool AppCollisionManager::IsCollision(const AppAABB& _aabb, const AppSphere& _sphere)
+bool AppColliderManager::IsCollision(const AppAABB& _aabb, const AppSphere& _sphere)
 {
     Vector3 _closestPoint{
         std::clamp(_sphere.center.x, _aabb.min.x, _aabb.max.x),
@@ -176,7 +176,7 @@ bool AppCollisionManager::IsCollision(const AppAABB& _aabb, const AppSphere& _sp
     return false;
 }
 
-bool AppCollisionManager::IsCollision(const AppOBB* _obb1, const AppOBB* _obb2)
+bool AppColliderManager::IsCollision(const AppOBB* _obb1, const AppOBB* _obb2)
 {
     // 分離軸のリスト
     Vector3 axes[15];
@@ -207,7 +207,7 @@ bool AppCollisionManager::IsCollision(const AppOBB* _obb1, const AppOBB* _obb2)
     return true;
 }
 
-bool AppCollisionManager::IsCollision(const AppSphere* _sphere1, const AppSphere* _sphere2)
+bool AppColliderManager::IsCollision(const AppSphere* _sphere1, const AppSphere* _sphere2)
 {
     Vector3 distanceAB = _sphere1->center - _sphere2->center;
     float radiusAB = _sphere1->radius + _sphere2->radius;
@@ -215,29 +215,7 @@ bool AppCollisionManager::IsCollision(const AppSphere* _sphere1, const AppSphere
     return false;
 }
 
-//bool AppCollisionManager::IsCollision(const OBB& _obb, const Sphere& _sphere)
-//{
-//    Matrix4x4 obbWorldMatrix{};
-//    for (int i = 0; i < 3; i++)
-//        obbWorldMatrix.m[0][i] = _obb.orientations[i].x;
-//    for (int i = 0; i < 3; i++)
-//        obbWorldMatrix.m[1][i] = _obb.orientations[i].y;
-//    for (int i = 0; i < 3; i++)
-//        obbWorldMatrix.m[2][i] = _obb.orientations[i].z;
-//    for (int i = 0; i < 3; i++)
-//        obbWorldMatrix.m[3][i] = *(&_obb.center.x + i);
-//    obbWorldMatrix.m[3][3] = 1.0f;
-//
-//    Matrix4x4 obbWorldMatrixInverse = obbWorldMatrix.Inverse();
-//    Vector3 centerInOBBLocalSpace = FMath::Transform(_sphere.center, obbWorldMatrixInverse);
-//
-//    AABB aabbOBBLocal{ .min = -_obb.size, .max = _obb.size };
-//    Sphere sphereOBBLocal{ centerInOBBLocalSpace, _sphere.radius };
-//
-//    return IsCollision(aabbOBBLocal, sphereOBBLocal);
-//}
-
-float AppCollisionManager::ProjectOntoAxis(const AppOBB* _obb, const Vector3& axis)
+float AppColliderManager::ProjectOntoAxis(const AppOBB* _obb, const Vector3& axis)
 {
     // 軸方向にOBBの各半サイズを投影
     float extent = 0.0f;
@@ -249,7 +227,7 @@ float AppCollisionManager::ProjectOntoAxis(const AppOBB* _obb, const Vector3& ax
     return extent;
 }
 
-bool AppCollisionManager::OverlapOnAxis(const AppOBB* _obb1, const AppOBB* _obb2, const Vector3& axis)
+bool AppColliderManager::OverlapOnAxis(const AppOBB* _obb1, const AppOBB* _obb2, const Vector3& axis)
 {
     // 軸がゼロベクトルなら無効
     if (axis.x == 0 && axis.y == 0 && axis.z == 0) return true;

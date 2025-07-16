@@ -107,8 +107,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\appCollider\AppCollider.cpp" />
-    <ClCompile Include="application\appCollider\AppCollisionManager.cpp" />
+    <ClCompile Include="engine\appCollider\AppCollider.cpp" />
+    <ClCompile Include="engine\appCollider\AppColliderManager.cpp" />
     <ClCompile Include="application\enemy\IceMist.cpp" />
     <ClCompile Include="application\MathUtils.cpp" />
     <ClCompile Include="application\objects\Gimmick\Obstacle.cpp" />
@@ -196,10 +196,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\TutorialScene.cpp" />
     <ClCompile Include="application\TutorialSystem.cpp" />
     <ClCompile Include="application\UI\RemainingSpawnNum.cpp" />
+    <ClCompile Include="application\objects\Player\PlayerManager.cpp" />
+    <ClCompile Include="application\objects\Player\SpawnPos\PlayerSpawnManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\appCollider\AppCollider.h" />
-    <ClInclude Include="application\appCollider\AppCollisionManager.h" />
+    <ClInclude Include="engine\appCollider\AppCollider.h" />
+    <ClInclude Include="engine\appCollider\AppColliderManager.h" />
     <ClInclude Include="application\enemy\BaseEnemy.h" />
     <ClInclude Include="application\enemy\EnemyManager.h" />
     <ClInclude Include="application\enemy\IceMist.h" />
@@ -277,7 +279,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\SceneLight.h" />
     <ClInclude Include="engine\3d\SpotLight.h" />
     <ClInclude Include="engine\3d\Shape.h" />
-    <ClInclude Include="application\appCollider\AppShape.h" />
+    <ClInclude Include="engine\appCollider\AppShape.h" />
     <ClInclude Include="application\objects\Player\Player.h" />
     <ClInclude Include="application\objects\Player\SpawnPos\SpawnPos.h" />
     <ClInclude Include="application\enemy\Wind.h" />
@@ -294,6 +296,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\scene\TutorialScene.h" />
     <ClInclude Include="application\TutorialSystem.h" />
     <ClInclude Include="application\UI\RemainingSpawnNum.h" />
+    <ClInclude Include="application\objects\Player\PlayerManager.h" />
+    <ClInclude Include="application\objects\Player\SpawnPos\PlayerSpawnManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

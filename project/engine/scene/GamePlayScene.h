@@ -13,11 +13,11 @@
 #include <memory>
 
 // アプリケーションインクルード
-#include "../../application/objects/Player/Player.h"
-#include "../../application/objects/Player/SpawnPos/SpawnPos.h"
+#include "../../application/objects/Player/PlayerManager.h"
+#include "../../application/objects/Player/SpawnPos/PlayerSpawnManager.h"
 #include "../../application/objects/Skydome/Skydome.h"
 #include "../../application/objects/Field/Field.h"
-#include "../../application/appCollider/AppCollisionManager.h"
+#include "../appCollider/AppColliderManager.h"
 #include "../../application/enemy/EnemyManager.h"
 #include "../../application/objects/Gimmick/Obstacle.h"
 #include "../../application/objects/Gimmick/Bumper.h"
@@ -171,11 +171,13 @@ protected://メンバ変数
 	Vector3 cameraRotate = { 0.95f,0.0f,0.0f };
 
 	// 当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 
 	// プレイヤー
-	std::vector<std::unique_ptr<Player>> players_{};
-	std::unique_ptr<Player> preSpawnedPlayer_ = nullptr;
+	std::unique_ptr<PlayerManager> playerManager_ = nullptr;
+
+	// プレイヤースポーンマネージャー
+	std::unique_ptr<PlayerSpawnManager> playerSpawnManager_ = nullptr;
 
 	//エネミーマネージャー
 	std::unique_ptr<EnemyManager> enemyManager_;
@@ -194,29 +196,16 @@ protected://メンバ変数
 	//氷の床
 	std::vector<std::unique_ptr<IceFloor>> icefloors_;
 
-	// プレイヤースポーン位置
-	std::vector<std::unique_ptr<SpawnPos>> playerSpawn_{};
-
 	//bgm
 	std::unique_ptr<Audio> bgm_ = nullptr;
 
 	//ポーズシステム
 	std::unique_ptr<PauseSystem> pauseSystem_ = nullptr;
 
-	// プレイヤースポーン位置の数(固定)
-	const uint32_t playerSpawnNum_ = 3;
-	// プレイヤースポーン(ローテーション用。どのポイントから出現させるか)
-	uint32_t playerSpawnIndex_ = 0;
-	// プレイヤースポーン位置
-	std::vector<Vector3> playerSpawnPositions_{};
-	// ローテーション間隔
-	const float rotation_ = 240.0f;
-	// ローテーション用タイマー
-	float rotationTimer_ = rotation_;
+	// プレイヤー出現ポイント
+	std::vector<Vector3> stageSpawnPositions_;
 	// 出現数上限
 	const uint32_t kMaxSpawnNum = 15;
-	// 何体出たか
-	uint32_t howManyBoogie_ = 0;
 
 	// フィールド上にいるプレイヤーの数
 	uint32_t playerNum_ = 0;

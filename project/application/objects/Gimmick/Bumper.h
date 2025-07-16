@@ -2,7 +2,7 @@
 #include <Object3d.h>
 
 #include "../GameObject/GameObject.h"
-#include "../../appCollider/AppCollider.h"
+#include "../../../engine/appCollider/AppCollider.h"
 
 class Bumper : public GameObject
 {
@@ -31,9 +31,10 @@ private:
 	std::unique_ptr<Object3d> object_;
 
 	// 当たり判定関係
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	// 移動方向と速度のプロパティを追加
 	Vector3 moveDirection_ = { 0.0f, 0.0f, 0.0f };

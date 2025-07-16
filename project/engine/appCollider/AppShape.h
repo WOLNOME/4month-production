@@ -5,7 +5,6 @@
 enum class AppShape
 {
     AppSphere,
-    Polygon,
     AppOBB,
     AppAABB,
 };

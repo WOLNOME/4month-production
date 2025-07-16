@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#include "../../appCollider/AppCollisionManager.h"
+#include "../../../engine/appCollider/AppColliderManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "ParticleManager.h"
@@ -19,18 +19,22 @@ void Player::Initialize() {
 	textureHandle_ = TextureManager::GetInstance()->LoadTexture("player.png");
 
 	// 当たり判定関係
-	appCollisionManager_ = AppCollisionManager::GetInstance();
-
+	appColliderManager_ = AppColliderManager::GetInstance();
 	objectName_ = "Player";
 	appCollider_ = std::make_unique<AppCollider>();
-	appCollider_->SetOwner(this);
-	appCollider_->SetColliderID(objectName_);
-	appCollider_->SetShapeData(&aabb_);
-	appCollider_->SetShape(AppShape::AppAABB);
-	appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-	appCollider_->SetOnCollisionTrigger(std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1));
-	appCollider_->SetOnCollision(std::bind(&Player::OnCollision, this, std::placeholders::_1));
-	appCollisionManager_->RegisterCollider(appCollider_.get());
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&Player::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc);
+	appColliderManager_->RegisterCollider(appCollider_.get());
 
 	//パーティクル
 	auto particleManager = ParticleManager::GetInstance();
@@ -74,7 +78,7 @@ void Player::Initialize() {
 void Player::Finalize() {
 	// 各解放処理
 	if (appCollider_) {
-		appCollisionManager_->DeleteCollider(appCollider_.get());
+		appColliderManager_->DeleteCollider(appCollider_.get());
 		appCollider_.reset();
 	}
 
@@ -499,7 +503,7 @@ void Player::AttackCommon(float attackSpeed)
 void Player::MovePositionCommon(float friction)
 {
 	// 摩擦による減速を適用
-	moveVel_ *= friction * slowRate_;
+ 	moveVel_ *= friction * slowRate_;
 
 	// 速度が非常に小さくなったら停止する
 	if (moveVel_.Length() < 0.001f) {

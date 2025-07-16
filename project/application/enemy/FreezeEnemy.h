@@ -3,7 +3,7 @@
 #include <Particle.h>
 
 #include "BaseEnemy.h"
-#include "../appCollider/AppCollisionManager.h"
+#include "../../../engine/appCollider/AppCollider.h"
 #include "application/objects/GameObject/GameObject.h"
 
 class EnemyManager;
@@ -62,11 +62,12 @@ private:
 	//エネミーマネージャー
 	EnemyManager* enemyManager_ = nullptr;
 	//当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	//当たり判定
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	//当たり判定の形状
 	AppAABB aabb_;
+	AppCollider::AppColliderDesc desc = {};
 	//生存フラグ
 	bool isAlive_ = true;
 	//ランダムエンジン

@@ -11,7 +11,7 @@
 #include <list>
 #include <variant>
 
-class AppCollisionManager;
+class AppColliderManager;
 
 class AppCollider
 {
@@ -19,6 +19,28 @@ public:
 
 	AppCollider();
 	~AppCollider();
+
+    // コライダー作成の構造体
+    struct AppColliderDesc
+    {
+        GameObject* owner = nullptr;
+        std::string colliderID;
+        AppShape shape = AppShape::AppAABB;
+        void* shapeData = nullptr;
+        uint32_t attribute = 0;
+        std::function<void(const AppCollider*)> onCollision = nullptr;
+        std::function<void(const AppCollider*)> onCollisionTrigger = nullptr;
+    };
+
+    // コライダー作成
+    // AABB
+    void MakeAABBDesc(const AppColliderDesc& desc);
+
+	// OBB
+	void MakeOBBDesc(const AppColliderDesc& desc);
+
+	// Sphere
+	void MakeSphereDesc(const AppColliderDesc& desc);
 
 public: // ゲッター
 

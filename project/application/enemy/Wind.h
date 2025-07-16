@@ -2,7 +2,7 @@
 #include "Object3d.h"
 #include "Vector3.h"
 #include "WorldTransform.h"
-#include "application/appCollider/AppCollisionManager.h"
+#include "../../engine/appCollider/AppColliderManager.h"
 
 class Wind : public GameObject
 {
@@ -30,9 +30,10 @@ private:
 	int32_t textureHandle_ = EOF;
 	std::unique_ptr<Object3d> object3d_;
 	//当たり判定
-	AppCollisionManager* appCollisionManager_ = nullptr;
+	AppColliderManager* appColliderManager_ = nullptr;
 	std::unique_ptr<AppCollider> appCollider_ = nullptr;
 	AppAABB aabb_{};
+	AppCollider::AppColliderDesc desc = {};
 
 	// 風向き
     Vector3 direction_;

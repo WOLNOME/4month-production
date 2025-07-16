@@ -5,7 +5,7 @@
 IceMist::~IceMist()
 {
 	// 当たり判定関係
-	appCollisionManager_->DeleteCollider(appCollider_.get());
+    appColliderManager_->DeleteCollider(appCollider_.get());
 	appCollider_.reset();
 }
 
@@ -26,16 +26,22 @@ void IceMist::Initialize(const std::string& filePath, const Vector3& position, c
 	// スタート地点
 	startPosition_ = position;
     // 当たり判定関係
-    appCollisionManager_ = AppCollisionManager::GetInstance();
+    appColliderManager_ = AppColliderManager::GetInstance();
+	objectName_ = "IceMist";
     appCollider_ = std::make_unique<AppCollider>();
-    appCollider_->SetOwner(this);
-    appCollider_->SetColliderID("IceMist");
-    appCollider_->SetShapeData(&aabb_);
-    appCollider_->SetShape(AppShape::AppAABB);
-    appCollider_->SetAttribute(appCollisionManager_->GetNewAttribute(appCollider_->GetColliderID()));
-    appCollider_->SetOnCollisionTrigger(std::bind(&IceMist::OnCollisionTrigger, this, std::placeholders::_1));
-    appCollider_->SetOnCollision(std::bind(&IceMist::OnCollision, this, std::placeholders::_1));
-    appCollisionManager_->RegisterCollider(appCollider_.get());
+	desc =
+	{
+		//ここに設定
+		.owner = this,
+		.colliderID = objectName_,
+		.shape = AppShape::AppAABB,
+		.shapeData = &aabb_,
+		.attribute = appColliderManager_->GetNewAttribute(objectName_),
+		.onCollision = std::bind(&IceMist::OnCollision, this, std::placeholders::_1),
+		.onCollisionTrigger = std::bind(&IceMist::OnCollisionTrigger, this, std::placeholders::_1),
+	};
+	appCollider_->MakeAABBDesc(desc);
+    appColliderManager_->RegisterCollider(appCollider_.get());
 }
 
 void IceMist::Update()

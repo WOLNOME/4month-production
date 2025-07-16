@@ -8,18 +8,18 @@
 #include <string>
 #include <utility>
 
-class AppCollisionManager
+class AppColliderManager
 {
 public:
 
-	AppCollisionManager(const AppCollisionManager&) = delete;
-	AppCollisionManager(const AppCollisionManager&&) = delete;
-	AppCollisionManager& operator=(const AppCollisionManager&) = delete;
-	AppCollisionManager& operator=(const AppCollisionManager&&) = delete;
+	AppColliderManager(const AppColliderManager&) = delete;
+	AppColliderManager(const AppColliderManager&&) = delete;
+	AppColliderManager& operator=(const AppColliderManager&) = delete;
+	AppColliderManager& operator=(const AppColliderManager&&) = delete;
 
-	static AppCollisionManager* GetInstance()
+	static AppColliderManager* GetInstance()
 	{
-		static AppCollisionManager instance;
+		static AppColliderManager instance;
 		return &instance;
 	}
 
@@ -80,7 +80,7 @@ public:
 
 
 private:
-    AppCollisionManager() = default;
+    AppColliderManager() = default;
 
     std::vector<AppCollider*> colliders_;
     std::vector<std::pair<std::string, std::string>> collisionNames_;
@@ -95,8 +95,6 @@ private:
 
     bool IsCollision(const AppSphere* _sphere1, const AppSphere* _sphere2);
     bool IsCollision(const AppOBB* _obb1, const AppOBB* _obb2);
-
-    // bool IsCollision(const OBB& _obb, const Sphere& _sphere);
 
     float ProjectOntoAxis(const AppOBB* _obb, const Vector3& axis);
     bool OverlapOnAxis(const AppOBB* _obb1, const AppOBB* _obb2, const Vector3& axis);
